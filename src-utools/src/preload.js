@@ -4,6 +4,7 @@ const {URL} = require("node:url");
 const https = require("node:https");
 const http = require("node:http");
 const axios = require('axios');
+const {sendMessage, buildSubWindow, receiveMessage} = require('./ipc');
 
 /**
  * 获取一个文件
@@ -129,11 +130,14 @@ const axiosInstance = axios.create({
   adapter: 'http'
 });
 
+
 window.preload = {
   dialog: {
     openFile, downloadFileFromUrl, downloadFile
   },
   lib: {
     axiosInstance
-  }
+  },
+
+  ipcRenderer: {sendMessage, buildSubWindow, receiveMessage},
 }

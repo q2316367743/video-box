@@ -5,7 +5,7 @@ export const routes: Array<RouteRecordRaw> = [{
   name: "主页",
   path: '/home',
   alias: ['/'],
-  component: () => import('@/pages/home/index.vue'),
+  component: () => import('@/pages/home/home.vue'),
   meta: {
     icon: HomeIcon,
   }

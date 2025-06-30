@@ -1,3 +1,5 @@
+import {VideoSourceEntry} from "@/entities/VideoSource";
+
 export interface VideoPageResult {
   // 当前页
   page: number;
@@ -92,6 +94,8 @@ export interface VideoSearchResult extends VideoPageResult {
 }
 
 export interface VideoPlugin {
+
+  props: VideoSourceEntry;
 
   /**
    * 获取首页数据

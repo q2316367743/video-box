@@ -2,7 +2,7 @@
   "name": "video-box",
   "version": "1.0.0",
   "description": "",
-  "main": "preload.js",
+  "main": "src/preload.js",
   "author": "",
   "license": "MIT",
   "type": "commonjs",

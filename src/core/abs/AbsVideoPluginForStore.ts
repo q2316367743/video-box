@@ -6,8 +6,12 @@ import {
   VideoSearchResult
 } from "@/core/VideoPlugin";
 import {getItem, removeItem, setItem} from "@/utils/utools/DbStorageUtil";
+import {VideoSourceEntry} from "@/entities/VideoSource";
 
 export abstract class AbsVideoPluginForStore implements VideoPlugin {
+
+  abstract props: VideoSourceEntry;
+
   abstract getDetail(video: VideoListItem): Promise<VideoDetail>;
 
   abstract getVideos(categoryId: string, page: number): Promise<VideoCategoryResult>;
@@ -35,5 +39,6 @@ export abstract class AbsVideoPluginForStore implements VideoPlugin {
   private removeItem(key: string) {
     removeItem(this.prefix + key);
   }
+
 
 }

@@ -4,4 +4,7 @@ export enum LocalNameEnum {
 
   LIST_SOURCE = '/list/source',
 
+  KEY_PLAYER_INDEX = '/key/player/index',
+  KEY_PLAYER_VOLUME = '/key/player/volume',
+
 }

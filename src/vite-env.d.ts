@@ -16,7 +16,26 @@ interface OpenFileOption {
   securityScopedBookmarks?: boolean
 }
 
+
 declare global {
+
+
+  type SubWindowChannel = 'player';
+
+  interface SubWindow {
+
+    receiveMsg<T = any>(callback: (msg: IpcEvent<T>) => void): void;
+
+    sendMsg<T = any>(msg: IpcEvent<T>): void
+  }
+
+  interface IpcEvent<T = any> {
+    event: string,
+    data: T;
+  }
+
+  type ChannelName<C = SubWindowChannel> = `${C}:to` | `${C}:from`;
+
   interface Window {
     preload: {
       dialog: {
@@ -43,6 +62,11 @@ declare global {
       },
       lib: {
         axiosInstance: AxiosInstance
+      },
+      ipcRenderer: {
+        buildSubWindow(channel: SubWindowChannel): SubWindow;
+        receiveMessage<T = any, C = SubWindowChannel>(channel: ChannelName<C>, callback: (msg: IpcEvent<T>) => void): void;
+        sendMessage<T = any, C extends SubWindowChannel = SubWindowChannel>(id: number, channel: ChannelName<C>, message: IpcEvent<T>): void;
       }
     }
   }

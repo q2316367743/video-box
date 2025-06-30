@@ -8,6 +8,7 @@ import {
 } from "@/core/VideoPlugin";
 import {CmsHomeClass, CmsHomeResult, CmsVideoList} from "@/core/impl/cms/VideoTypeForCms";
 import {group, MapWrapper} from "@/utils/lang/ArrayUtil";
+import {VideoSource} from "@/entities/VideoSource";
 
 export interface VideoPluginForCmsProps {
   url: string;
@@ -15,13 +16,13 @@ export interface VideoPluginForCmsProps {
 
 export class VideoPluginForCms extends AbsVideoPluginForStore {
 
-  private readonly props: VideoPluginForCmsProps;
+  public props: VideoSource<'CMS'>;
   private readonly url: string;
 
-  constructor(id: string, props: VideoPluginForCmsProps) {
-    super(id);
+  constructor(props: VideoSource<'CMS'>) {
+    super(props.id);
     this.props = props;
-    this.url = props.url;
+    this.url = props.props.url;
   }
 
   async getDetail(video: VideoListItem): Promise<VideoDetail> {
@@ -29,13 +30,39 @@ export class VideoPluginForCms extends AbsVideoPluginForStore {
     return Promise.resolve({recommends: [], ...video});
   }
 
-  getVideos(categoryId: string, page: number): Promise<VideoCategoryResult> {
-    return Promise.resolve({
-      limit: 20,
-      page: page,
-      total: 0,
-      data: []
+  private async cToL(params: Record<string, any>): Promise<VideoCategoryResult> {
+    const {data} = await window.preload.lib.axiosInstance.get<CmsVideoList>(this.url, {
+      params
     });
+    return {
+      limit: Number(data.limit),
+      page: Number(data.page),
+      total: Number(data.total),
+      data: data.list.map(e => ({
+        id: e.vod_id + '',
+        cover: e.vod_pic,
+        title: e.vod_name,
+        subtitle: e.vod_sub,
+        titleEn: e.vod_en,
+        types: e.vod_tag.split(','),
+        actors: e.vod_actor.split(','),
+        directors: e.vod_director.split(','),
+        writers: e.vod_writer.split(','),
+        blurb: e.vod_blurb,
+        remark: e.vod_remarks,
+        releaseDate: e.vod_pubdate,
+        total: e.vod_total,
+        region: e.vod_area,
+        language: e.vod_lang,
+        releaseYear: e.vod_year,
+        duration: e.vod_duration,
+        content: e.vod_content,
+        playUrls: e.vod_play_url.split("#").map(e => ({
+          name: e.split('$')[0],
+          url: e.split('$')[1]
+        }))
+      }))
+    }
   }
 
   private cTC(c: CmsHomeClass): VideoCategory {
@@ -93,42 +120,21 @@ export class VideoPluginForCms extends AbsVideoPluginForStore {
     }
   }
 
-  async searchVideos(keyword: string, page: number): Promise<VideoSearchResult> {
-    const {data} = await window.preload.lib.axiosInstance.get<CmsVideoList>(this.url, {
-      params: {
-        ac: 'videolist',
-        wd: keyword
-      }
+  async getVideos(categoryId: string, page: number): Promise<VideoCategoryResult> {
+    // https://caiji.dyttzyapi.com/api.php/provide/vod?ac=videolist&t=&pg=
+    return this.cToL({
+      ac: 'videolist',
+      t: categoryId,
+      pg: page
     });
-    return {
-      limit: Number(data.limit),
-      page: data.page,
-      total: data.total,
-      data: data.list.map(e => ({
-        id: e.vod_id + '',
-        cover: e.vod_pic,
-        title: e.vod_name,
-        subtitle: e.vod_sub,
-        titleEn: e.vod_en,
-        types: e.vod_tag.split(','),
-        actors: e.vod_actor.split(','),
-        directors: e.vod_director.split(','),
-        writers: e.vod_writer.split(','),
-        blurb: e.vod_blurb,
-        remark: e.vod_remarks,
-        releaseDate: e.vod_pubdate,
-        total: e.vod_total,
-        region: e.vod_area,
-        language: e.vod_lang,
-        releaseYear: e.vod_year,
-        duration: e.vod_duration,
-        content: e.vod_content,
-        playUrls: e.vod_play_url.split("#").map(e => ({
-          name: e.split('$')[0],
-          url: e.split('$')[1]
-        }))
-      }))
-    }
+  }
+
+  async searchVideos(keyword: string, page: number): Promise<VideoSearchResult> {
+    return this.cToL({
+      ac: 'videolist',
+      wd: keyword,
+      pg: page
+    });
   }
 
 
