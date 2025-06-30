@@ -12,7 +12,7 @@ export interface CmsHomeResult {
 
 export interface CmsHomeClass {
   type_id: number;
-  type_pid: number;
+  type_pid?: number;
   type_name: string;
 }
 

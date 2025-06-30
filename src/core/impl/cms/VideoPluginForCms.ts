@@ -38,16 +38,20 @@ export class VideoPluginForCms extends AbsVideoPluginForStore {
     });
   }
 
+  private cTC(c: CmsHomeClass): VideoCategory {
+    return {
+      id: c.type_id + '',
+      name: c.type_name,
+      cover: '',
+      children: []
+    }
+  }
+
   private tree(c: Array<CmsHomeClass>): Array<VideoCategory> {
     const cGroupMap = group(c, 'type_pid');
-    const _tree = (node: VideoCategory, map: MapWrapper<number, Array<CmsHomeClass>>) => {
+    const _tree = (node: VideoCategory, map: MapWrapper<number | undefined, Array<CmsHomeClass>>) => {
       let nodes = cGroupMap.getOrDefault(Number(node.id), []);
-      node.children = nodes.map(e => ({
-        id: e.type_id + '',
-        name: e.type_name,
-        cover: '',
-        children: []
-      }))
+      node.children = nodes.map(e => this.cTC(e))
       node.children.forEach(n => _tree(n, map));
     }
     const t = {
@@ -57,7 +61,7 @@ export class VideoPluginForCms extends AbsVideoPluginForStore {
       children: []
     };
     _tree(t, cGroupMap);
-    return t.children;
+    return [...t.children, ...cGroupMap.getOrDefault(undefined, []).map(e => this.cTC(e))];
   }
 
   async home(page: number): Promise<VideoHome> {
@@ -68,9 +72,9 @@ export class VideoPluginForCms extends AbsVideoPluginForStore {
       }
     });
     return {
-      limit: data.limit,
-      page: data.page,
-      total: data.total,
+      limit: Number(data.limit),
+      page: Number(data.page),
+      total: Number(data.total),
       recommends: data.list.map(e => ({
         id: e.vod_id + '',
         cover: '',
