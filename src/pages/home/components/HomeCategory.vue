@@ -100,7 +100,6 @@ onMounted(() => {
 });
 </script>
 <style scoped lang="less">
-
 .home-category {
   position: sticky;
   top: 0;
@@ -110,64 +109,65 @@ onMounted(() => {
 
 .waterfall-list {
   margin-top: 8px;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  grid-gap: 12px;
+  /* 使用 column-width 实现自适应列数 */
+  column-width: 200px;
+  column-gap: 12px;
+}
 
-  .waterfall-item {
-    break-inside: avoid;
+.waterfall-item {
+  break-inside: avoid;
+  position: relative;
+  cursor: pointer;
+  margin-bottom: 12px;
+  display: inline-block;
+  width: 100%;
+
+  &__cover {
     position: relative;
-    cursor: pointer;
-
-    .waterfall-item__cover {
-      position: relative;
-      overflow: hidden;
-      border-radius: var(--td-radius-medium);
-
-
-      .waterfall-item__tag {
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 1;
-        background-color: #ffdd9a;
-        max-width: 80%;
-        padding: 3px 6px;
-        color: #4f3007;
-        font-weight: bold;
-        border-radius: var(--td-radius-medium) 0;
-        font-size: var(--td-font-size-body-medium);
-        user-select: none;
-      }
-    }
-
-    .waterfall-item__title {
-      font-size: var(--td-font-size-title-medium);
-      font-weight: bold;
-      color: var(--td-text-color-primary);
-      transition: color 0.3s ease;
-    }
-
-    .waterfall-item__remark {
-      margin-top: 2px;
-      font-size: var(--td-font-body-medium);
-      color: var(--td-text-color-secondary);
-    }
+    overflow: hidden;
+    border-radius: var(--td-radius-medium);
 
     :deep(img) {
       transition: transform 0.3s ease;
     }
+  }
 
-    &:hover {
-      :deep(img) {
-        transform: scale(1.02);
-      }
+  &__tag {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    background-color: #ffdd9a;
+    max-width: 80%;
+    padding: 3px 6px;
+    color: #4f3007;
+    font-weight: bold;
+    border-radius: var(--td-radius-medium) 0;
+    font-size: var(--td-font-size-body-medium);
+    user-select: none;
+  }
 
-      .waterfall-item__title {
-        color: var(--td-brand-color);
-      }
+  &__title {
+    font-size: var(--td-font-size-title-medium);
+    font-weight: bold;
+    color: var(--td-text-color-primary);
+    transition: color 0.3s ease;
+  }
+
+  &__remark {
+    margin-top: 2px;
+    font-size: var(--td-font-body-medium);
+    color: var(--td-text-color-secondary);
+  }
+
+  &:hover {
+    .waterfall-item__cover :deep(img) {
+      transform: scale(1.02);
+    }
+
+    .waterfall-item__title {
+      color: var(--td-brand-color);
     }
   }
 }
-
 </style>
