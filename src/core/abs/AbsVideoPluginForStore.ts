@@ -25,7 +25,7 @@ export abstract class AbsVideoPluginForStore implements VideoPlugin {
 
   protected constructor(id: string) {
     this.id = id;
-    this.prefix = `/video/store/${this.id}`;
+    this.prefix = `/video/store/${this.id}/`;
   }
 
   protected getItem<T>(key: string): T | null {
@@ -36,7 +36,7 @@ export abstract class AbsVideoPluginForStore implements VideoPlugin {
     setItem(this.prefix + key, value)
   }
 
-  private removeItem(key: string) {
+  protected removeItem(key: string) {
     removeItem(this.prefix + key);
   }
 

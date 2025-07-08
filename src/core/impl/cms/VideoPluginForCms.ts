@@ -40,6 +40,7 @@ export class VideoPluginForCms extends AbsVideoPluginForStore {
       total: Number(data.total),
       data: data.list.map(e => ({
         id: e.vod_id + '',
+        type: 'Series',
         cover: e.vod_pic,
         title: e.vod_name,
         subtitle: e.vod_sub,

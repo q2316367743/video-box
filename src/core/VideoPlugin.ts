@@ -43,6 +43,7 @@ export interface VideoListItemUrl {
 
 export interface VideoListItem {
   id: string;
+  type: 'Movie' | 'Series'
   cover: string;
   // 标题
   title: string;
@@ -85,12 +86,14 @@ export interface VideoDetail extends VideoListItem {
   recommends: Array<VideoListItem>;
 }
 
-export interface VideoCategoryResult extends VideoPageResult {
+export interface VideoCommonResult extends VideoPageResult {
   data: Array<VideoListItem>;
 }
 
-export interface VideoSearchResult extends VideoPageResult {
-  data: Array<VideoListItem>;
+export interface VideoCategoryResult extends VideoCommonResult {
+}
+
+export interface VideoSearchResult extends VideoCommonResult {
 }
 
 export interface VideoPlugin {
