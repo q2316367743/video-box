@@ -10,6 +10,18 @@ export const usePlayerWindowStore = defineStore('player-window-store', () => {
   const title = ref('');
   const stop = ref(false);
 
+  // 检测窗口
+  setInterval(async () => {
+    if (!cw) {
+      title.value = '';
+      return;
+    }
+    if (await cw.isDestroyed()) {
+      cw = null;
+      title.value = '';
+    }
+  }, 1000)
+
   async function closePlayerWindow() {
     if (cw) {
       await cw.close();
@@ -26,7 +38,7 @@ export const usePlayerWindowStore = defineStore('player-window-store', () => {
   async function openPlayerWindow(source: VideoSourceEntry, video: VideoListItem) {
     try {
       await closePlayerWindow();
-      const bw = WindowUtil.createBrowserWindow('player', {
+      cw = WindowUtil.createBrowserWindow('player', {
         width: 1200,
         height: 800,
         minWidth: 960,
@@ -36,13 +48,13 @@ export const usePlayerWindowStore = defineStore('player-window-store', () => {
         alwaysOnTop: false,
         backgroundColor: '#00000000',
       });
-      await bw.open();
+      await cw.open();
       const data = clone({
         source: source,
         video: video
       }, true);
       const interval = setInterval(() => {
-        bw.sendMessage({
+        cw?.sendMessage({
           event: 'initialize',
           data
         });
@@ -51,7 +63,7 @@ export const usePlayerWindowStore = defineStore('player-window-store', () => {
         }
       }, 1000);
       title.value = video.title;
-      return bw;
+      return cw;
     } catch (error) {
       title.value = '';
       cw = null;

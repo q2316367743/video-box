@@ -54,7 +54,7 @@ const slots = defineSlots();
 
   .page-container {
     position: absolute;
-    top: 51px;
+    top: 56px;
     left: 0;
     right: 0;
     bottom: 0;

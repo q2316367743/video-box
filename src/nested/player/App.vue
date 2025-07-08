@@ -25,24 +25,6 @@
             </header>
             <section class="mt-8px">
               <div class="space-y-4">
-                <div class="flex items-center gap-3">
-                  <t-button theme="primary" class="flex-1" @click="playVideo">
-                    <template #icon>
-                      <play-icon/>
-                    </template>
-                    立即播放
-                  </t-button>
-                  <t-button theme="primary" shape="square" variant="outline">
-                    <heart-icon/>
-                  </t-button>
-                  <t-button theme="primary" shape="square" variant="outline">
-                    <share-icon/>
-                  </t-button>
-                  <t-button theme="primary" shape="square" variant="outline">
-                    <download-icon/>
-                  </t-button>
-                </div>
-
                 <div class="space-y-3">
                   <div>
                     <span class="text-sm font-bold">导演：</span>
@@ -119,7 +101,6 @@ import {playFlv, playM3u8} from "@/nested/player/pplugin";
 import {LocalNameEnum} from "@/global/LocalNameEnum";
 import MessageUtil from "@/utils/modal/MessageUtil";
 import {LoadingPlugin, RadioValue} from "tdesign-vue-next";
-import {DownloadIcon, HeartIcon, PlayIcon, ShareIcon} from "tdesign-icons-vue-next";
 
 const activeTab = ref('episodes');
 
@@ -129,7 +110,7 @@ const plugin = shallowRef<VideoPlugin>();
 const art = shallowRef<Artplayer>();
 const title = useTitle();
 const cache = useStorage<Record<string, number>>(LocalNameEnum.KEY_PLAYER_INDEX, {}, utools.dbStorage);
-const index = computed(() => cache.value[video.value?.id || ''] || 0);
+const index = computed(() => cache.value[`/${plugin.value?.props.id || ''}/${video.value?.id || ''}`] || 0);
 
 const initialize = (p: VideoPlugin, v: VideoListItem) => {
   art.value = new Artplayer({
@@ -148,6 +129,7 @@ const initialize = (p: VideoPlugin, v: VideoListItem) => {
     fullscreenWeb: true,
     setting: true,
   });
+  title.value = v.title
   // 获取详情
   const lp = LoadingPlugin({
     content: '正在获取详情'
@@ -161,7 +143,7 @@ const initialize = (p: VideoPlugin, v: VideoListItem) => {
       // 修改类型
       const u = new URL(url);
       if (!art.value) return;
-      art.value.type =(u.pathname.endsWith('.m3u8') ?  'm3u8' : u.pathname.endsWith('.flv') ? 'flv' : 'mp4');
+      art.value.type = (u.pathname.endsWith('.m3u8') ? 'm3u8' : u.pathname.endsWith('.flv') ? 'flv' : 'mp4');
       art.value.switchUrl(url);
     })
     .catch(e => MessageUtil.error("获取视频详情失败", e))
@@ -171,7 +153,7 @@ const initialize = (p: VideoPlugin, v: VideoListItem) => {
 const switchUrl = (index: RadioValue) => {
   index = Number(index);
   if (!video.value) return;
-  cache.value[video.value.id] = index;
+  cache.value[`/${plugin.value?.props.id || ''}/${video.value.id}`] = index;
   const item = video.value.playUrls[index];
   title.value = video.value.title + '-' + item.name;
   art.value?.switchUrl(item.url);
@@ -227,6 +209,7 @@ const playVideo = () => {
 
       .index {
         background-color: var(--td-bg-color-component);
+        flex: 0 0 35px;
 
         &.watch {
           background-color: var(--td-success-color);

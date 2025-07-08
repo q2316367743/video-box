@@ -1,7 +1,15 @@
 <template>
   <div class="home">
     <header class="home-header">
-      <t-select v-model="selectValue" :options="sourceOptions" placeholder="请选择源" class="w-120px" clearable/>
+      <div class="flex gap-8px items-center">
+        <t-select v-model="selectValue" :options="sourceOptions" placeholder="请选择源" class="w-120px" clearable/>
+        <t-tag theme="primary" variant="outline" size="large" v-if="title" closable @close="handleCloseCw">
+          <template #icon>
+            <play-icon/>
+          </template>
+          {{ title }}
+        </t-tag>
+      </div>
       <t-input v-model="inputValue" placeholder="请输入影视名称" class="w-240px" clearable>
         <template #prefix-icon>
           <search-icon/>
@@ -12,12 +20,11 @@
       <home-category v-if="plugin" :plugin :value="categoryValue"/>
       <empty-result v-else title="请先选择源"/>
     </div>
-    <t-back-top container=".home-content-wrap"/>
   </div>
 </template>
 <script lang="ts" setup>
-import {SearchIcon} from "tdesign-icons-vue-next";
-import {useSourceStore} from "@/store";
+import {PlayIcon, SearchIcon} from "tdesign-icons-vue-next";
+import {usePlayerWindowStore, useSourceStore} from "@/store";
 import {buildVideoPlugin} from "@/core";
 import {VideoPlugin} from "@/core/VideoPlugin";
 import HomeCategory from "@/pages/home/components/HomeCategory.vue";
@@ -28,6 +35,11 @@ const categoryValue = ref('');
 const plugin = shallowRef<VideoPlugin | null>(null);
 
 const {sourceOptions} = toRefs(useSourceStore());
+const {title} = toRefs(usePlayerWindowStore());
+
+const handleCloseCw = () => {
+  usePlayerWindowStore().closePlayerWindow();
+}
 
 watch(selectValue, value => {
   // 清空数据
@@ -50,11 +62,11 @@ watch(selectValue, value => {
   background-color: var(--td-bg-color-container);
 
   .home-header {
-    padding: 12px;
-
+    padding: 12px 12px 11px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-bottom: 1px solid var(--td-border-level-2-color);
   }
 
   .home-content-wrap {
