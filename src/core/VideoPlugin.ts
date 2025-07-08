@@ -36,6 +36,11 @@ export interface VideoHome extends VideoPageResult {
   categories: Array<VideoCategory>;
 }
 
+export interface VideoListItemChapter {
+  id: string;
+  name: string;
+  items: Array<VideoListItemUrl>;
+}
 export interface VideoListItemUrl {
   name: string;
   url: string;
@@ -78,7 +83,7 @@ export interface VideoListItem {
   // 内容，可能是html
   content: string;
   // 播放地址
-  playUrls: Array<VideoListItemUrl>;
+  playUrls: Array<VideoListItemChapter>;
 }
 
 

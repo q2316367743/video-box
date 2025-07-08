@@ -129,6 +129,17 @@ async function downloadFile(data, name) {
 const axiosInstance = axios.create({
   adapter: 'http'
 });
+axiosInstance.interceptors.request.use(config => {
+  console.debug(config);
+  return config;
+})
+axiosInstance.interceptors.response.use(response => {
+  console.debug(response);
+  return response;
+}, e => {
+  console.error(e);
+  return Promise.reject(e);
+})
 
 
 window.preload = {

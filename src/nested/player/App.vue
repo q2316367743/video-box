@@ -48,21 +48,25 @@
             <t-tabs v-model="activeTab">
               <t-tab-panel label="剧集列表" value="episodes">
                 <div class="space-y-2 mt-8px">
-                  <div v-for="(episode, i) in video.playUrls" :key="episode.url"
-                       class="flex items-center justify-between p-4 rounded-lg cursor-pointer transition-all hover:shadow-sm play-item"
-                       :class="{player: index === i}"
-                       @click="switchUrl(i)">
-                    <div class="flex items-center gap-4">
-                      <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium index"
-                           :class="[i < index ? 'watch' : index === i ? 'play' : '']">
-                        {{ (i < index) ? '✓' : (i + 1) }}
+                  <t-tabs>
+                    <t-tab-panel v-for="chapter in video.playUrls" :label="chapter.name" :value="chapter.id">
+                      <div v-for="(episode, i) in chapter.items" :key="episode.url"
+                           class="flex items-center justify-between p-4 rounded-lg cursor-pointer transition-all hover:shadow-sm play-item"
+                           :class="{player: index === `/${chapter.id}/${i}`}"
+                           @click="switchUrl(`/${chapter.id}/${i}`)">
+                        <div class="flex items-center gap-4">
+                          <div
+                            class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium index">
+                            {{ (i + 1) }}
+                          </div>
+                          <div>
+                            <div class="font-medium">{{ episode.name }}</div>
+                            <div class="text-sm text-muted-foreground">duration</div>
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <div class="font-medium">{{ episode.name }}</div>
-                        <div class="text-sm text-muted-foreground">duration</div>
-                      </div>
-                    </div>
-                  </div>
+                    </t-tab-panel>
+                  </t-tabs>
                 </div>
               </t-tab-panel>
               <t-tab-panel label="相关推荐" value="recommendations">
@@ -100,7 +104,7 @@ import {buildVideoPlugin} from "@/core";
 import {playFlv, playM3u8} from "@/nested/player/pplugin";
 import {LocalNameEnum} from "@/global/LocalNameEnum";
 import MessageUtil from "@/utils/modal/MessageUtil";
-import {LoadingPlugin, RadioValue} from "tdesign-vue-next";
+import {LoadingPlugin} from "tdesign-vue-next";
 
 const activeTab = ref('episodes');
 
@@ -109,8 +113,8 @@ const video = shallowRef<VideoDetail>();
 const plugin = shallowRef<VideoPlugin>();
 const art = shallowRef<Artplayer>();
 const title = useTitle();
-const cache = useStorage<Record<string, number>>(LocalNameEnum.KEY_PLAYER_INDEX, {}, utools.dbStorage);
-const index = computed(() => cache.value[`/${plugin.value?.props.id || ''}/${video.value?.id || ''}`] || 0);
+const cache = useStorage<Record<string, string>>(LocalNameEnum.KEY_PLAYER_INDEX, {}, utools.dbStorage);
+const index = computed<string>(() => cache.value[`/${plugin.value?.props.id || ''}/${video.value?.id || ''}`] || '');
 
 const initialize = (p: VideoPlugin, v: VideoListItem) => {
   art.value = new Artplayer({
@@ -137,26 +141,32 @@ const initialize = (p: VideoPlugin, v: VideoListItem) => {
   p.getDetail(v)
     .then((res) => {
       video.value = res;
-      const index = cache.value[res.id] || 0;
-      const {name, url} = res.playUrls[index];
-      title.value = res.title + ' - ' + name;
-      // 修改类型
-      const u = new URL(url);
-      if (!art.value) return;
-      art.value.type = (u.pathname.endsWith('.m3u8') ? 'm3u8' : u.pathname.endsWith('.flv') ? 'flv' : 'mp4');
-      art.value.switchUrl(url);
+      switchUrl(cache.value[`/${plugin.value?.props.id || ''}/${video.value?.id || ''}`] || '');
     })
     .catch(e => MessageUtil.error("获取视频详情失败", e))
     .finally(() => lp.hide());
 }
 
-const switchUrl = (index: RadioValue) => {
-  index = Number(index);
+const switchUrl = (path: string) => {
   if (!video.value) return;
-  cache.value[`/${plugin.value?.props.id || ''}/${video.value.id}`] = index;
-  const item = video.value.playUrls[index];
-  title.value = video.value.title + '-' + item.name;
-  art.value?.switchUrl(item.url);
+  const paths = path.split('/');
+  const chapterId = paths[1] || video.value.playUrls[0].id;
+  const index = Number(paths[2]) || 0;
+
+  for (let chapter of video.value.playUrls) {
+    if (chapter.id === chapterId) {
+      const {name, url} = chapter.items[index];
+      title.value = video.value.title + '-' + name;
+      // 修改类型
+      const u = new URL(url);
+      if (!art.value) return;
+      art.value.type = (u.pathname.endsWith('.m3u8') ? 'm3u8' : u.pathname.endsWith('.flv') ? 'flv' : 'mp4');
+      art.value?.switchUrl(url);
+      cache.value[`/${plugin.value?.props.id || ''}/${video.value?.id || ''}`] = path;
+      return;
+    }
+  }
+
 }
 
 const subWindow = window.preload.ipcRenderer.buildSubWindow('player');
@@ -171,10 +181,6 @@ subWindow.receiveMsg(({event, data}) => {
     subWindow.sendMsg({event: 'initialized', data: null})
   }
 });
-const playVideo = () => {
-  if (!art.value) return;
-  art.value.play();
-}
 </script>
 <style scoped lang="less">
 .main {

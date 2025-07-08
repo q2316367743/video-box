@@ -24,7 +24,7 @@
             </div>
           </div>
           <div v-if="loading" class="w-full text-center my-4px">正在加载中...</div>
-          <div v-if="bottom" class="w-full text-center my-4px">人家已经到极限了</div>
+          <div v-if="bottom" class="w-full text-center my-4px">人家也是有底线的</div>
         </t-card>
       </t-loading>
     </div>

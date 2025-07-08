@@ -140,10 +140,14 @@ export class VideoPluginForEmby extends AbsVideoPluginForStore {
       language: res.OfficialRating || '',
       duration: "",
       content: "",
-      playUrls: info.MediaSources.map(s => ({
-        name: video.title,
-        url: `${this.props.props.url}/emby/videos/${video.id}/original.mp4?DeviceId=${Constant.id}&MediaSourceId=${s.Id}&PlaySessionId=${info.PlaySessionId}&api_key=${profile.AccessToken}`
-      })),
+      playUrls: [{
+        id: encodeURIComponent(this.props.title),
+        name: this.props.title,
+        items: info.MediaSources.map(s => ({
+          name: video.title,
+          url: `${this.props.props.url}/emby/videos/${video.id}/original.mp4?DeviceId=${Constant.id}&MediaSourceId=${s.Id}&PlaySessionId=${info.PlaySessionId}&api_key=${profile.AccessToken}`
+        }))
+      }],
       recommends: this.embyItemsToItem(1, rec).data
     }
   }

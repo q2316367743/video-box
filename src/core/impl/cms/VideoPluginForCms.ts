@@ -3,7 +3,7 @@ import {
   VideoCategory,
   VideoCategoryResult,
   VideoDetail,
-  VideoHome, VideoListItem,
+  VideoHome, VideoListItem, VideoListItemChapter,
   VideoSearchResult
 } from "@/core/VideoPlugin";
 import {CmsHomeClass, CmsHomeResult, CmsVideoList} from "@/core/impl/cms/VideoTypeForCms";
@@ -38,31 +38,59 @@ export class VideoPluginForCms extends AbsVideoPluginForStore {
       limit: Number(data.limit),
       page: Number(data.page),
       total: Number(data.total),
-      data: data.list.map(e => ({
-        id: e.vod_id + '',
-        type: 'Series',
-        cover: e.vod_pic,
-        title: e.vod_name,
-        subtitle: e.vod_sub,
-        titleEn: e.vod_en,
-        types: e.vod_tag.split(','),
-        actors: e.vod_actor.split(','),
-        directors: e.vod_director.split(','),
-        writers: e.vod_writer.split(','),
-        blurb: e.vod_blurb,
-        remark: e.vod_remarks,
-        releaseDate: e.vod_pubdate,
-        total: e.vod_total,
-        region: e.vod_area,
-        language: e.vod_lang,
-        releaseYear: e.vod_year,
-        duration: e.vod_duration,
-        content: e.vod_content,
-        playUrls: e.vod_play_url.split("#").map(e => ({
-          name: e.split('$')[0],
-          url: e.split('$')[1]
-        }))
-      }))
+      data: data.list.map(e => {
+        const playUrls = new Array<VideoListItemChapter>();
+        if (e.vod_play_note) {
+          const chapterNames = e.vod_play_from.split(e.vod_play_note);
+          e.vod_play_url.split(e.vod_play_note).forEach((e, i) => {
+            playUrls.push({
+              id: encodeURIComponent(chapterNames[i]),
+              name: chapterNames[i],
+              items: e.split('#').map(e => {
+                const temp = e.split('$');
+                return {
+                  name: temp[0],
+                  url: temp[1]
+                }
+              })
+            })
+          })
+        } else {
+          playUrls.push({
+            id: encodeURIComponent(this.props.title),
+            name: this.props.title,
+            items: e.vod_play_url.split('#').map(e => {
+              const temp = e.split('$');
+              return {
+                name: temp[0],
+                url: temp[1]
+              }
+            })
+          })
+        }
+        return {
+          id: e.vod_id + '',
+          type: 'Series',
+          cover: e.vod_pic,
+          title: e.vod_name,
+          subtitle: e.vod_sub,
+          titleEn: e.vod_en,
+          types: e.vod_tag.split(','),
+          actors: e.vod_actor.split(','),
+          directors: e.vod_director.split(','),
+          writers: e.vod_writer.split(','),
+          blurb: e.vod_blurb,
+          remark: e.vod_remarks,
+          releaseDate: e.vod_pubdate,
+          total: e.vod_total,
+          region: e.vod_area,
+          language: e.vod_lang,
+          releaseYear: e.vod_year,
+          duration: e.vod_duration,
+          content: e.vod_content,
+          playUrls
+        }
+      })
     }
   }
 
