@@ -15,6 +15,8 @@ import MessageUtil from "@/utils/modal/MessageUtil";
 import {EmbyItems} from "@/core/impl/emby/types/EmbyItems";
 import {EmbyResume} from "@/core/impl/emby/types/EmbyResume";
 import {EmbyItemInfo} from "@/core/impl/emby/types/EmbyItemsInfo";
+import {EmbyPlaybackInfo} from "@/core/impl/emby/types/EmbyPlaybackInfo";
+import {EmbyView} from "@/core/impl/emby/types/EmbyView";
 
 export interface VideoPluginForEmbyProps {
   url: string;
@@ -95,10 +97,35 @@ export class VideoPluginForEmby extends AbsVideoPluginForStore {
 
   async getDetail(video: VideoListItem): Promise<VideoDetail> {
     let profile = await this.getProfile();
-    const res = await this.request<EmbyItemInfo>({
-      url: `/emby/Users/${profile.User.Id}/Items/${video.id}`,
-      params: {}
-    });
+    const [res, info, rec] = await Promise.all([
+      // 基础信息
+      this.request<EmbyItemInfo>({
+        url: `/emby/Users/${profile.User.Id}/Items/${video.id}`,
+        params: {}
+      }),
+      // 播放信息
+      this.request<EmbyPlaybackInfo>({
+        url: `/emby/Items/${video.id}/PlaybackInfo`,
+        params: {
+          UserId: profile.User.Id,
+          StartTimeTicks: 0,
+          IsPlayback: false,
+          AutoOpenLiveStream: false,
+          MaxStreamingBitrate: 200000000,
+          reqformat: "json"
+        }
+      }),
+      // 推荐信息
+      this.request<EmbyItems>({
+        url: `/emby/Items/${video.id}/Similar`,
+        params: {
+          Limit: 12,
+          UserId: profile.User.Id,
+          ImageTypeLimit: 1,
+          Fields: "BasicSyncInfo,CanDelete,CanDownload,PrimaryImageAspectRatio,ProductionYear,Status,EndDate",
+          EnableTotalRecordCount: false
+        }
+      })]);
     return {
       ...video,
       types: res.Genres,
@@ -113,9 +140,11 @@ export class VideoPluginForEmby extends AbsVideoPluginForStore {
       language: res.OfficialRating || '',
       duration: "",
       content: "",
-      playUrls: [],
-      // TODO: 推荐
-      recommends: []
+      playUrls: info.MediaSources.map(s => ({
+        name: video.title,
+        url: `${this.props.props.url}/emby/videos/${video.id}/original.mp4?DeviceId=${Constant.id}&MediaSourceId=${s.Id}&PlaySessionId=${info.PlaySessionId}&api_key=${profile.AccessToken}`
+      })),
+      recommends: this.embyItemsToItem(1, rec).data
     }
   }
 
@@ -124,10 +153,10 @@ export class VideoPluginForEmby extends AbsVideoPluginForStore {
       page,
       limit: 20,
       total: res.TotalRecordCount,
-      data: res.Items.filter(e => e.MediaType === 'Video').map(e => ({
+      data: res.Items.filter(e => e.MediaType === 'Video' || e.Type === 'Series').map(e => ({
         id: e.Id,
         type: e.Type,
-        cover: `${this.props.props.url}/emby/Items/${e.Id}/Images/Primary?maxHeight=300&maxWidth=200&tag=${e.ImageTags.Primary}&quality=90`,
+        cover: `${this.props.props.url}/emby/Items/${e.Id}/Images/Primary?maxHeight=450&maxWidth=300&tag=${e.ImageTags.Primary}&quality=90`,
         title: e.Name,
         subtitle: '',
         titleEn: '',
@@ -154,7 +183,7 @@ export class VideoPluginForEmby extends AbsVideoPluginForStore {
     const res = await this.request<EmbyItems>({
       url: `/emby/Users/${profile.User.Id}/Items`,
       params: {
-        "IncludeItemTypes": "Movie",
+        "IncludeItemTypes": "Movie,Series",
         "Fields": "BasicSyncInfo,CanDelete,CanDownload,PrimaryImageAspectRatio,ProductionYear,Status,EndDate",
         "StartIndex": (page - 1) * 20,
         "SortBy": "SortName",
@@ -176,27 +205,37 @@ export class VideoPluginForEmby extends AbsVideoPluginForStore {
   async home(page: number): Promise<VideoHome> {
     // 获取推荐
     let profile = await this.getProfile();
-    const res = await this.request<EmbyResume>({
-      url: `/emby/Users/${profile.User.Id}/Items/Resume`,
-      params: {
-        "Recursive": "true",
-        "Fields": "BasicSyncInfo,CanDelete,CanDownload,PrimaryImageAspectRatio,ProductionYear",
-        "ImageTypeLimit": "1",
-        "EnableImageTypes": "Primary,Backdrop,Thumb",
-        "MediaTypes": "Video",
-        "Limit": "20"
-      }
-    })
+    const [res, view] = await Promise.all([
+      this.request<EmbyResume>({
+        url: `/emby/Users/${profile.User.Id}/Items/Resume`,
+        params: {
+          "Recursive": "true",
+          "Fields": "BasicSyncInfo,CanDelete,CanDownload,PrimaryImageAspectRatio,ProductionYear",
+          "ImageTypeLimit": "1",
+          "EnableImageTypes": "Primary,Backdrop,Thumb",
+          "MediaTypes": "Video",
+          "Limit": "20"
+        }
+      }),
+      this.request<EmbyView>({
+        url: `/emby/Users/${profile.User.Id}/Views`
+      })
+    ])
     return {
       page,
       limit: 20,
       total: res.TotalRecordCount,
-      categories: [],
+      categories: view.Items.map(e => ({
+        id: e.Id,
+        cover: e.ImageTags.Primary ? `http://10.20.30.2:8096/emby/Items/${e.Id}/Images/Primary?maxHeight=212&maxWidth=375&tag=${e.ImageTags.Primary}&quality=90` : '',
+        name: e.Name,
+        children: []
+      })),
       recommends: res.Items.map(e => ({
         id: e.Id,
         title: e.Name,
         titleEn: '',
-        cover: `${this.props.props.url}/emby/Items/${e.Id}/Images/Primary?maxHeight=300&maxWidth=200&tag=${e.ImageTags.Primary}&quality=90`,
+        cover: `${this.props.props.url}/emby/Items/${e.Id}/Images/Primary?maxHeight=450&maxWidth=300&tag=${e.ImageTags.Primary}&quality=90`,
         category: {
           id: '',
           children: [],

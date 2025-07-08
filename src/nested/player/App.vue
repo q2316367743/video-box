@@ -15,13 +15,15 @@
                   {{ video.titleEn }} ({{ video.releaseYear }})
                 </div>
                 <div class="flex flex-wrap gap-2">
-                  <span v-for="g in video.types" :key="g" class="badge badge-secondary text-sm">
-                    {{ g }}
-                  </span>
+                  <template v-for="g in video.types" :key="g">
+                    <t-tag theme="primary" shape="round" size="small" v-if="g">
+                      {{ g }}
+                    </t-tag>
+                  </template>
                 </div>
               </div>
             </header>
-            <section class="card-content">
+            <section class="mt-8px">
               <div class="space-y-4">
                 <div class="flex items-center gap-3">
                   <t-button theme="primary" class="flex-1" @click="playVideo">
@@ -82,18 +84,18 @@
                 </div>
               </t-tab-panel>
               <t-tab-panel label="相关推荐" value="recommendations">
-                <div class="space-y-4">
+                <div class="space-y-4 mt-8px">
                   <div v-for="movie in video.recommends" :key="movie.id"
-                       class="flex gap-4 p-3 rounded-lg hover:bg-muted-50 cursor-pointer transition-colors">
+                       class="flex gap-4 p-3 rounded-lg  cursor-pointer transition-colors recommend">
                     <img :src="movie.cover || '/placeholder.svg'" :alt="movie.title"
                          class="w-20 h-28 object-cover rounded-md flex-shrink-0"/>
-                    <div class="flex-1 space-y-2">
-                      <h4 class="font-medium leading-tight">{{ movie.title }}</h4>
+                    <div class="flex-1">
+                      <h4 class="font-medium leading-tight m-0">{{ movie.title }}</h4>
                       <div class="text-sm text-muted-foreground">{{ movie.releaseDate }}</div>
                       <div class="flex items-center gap-3">
-                          <span v-for="t in movie.types" class="badge badge-outline text-xs">
+                        <t-tag theme="primary" shape="round" size="small" v-for="t in movie.types">
                           {{ t }}
-                        </span>
+                        </t-tag>
                       </div>
                     </div>
                   </div>
@@ -102,7 +104,7 @@
             </t-tabs>
           </t-card>
         </div>
-        <t-back-top container=".app-side" />
+        <t-back-top container=".app-side"/>
       </div>
     </div>
   </div>
@@ -138,6 +140,13 @@ const initialize = (p: VideoPlugin, v: VideoListItem) => {
       flv: playFlv,
       m3u8: playM3u8
     },
+    flip: true,
+    playbackRate: true,
+    aspectRatio: true,
+    screenshot: true,
+    fullscreen: true,
+    fullscreenWeb: true,
+    setting: true,
   });
   // 获取详情
   const lp = LoadingPlugin({
@@ -147,8 +156,13 @@ const initialize = (p: VideoPlugin, v: VideoListItem) => {
     .then((res) => {
       video.value = res;
       const index = cache.value[res.id] || 0;
-      title.value = res.title + ' - ' + res.playUrls[index].name;
-      art.value?.switchUrl(res.playUrls[index].url);
+      const {name, url} = res.playUrls[index];
+      title.value = res.title + ' - ' + name;
+      // 修改类型
+      const u = new URL(url);
+      if (!art.value) return;
+      art.value.type =(u.pathname.endsWith('.m3u8') ?  'm3u8' : u.pathname.endsWith('.flv') ? 'flv' : 'mp4');
+      art.value.switchUrl(url);
     })
     .catch(e => MessageUtil.error("获取视频详情失败", e))
     .finally(() => lp.hide());
@@ -222,6 +236,15 @@ const playVideo = () => {
         &.play {
           background-color: var(--td-bg-color-component-active);
         }
+      }
+    }
+
+    .recommend {
+      transition: all 0.2s;
+      border: 1px solid transparent;
+
+      &:hover {
+        background-color: var(--td-bg-color-container-hover);
       }
     }
   }

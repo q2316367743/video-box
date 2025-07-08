@@ -9,10 +9,8 @@
       </t-input>
     </header>
     <div class="home-content-wrap">
-      <div class="home-content">
-        <home-category v-if="plugin" :plugin :value="categoryValue"/>
-        <empty-result v-else title="请先选择源"/>
-      </div>
+      <home-category v-if="plugin" :plugin :value="categoryValue"/>
+      <empty-result v-else title="请先选择源"/>
     </div>
     <t-back-top container=".home-content-wrap"/>
   </div>
@@ -38,7 +36,9 @@ watch(selectValue, value => {
   if (value) {
     const source = useSourceStore().sourceMap.get(value);
     if (!source) return;  // 不存在
-    plugin.value = buildVideoPlugin(source);
+    nextTick(() => {
+      plugin.value = buildVideoPlugin(source);
+    })
   }
 }, {immediate: true});
 </script>
@@ -67,10 +67,6 @@ watch(selectValue, value => {
     overflow-y: auto;
     overflow-x: hidden;
 
-    .home-content {
-      width: calc(100% - 16px);
-      padding: 8px;
-    }
 
   }
 }

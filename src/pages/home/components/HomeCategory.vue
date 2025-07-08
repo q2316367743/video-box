@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full">
+  <div class="home-content">
     <t-loading :loading>
       <div class="home-category">
         <t-card size="small">
@@ -11,12 +11,12 @@
       <t-card size="small">
         <t-empty style="margin: 15vh 0" v-if="list.length === 0"/>
         <div class="waterfall-list">
-          <div v-for="r in list" :key="r.id" class="waterfall-item" @click="openOne(r)">
+          <div v-for="r in list" :key="r.id" class="waterfall-item" @click="openOne(r)" :title="r.title">
             <div class="waterfall-item__cover">
               <t-image :src="r.cover" :alt="r.title" lazy fit="cover"/>
               <div class="waterfall-item__tag ellipsis">{{ r.remark }}</div>
             </div>
-            <div class="waterfall-item__title">{{ r.title }}</div>
+            <div class="waterfall-item__title ellipsis">{{ r.title }}</div>
             <div class="waterfall-item__remark ellipsis" :title="r.remark">{{ r.remark }}</div>
           </div>
         </div>
@@ -100,7 +100,14 @@ onMounted(() => {
 });
 </script>
 <style scoped lang="less">
+
+.home-content {
+  width: calc(100% - 16px);
+  padding: 8px;
+}
+
 .home-category {
+
   position: sticky;
   top: 0;
   z-index: 2;
