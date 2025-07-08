@@ -41,5 +41,6 @@ declare module 'vue' {
     TSubmenu: typeof import('tdesign-vue-next')['Submenu']
     TTabPanel: typeof import('tdesign-vue-next')['TabPanel']
     TTabs: typeof import('tdesign-vue-next')['Tabs']
+    TTag: typeof import('tdesign-vue-next')['Tag']
   }
 }
