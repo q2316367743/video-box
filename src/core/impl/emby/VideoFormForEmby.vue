@@ -6,7 +6,7 @@
     <t-input v-model="form.username" placeholder="请输入用户名"/>
   </t-form-item>
   <t-form-item label="密码" name="props.password" required-mark :rules="[{required: true}]">
-    <t-input v-model="form.password" placeholder="请输入密码"/>
+    <t-input type="password" v-model="form.password" placeholder="请输入密码"/>
   </t-form-item>
 </template>
 <script lang="ts" setup>

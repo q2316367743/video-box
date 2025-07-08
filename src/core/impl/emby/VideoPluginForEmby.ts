@@ -48,14 +48,20 @@ export class VideoPluginForEmby extends AbsVideoPluginForStore {
         formData.append('Username', this.props.props.username);
         formData.append('Pw', this.props.props.password);
         const {data} = await window.preload.lib.axiosInstance.request({
+          baseURL: this.props.props.url,
           url: '/emby/Users/authenticatebyname',
           method: 'POST',
           data: formData,
-          responseType: 'json'
+          responseType: 'json',
+          params: this.PARAMS,
+          headers: {
+            'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 QuarkPC/4.2.0.418"
+          }
         });
         profile = data as EmbyAuthenticateByName;
         this.setItem('profile', profile);
       } catch (e) {
+        console.error(e);
         MessageUtil.error(((e as AxiosError).response?.data as string) || ('登录失败，' + ((e as Error).message || `${e}`)))
         return Promise.reject(e);
       }
@@ -121,7 +127,7 @@ export class VideoPluginForEmby extends AbsVideoPluginForStore {
       data: res.Items.filter(e => e.MediaType === 'Video').map(e => ({
         id: e.Id,
         type: e.Type,
-        cover: `${this.props.props.url}/emby/Items/70/Images/Thumb?maxWidth=300&tag=${e.ImageTags.Thumb || e.ImageTags.Primary}&quality=90`,
+        cover: `${this.props.props.url}/emby/Items/${e.Id}/Images/Primary?maxHeight=300&maxWidth=200&tag=${e.ImageTags.Primary}&quality=90`,
         title: e.Name,
         subtitle: '',
         titleEn: '',
@@ -190,7 +196,7 @@ export class VideoPluginForEmby extends AbsVideoPluginForStore {
         id: e.Id,
         title: e.Name,
         titleEn: '',
-        cover: `${this.props.props.url}/emby/Items/70/Images/Thumb?maxWidth=300&tag=${e.ImageTags.Thumb || e.ImageTags.Primary}&quality=90`,
+        cover: `${this.props.props.url}/emby/Items/${e.Id}/Images/Primary?maxHeight=300&maxWidth=200&tag=${e.ImageTags.Primary}&quality=90`,
         category: {
           id: '',
           children: [],
