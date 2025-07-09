@@ -1,7 +1,7 @@
 <template>
   <div class="player">
     <div class="player-container">
-      <video-container :url="videoUrl" />
+      <video-container :url="videoUrl"/>
     </div>
     <div class="player-side">
       <div class="side-container" v-if="video">
@@ -10,8 +10,8 @@
           <t-card class="card">
             <header class="card-header">
               <div class="space-y-3">
-                <h2 class="text-2xl leading-tight">{{ video.title }}</h2>
-                <div class="text-sm">
+                <h2 class="text-2xl leading-tight ellipsis" :title="video.title">{{ video.title }}</h2>
+                <div class="text-sm" v-if="video.titleEn || video.releaseYear">
                   {{ video.titleEn }} ({{ video.releaseYear }})
                 </div>
                 <div class="flex flex-wrap gap-2">
@@ -36,7 +36,9 @@
                   </div>
                   <div>
                     <span class="text-sm font-bold">简介：</span>
-                    <p class="text-sm text-muted-foreground mt-2 leading-relaxed" v-html="video.content"></p>
+                    <t-paragraph :ellipsis="{row: 3,expandable: true,collapsible: true}" style="margin: -14px 0">
+                      <div class="text-sm text-muted-foreground mt-2 leading-relaxed" v-html="video.content"></div>
+                    </t-paragraph>
                   </div>
                 </div>
               </div>
