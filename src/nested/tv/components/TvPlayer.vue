@@ -38,6 +38,7 @@ onMounted(() => {
 watch(() => props.url, url => {
   if (!art.value) return;
   art.value.switchUrl(url);
+  art.value.play()
 })
 </script>
 <style scoped lang="less">

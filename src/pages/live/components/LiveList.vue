@@ -8,7 +8,7 @@
       </t-tabs>
       <div class="container-content" ref="contentContainer" @scroll="handleScroll">
         <!-- 仅渲染当前加载的项目 -->
-        <LiveListItem v-for="item in currentlyLoadedResults" :key="item.url" :item="item"/>
+        <LiveListItem v-for="item in currentlyLoadedResults" :key="item.url" :item="item" :active/>
         <!-- 加载更多提示 -->
         <div v-if="currentlyLoadedResults.length < results.length" class="loading-more" @click="handleScroll">
           正在加载更多...

@@ -11,7 +11,7 @@
             <header class="card-header">
               <div class="space-y-3">
                 <h2 class="text-2xl leading-tight">{{ video.title }}</h2>
-                <div class="text-sm ">
+                <div class="text-sm">
                   {{ video.titleEn }} ({{ video.releaseYear }})
                 </div>
                 <div class="flex flex-wrap gap-2">

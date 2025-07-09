@@ -5,7 +5,7 @@
                :preview="false">
         <template #error>
           <div class="flex justify-center items-center h-85px w-full">
-            <video-camera1-icon />
+            <video-camera1-icon/>
           </div>
         </template>
       </t-image>
@@ -28,12 +28,17 @@
 import {M3u8ChannelWrap} from "@/entities/LiveSource";
 import {LoadingIcon, VideoCamera1Icon} from "tdesign-icons-vue-next";
 import {useHead} from "@/hooks/HttpRequest";
+import {useTvWindowStore} from "@/store/component/TvWindowStore";
 
 // -1:加载中、-2:超时
 const timeout = ref(0);
 
 const props = defineProps({
-  item: Object as PropType<M3u8ChannelWrap>
+  item: Object as PropType<M3u8ChannelWrap>,
+  active: {
+    type: Number,
+    default: 0
+  }
 });
 
 onMounted(onTimeout);
@@ -65,6 +70,7 @@ function onTimeout() {
 }
 
 const openPlayer = (name: string, url: string) => {
+  useTvWindowStore().openTvWindow(props.active, url, name);
 
 }
 </script>
@@ -93,6 +99,7 @@ const openPlayer = (name: string, url: string) => {
       width: 150px;
       height: 85px;
     }
+
     :deep(.t-image__error) {
       height: 85px;
     }
