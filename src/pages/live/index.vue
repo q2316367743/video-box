@@ -1,47 +1,30 @@
 <template>
-  <page-layout title="默认分组" :subtitle="channels.length + '个频道'" class="home">
-    <template #extra>
-      <t-space size="small">
-        <t-select v-model="active" :options="liveSourceOptions" style="width: 120px;" clearable/>
-        <t-select v-model="activeKeys" style="width: 120px;">
-          <t-option value="">全部分组</t-option>
-          <t-option v-for="name in groupNames" :key="name" :value="name">{{ name }}</t-option>
-        </t-select>
-      </t-space>
-    </template>
-    <live-list :results="items" :loading/>
-  </page-layout>
+  <div class="live">
+    <div class="live-header">
+      <t-tabs v-model="active" theme="card">
+        <t-tab-panel v-for="live in liveSources" :key="live.id" :label="live.name" :value="live.id"/>
+      </t-tabs>
+    </div>
+    <div class="live-container">
+      <live-list :channels :loading :active/>
+    </div>
+  </div>
 </template>
 <script lang="ts" setup>
 import {useLiveSourceStore} from "@/store";
 import {M3u8ChannelWrap} from "@/entities/LiveSource";
-import {channelsToGroup} from "@/utils/file/M3u8Util";
-import LiveList from "@/pages/live/components/LiveList.vue";
-import {SelectOption} from "tdesign-vue-next";
 import {useUtoolsKvStorage} from "@/hooks/UtoolsKvStorage";
 import {LocalNameEnum} from "@/global/LocalNameEnum";
 import MessageUtil from "@/utils/modal/MessageUtil";
+import LiveList from "@/pages/live/components/LiveList.vue";
 
 
 const active = useUtoolsKvStorage(LocalNameEnum.KEY_SOURCE_ACTIVE_LIVE, 0);
 
-const activeKeys = ref('');
 const channels = ref(new Array<M3u8ChannelWrap>());
 const loading = ref(true);
-const subInput = ref('');
 
-const liveSourceOptions = computed<Array<SelectOption>>(() => useLiveSourceStore().liveSources.map(e => ({
-  label: e.name,
-  value: e.id
-})));
-const groups = computed(() => channelsToGroup(channels.value));
-const groupNames = computed(() => groups.value.map(e => e.group));
-const items = computed<Array<M3u8ChannelWrap>>(() => {
-  if (activeKeys.value === '') {
-    return channels.value;
-  }
-  return channels.value.filter(e => e.group === activeKeys.value)
-});
+const liveSources = computed(() => useLiveSourceStore().liveSources);
 
 watch(active, val => {
   if (!val) {
@@ -57,4 +40,26 @@ watch(active, val => {
 
 </script>
 <style scoped lang="less">
+.live {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  .live-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .live-container {
+    position: absolute;
+    top: 49px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+}
 </style>

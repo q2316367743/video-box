@@ -50,16 +50,16 @@ import {useRoute, useRouter} from "vue-router";
 import {detach} from "@/store/AppStore";
 import {routes} from "@/plugin/router";
 import {ViewListIcon} from "tdesign-icons-vue-next";
-import {useUtoolsDbStorage} from "@/hooks/UtoolsDbStorage";
 import {LocalNameEnum} from "@/global/LocalNameEnum";
 import {useLiveSourceStore, useVideoSourceStore} from "@/store";
+import {useUtoolsKvStorage} from "@/hooks/UtoolsKvStorage";
 
 const route = useRoute();
 const router = useRouter();
 const path = ref('/home');
 const avatar = utools.getUser()?.avatar;
 
-const collapsed = useUtoolsDbStorage(LocalNameEnum.KEY_APP_COLLAPSED, true);
+const collapsed = useUtoolsKvStorage(LocalNameEnum.KEY_APP_COLLAPSED, true);
 
 watch(path, value => router.push(value));
 

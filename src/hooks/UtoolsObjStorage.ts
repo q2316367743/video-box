@@ -1,6 +1,7 @@
 import {ref, Ref, shallowRef, toRaw, watch} from "vue";
 import MessageUtil from "@/utils/modal/MessageUtil";
 import {getItem, removeItem, setItem} from "@/utils/utools/DbStorageUtil";
+import {assignDeep} from "@/utils/lang/ObjUtil";
 
 export interface UseUtoolsDbOptions {
   flush?: 'pre' | 'post' | 'sync';
@@ -17,7 +18,7 @@ type InitialValue<T> = T | InitialValueFunc<T>
 /**
  * 同步对象存储
  */
-export function useUtoolsDbStorage<T extends (string | number | boolean | object | null)>(
+export function useUtoolsDbStorage<T extends Record<string, any>>(
   key: string,
   initial: InitialValue<T>,
   options: UseUtoolsDbOptions = {},
@@ -33,7 +34,8 @@ export function useUtoolsDbStorage<T extends (string | number | boolean | object
 
   const sourceValue = getItem(key);
   const initialFunc: InitialValueFunc<T> = typeof initial === 'function' ? (initial as InitialValueFunc<T>) : (() => initial);
-  const data = (shallow ? shallowRef : ref)((typeof sourceValue === 'undefined' || sourceValue === null) ? initialFunc() : sourceValue) as Ref<T>;
+  const initialValue = initialFunc();
+  const data = (shallow ? shallowRef : ref)(assignDeep(initialValue, sourceValue)) as Ref<T>;
 
   watch(
     data,

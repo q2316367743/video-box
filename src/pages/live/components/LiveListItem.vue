@@ -73,14 +73,14 @@ const openPlayer = (name: string, url: string) => {
   position: relative;
   cursor: pointer;
   padding: 8px;
-  transition: 0.2s;
-  background-color: var(--color-fill-1);
-  border-radius: var(--border-radius-medium);
-  border: 1px solid var(--color-border-2);
+  transition: all 0.2s;
+  background-color: var(--td-bg-color-container);
+  border-radius: var(--td-radius-default);
+  border: 1px solid var(--td-border-level-2-color);
 
   &:hover {
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgb(var(--primary-6));
+    box-shadow: var(--td-shadow-2);
+    border: 1px solid var(--td-brand-color);
   }
 
   .cover {
@@ -108,21 +108,21 @@ const openPlayer = (name: string, url: string) => {
     position: absolute;
     top: -1px;
     right: -1px;
-    background-color: rgb(var(--primary-6));
+    background-color: var(--td-brand-color);
     padding: 2px 4px;
     color: #fff;
-    border-radius: 0 var(--border-radius-medium) 0 var(--border-radius-medium);
+    border-radius: 0 var(--td-radius-medium) 0 var(--td-radius-medium);
 
     &.red {
-      background-color: rgb(var(--danger-6));
+      background-color: var(--td-error-color);
     }
 
     &.orange {
-      background-color: rgb(var(--warning-6));
+      background-color: var(--td-warning-color);
     }
 
     &.green {
-      background-color: rgb(var(--success-6));
+      background-color: var(--td-success-color);
     }
   }
 }

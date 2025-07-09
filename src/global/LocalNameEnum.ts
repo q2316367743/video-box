@@ -12,4 +12,6 @@ export enum LocalNameEnum {
 
   KEY_SOURCE_ACTIVE_LIVE = '/key/source/active/live',
 
+  KEY_SETTING_BASE = '/key/setting/base',
+
 }

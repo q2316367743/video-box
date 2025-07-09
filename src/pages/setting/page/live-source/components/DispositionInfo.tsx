@@ -9,7 +9,7 @@ export async function openDispositionInfo(id: number) {
     footer: false,
     default: () => <List split={true}>
       {info.channels.map((item) => <ListItem>
-        <ListItemMeta title={item.name} description={item.url} avatar={item.logo}></ListItemMeta>
+        <ListItemMeta title={item.name} description={item.url} image={item.logo}></ListItemMeta>
         <Space>
           <Tag>{item.group}</Tag>
         </Space>
