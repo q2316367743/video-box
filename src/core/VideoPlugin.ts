@@ -42,8 +42,12 @@ export interface VideoListItemChapter {
   items: Array<VideoListItemUrl>;
 }
 export interface VideoListItemUrl {
+  // 视频名称
   name: string;
+  // 视频地址
   url: string;
+  // 视频时长
+  duration?: string;
 }
 
 export interface VideoListItem {

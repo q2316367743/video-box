@@ -19,7 +19,13 @@ export default defineConfig({
     },
   },
   plugins: [
-    vue(), vueJsx(), UnoCSS(),
+    vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: (tag) => tag === 'webview'
+        }
+      }
+    }), vueJsx(), UnoCSS(),
     AutoImport({
       resolvers: [ArcoResolver(), TDesignResolver({
         library: 'vue-next'

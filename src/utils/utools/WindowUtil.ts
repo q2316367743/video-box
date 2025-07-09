@@ -70,7 +70,8 @@ class CustomerWindowForUTools implements CustomerWindow {
         webPreferences: {
           preload: 'src/preload.js',
           zoomFactor: 0,
-          devTools: dev
+          devTools: dev,
+          webviewTag: true,
         },
       }, () => {
         try {

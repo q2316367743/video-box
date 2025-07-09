@@ -1,188 +1,37 @@
 <template>
   <div class="main">
-    <div class="app-container">
-      <div class="video-container"></div>
-    </div>
-    <div class="app-side">
-      <div class="side-container" v-if="video">
-        <div class="p-8px">
-          <!-- 视频信息 -->
-          <t-card class="card">
-            <header class="card-header">
-              <div class="space-y-3">
-                <h2 class="text-2xl leading-tight">{{ video.title }}</h2>
-                <div class="text-sm text-muted-foreground">
-                  {{ video.titleEn }} ({{ video.releaseYear }})
-                </div>
-                <div class="flex flex-wrap gap-2">
-                  <template v-for="g in video.types" :key="g">
-                    <t-tag theme="primary" shape="round" size="small" v-if="g">
-                      {{ g }}
-                    </t-tag>
-                  </template>
-                </div>
-              </div>
-            </header>
-            <section class="mt-8px">
-              <div class="space-y-4">
-                <div class="space-y-3">
-                  <div>
-                    <span class="text-sm font-bold">导演：</span>
-                    <span class="text-sm text-muted-foreground">{{ video.writers.join('、') }}</span>
-                  </div>
-                  <div>
-                    <span class="text-sm font-bold">主演：</span>
-                    <span class="text-sm text-muted-foreground">{{ video.actors.join('、') }}</span>
-                  </div>
-                  <div>
-                    <span class="text-sm font-bold">简介：</span>
-                    <p class="text-sm text-muted-foreground mt-2 leading-relaxed" v-html="video.content"></p>
-                  </div>
-                </div>
-              </div>
-            </section>
-          </t-card>
-
-          <!-- 剧集列表和推荐 -->
-          <t-card class="card mt-8px">
-            <t-tabs v-model="activeTab">
-              <t-tab-panel label="剧集列表" value="episodes">
-                <div class="space-y-2 mt-8px">
-                  <t-tabs>
-                    <t-tab-panel v-for="chapter in video.playUrls" :label="chapter.name" :value="chapter.id">
-                      <div v-for="(episode, i) in chapter.items" :key="episode.url"
-                           class="flex items-center justify-between p-4 rounded-lg cursor-pointer transition-all hover:shadow-sm play-item"
-                           :class="{player: index === `/${chapter.id}/${i}`}"
-                           @click="switchUrl(`/${chapter.id}/${i}`)">
-                        <div class="flex items-center gap-4">
-                          <div
-                            class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium index">
-                            {{ (i + 1) }}
-                          </div>
-                          <div>
-                            <div class="font-medium">{{ episode.name }}</div>
-                            <div class="text-sm text-muted-foreground">duration</div>
-                          </div>
-                        </div>
-                      </div>
-                    </t-tab-panel>
-                  </t-tabs>
-                </div>
-              </t-tab-panel>
-              <t-tab-panel label="相关推荐" value="recommendations">
-                <div class="space-y-4 mt-8px">
-                  <div v-for="movie in video.recommends" :key="movie.id"
-                       class="flex gap-4 p-3 rounded-lg  cursor-pointer transition-colors recommend">
-                    <img :src="movie.cover || '/placeholder.svg'" :alt="movie.title"
-                         class="w-20 h-28 object-cover rounded-md flex-shrink-0"/>
-                    <div class="flex-1">
-                      <h4 class="font-medium leading-tight m-0">{{ movie.title }}</h4>
-                      <div class="text-sm text-muted-foreground">{{ movie.releaseDate }}</div>
-                      <div class="flex items-center gap-3">
-                        <t-tag theme="primary" shape="round" size="small" v-for="t in movie.types">
-                          {{ t }}
-                        </t-tag>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </t-tab-panel>
-            </t-tabs>
-          </t-card>
-        </div>
-        <t-back-top container=".app-side"/>
-      </div>
-    </div>
+    <player v-if="video && plugin" :default-video="video" :plugin="plugin"/>
+    <loading-result v-else title="正在加载中"/>
   </div>
-
-
 </template>
 <script lang="ts" setup>
-import Artplayer from 'artplayer';
-import {VideoDetail, VideoListItem, VideoPlugin} from "@/core/VideoPlugin";
+import {VideoDetail, VideoPlugin} from "@/core/VideoPlugin";
 import {buildVideoPlugin} from "@/core";
-import {playFlv, playM3u8} from "@/nested/player/pplugin";
-import {LocalNameEnum} from "@/global/LocalNameEnum";
-import MessageUtil from "@/utils/modal/MessageUtil";
-import {LoadingPlugin} from "tdesign-vue-next";
-
-const activeTab = ref('episodes');
+import Player from "@/nested/player/components/Player.vue";
 
 let isInit = false
 const video = shallowRef<VideoDetail>();
 const plugin = shallowRef<VideoPlugin>();
-const art = shallowRef<Artplayer>();
-const title = useTitle();
-const cache = useStorage<Record<string, string>>(LocalNameEnum.KEY_PLAYER_INDEX, {}, utools.dbStorage);
-const index = computed<string>(() => cache.value[`/${plugin.value?.props.id || ''}/${video.value?.id || ''}`] || '');
-
-const initialize = (p: VideoPlugin, v: VideoListItem) => {
-  art.value = new Artplayer({
-    container: '.video-container',
-    url: '',
-    type: 'm3u8',
-    customType: {
-      flv: playFlv,
-      m3u8: playM3u8
-    },
-    flip: true,
-    playbackRate: true,
-    aspectRatio: true,
-    screenshot: true,
-    fullscreen: true,
-    fullscreenWeb: true,
-    setting: true,
-  });
-  title.value = v.title
-  // 获取详情
-  const lp = LoadingPlugin({
-    content: '正在获取详情'
-  });
-  p.getDetail(v)
-    .then((res) => {
-      video.value = res;
-      switchUrl(cache.value[`/${plugin.value?.props.id || ''}/${video.value?.id || ''}`] || '');
-    })
-    .catch(e => MessageUtil.error("获取视频详情失败", e))
-    .finally(() => lp.hide());
-}
-
-const switchUrl = (path: string) => {
-  if (!video.value) return;
-  const paths = path.split('/');
-  const chapterId = paths[1] || video.value.playUrls[0].id;
-  const index = Number(paths[2]) || 0;
-
-  for (let chapter of video.value.playUrls) {
-    if (chapter.id === chapterId) {
-      const {name, url} = chapter.items[index];
-      title.value = video.value.title + '-' + name;
-      // 修改类型
-      const u = new URL(url);
-      if (!art.value) return;
-      art.value.type = (u.pathname.endsWith('.m3u8') ? 'm3u8' : u.pathname.endsWith('.flv') ? 'flv' : 'mp4');
-      art.value?.switchUrl(url);
-      cache.value[`/${plugin.value?.props.id || ''}/${video.value?.id || ''}`] = path;
-      return;
-    }
-  }
-
-}
 
 const subWindow = window.preload.ipcRenderer.buildSubWindow('player');
 subWindow.receiveMsg(({event, data}) => {
-  console.log(event, data)
   if (event === 'initialize') {
     if (isInit) return;
     isInit = true;
-    console.log('初始化', data);
     plugin.value = buildVideoPlugin(data.source);
-    initialize(plugin.value, data.video);
+    video.value = data.video;
     subWindow.sendMsg({event: 'initialized', data: null})
   }
 });
 </script>
-<style scoped lang="less">
+<style  lang="less">
+#app {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
 .main {
   position: fixed;
   top: 0;
@@ -190,65 +39,6 @@ subWindow.receiveMsg(({event, data}) => {
   right: 0;
   bottom: 0;
   color: var(--td-text-color-primary);
-  display: flex;
-
-  .app-side {
-    position: relative;
-    transition: all 0.2s;
-    background: var(--td-bg-color-container);
-    width: 420px;
-    z-index: 50;
-    overflow-y: auto;
-
-    .play-item {
-      transition: all 0.2s;
-      border: 1px solid transparent;
-
-      &:hover {
-        background-color: var(--td-bg-color-container-hover);
-      }
-
-      &.player {
-        border-color: var(--td-border-level-2-color);
-        background-color: var(--td-bg-color-container-active);
-      }
-
-      .index {
-        background-color: var(--td-bg-color-component);
-        flex: 0 0 35px;
-
-        &.watch {
-          background-color: var(--td-success-color);
-          color: var(--td-text-color-anti);
-        }
-
-        &.play {
-          background-color: var(--td-bg-color-component-active);
-        }
-      }
-    }
-
-    .recommend {
-      transition: all 0.2s;
-      border: 1px solid transparent;
-
-      &:hover {
-        background-color: var(--td-bg-color-container-hover);
-      }
-    }
-  }
-
-  .app-container {
-    position: relative;
-    height: 100%;
-    width: 100%;
-    background-color: var(--td-bg-color-page);
-    flex: auto;
-
-    .video-container {
-      width: 100%;
-      height: 100%;
-    }
-  }
+  background-color: var(--td-bg-color-container);
 }
 </style>
