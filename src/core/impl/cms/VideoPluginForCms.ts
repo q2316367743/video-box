@@ -16,10 +16,10 @@ export interface VideoPluginForCmsProps {
 
 export class VideoPluginForCms extends AbsVideoPluginForStore {
 
-  public props: VideoSource<'CMS'>;
+  public props: VideoSource<'CMS:JSON'>;
   private readonly url: string;
 
-  constructor(props: VideoSource<'CMS'>) {
+  constructor(props: VideoSource<'CMS:JSON'>) {
     super(props.id);
     this.props = props;
     this.url = props.props.url;

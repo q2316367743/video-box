@@ -4,15 +4,15 @@ import {VideoPluginForJellyfinProps} from "@/core/impl/jellyfin/VideoPluginForJe
 import {VideoPluginForEmbyProps} from "@/core/impl/emby/VideoPluginForEmby";
 
 export type VideoSourceType = {
-  CMS: VideoPluginForCmsProps,
+  'CMS:JSON': VideoPluginForCmsProps,
   JELLYFIN: VideoPluginForJellyfinProps,
   EMBY: VideoPluginForEmbyProps
 }
 export type VideoSourceTypeName = keyof VideoSourceType;
 
 export const videoSourceTypeOptions: Array<SelectOption> = [{
-  label: 'CMS',
-  value: 'CMS'
+  label: 'CMS:JSON',
+  value: 'CMS (JSON)'
 }, {
   label: 'Emby',
   value: 'EMBY'

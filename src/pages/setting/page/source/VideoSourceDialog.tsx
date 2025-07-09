@@ -13,7 +13,7 @@ export function openVideoSourceDialog(old?: VideoSourceEntry) {
     createTime: Date.now(),
     updateTime: Date.now(),
     title: '',
-    type: 'CMS',
+    type: 'CMS:JSON',
     props: {
       url: ''
     }
@@ -29,7 +29,7 @@ export function openVideoSourceDialog(old?: VideoSourceEntry) {
       <FormItem label="视频源类型" name={'title'} required-mark rules={[{required: true}]}>
         <Select options={videoSourceTypeOptions} v-model={data.value.type}/>
       </FormItem>
-      {data.value.type === 'CMS' ?
+      {data.value.type === 'CMS:JSON' ?
         <VideoFormForCms v-model={data.value.props}/> :
         data.value.type === 'EMBY' ?
           <VideoFormForEmby v-model={data.value.props}/> :

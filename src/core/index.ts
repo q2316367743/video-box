@@ -5,8 +5,8 @@ import {VideoPluginForJellyfin} from "@/core/impl/jellyfin/VideoPluginForJellyfi
 import {VideoPluginForEmby} from "@/core/impl/emby/VideoPluginForEmby";
 
 export function buildVideoPlugin(source: VideoSourceEntry): VideoPlugin {
-  if (source.type === 'CMS') {
-    return new VideoPluginForCms(source as VideoSource<'CMS'>);
+  if (source.type === 'CMS:JSON') {
+    return new VideoPluginForCms(source as VideoSource<'CMS:JSON'>);
   } else if (source.type === 'JELLYFIN') {
     return new VideoPluginForJellyfin(source as VideoSource<'JELLYFIN'>);
   } else if (source.type === 'EMBY') {
