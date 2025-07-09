@@ -10,14 +10,16 @@
           {{ title }}
         </t-tag>
       </div>
-      <t-input v-model="inputValue" placeholder="请输入影视名称" class="w-240px" clearable>
+      <t-input v-model="inputValue" placeholder="请输入影视名称" class="w-240px" clearable @enter="handleSearch"
+               @clear="handleSearch" :disabled="!selectValue || loading">
         <template #prefix-icon>
           <search-icon/>
         </template>
       </t-input>
     </header>
     <div class="home-content-wrap">
-      <home-category v-if="plugin" :plugin :value="categoryValue"/>
+      <home-category v-if="plugin" :plugin :value="categoryValue" ref="categoryRef"
+                     @change-category="handleChangeCategory" v-model="loading"/>
       <empty-result v-else title="请先选择源"/>
     </div>
   </div>
@@ -29,16 +31,25 @@ import {buildVideoPlugin} from "@/core";
 import {VideoPlugin} from "@/core/VideoPlugin";
 import HomeCategory from "@/pages/home/components/HomeCategory.vue";
 
+const categoryRef = ref();
 const inputValue = ref('');
 const selectValue = useSessionStorage('selectValue', '');
 const categoryValue = ref('');
 const plugin = shallowRef<VideoPlugin | null>(null);
+const loading = ref(false);
 
 const {sourceOptions} = toRefs(useVideoSourceStore());
 const {title} = toRefs(usePlayerWindowStore());
 
 const handleCloseCw = () => {
   usePlayerWindowStore().closePlayerWindow();
+}
+
+const handleSearch = () => {
+  categoryRef.value?.search(inputValue.value);
+}
+const handleChangeCategory = () => {
+  inputValue.value = '';
 }
 
 watch(selectValue, value => {

@@ -21,7 +21,6 @@ const videoRef = useTemplateRef('art-player');
 
 onMounted(() => {
   if (!videoRef.value) return;
-  console.log(props)
   art.value = new Artplayer({
     container: videoRef.value,
     url: props.url,
@@ -42,6 +41,7 @@ onMounted(() => {
 watch(() => props.url, url => {
   if (!art.value) return;
   art.value.switchUrl(url);
+  art.value.play();
 })
 watch(() => props.type, type => {
   if (!art.value || !type) return;

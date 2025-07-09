@@ -3,8 +3,7 @@ import {HomeIcon, SettingIcon, TvIcon} from 'tdesign-icons-vue-next';
 
 export const routes: Array<RouteRecordRaw> = [{
   name: "主页",
-  path: '/home',
-  alias: ['/'],
+  path: '/',
   component: () => import('@/pages/home/home.vue'),
   meta: {
     icon: HomeIcon,
