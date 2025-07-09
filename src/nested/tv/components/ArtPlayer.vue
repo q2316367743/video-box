@@ -3,17 +3,13 @@
 </template>
 <script lang="ts" setup>
 import Artplayer from 'artplayer';
-import {playFlv, playM3u8} from "@/plugin/ArtPlayerPlugin";
+import {playM3u8} from "@/plugin/ArtPlayerPlugin";
 
 const props = defineProps({
   url: {
     type: String,
     required: true
   },
-  type: {
-    type: String,
-    required: false
-  }
 });
 const art = shallowRef<Artplayer>();
 const videoRef = useTemplateRef('art-player');
@@ -25,12 +21,12 @@ onMounted(() => {
   art.value = new Artplayer({
     container: videoRef.value,
     url: props.url,
-    type: props.type,
+    type: 'm3u8',
     customType: {
-      flv: playFlv,
       m3u8: playM3u8
     },
     flip: true,
+    isLive: true,
     playbackRate: true,
     aspectRatio: true,
     screenshot: true,
@@ -42,10 +38,6 @@ onMounted(() => {
 watch(() => props.url, url => {
   if (!art.value) return;
   art.value.switchUrl(url);
-})
-watch(() => props.type, type => {
-  if (!art.value || !type) return;
-  art.value.type = type;
 })
 </script>
 <style scoped lang="less">

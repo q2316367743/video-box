@@ -20,7 +20,7 @@ interface OpenFileOption {
 declare global {
 
 
-  type SubWindowChannel = 'player';
+  type SubWindowChannel = 'player' | 'tv';
 
   interface SubWindow {
 
