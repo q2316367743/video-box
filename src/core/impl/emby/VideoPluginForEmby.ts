@@ -8,7 +8,7 @@ import {
   VideoRecommend,
   VideoSearchResult
 } from "@/core/VideoPlugin";
-import {AxiosError, AxiosRequestConfig} from "axios";
+import {AxiosError} from "axios";
 import Constant from "@/global/Constant";
 import {EmbyAuthenticateByName} from "@/core/impl/emby/types/EmbyAuthenticateByName";
 import MessageUtil from "@/utils/modal/MessageUtil";
@@ -17,6 +17,7 @@ import {EmbyResume} from "@/core/impl/emby/types/EmbyResume";
 import {EmbyItemInfo} from "@/core/impl/emby/types/EmbyItemsInfo";
 import {EmbyPlaybackInfo} from "@/core/impl/emby/types/EmbyPlaybackInfo";
 import {EmbyView} from "@/core/impl/emby/types/EmbyView";
+import {useRequest} from "@/hooks/HttpRequest";
 
 export interface VideoPluginForEmbyProps {
   url: string;
@@ -49,9 +50,8 @@ export class VideoPluginForEmby extends AbsVideoPluginForStore {
         const formData = new FormData();
         formData.append('Username', this.props.props.username);
         formData.append('Pw', this.props.props.password);
-        const {data} = await window.preload.lib.axiosInstance.request({
+        const {data} = await useRequest('/emby/Users/authenticatebyname', {
           baseURL: this.props.props.url,
-          url: '/emby/Users/authenticatebyname',
           method: 'POST',
           data: formData,
           responseType: 'json',
@@ -72,14 +72,13 @@ export class VideoPluginForEmby extends AbsVideoPluginForStore {
 
   }
 
-  private async request<T>(config: AxiosRequestConfig) {
+  private async request<T>(url: string, params?: Record<string, any>) {
     let profile = await this.getProfile();
     try {
-      const {data} = await window.preload.lib.axiosInstance.request<T>({
-        ...config,
+      const {data} = await useRequest<T>(url, {
         baseURL: this.props.props.url,
         params: {
-          ...config.params,
+          ...params,
           ...this.PARAMS,
           "X-Emby-Token": profile.AccessToken,
         }
@@ -99,32 +98,23 @@ export class VideoPluginForEmby extends AbsVideoPluginForStore {
     let profile = await this.getProfile();
     const [res, info, rec] = await Promise.all([
       // 基础信息
-      this.request<EmbyItemInfo>({
-        url: `/emby/Users/${profile.User.Id}/Items/${video.id}`,
-        params: {}
-      }),
+      this.request<EmbyItemInfo>(`/emby/Users/${profile.User.Id}/Items/${video.id}`, {}),
       // 播放信息
-      this.request<EmbyPlaybackInfo>({
-        url: `/emby/Items/${video.id}/PlaybackInfo`,
-        params: {
-          UserId: profile.User.Id,
-          StartTimeTicks: 0,
-          IsPlayback: false,
-          AutoOpenLiveStream: false,
-          MaxStreamingBitrate: 200000000,
-          reqformat: "json"
-        }
+      this.request<EmbyPlaybackInfo>(`/emby/Items/${video.id}/PlaybackInfo`, {
+        UserId: profile.User.Id,
+        StartTimeTicks: 0,
+        IsPlayback: false,
+        AutoOpenLiveStream: false,
+        MaxStreamingBitrate: 200000000,
+        reqformat: "json"
       }),
       // 推荐信息
-      this.request<EmbyItems>({
-        url: `/emby/Items/${video.id}/Similar`,
-        params: {
-          Limit: 12,
-          UserId: profile.User.Id,
-          ImageTypeLimit: 1,
-          Fields: "BasicSyncInfo,CanDelete,CanDownload,PrimaryImageAspectRatio,ProductionYear,Status,EndDate",
-          EnableTotalRecordCount: false
-        }
+      this.request<EmbyItems>(`/emby/Items/${video.id}/Similar`, {
+        Limit: 12,
+        UserId: profile.User.Id,
+        ImageTypeLimit: 1,
+        Fields: "BasicSyncInfo,CanDelete,CanDownload,PrimaryImageAspectRatio,ProductionYear,Status,EndDate",
+        EnableTotalRecordCount: false
       })]);
     return {
       ...video,
@@ -184,20 +174,17 @@ export class VideoPluginForEmby extends AbsVideoPluginForStore {
 
   async getVideos(categoryId: string, page: number): Promise<VideoCategoryResult> {
     let profile = await this.getProfile();
-    const res = await this.request<EmbyItems>({
-      url: `/emby/Users/${profile.User.Id}/Items`,
-      params: {
-        "IncludeItemTypes": "Movie,Series",
-        "Fields": "BasicSyncInfo,CanDelete,CanDownload,PrimaryImageAspectRatio,ProductionYear,Status,EndDate",
-        "StartIndex": (page - 1) * 20,
-        "SortBy": "SortName",
-        "SortOrder": "Ascending",
-        "ParentId": categoryId,
-        "EnableImageTypes": "Primary,Backdrop,Thumb",
-        "ImageTypeLimit": 1,
-        Recursive: true,
-        Limit: 20
-      }
+    const res = await this.request<EmbyItems>(`/emby/Users/${profile.User.Id}/Items`, {
+      "IncludeItemTypes": "Movie,Series",
+      "Fields": "BasicSyncInfo,CanDelete,CanDownload,PrimaryImageAspectRatio,ProductionYear,Status,EndDate",
+      "StartIndex": (page - 1) * 20,
+      "SortBy": "SortName",
+      "SortOrder": "Ascending",
+      "ParentId": categoryId,
+      "EnableImageTypes": "Primary,Backdrop,Thumb",
+      "ImageTypeLimit": 1,
+      Recursive: true,
+      Limit: 20
     });
 
     return {
@@ -210,20 +197,15 @@ export class VideoPluginForEmby extends AbsVideoPluginForStore {
     // 获取推荐
     let profile = await this.getProfile();
     const [res, view] = await Promise.all([
-      this.request<EmbyResume>({
-        url: `/emby/Users/${profile.User.Id}/Items/Resume`,
-        params: {
-          "Recursive": "true",
-          "Fields": "BasicSyncInfo,CanDelete,CanDownload,PrimaryImageAspectRatio,ProductionYear",
-          "ImageTypeLimit": "1",
-          "EnableImageTypes": "Primary,Backdrop,Thumb",
-          "MediaTypes": "Video",
-          "Limit": "20"
-        }
+      this.request<EmbyResume>(`/emby/Users/${profile.User.Id}/Items/Resume`, {
+        "Recursive": "true",
+        "Fields": "BasicSyncInfo,CanDelete,CanDownload,PrimaryImageAspectRatio,ProductionYear",
+        "ImageTypeLimit": "1",
+        "EnableImageTypes": "Primary,Backdrop,Thumb",
+        "MediaTypes": "Video",
+        "Limit": "20"
       }),
-      this.request<EmbyView>({
-        url: `/emby/Users/${profile.User.Id}/Views`
-      })
+      this.request<EmbyView>(`/emby/Users/${profile.User.Id}/Views`, {})
     ])
     return {
       page,
@@ -254,20 +236,17 @@ export class VideoPluginForEmby extends AbsVideoPluginForStore {
 
   async searchVideos(keyword: string, page: number): Promise<VideoSearchResult> {
     let profile = await this.getProfile();
-    const res = await this.request<EmbyItems>({
-      url: `/emby/Users/${profile.User.Id}/Items`,
-      params: {
-        'Fields': 'BasicSyncInfo,CanDelete,CanDownload,PrimaryImageAspectRatio,ProductionYear,Status,EndDate',
-        "StartIndex": (page - 1) * 20,
-        "SortBy": "SortName",
-        "SortOrder": "Ascending",
-        "EnableImageTypes": "Primary,Backdrop,Thumb",
-        "ImageTypeLimit": 1,
-        "Recursive": "true",
-        "SearchTerm": keyword,
-        "GroupProgramsBySeries": "true",
-        "Limit": 20
-      }
+    const res = await this.request<EmbyItems>(`/emby/Users/${profile.User.Id}/Items`, {
+      'Fields': 'BasicSyncInfo,CanDelete,CanDownload,PrimaryImageAspectRatio,ProductionYear,Status,EndDate',
+      "StartIndex": (page - 1) * 20,
+      "SortBy": "SortName",
+      "SortOrder": "Ascending",
+      "EnableImageTypes": "Primary,Backdrop,Thumb",
+      "ImageTypeLimit": 1,
+      "Recursive": "true",
+      "SearchTerm": keyword,
+      "GroupProgramsBySeries": "true",
+      "Limit": 20
     })
     return {
       ...this.embyItemsToItem(page, res)

@@ -5,7 +5,7 @@ import {LocalNameEnum} from "@/global/LocalNameEnum";
 import {map} from "@/utils/lang/ArrayUtil";
 
 
-export const useSourceStore = defineStore('source', () => {
+export const useVideoSourceStore = defineStore('source', () => {
   const sources = ref<Array<VideoSourceEntry>>([])
   const rev = ref<string>();
 
@@ -16,19 +16,19 @@ export const useSourceStore = defineStore('source', () => {
   const sourceMap = computed(() =>  map(sources.value, 'id'));
 
   const init = async () => {
-    const res = await listByAsync<VideoSourceEntry>(LocalNameEnum.LIST_SOURCE);
+    const res = await listByAsync<VideoSourceEntry>(LocalNameEnum.LIST_SOURCE_VIDEO);
     sources.value = res.list;
     rev.value = res.rev;
   }
 
   const add = async (res: VideoSourceEntry) => {
     sources.value.push(res);
-    rev.value = await saveListByAsync(LocalNameEnum.LIST_SOURCE, sources.value, rev.value);
+    rev.value = await saveListByAsync(LocalNameEnum.LIST_SOURCE_VIDEO, sources.value, rev.value);
   }
 
   const remove = async (res: VideoSourceEntry) => {
     sources.value = sources.value.filter(item => item.id !== res.id);
-    rev.value = await saveListByAsync(LocalNameEnum.LIST_SOURCE, sources.value, rev.value);
+    rev.value = await saveListByAsync(LocalNameEnum.LIST_SOURCE_VIDEO, sources.value, rev.value);
   }
   const update = async (res: Partial<Omit<VideoSourceEntry, 'id'>> & Pick<VideoSourceEntry, 'id'>) => {
     const index = sources.value.findIndex(item => item.id === res.id);
@@ -37,7 +37,7 @@ export const useSourceStore = defineStore('source', () => {
         ...sources.value[index],
         ...res
       };
-      rev.value = await saveListByAsync(LocalNameEnum.LIST_SOURCE, sources.value, rev.value);
+      rev.value = await saveListByAsync(LocalNameEnum.LIST_SOURCE_VIDEO, sources.value, rev.value);
     }
   }
 

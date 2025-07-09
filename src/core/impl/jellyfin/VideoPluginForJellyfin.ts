@@ -3,6 +3,7 @@ import {VideoSource} from "@/entities/VideoSource";
 import {VideoCategoryResult, VideoDetail, VideoHome, VideoListItem, VideoSearchResult} from "@/core/VideoPlugin";
 import {AxiosRequestConfig} from "axios";
 import Constant from "@/global/Constant";
+import {useRequest} from "@/hooks/HttpRequest";
 
 export interface VideoPluginForJellyfinProps {
   url: string;
@@ -21,7 +22,7 @@ export class VideoPluginForJellyfin extends AbsVideoPluginForStore {
 
   private async request<T>(config: AxiosRequestConfig) {
     const token = this.getItem('token')
-    const {data} = await window.preload.lib.axiosInstance.request({
+    const {data} = await useRequest('', {
       ...config,
       params: {
         ...config.params,

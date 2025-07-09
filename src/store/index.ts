@@ -1,2 +1,3 @@
-export * from './db/SourceStore';
+export * from './db/VideoSourceStore';
+export * from './db/LiveSourceStore';
 export * from './component/PlayerWindowStore';

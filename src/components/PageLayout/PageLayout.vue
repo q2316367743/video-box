@@ -5,6 +5,7 @@
         <div class="page-header__title">
           <slot name="title" v-if="slots['title']"></slot>
           <span v-else-if="title">{{ title }}</span>
+          <span v-if="subtitle" class="subtitle">{{ subtitle }}</span>
         </div>
       </div>
       <div class="page-header__right" v-if="slots['extra']">
@@ -14,12 +15,13 @@
     <div class="page-container">
       <slot/>
     </div>
-    <t-back-top container=".page-layout .page-container" />
+    <t-back-top container=".page-layout .page-container"/>
   </div>
 </template>
 <script lang="ts" setup>
 defineProps({
-  title: String
+  title: String,
+  subtitle: String
 });
 const slots = defineSlots();
 </script>
@@ -48,6 +50,12 @@ const slots = defineSlots();
     &__title {
       display: flex;
       align-items: center;
+
+      .subtitle {
+        margin-left: 6px;
+        font-size: 0.9rem;
+        color: var(--td-text-color-secondary);
+      }
     }
 
   }

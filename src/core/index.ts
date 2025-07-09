@@ -12,6 +12,6 @@ export function buildVideoPlugin(source: VideoSourceEntry): VideoPlugin {
   } else if (source.type === 'EMBY') {
     return new VideoPluginForEmby(source as VideoSource<'EMBY'>);
   } else {
-    throw new Error('Unknown video source type: ' + source.type);
+    throw new Error('Unknown video video-source type: ' + source.type);
   }
 }

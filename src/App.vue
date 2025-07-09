@@ -52,7 +52,7 @@ import {routes} from "@/plugin/router";
 import {ViewListIcon} from "tdesign-icons-vue-next";
 import {useUtoolsDbStorage} from "@/hooks/UtoolsDbStorage";
 import {LocalNameEnum} from "@/global/LocalNameEnum";
-import {useSourceStore} from "@/store";
+import {useLiveSourceStore, useVideoSourceStore} from "@/store";
 
 const route = useRoute();
 const router = useRouter();
@@ -71,7 +71,8 @@ watch(() => route.path, value => {
 
 // 颜色模式
 useUtoolsColorMode();
-useSourceStore().init();
+useVideoSourceStore().init();
+useLiveSourceStore().init();
 const toggleCollapsed = useToggle(collapsed);
 
 utools.onPluginEnter(action => {

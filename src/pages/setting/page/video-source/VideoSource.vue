@@ -27,16 +27,16 @@
   </page-layout>
 </template>
 <script lang="ts" setup>
-import {openVideoSourceDialog} from "@/pages/setting/page/source/VideoSourceDialog";
-import {useSourceStore} from "@/store";
+import {openVideoSourceDialog} from "@/pages/setting/page/video-source/VideoSourceDialog";
+import {useVideoSourceStore} from "@/store";
 import {DeleteIcon, EditIcon} from "tdesign-icons-vue-next";
 import {VideoSourceEntry} from "@/entities/VideoSource";
 
 
-const {sources} = toRefs(useSourceStore());
+const {sources} = toRefs(useVideoSourceStore());
 
 const removeVideoSource = (source: VideoSourceEntry) => {
-  useSourceStore().remove(source);
+  useVideoSourceStore().remove(source);
 }
 </script>
 <style scoped lang="less">

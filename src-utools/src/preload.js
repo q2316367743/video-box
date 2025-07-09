@@ -127,7 +127,8 @@ async function downloadFile(data, name) {
 
 
 const axiosInstance = axios.create({
-  adapter: 'http'
+  adapter: 'http',
+  httpsAgent: new https.Agent({rejectUnauthorized: true}),
 });
 axiosInstance.interceptors.request.use(config => {
   console.debug(config);

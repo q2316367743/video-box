@@ -24,7 +24,7 @@
 </template>
 <script lang="ts" setup>
 import {PlayIcon, SearchIcon} from "tdesign-icons-vue-next";
-import {usePlayerWindowStore, useSourceStore} from "@/store";
+import {usePlayerWindowStore, useVideoSourceStore} from "@/store";
 import {buildVideoPlugin} from "@/core";
 import {VideoPlugin} from "@/core/VideoPlugin";
 import HomeCategory from "@/pages/home/components/HomeCategory.vue";
@@ -34,7 +34,7 @@ const selectValue = useSessionStorage('selectValue', '');
 const categoryValue = ref('');
 const plugin = shallowRef<VideoPlugin | null>(null);
 
-const {sourceOptions} = toRefs(useSourceStore());
+const {sourceOptions} = toRefs(useVideoSourceStore());
 const {title} = toRefs(usePlayerWindowStore());
 
 const handleCloseCw = () => {
@@ -46,7 +46,7 @@ watch(selectValue, value => {
   plugin.value = null;
   // 获取插件
   if (value) {
-    const source = useSourceStore().sourceMap.get(value);
+    const source = useVideoSourceStore().sourceMap.get(value);
     if (!source) return;  // 不存在
     nextTick(() => {
       plugin.value = buildVideoPlugin(source);

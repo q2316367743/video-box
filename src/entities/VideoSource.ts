@@ -11,8 +11,8 @@ export type VideoSourceType = {
 export type VideoSourceTypeName = keyof VideoSourceType;
 
 export const videoSourceTypeOptions: Array<SelectOption> = [{
-  label: 'CMS:JSON',
-  value: 'CMS (JSON)'
+  label: 'CMS (JSON)',
+  value: 'CMS:JSON'
 }, {
   label: 'Emby',
   value: 'EMBY'

@@ -1,5 +1,5 @@
 import {createRouter, createWebHashHistory, RouteRecordRaw} from 'vue-router';
-import {HomeIcon, SettingIcon} from 'tdesign-icons-vue-next';
+import {HomeIcon, SettingIcon, TvIcon} from 'tdesign-icons-vue-next';
 
 export const routes: Array<RouteRecordRaw> = [{
   name: "主页",
@@ -8,6 +8,13 @@ export const routes: Array<RouteRecordRaw> = [{
   component: () => import('@/pages/home/home.vue'),
   meta: {
     icon: HomeIcon,
+  }
+}, {
+  name: '直播',
+  path: '/live',
+  component: () => import('@/pages/live/index.vue'),
+  meta: {
+    icon: TvIcon,
   }
 }, {
   name: '设置',
@@ -20,10 +27,14 @@ export const routes: Array<RouteRecordRaw> = [{
     name: '基础设置',
     path: 'base',
     component: () => import('@/pages/setting/page/base/base.vue'),
-  },{
-    name: '订阅源设置',
-    path: 'source',
-    component: () => import('@/pages/setting/page/source/source.vue'),
+  }, {
+    name: '视频源设置',
+    path: 'video-source',
+    component: () => import('@/pages/setting/page/video-source/VideoSource.vue'),
+  }, {
+    name: '直播源设置',
+    path: 'live-source',
+    component: () => import('@/pages/setting/page/live-source/index.vue'),
   }]
 }];
 

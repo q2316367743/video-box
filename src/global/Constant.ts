@@ -11,4 +11,6 @@ export default {
   author: '落雨不悔',
   // 仓库
   repo: '',
+  // 帮助
+  help: ''
 }

@@ -9,6 +9,7 @@ import {
 import {CmsHomeClass, CmsHomeResult, CmsVideoList} from "@/core/impl/cms/VideoTypeForCms";
 import {group, MapWrapper} from "@/utils/lang/ArrayUtil";
 import {VideoSource} from "@/entities/VideoSource";
+import {useGet} from "@/hooks/HttpRequest";
 
 export interface VideoPluginForCmsProps {
   url: string;
@@ -31,9 +32,7 @@ export class VideoPluginForCms extends AbsVideoPluginForStore {
   }
 
   private async cToL(params: Record<string, any>): Promise<VideoCategoryResult> {
-    const {data} = await window.preload.lib.axiosInstance.get<CmsVideoList>(this.url, {
-      params
-    });
+    const {data} = await useGet<CmsVideoList>(this.url, params);
     return {
       limit: Number(data.limit),
       page: Number(data.page),
@@ -121,11 +120,9 @@ export class VideoPluginForCms extends AbsVideoPluginForStore {
   }
 
   async home(page: number): Promise<VideoHome> {
-    const {data} = await window.preload.lib.axiosInstance.get<CmsHomeResult>(this.url, {
-      params: {
-        ac: 'class',
-        pg: page
-      }
+    const {data} = await useGet<CmsHomeResult>(this.url, {
+      ac: 'class',
+      pg: page
     });
     return {
       limit: Number(data.limit),

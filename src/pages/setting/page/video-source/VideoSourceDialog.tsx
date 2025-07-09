@@ -2,7 +2,7 @@ import {DialogPlugin, Form, FormItem, Input, Select} from "tdesign-vue-next";
 import {VideoSourceEntry, videoSourceTypeOptions} from "@/entities/VideoSource";
 import {useSnowflake} from "@/hooks/Snowflake";
 import VideoFormForCms from "@/core/impl/cms/VideoFormForCms.vue";
-import {useSourceStore} from "@/store";
+import {useVideoSourceStore} from "@/store";
 import MessageUtil from "@/utils/modal/MessageUtil";
 import VideoFormForEmby from "@/core/impl/emby/VideoFormForEmby.vue";
 
@@ -37,7 +37,7 @@ export function openVideoSourceDialog(old?: VideoSourceEntry) {
     </Form>,
     confirmBtn: op,
     onConfirm() {
-      (!!old ? useSourceStore().update : useSourceStore().add)(data.value)
+      (!!old ? useVideoSourceStore().update : useVideoSourceStore().add)(data.value)
         .then(() => {
           MessageUtil.success(op + "成功");
           dp.destroy();
