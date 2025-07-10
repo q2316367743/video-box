@@ -19,8 +19,8 @@ export async function getM3u8Channel(url: string): Promise<Array<M3u8Channel>> {
       const split1 = line.split(",");
       const strings = split1[0].split(" ");
       const item: M3u8Channel = {
-        name: split1[1],
-        url: lines[i + 1],
+        name: trim(split1[1], '\r'),
+        url: trim(lines[i + 1], '\r'),
         group: '',
         logo: '',
         id: useSnowflake().nextId()
@@ -32,9 +32,6 @@ export async function getM3u8Channel(url: string): Promise<Array<M3u8Channel>> {
         switch (key) {
           case 'group-title':
             item['group'] = value;
-            break;
-          case 'tvg-id':
-            item['id'] = value;
             break;
           case 'tvg-logo':
             item['logo'] = value;

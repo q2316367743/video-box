@@ -30,7 +30,7 @@ export const usePlayerWindowStore = defineStore('player-window-store', () => {
   }
 
   window.preload.ipcRenderer.receiveMessage('player:from', ({event}) => {
-    if (event === 'initialize') {
+    if (event === 'initialized') {
       stop.value = true;
     }
   })
@@ -53,12 +53,13 @@ export const usePlayerWindowStore = defineStore('player-window-store', () => {
         source: source,
         video: video
       }, true);
+      stop.value = false;
       const interval = setInterval(() => {
         cw?.sendMessage({
           event: 'initialize',
           data
         });
-        if (!stop.value) {
+        if (stop.value || !cw) {
           clearInterval(interval);
         }
       }, 1000);

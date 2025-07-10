@@ -28,7 +28,7 @@ export const useTvWindowStore = defineStore('tv-window-store', () => {
   }
 
   window.preload.ipcRenderer.receiveMessage('tv:from', ({event}) => {
-    if (event === 'initialize') {
+    if (event === 'initialized') {
       stop.value = true;
     }
   })
@@ -48,12 +48,13 @@ export const useTvWindowStore = defineStore('tv-window-store', () => {
       });
       await cw.open();
       const data = clone({sourceId, url}, true);
+      stop.value = false;
       const interval = setInterval(() => {
         cw?.sendMessage({
           event: 'initialize',
           data
         });
-        if (!stop.value) {
+        if (stop.value || !cw) {
           clearInterval(interval);
         }
       }, 1000);

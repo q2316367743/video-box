@@ -1,16 +1,36 @@
 <template>
   <div class="live">
     <div class="live-header">
-      <t-tabs v-model="active" theme="card">
-        <t-tab-panel v-for="live in liveSources" :key="live.id" :label="live.name" :value="live.id"/>
-      </t-tabs>
+      <!-- 顶部工具栏 -->
+      <div class="flex items-center gap-4">
+        <div class="title">电视直播</div>
+        <t-tag class="text-xs">
+          {{ channels.length || 0 }} 个频道
+        </t-tag>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <div class="w-180px">
+          <t-input placeholder="请输入频道名" v-model="keyword">
+            <template #prefix-icon>
+              <search-icon/>
+            </template>
+          </t-input>
+        </div>
+        <div class="flex-46px text-sm ">来源：</div>
+        <div class="w-120px">
+          <t-select v-model="active" :options="liveSourceOptions"/>
+        </div>
+      </div>
     </div>
     <div class="live-container">
-      <live-list :channels :loading :active/>
+      <live-list :channels :loading :active :keyword/>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
+import {SelectOption} from "tdesign-vue-next";
+import {SearchIcon} from "tdesign-icons-vue-next";
 import {useLiveSourceStore} from "@/store";
 import {M3u8ChannelWrap} from "@/entities/LiveSource";
 import {useUtoolsKvStorage} from "@/hooks/UtoolsKvStorage";
@@ -23,8 +43,12 @@ const active = useUtoolsKvStorage(LocalNameEnum.KEY_SOURCE_ACTIVE_LIVE, 0);
 
 const channels = ref(new Array<M3u8ChannelWrap>());
 const loading = ref(true);
+const keyword = ref('');
 
-const liveSources = computed(() => useLiveSourceStore().liveSources);
+const liveSourceOptions = computed<Array<SelectOption>>(() => useLiveSourceStore().liveSources.map(e => ({
+  value: e.id,
+  label: e.name,
+})));
 
 watch(active, val => {
   if (!val) {
@@ -52,11 +76,15 @@ watch(active, val => {
     top: 0;
     left: 0;
     right: 0;
+    border-bottom: 1px solid var(--td-border-level-2-color);
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
   }
 
   .live-container {
     position: absolute;
-    top: 49px;
+    top: 57px;
     left: 0;
     right: 0;
     bottom: 0;

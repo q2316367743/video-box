@@ -1,16 +1,16 @@
 <template>
   <div class="live-list" ref="el">
     <loading-result v-if="loading" title="正在加载中"/>
-    <empty-result v-else-if="results.length === 0" status="404" title="没有频道"/>
+    <empty-result v-else-if="items.length === 0" status="404" title="没有频道"/>
     <div class="live-list-container">
       <t-tabs v-model="activeKey">
         <t-tab-panel v-for="name in groupNames" :key="name.value" :label="name.label" :value="name.value"/>
       </t-tabs>
       <div class="container-content" ref="contentContainer" @scroll="handleScroll">
         <!-- 仅渲染当前加载的项目 -->
-        <LiveListItem v-for="item in currentlyLoadedResults" :key="item.url" :item="item" :active/>
+        <LiveListItem v-for="item in currentlyLoadedResults" :key="item.id" :item="item" :active/>
         <!-- 加载更多提示 -->
-        <div v-if="currentlyLoadedResults.length < results.length" class="loading-more" @click="handleScroll">
+        <div v-if="currentlyLoadedResults.length < items.length" class="loading-more" @click="handleScroll">
           正在加载更多...
         </div>
       </div>
@@ -19,7 +19,8 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {ref, computed, onMounted} from "vue";
+// @ts-ignore
+import {useFuse} from "@vueuse/integrations/useFuse";
 import {M3u8ChannelWrap} from "@/entities/LiveSource";
 import LiveListItem from "@/pages/live/components/LiveListItem.vue";
 import {channelsToGroup} from "@/utils/file/M3u8Util";
@@ -36,6 +37,10 @@ const props = defineProps({
   active: {
     type: Number,
     default: 0
+  },
+  keyword: {
+    type: String,
+    default: ''
   }
 });
 
@@ -50,7 +55,7 @@ const groupNames = computed(() => [{
   label: e.group,
   value: e.group
 }))]);
-const results = computed<Array<M3u8ChannelWrap>>(() => {
+const items = computed<Array<M3u8ChannelWrap>>(() => {
   if (activeKey.value === '') {
     return props.channels;
   }
@@ -58,6 +63,13 @@ const results = computed<Array<M3u8ChannelWrap>>(() => {
   contentContainer.value?.scrollTo(0, 0);
   return props.channels.filter(e => e.group === activeKey.value)
 });
+
+const {results} = useFuse(() => props.keyword, items, {
+  matchAllWhenSearchEmpty: true,
+  fuseOptions: {
+    keys: ['name', 'group']
+  }
+})
 
 // 初始加载数量
 const initialLoadCount = 20;
@@ -67,9 +79,7 @@ const loadMoreCount = 10;
 const currentlyLoadedCount = ref(initialLoadCount);
 
 // 当前加载的项目
-const currentlyLoadedResults = computed(() => {
-  return results.value.slice(0, currentlyLoadedCount.value);
-});
+const currentlyLoadedResults = computed(() => results.value.slice(0, currentlyLoadedCount.value).map(e => e.item));
 
 // 处理滚动事件
 const handleScroll = () => {
