@@ -4,7 +4,7 @@
   </t-form-item>
 </template>
 <script lang="ts" setup>
-import {VideoPluginForCmsProps} from "@/core/impl/cms/VideoPluginForCms";
+import {VideoPluginForCmsProps} from "@/modules/video/impl/cms/VideoPluginForCms";
 
 const form = defineModel({
   type: Object as PropType<VideoPluginForCmsProps>,

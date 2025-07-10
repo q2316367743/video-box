@@ -11,7 +11,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {VideoCategory, VideoCommonResult, VideoPlugin} from "@/core/VideoPlugin";
+import {VideoCategory, VideoCommonResult, VideoPlugin} from "@/modules/video/VideoPlugin";
 import MessageUtil from "@/utils/modal/MessageUtil";
 import HomeList from "@/pages/home/components/HomeList.vue";
 

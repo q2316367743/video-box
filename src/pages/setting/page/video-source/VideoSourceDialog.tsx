@@ -1,10 +1,10 @@
 import {DialogPlugin, Form, FormItem, Input, Select} from "tdesign-vue-next";
 import {VideoSourceEntry, videoSourceTypeOptions} from "@/entities/VideoSource";
 import {useSnowflake} from "@/hooks/Snowflake";
-import VideoFormForCms from "@/core/impl/cms/VideoFormForCms.vue";
+import VideoFormForCms from "@/modules/video/impl/cms/VideoFormForCms.vue";
 import {useVideoSourceStore} from "@/store";
 import MessageUtil from "@/utils/modal/MessageUtil";
-import VideoFormForEmby from "@/core/impl/emby/VideoFormForEmby.vue";
+import VideoFormForEmby from "@/modules/video/impl/emby/VideoFormForEmby.vue";
 
 export function openVideoSourceDialog(old?: VideoSourceEntry) {
   const op = !!old ? '更新' : '新增';

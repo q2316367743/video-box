@@ -1,12 +1,12 @@
-import {AbsVideoPluginForStore} from "@/core/abs/AbsVideoPluginForStore";
+import {AbsVideoPluginForStore} from "@/modules/video/abs/AbsVideoPluginForStore";
 import {
   VideoCategory,
   VideoCategoryResult,
   VideoDetail,
   VideoHome, VideoListItem, VideoListItemChapter,
   VideoSearchResult
-} from "@/core/VideoPlugin";
-import {CmsHomeClass, CmsHomeResult, CmsVideoList} from "@/core/impl/cms/VideoTypeForCms";
+} from "@/modules/video/VideoPlugin";
+import {CmsHomeClass, CmsHomeResult, CmsVideoList} from "@/modules/video/impl/cms/VideoTypeForCms";
 import {group, MapWrapper} from "@/utils/lang/ArrayUtil";
 import {VideoSource} from "@/entities/VideoSource";
 import {useGet} from "@/hooks/HttpRequest";

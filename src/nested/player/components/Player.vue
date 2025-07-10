@@ -99,7 +99,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {VideoDetail, VideoListItem, VideoPlugin} from "@/core/VideoPlugin";
+import {VideoDetail, VideoListItem, VideoPlugin} from "@/modules/video/VideoPlugin";
 import {LocalNameEnum} from "@/global/LocalNameEnum";
 import MessageUtil from "@/utils/modal/MessageUtil";
 import {LoadingPlugin} from "tdesign-vue-next";

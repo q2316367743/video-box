@@ -5,8 +5,8 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {VideoDetail, VideoPlugin} from "@/core/VideoPlugin";
-import {buildVideoPlugin} from "@/core";
+import {VideoDetail, VideoPlugin} from "@/modules/video/VideoPlugin";
+import {buildVideoPlugin} from "@/modules/video";
 import Player from "@/nested/player/components/Player.vue";
 
 let isInit = false

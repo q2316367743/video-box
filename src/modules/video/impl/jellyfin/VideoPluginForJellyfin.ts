@@ -1,6 +1,6 @@
-import {AbsVideoPluginForStore} from "@/core/abs/AbsVideoPluginForStore";
+import {AbsVideoPluginForStore} from "@/modules/video/abs/AbsVideoPluginForStore";
 import {VideoSource} from "@/entities/VideoSource";
-import {VideoCategoryResult, VideoDetail, VideoHome, VideoListItem, VideoSearchResult} from "@/core/VideoPlugin";
+import {VideoCategoryResult, VideoDetail, VideoHome, VideoListItem, VideoSearchResult} from "@/modules/video/VideoPlugin";
 import {AxiosRequestConfig} from "axios";
 import Constant from "@/global/Constant";
 import {useRequest} from "@/hooks/HttpRequest";

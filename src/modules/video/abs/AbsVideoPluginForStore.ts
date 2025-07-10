@@ -4,7 +4,7 @@ import {
   VideoHome, VideoListItem,
   VideoPlugin,
   VideoSearchResult
-} from "@/core/VideoPlugin";
+} from "@/modules/video/VideoPlugin";
 import {getItem, removeItem, setItem} from "@/utils/utools/DbStorageUtil";
 import {VideoSourceEntry} from "@/entities/VideoSource";
 

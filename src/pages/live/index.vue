@@ -79,7 +79,7 @@ watch(active, val => {
     border-bottom: 1px solid var(--td-border-level-2-color);
     display: flex;
     justify-content: space-between;
-    padding: 10px;
+    padding: 12px 12px 11px;
   }
 
   .live-container {

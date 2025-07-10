@@ -1,7 +1,7 @@
 import {defineStore} from "pinia";
 import {CustomerWindow, WindowUtil} from "@/utils/utools/WindowUtil";
 import {VideoSourceEntry} from "@/entities/VideoSource";
-import {VideoListItem} from "@/core/VideoPlugin";
+import {VideoListItem} from "@/modules/video/VideoPlugin";
 import MessageUtil from "@/utils/modal/MessageUtil";
 import {clone} from "@/utils/lang/ObjUtil";
 

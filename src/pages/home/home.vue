@@ -27,8 +27,8 @@
 <script lang="ts" setup>
 import {PlayIcon, SearchIcon} from "tdesign-icons-vue-next";
 import {usePlayerWindowStore, useVideoSourceStore} from "@/store";
-import {buildVideoPlugin} from "@/core";
-import {VideoPlugin} from "@/core/VideoPlugin";
+import {buildVideoPlugin} from "@/modules/video";
+import {VideoPlugin} from "@/modules/video/VideoPlugin";
 import HomeCategory from "@/pages/home/components/HomeCategory.vue";
 
 const categoryRef = ref();

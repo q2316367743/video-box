@@ -23,7 +23,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {VideoCommonResult, VideoListItem, VideoPlugin} from "@/core/VideoPlugin";
+import {VideoCommonResult, VideoListItem, VideoPlugin} from "@/modules/video/VideoPlugin";
 import MessageUtil from "@/utils/modal/MessageUtil";
 import {usePlayerWindowStore} from "@/store";
 

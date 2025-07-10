@@ -10,7 +10,7 @@
   </t-form-item>
 </template>
 <script lang="ts" setup>
-import {VideoPluginForEmbyProps} from "@/core/impl/emby/VideoPluginForEmby";
+import {VideoPluginForEmbyProps} from "@/modules/video/impl/emby/VideoPluginForEmby";
 
 const form = defineModel({
   type: Object as PropType<VideoPluginForEmbyProps>,

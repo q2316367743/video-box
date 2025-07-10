@@ -1,4 +1,4 @@
-import {AbsVideoPluginForStore} from "@/core/abs/AbsVideoPluginForStore";
+import {AbsVideoPluginForStore} from "@/modules/video/abs/AbsVideoPluginForStore";
 import {VideoSource} from "@/entities/VideoSource";
 import {
   VideoCategoryResult, VideoCommonResult,
@@ -7,16 +7,16 @@ import {
   VideoListItem,
   VideoRecommend,
   VideoSearchResult
-} from "@/core/VideoPlugin";
+} from "@/modules/video/VideoPlugin";
 import {AxiosError} from "axios";
 import Constant from "@/global/Constant";
-import {EmbyAuthenticateByName} from "@/core/impl/emby/types/EmbyAuthenticateByName";
+import {EmbyAuthenticateByName} from "@/modules/video/impl/emby/types/EmbyAuthenticateByName";
 import MessageUtil from "@/utils/modal/MessageUtil";
-import {EmbyItems} from "@/core/impl/emby/types/EmbyItems";
-import {EmbyResume} from "@/core/impl/emby/types/EmbyResume";
-import {EmbyItemInfo} from "@/core/impl/emby/types/EmbyItemsInfo";
-import {EmbyPlaybackInfo} from "@/core/impl/emby/types/EmbyPlaybackInfo";
-import {EmbyView} from "@/core/impl/emby/types/EmbyView";
+import {EmbyItems} from "@/modules/video/impl/emby/types/EmbyItems";
+import {EmbyResume} from "@/modules/video/impl/emby/types/EmbyResume";
+import {EmbyItemInfo} from "@/modules/video/impl/emby/types/EmbyItemsInfo";
+import {EmbyPlaybackInfo} from "@/modules/video/impl/emby/types/EmbyPlaybackInfo";
+import {EmbyView} from "@/modules/video/impl/emby/types/EmbyView";
 import {useRequest} from "@/hooks/HttpRequest";
 
 export interface VideoPluginForEmbyProps {

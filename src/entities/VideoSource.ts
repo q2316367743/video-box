@@ -1,7 +1,7 @@
-import {VideoPluginForCmsProps} from "@/core/impl/cms/VideoPluginForCms";
+import {VideoPluginForCmsProps} from "@/modules/video/impl/cms/VideoPluginForCms";
 import {SelectOption} from "tdesign-vue-next";
-import {VideoPluginForJellyfinProps} from "@/core/impl/jellyfin/VideoPluginForJellyfin";
-import {VideoPluginForEmbyProps} from "@/core/impl/emby/VideoPluginForEmby";
+import {VideoPluginForJellyfinProps} from "@/modules/video/impl/jellyfin/VideoPluginForJellyfin";
+import {VideoPluginForEmbyProps} from "@/modules/video/impl/emby/VideoPluginForEmby";
 
 export type VideoSourceType = {
   'CMS:JSON': VideoPluginForCmsProps,

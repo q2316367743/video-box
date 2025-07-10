@@ -1,8 +1,8 @@
 import {VideoSource, VideoSourceEntry} from "@/entities/VideoSource";
-import {VideoPlugin} from "@/core/VideoPlugin";
-import {VideoPluginForCms} from "@/core/impl/cms/VideoPluginForCms";
-import {VideoPluginForJellyfin} from "@/core/impl/jellyfin/VideoPluginForJellyfin";
-import {VideoPluginForEmby} from "@/core/impl/emby/VideoPluginForEmby";
+import {VideoPlugin} from "@/modules/video/VideoPlugin";
+import {VideoPluginForCms} from "@/modules/video/impl/cms/VideoPluginForCms";
+import {VideoPluginForJellyfin} from "@/modules/video/impl/jellyfin/VideoPluginForJellyfin";
+import {VideoPluginForEmby} from "@/modules/video/impl/emby/VideoPluginForEmby";
 
 export function buildVideoPlugin(source: VideoSourceEntry): VideoPlugin {
   if (source.type === 'CMS:JSON') {

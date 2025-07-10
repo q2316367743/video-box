@@ -25,6 +25,12 @@ import {M3u8ChannelWrap} from "@/entities/LiveSource";
 import LiveListItem from "@/pages/live/components/LiveListItem.vue";
 import {channelsToGroup} from "@/utils/file/M3u8Util";
 
+type FuseResult<T> = {
+  item: T
+  refIndex: number
+  score?: number
+}
+
 const props = defineProps({
   channels: {
     type: Object as PropType<Array<M3u8ChannelWrap>>,
@@ -79,7 +85,10 @@ const loadMoreCount = 10;
 const currentlyLoadedCount = ref(initialLoadCount);
 
 // 当前加载的项目
-const currentlyLoadedResults = computed(() => results.value.slice(0, currentlyLoadedCount.value).map(e => e.item));
+const currentlyLoadedResults = computed(() => {
+  const c: Array<FuseResult<M3u8ChannelWrap>> = results.value.slice(0, currentlyLoadedCount.value);
+  return c.map(e => e.item)
+});
 
 // 处理滚动事件
 const handleScroll = () => {

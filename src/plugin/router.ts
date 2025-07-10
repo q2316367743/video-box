@@ -1,5 +1,5 @@
 import {createRouter, createWebHashHistory, RouteRecordRaw} from 'vue-router';
-import {HomeIcon, SettingIcon, TvIcon} from 'tdesign-icons-vue-next';
+import {CloudIcon, HomeIcon, SettingIcon, TvIcon} from 'tdesign-icons-vue-next';
 
 export const routes: Array<RouteRecordRaw> = [{
   name: "主页",
@@ -14,6 +14,13 @@ export const routes: Array<RouteRecordRaw> = [{
   component: () => import('@/pages/live/index.vue'),
   meta: {
     icon: TvIcon,
+  }
+}, {
+  name: '网盘',
+  path: '/network-disk',
+  component: () => import('@/pages/network-disk/index.vue'),
+  meta: {
+    icon: CloudIcon,
   }
 }, {
   name: '设置',
