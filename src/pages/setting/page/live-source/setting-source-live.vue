@@ -1,5 +1,5 @@
 <template>
-  <page-layout title="配置中心" :subtitle="liveSources.length + '个列表'">
+  <page-layout title="直播源设置" :subtitle="liveSources.length + '个列表'">
     <template #extra>
       <t-space size="small">
         <t-button theme="primary" variant="text" shape="square" @click="showHelp()">

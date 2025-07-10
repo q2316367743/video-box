@@ -19,7 +19,7 @@ export interface NetworkDiskMap {
 
 export type NetworkDiskType = keyof NetworkDiskMap;
 
-export interface NetworkDisk<K extends NetworkDiskType> {
+export interface Disk<K extends NetworkDiskType> {
   id: string;
   createTime: number;
   updateTime: number;

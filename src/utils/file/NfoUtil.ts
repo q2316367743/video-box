@@ -1,8 +1,8 @@
 import {
-  NetworkDiskProgram,
-  NetworkDiskProgramActor,
-  NetworkDiskProgramType
-} from "@/entities/NetworkDisk/NetworkDiskEntry";
+  DiskProgram,
+  DiskProgramActor,
+  DiskProgramType
+} from "@/entities/disk/DiskEntry";
 import {isNotEmptyString} from "@/utils/lang/FieldUtil";
 
 /**
@@ -32,7 +32,7 @@ function getElementTexts(element: Element, tagName: string): string[] {
  * @param nfo nfo文件内容
  * @param type 类型
  */
-export function parseNfo(nfo: string, type: NetworkDiskProgramType): NetworkDiskProgram {
+export function parseNfo(nfo: string, type: DiskProgramType): DiskProgram {
   const parser = new DOMParser();
   const doc = parser.parseFromString(nfo, "text/xml");
 
@@ -69,7 +69,7 @@ export function parseNfo(nfo: string, type: NetworkDiskProgramType): NetworkDisk
         type: getElementText(actorNode, "type"),
         order: getElementText(actorNode, "order"),
         thumb: getElementText(actorNode, "thumb")
-      } as NetworkDiskProgramActor;
+      } as DiskProgramActor;
     }),
     premiered: getElementText(root, "premiered"),
     release: getElementText(root, "release"),

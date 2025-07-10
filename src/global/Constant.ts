@@ -9,6 +9,7 @@ export default {
   version: '1.0.0',
   // 作者
   author: '落雨不悔',
+  website: '',
   // 仓库
   repo: '',
   // 帮助

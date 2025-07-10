@@ -37,6 +37,10 @@ declare global {
   type ChannelName<C = SubWindowChannel> = `${C}:to` | `${C}:from`;
 
   interface Window {
+    eruda: {
+      init: () => void,
+      destroy: () => void
+    },
     preload: {
       dialog: {
 

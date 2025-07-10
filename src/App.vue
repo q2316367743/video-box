@@ -36,7 +36,7 @@
     </div>
     <div class="app-container">
       <router-view v-slot="{ Component }">
-        <keep-alive :include="['home']">
+        <keep-alive :exclude="['about', /^setting/]">
           <component :is="Component"/>
         </keep-alive>
       </router-view>
@@ -56,7 +56,7 @@ import {useUtoolsKvStorage} from "@/hooks/UtoolsKvStorage";
 
 const route = useRoute();
 const router = useRouter();
-const path = ref('/home');
+const path = ref('/');
 const avatar = utools.getUser()?.avatar;
 
 const collapsed = useUtoolsKvStorage(LocalNameEnum.KEY_APP_COLLAPSED, true);

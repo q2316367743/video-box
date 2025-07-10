@@ -28,7 +28,7 @@
 import {M3u8ChannelWrap} from "@/entities/LiveSource";
 import {LoadingIcon, VideoCamera1Icon} from "tdesign-icons-vue-next";
 import {useHead} from "@/hooks/HttpRequest";
-import {useTvWindowStore} from "@/store/component/TvWindowStore";
+import {useTvWindowStore} from "@/store";
 
 // -1:加载中、-2:超时
 const timeout = ref(0);

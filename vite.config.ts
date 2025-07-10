@@ -25,7 +25,7 @@ export default defineConfig({
           isCustomElement: (tag) => tag === 'webview'
         }
       }
-    }), vueJsx(), UnoCSS(),
+    }), vueJsx(),
     AutoImport({
       resolvers: [ArcoResolver(), TDesignResolver({
         library: 'vue-next'
@@ -41,11 +41,18 @@ export default defineConfig({
           library: 'vue-next'
         })
       ]
-    })
+    }), UnoCSS()
   ],
   base: "./",
   build: {
-    outDir: "src-utools/dist"
+    outDir: "src-utools/dist",
+    rollupOptions: {
+      input: {
+        main: _resolve('index.html'),
+        player: _resolve('player.html'),
+        tv: _resolve('tv.html'),
+      },
+    },
   },
 
 });

@@ -1,7 +1,7 @@
 /**
  * 网络硬盘节目章节，一个章节就是一个视频文件
  */
-export interface NetworkDiskProgramChapter {
+export interface DiskProgramChapter {
   id: string;
   // 封面图
   cover: string;
@@ -16,17 +16,17 @@ export interface NetworkDiskProgramChapter {
 /**
  * 网络硬盘节目会话，一个会话就是一个文件夹
  */
-export interface NetworkDiskProgramSession {
+export interface DiskProgramSession {
   id: string;
   // 名字
   name: string;
   // 简介
   description: string;
   // 所有的节目章节
-  chapters: Array<NetworkDiskProgramChapter>;
+  chapters: Array<DiskProgramChapter>;
 }
 
-export interface NetworkDiskProgramActor{
+export interface DiskProgramActor{
   name: string;
   role: string;
   // 封面
@@ -38,15 +38,15 @@ export interface NetworkDiskProgramActor{
 }
 
 // 类型，MOVIE-电影、tvshow-剧集
-export type NetworkDiskProgramType = 'movie' | 'tvshow';
+export type DiskProgramType = 'movie' | 'tvshow';
 
 /**
  * 网络硬盘节目，一个节目就是一个nfo
  */
-export interface NetworkDiskProgram {
+export interface DiskProgram {
   id: string;
   // 类型
-  type: NetworkDiskProgramType;
+  type: DiskProgramType;
 
   // 描述
   description: string;
@@ -90,7 +90,7 @@ export interface NetworkDiskProgram {
   // 工作室
   studio: string;
   // 演员名单
-  actors: Array<NetworkDiskProgramActor>;
+  actors: Array<DiskProgramActor>;
 
   // 首次公演时间，yyyy-mm-dd
   premiered: string;
@@ -113,11 +113,11 @@ export interface NetworkDiskProgram {
   cover: string;
 
   // 全部的季
-  sessions: Array<NetworkDiskProgramSession>;
+  sessions: Array<DiskProgramSession>;
 }
 
-export interface NetworkDiskEntry {
+export interface DiskEntry {
   // 刷新时间
   refreshTime: number;
-  programs: Array<NetworkDiskProgram>;
+  programs: Array<DiskProgram>;
 }
