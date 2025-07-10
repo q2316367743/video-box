@@ -1,3 +1,5 @@
+import {DiskDriver, DiskSource} from "@/entities/disk/DiskSource";
+
 /**
  * 网络硬盘节目章节，一个章节就是一个视频文件
  */
@@ -37,16 +39,11 @@ export interface DiskProgramActor{
   order?: string;
 }
 
-// 类型，MOVIE-电影、tvshow-剧集
-export type DiskProgramType = 'movie' | 'tvshow';
-
 /**
  * 网络硬盘节目，一个节目就是一个nfo
  */
 export interface DiskProgram {
   id: string;
-  // 类型
-  type: DiskProgramType;
 
   // 描述
   description: string;
@@ -117,7 +114,11 @@ export interface DiskProgram {
 }
 
 export interface DiskEntry {
-  // 刷新时间
-  refreshTime: number;
+  id: string;
+  // 一个节目
   programs: Array<DiskProgram>;
+}
+
+export interface DiskInfo extends DiskEntry, DiskSource<DiskDriver> {
+
 }

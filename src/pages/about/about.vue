@@ -11,8 +11,7 @@
         </t-link>
       </div>
       <div class="desc">
-        <p>构建属于自己的知识库。</p>
-        <p>开通utools会员，数据可同步。</p>
+        <p>实现你的影音自由</p>
       </div>
       <div class="action">
         <t-space>
