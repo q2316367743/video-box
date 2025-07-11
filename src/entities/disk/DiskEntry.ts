@@ -1,4 +1,5 @@
 import {DiskDriver, DiskSource} from "@/entities/disk/DiskSource";
+import {useSnowflake} from "@/hooks/Snowflake";
 
 /**
  * 网络硬盘节目章节，一个章节就是一个视频文件
@@ -111,6 +112,42 @@ export interface DiskProgram {
 
   // 全部的季
   sessions: Array<DiskProgramSession>;
+}
+export function defaultDiskProgram(title: string): DiskProgram {
+  return {
+    id: useSnowflake().nextId(),
+    description: '',
+    title: title,
+    originalTitle: title,
+    userRating: 0,
+    plot: '',
+    mpaa: '',
+    country: '',
+    uniqueId: '',
+    num: '',
+    website: '',
+    genre: [],
+    tag: [],
+    set: {
+      name: '',
+      overview: ''
+    },
+    maker: '',
+    credits: [],
+    directors: [],
+    studio: '',
+    actors: [],
+    premiered: '',
+    releaseDate: '',
+    release: '',
+    dateAdded: '',
+    year: '',
+    poster: '',
+    thumb: '',
+    fanart: '',
+    cover: '',
+    sessions: []
+  }
 }
 
 export interface DiskEntry {

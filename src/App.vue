@@ -16,7 +16,13 @@
           </t-button>
         </template>
         <template v-for="r in routes">
-          <t-submenu v-if="r.children && r.children.length > 0 && !r.meta?.hidden" :value="r.path"
+          <t-menu-item v-if="r.meta?.single && r.redirect" :value="r.redirect as string">
+            <template #icon v-if="r.meta?.icon">
+              <component :is="r.meta.icon"/>
+            </template>
+            {{ r.name }}
+          </t-menu-item>
+          <t-submenu v-else-if="r.children && r.children.length > 0 && !r.meta?.hidden" :value="r.path"
                      :title="`${r.name as string}`">
             <template #icon v-if="r.meta?.icon">
               <component :is="r.meta.icon"/>
@@ -73,6 +79,12 @@ watch(() => route.path, value => {
 useUtoolsColorMode();
 useVideoSourceStore().init();
 useLiveSourceStore().init();
+window.preload.lib.createServer(import.meta.env.DEV ? 13001 : 13011, () => {
+
+}, e => {
+
+})
+
 const toggleCollapsed = useToggle(collapsed);
 
 utools.onPluginEnter(action => {

@@ -105,8 +105,8 @@ watch(() => props.getRecords, () => {
   .waterfall-list {
     margin-top: 8px;
     /* 使用 column-width 实现自适应列数 */
-    column-width: 200px;
-    column-gap: 12px;
+    column-width: 300px;
+    column-gap: 8px;
   }
 
   .waterfall-item {

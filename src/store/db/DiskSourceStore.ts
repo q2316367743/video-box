@@ -19,6 +19,7 @@ export const useDiskSourceStore = defineStore('disk-source-store', () => {
   const diskEntryMap = new Map<string, DiskEntry>();
   // 正在刷新中的云盘源，源ID=>百分比
   const refreshSourceMap = ref(new Map<string, number>());
+  const allowDelete = computed(() => refreshSourceMap.value.size === 0);
 
   listByAsync(LocalNameEnum.LIST_SOURCE_DISK).then(res => {
     diskSourceList.value = res.list;
@@ -30,8 +31,8 @@ export const useDiskSourceStore = defineStore('disk-source-store', () => {
       ...res,
       id: useSnowflake().nextId(),
       createTime: Date.now(),
-      updateTime: Date.now(),
-      refreshTime: 0
+      refreshTime: 0,
+      programCount: 0
     };
     diskSourceList.value.push(data);
     rev.value = await saveListByAsync(LocalNameEnum.LIST_SOURCE_DISK, diskSourceList.value, rev.value);
@@ -89,13 +90,22 @@ export const useDiskSourceStore = defineStore('disk-source-store', () => {
     // 刷新数据操作
     const entry = await refreshDiskEntry(diskSourceList.value[index], refreshSourceMap.value);
     // 保存到数据库
-    await saveOneByAsync(LocalNameEnum.ITEM_SOURCE_DISK + id, entry)
+    await saveOneByAsync(LocalNameEnum.ITEM_SOURCE_DISK + id, entry);
+    diskSourceList.value[index] = {
+      ...diskSourceList.value[index],
+      programCount: entry.programs.length,
+      refreshTime: Date.now(),
+    }
+    // 保存到磁盘
+    rev.value = await saveListByAsync(LocalNameEnum.LIST_SOURCE_DISK, diskSourceList.value, rev.value);
+    // 刷新缓存
+    diskEntryMap.set(id, entry);
     // 完成后删除正在刷新的标记
     refreshSourceMap.value.delete(id);
   }
 
   return {
-    diskSourceList, refreshSourceMap,
+    diskSourceList, refreshSourceMap, allowDelete,
     add, deleteById, getInfo, refreshDiskSource
   }
 

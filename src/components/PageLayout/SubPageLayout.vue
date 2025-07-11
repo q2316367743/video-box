@@ -46,7 +46,7 @@ function handlerClick() {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 12px 11px;
+    padding: 12px 12px 11px 8px;
     height: 56px;
     line-height: 32px;
     border-bottom: 1px solid var(--td-border-level-2-color);
@@ -55,7 +55,6 @@ function handlerClick() {
     &__left {
       display: flex;
       align-items: center;
-      padding-left: 8px;
     }
 
     &__title {
@@ -67,7 +66,7 @@ function handlerClick() {
 
   .page-container {
     position: absolute;
-    top: 51px;
+    top: 56px;
     left: 0;
     right: 0;
     bottom: 0;

@@ -18,7 +18,7 @@
       </t-input>
     </header>
     <div class="home-content-wrap">
-      <home-category v-if="plugin" :plugin :value="categoryValue" ref="categoryRef"
+      <web-category v-if="plugin" :plugin :value="categoryValue" ref="categoryRef"
                      @change-category="handleChangeCategory" v-model="loading"/>
       <empty-result v-else title="请先选择源"/>
     </div>
@@ -29,7 +29,7 @@ import {PlayIcon, SearchIcon} from "tdesign-icons-vue-next";
 import {usePlayerWindowStore, useVideoSourceStore} from "@/store";
 import {buildVideoPlugin} from "@/modules/video";
 import {VideoPlugin} from "@/modules/video/VideoPlugin";
-import HomeCategory from "@/pages/home/components/HomeCategory.vue";
+import WebCategory from "@/pages/web/components/WebCategory.vue";
 
 const categoryRef = ref();
 const inputValue = ref('');

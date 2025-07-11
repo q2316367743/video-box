@@ -7,6 +7,7 @@ import {
 } from "@/modules/video/VideoPlugin";
 import {getItem, removeItem, setItem} from "@/utils/utools/DbStorageUtil";
 import {VideoSourceEntry} from "@/entities/VideoSource";
+import {LocalNameEnum} from "@/global/LocalNameEnum";
 
 export abstract class AbsVideoPluginForStore implements VideoPlugin {
 
@@ -25,7 +26,7 @@ export abstract class AbsVideoPluginForStore implements VideoPlugin {
 
   protected constructor(id: string) {
     this.id = id;
-    this.prefix = `/video/store/${this.id}/`;
+    this.prefix = `${LocalNameEnum.STORE_SOURCE_VIDEO}/${this.id}/`;
   }
 
   protected getItem<T>(key: string): T | null {

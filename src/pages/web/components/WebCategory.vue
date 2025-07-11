@@ -6,14 +6,14 @@
           <t-tab-panel v-for="t in categoryOptions" :value="t.value" :label="t.label"/>
         </t-tabs>
       </div>
-      <home-list v-if="getRecords" v-model:loading="loading" :get-records="getRecords" :plugin="plugin"/>
+      <web-list v-if="getRecords" v-model:loading="loading" :get-records="getRecords" :plugin="plugin"/>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 import {VideoCategory, VideoCommonResult, VideoPlugin} from "@/modules/video/VideoPlugin";
 import MessageUtil from "@/utils/modal/MessageUtil";
-import HomeList from "@/pages/home/components/HomeList.vue";
+import WebList from "@/pages/web/components/WebList.vue";
 
 const loading = defineModel({
   type: Boolean,

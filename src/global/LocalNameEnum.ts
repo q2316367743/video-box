@@ -16,4 +16,7 @@ export enum LocalNameEnum {
 
   KEY_SETTING_BASE = '/key/setting/base',
 
+  STORE_SOURCE_DISK = '/store/source/disk',
+  STORE_SOURCE_VIDEO = '/store/source/video',
+
 }

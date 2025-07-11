@@ -1,12 +1,30 @@
 import {createRouter, createWebHashHistory, RouteRecordRaw} from 'vue-router';
-import {CloudIcon, HomeIcon, InfoCircleIcon, SettingIcon, TvIcon} from 'tdesign-icons-vue-next';
+import {HomeIcon, InfoCircleIcon, InternetIcon, SettingIcon, TvIcon} from 'tdesign-icons-vue-next';
 
 export const routes: Array<RouteRecordRaw> = [{
-  name: "主页",
-  path: '/',
-  component: () => import('@/pages/home/home.vue'),
+  name: '网盘',
+  path: '/disk',
+  component: () => import('@/pages/disk/index.vue'),
   meta: {
     icon: HomeIcon,
+    single: true
+  },
+  redirect: '/disk/list',
+  children: [{
+    name: '网盘列表',
+    path: 'list',
+    component: () => import('@/pages/disk/pages/list/index.vue'),
+  }, {
+    name: '网盘详情',
+    path: 'info/:id',
+    component: () => import('@/pages/disk/pages/info/index.vue'),
+  }]
+}, {
+  name: "网络",
+  path: '/web',
+  component: () => import('@/pages/web/web.vue'),
+  meta: {
+    icon: InternetIcon,
   }
 }, {
   name: '直播',
@@ -14,13 +32,6 @@ export const routes: Array<RouteRecordRaw> = [{
   component: () => import('@/pages/live/index.vue'),
   meta: {
     icon: TvIcon,
-  }
-}, {
-  name: '网盘',
-  path: '/disk',
-  component: () => import('@/pages/disk/index.vue'),
-  meta: {
-    icon: CloudIcon,
   }
 }, {
   name: '设置',

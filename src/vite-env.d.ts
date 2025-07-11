@@ -65,7 +65,8 @@ declare global {
         downloadFile(data: string | Blob | ArrayBuffer, name: string): Promise<string>
       },
       lib: {
-        axiosInstance: AxiosInstance
+        axiosInstance: AxiosInstance,
+        createServer: (port: number, successCallback: () => void, errorCallback: (e: Error) => void) => void;
       },
       ipcRenderer: {
         buildSubWindow(channel: SubWindowChannel): SubWindow;

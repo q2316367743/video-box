@@ -5,6 +5,7 @@ const https = require("node:https");
 const http = require("node:http");
 const axios = require('axios');
 const {sendMessage, buildSubWindow, receiveMessage} = require('./ipc');
+const {createServer} = require('./webdav');
 
 /**
  * 获取一个文件
@@ -148,7 +149,8 @@ window.preload = {
     openFile, downloadFileFromUrl, downloadFile
   },
   lib: {
-    axiosInstance
+    axiosInstance,
+    createServer
   },
 
   ipcRenderer: {sendMessage, buildSubWindow, receiveMessage},

@@ -1,14 +1,12 @@
 export interface DiskFromAList {
   url: string;
-  username: string;
-  password: string;
-  token: string;
+  authorization: string;
 }
-
 export interface DiskFromWebDAV {
   url: string;
   username: string;
   password: string;
+  type: 'auto' | 'digest' | 'none' | 'password' | 'token';
 }
 
 
@@ -38,7 +36,8 @@ export interface DiskSourceForm<K extends DiskDriver> {
 export interface DiskSource<K extends DiskDriver> extends DiskSourceForm<K> {
   id: string;
   createTime: number;
-  updateTime: number;
   // 刷新时间
   refreshTime: number;
+  // 剧集数量
+  programCount: number;
 }

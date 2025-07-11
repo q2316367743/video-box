@@ -1,9 +1,9 @@
 import {
   DiskProgram,
   DiskProgramActor,
-  DiskProgramType
 } from "@/entities/disk/DiskEntry";
 import {isNotEmptyString} from "@/utils/lang/FieldUtil";
+import {DiskType} from "@/entities/disk/DiskSource";
 
 /**
  * 获取元素文本内容
@@ -32,7 +32,7 @@ function getElementTexts(element: Element, tagName: string): string[] {
  * @param nfo nfo文件内容
  * @param type 类型
  */
-export function parseNfo(nfo: string, type: DiskProgramType): DiskProgram {
+export function parseNfo(nfo: string, type: DiskType): DiskProgram {
   const parser = new DOMParser();
   const doc = parser.parseFromString(nfo, "text/xml");
 
@@ -41,7 +41,6 @@ export function parseNfo(nfo: string, type: DiskProgramType): DiskProgram {
 
   return {
     id: getElementText(root, "uniqueid"),
-    type,
     description: getElementText(root, "plot"),
     title: getElementText(root, "title"),
     originalTitle: getElementText(root, "originaltitle"),

@@ -1,10 +1,11 @@
-import {DiskDriver, DiskSource} from "@/entities/disk/DiskSource";
-import {DiskEntry} from "@/entities/disk/DiskEntry";
+import {DiskDriver, DiskSource, DiskSourceForm} from "@/entities/disk/DiskSource";
+import {DiskEntry, DiskProgram} from "@/entities/disk/DiskEntry";
 import {DiskPlugin} from "@/modules/disk/DiskPlugin";
 import {DiskPluginForAList} from "@/modules/disk/impl/DiskPluginForAList";
 import {DiskPluginForWebDAV} from "@/modules/disk/impl/DiskPluginForWebDAV";
+import {parseMovie} from "@/modules/disk/parser/MovieParser";
 
-export function buildDiskPlugin(source: DiskSource<DiskDriver>): DiskPlugin {
+export function buildDiskPlugin(source: DiskSourceForm<DiskDriver>): DiskPlugin {
   switch (source.driver) {
     case "A_LIST":
       return new DiskPluginForAList(source as DiskSource<"A_LIST">);
@@ -15,6 +16,7 @@ export function buildDiskPlugin(source: DiskSource<DiskDriver>): DiskPlugin {
   }
 }
 
+
 /**
  * TODO: 刷新云盘源
  *
@@ -23,9 +25,16 @@ export function buildDiskPlugin(source: DiskSource<DiskDriver>): DiskPlugin {
  */
 export async function refreshDiskEntry(source: DiskSource<DiskDriver>, progress: Map<string, number>): Promise<DiskEntry> {
   const plugin = buildDiskPlugin(source);
-  // 获取全部文件夹
+  let programs: Array<DiskProgram>;
+  if (source.type === 'movie') {
+    programs = await parseMovie(plugin, progress);
+  } else if (source.type === 'tvshow') {
+    programs = [];
+  } else {
+    throw new Error('不支持的磁盘类型')
+  }
   return {
     id: source.id,
-    programs: []
+    programs
   }
 }
