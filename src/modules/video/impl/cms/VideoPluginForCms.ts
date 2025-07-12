@@ -37,7 +37,7 @@ export class VideoPluginForCms extends AbsVideoPluginForStore {
       limit: Number(data.limit),
       page: Number(data.page),
       total: Number(data.total),
-      data: data.list.map(e => {
+      data: data.list?.map(e => {
         const playUrls = new Array<VideoListItemChapter>();
         if (e.vod_play_note) {
           const chapterNames = e.vod_play_from.split(e.vod_play_note);
@@ -89,7 +89,7 @@ export class VideoPluginForCms extends AbsVideoPluginForStore {
           content: e.vod_content,
           playUrls
         }
-      })
+      }) || []
     }
   }
 

@@ -53,20 +53,19 @@
                   <t-tabs v-model="chapterTabId">
                     <t-tab-panel v-for="chapter in video.playUrls" :label="chapter.name" :value="chapter.id"
                                  class="mt-8px">
-                      <div v-for="(episode, i) in chapter.items" :key="episode.url"
-                           class="flex items-center justify-between p-4 rounded-lg cursor-pointer transition-all hover:shadow-sm play-item"
-                           :class="{play: chapterId === chapter.id && index === i}"
-                           @click="switchUrl(chapter.id, i)">
-                        <div class="flex items-center gap-4">
-                          <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium index"
-                               :class="{watch: chapterId === chapter.id && index > i, play: chapterId === chapter.id && index === i}">
-                            {{ (i + 1) }}
+                      <div class="play-items">
+                        <t-tooltip v-for="(episode, i) in chapter.items" :key="episode.url" :content="episode.name">
+                          <div class=" play-item"
+                               :class="{play: chapterId === chapter.id && index === i}"
+                               @click="switchUrl(chapter.id, i)">
+                            <div class=" gap-4">
+                            <span v-if="chapterId === chapter.id && index === i">
+                              <play-icon size="24px"/>
+                            </span>
+                              <span v-else>{{ (i + 1) }}</span>
+                            </div>
                           </div>
-                          <div>
-                            <div class="font-medium">{{ episode.name }}</div>
-                            <div class="text-sm" v-if="episode.duration">{{ episode.duration }}</div>
-                          </div>
-                        </div>
+                        </t-tooltip>
                       </div>
                     </t-tab-panel>
                   </t-tabs>
@@ -106,6 +105,7 @@ import {LoadingPlugin} from "tdesign-vue-next";
 import {useCacheRecordStorage} from "@/hooks/CacheRecordStorage";
 import {isEmptyArray} from "@/utils/lang/FieldUtil";
 import VideoContainer from "@/nested/player/components/VideoContainer.vue";
+import {PlayIcon} from "tdesign-icons-vue-next";
 
 const props = defineProps({
   plugin: {
@@ -204,33 +204,38 @@ onMounted(() => {
     z-index: 50;
     overflow-y: auto;
 
-    .play-item {
-      transition: all 0.2s;
-      border: 1px solid transparent;
+    .play-items {
+      display: flex;
+      justify-content: flex-start;
+      align-content: flex-start;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 8px;
 
-      &:hover {
-        background-color: var(--td-bg-color-container-hover);
-      }
-
-      &.play {
-        border-color: var(--td-border-level-2-color);
-        background-color: var(--td-bg-color-container-active);
-      }
-
-      .index {
+      .play-item {
+        transition: all 0.2s;
+        border: 1px solid transparent;
+        border-radius: var(--td-radius-default);
         background-color: var(--td-bg-color-component);
-        flex: 0 0 35px;
+        width: 24px;
+        height: 24px;
+        line-height: 24px;
+        text-align: center;
+        cursor: pointer;
 
-        &.watch {
-          background-color: var(--td-success-color);
-          color: var(--td-text-color-anti);
+        &:hover {
+          background-color: var(--td-bg-color-component-hover);
         }
 
         &.play {
+          border-color: var(--td-border-level-2-color);
           background-color: var(--td-bg-color-component-active);
+          color: var(--td-success-color);
         }
+
       }
     }
+
 
     .recommend {
       transition: all 0.2s;

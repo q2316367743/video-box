@@ -20,12 +20,27 @@ export const routes: Array<RouteRecordRaw> = [{
     component: () => import('@/pages/disk/pages/info/index.vue'),
   }]
 }, {
-  name: "网络",
+  name: "网络资源",
   path: '/web',
   component: () => import('@/pages/web/web.vue'),
   meta: {
     icon: InternetIcon,
-  }
+    single: true
+  },
+  redirect: '/web/list',
+  children: [{
+    name: '网络资源列表',
+    path: 'list',
+    component: () => import('@/pages/web/pages/list/index.vue'),
+  }, {
+    name: '网络资源搜索',
+    path: 'search',
+    component: () => import('@/pages/web/pages/search/index.vue'),
+  }, {
+    name: '网络资源详情',
+    path: 'info/:id',
+    component: () => import('@/pages/web/pages/info/index.vue'),
+  }]
 }, {
   name: '直播',
   path: '/live',
@@ -44,10 +59,6 @@ export const routes: Array<RouteRecordRaw> = [{
     name: '基础设置',
     path: 'base',
     component: () => import('@/pages/setting/page/base/setting-base.vue'),
-  }, {
-    name: '视频源设置',
-    path: 'video-source',
-    component: () => import('@/pages/setting/page/video-source/setting-source-video.vue'),
   }, {
     name: '直播源设置',
     path: 'live-source',

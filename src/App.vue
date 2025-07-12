@@ -82,7 +82,7 @@ useLiveSourceStore().init();
 window.preload.lib.createServer(import.meta.env.DEV ? 13001 : 13011, () => {
 
 }, e => {
-
+  console.error(e);
 })
 
 const toggleCollapsed = useToggle(collapsed);
@@ -119,6 +119,7 @@ utools.onPluginEnter(action => {
     width: 100%;
     background-color: var(--td-bg-color-container);
     flex: auto;
+    overflow: hidden;
   }
 }
 </style>

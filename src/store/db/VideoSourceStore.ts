@@ -9,10 +9,6 @@ export const useVideoSourceStore = defineStore('source', () => {
   const sources = ref<Array<VideoSourceEntry>>([])
   const rev = ref<string>();
 
-  const sourceOptions = computed(() => sources.value.map(s => ({
-    value: s.id,
-    label: s.title
-  })));
   const sourceMap = computed(() =>  map(sources.value, 'id'));
 
   const init = async () => {
@@ -41,5 +37,5 @@ export const useVideoSourceStore = defineStore('source', () => {
     }
   }
 
-  return {sources, sourceOptions, sourceMap, init, add, update, remove};
+  return {sources, sourceMap, init, add, update, remove};
 })

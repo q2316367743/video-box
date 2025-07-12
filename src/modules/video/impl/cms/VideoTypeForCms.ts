@@ -34,7 +34,7 @@ export interface CmsVideoList {
   pagecount: number;
   limit: string;
   total: number;
-  list: CmsVideoListItem[];
+  list: CmsVideoListItem[] | null;
 }
 
 interface CmsVideoListItem {
