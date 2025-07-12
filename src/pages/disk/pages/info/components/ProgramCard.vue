@@ -3,9 +3,9 @@
           class="program-card rounded-lg border bg-card text-card-foreground shadow-2xs overflow-hidden hover:shadow-lg transition-shadow duration-300"
           data-v0-t="card">
     <div class="relative ">
-      <t-image :alt="program.title" class="w-full h-full object-cover" :src="program.cover" style="min-height: 200px">
+      <t-image :alt="program.title" class="w-full h-full object-cover" :src="cover" style="min-height: 200px">
         <template #error>
-          <img src="/movie.svg" style="width: 300px;height: 200px;"/>
+          <img src="/movie.svg" :alt="program.title" style="width: 300px;height: 200px;"/>
         </template>
       </t-image>
       <div class="absolute top-2 right-2" style="z-index: 2">
@@ -21,14 +21,13 @@
         <span>{{ program.userRating }}</span></div>
     </div>
     <div class="p-4">
-      <h3 class="font-semibold text-lg mb-2 line-clamp-2 mt-0" :title="program.title">{{ program.title }}</h3>
+      <h3 class="title" :title="program.title" @click="handlePlay">{{ program.title }}</h3>
       <!--      <p class="text-sm text-muted-foreground mb-2">{{ program.originalTitle }}</p>-->
       <div class="flex flex-wrap gap-1 mb-3">
         <t-tag v-for="g in program.genre" :key="g" theme="primary" variant="outline" shape="round">{{ g }}</t-tag>
       </div>
-      <p class="text-sm text-muted-foreground line-clamp-3 mb-3" :title="program.description">{{
-          program.description
-        }}</p>
+      <t-paragraph :ellipsis="ellipsis(program.description)">{{ program.description }}
+      </t-paragraph>
       <div class="space-y-2 text-xs text-muted-foreground">
         <div class="flex items-center gap-1" v-if="program.directors.length > 0">
           <usergroup-icon/>
@@ -41,33 +40,84 @@
         <div v-if="program.country">
           <span>国家: {{ program.country }}</span>
         </div>
-      </div>
-    </div>
-    <div class="flex items-center p-4 pt-0" v-if="program.actors.length > 0">
-      <div class="w-full"><p class="text-xs text-muted-foreground mb-2">主演:</p>
-        <div class="flex flex-wrap gap-1">
-          <t-tag v-for="g in program.actors" :key="g.name" theme="default" variant="outline" shape="round">{{
-              g.name
-            }}
-          </t-tag>
+        <div class="flex items-center" v-if="program.actors.length > 0">
+          <div class="w-full">
+            <div class="text-xs items-center mb-2">
+              <usergroup-icon/>
+              <span>主演：</span>
+            </div>
+            <div class="flex flex-wrap gap-1">
+              <t-tag v-for="g in program.actors" :key="g.name" theme="default" shape="round">{{
+                  g.name
+                }}
+              </t-tag>
+            </div>
+          </div>
         </div>
       </div>
+
     </div>
+
   </t-card>
 </template>
 <script lang="ts" setup>
 import {DiskProgram} from "@/entities/disk/DiskEntry";
 import {Calendar1Icon, StarIcon, UsergroupIcon} from "tdesign-icons-vue-next";
+import {DiskPlugin} from "@/modules/disk/DiskPlugin";
 
-defineProps({
+const props = defineProps({
   program: {
     type: Object as PropType<DiskProgram>,
     required: true
+  },
+  plugin: {
+    type: Object as PropType<DiskPlugin>,
+    required: true
   }
 });
+const emit = defineEmits(['play']);
+
+const ellipsis = (description: string) => ({
+  row: 3,
+  tooltipProps: {
+    content: description,
+    showArrow: false,
+  }
+})
+
+const cover = computedAsync(async () => {
+  if (!props.program.cover) return '';
+  return await props.plugin.getFileDownloadLink(props.program.cover)
+});
+const handlePlay = () => {
+  emit('play');
+}
 </script>
 <style scoped lang="less">
 .program-card {
   margin-bottom: 8px;
+
+  .title {
+    color: var(--td-text-color-primary);
+    display: -webkit-box;
+    font-size: var(--td-font-size-title-large);
+    font-weight: bold;
+    margin-block-end: 7px;
+    margin-block-start: 0;
+    margin-bottom: 7px;
+    margin-inline-end: 0;
+    margin-inline-start: 0;
+    margin-top: 0;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+      color: var(--td-text-color-link);
+    }
+  }
 }
 </style>

@@ -8,8 +8,9 @@
         <t-tag theme="primary" variant="outline">{{ info?.driver }}</t-tag>
       </t-space>
     </template>
-    <div class="program-info">
-      <program-card v-for="program in programs" :program="program" :key="program.id"/>
+    <div class="program-info" v-if="plugin">
+      <program-card v-for="(program, index) in programs" :program="program" :plugin="plugin" :key="program.id"
+                    @click="handlePlay(index)"/>
     </div>
   </sub-page-layout>
 </template>
@@ -17,10 +18,14 @@
 import {useDiskSourceStore} from "@/store/db/DiskSourceStore";
 import {DiskInfo} from "@/entities/disk/DiskEntry";
 import MessageUtil from "@/utils/modal/MessageUtil";
+import {DiskPlugin} from "@/modules/disk/DiskPlugin";
+import {buildDiskPlugin} from "@/modules/disk";
 import ProgramCard from "@/pages/disk/pages/info/components/ProgramCard.vue";
+import {useDiskWindowStore} from "@/store/component/DiskWindowStore";
 
 const route = useRoute();
 const info = ref<DiskInfo>();
+const plugin = shallowRef<DiskPlugin>();
 
 const programs = computed(() => info.value?.programs || []);
 
@@ -28,9 +33,14 @@ onMounted(() => {
   useDiskSourceStore().getInfo(route.params.id as string)
     .then(res => {
       info.value = res;
+      plugin.value = buildDiskPlugin(res);
     })
     .catch(e => MessageUtil.error("获取云盘详情失败", e));
 });
+const handlePlay = (index: number) => {
+  if (!info.value) return MessageUtil.error("系统异常，云盘详情不存在");
+  useDiskWindowStore().openDiskWindow(info.value, index);
+}
 </script>
 <style scoped lang="less">
 .program-info {
@@ -41,7 +51,7 @@ onMounted(() => {
   bottom: 0;
   /* 使用 column-width 实现自适应列数 */
   column-width: 300px;
-  column-gap: 12px;
+  column-gap: 8px;
   padding: 8px;
 }
 </style>

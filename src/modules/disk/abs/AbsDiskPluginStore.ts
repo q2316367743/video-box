@@ -44,4 +44,6 @@ export abstract class AbsDiskPluginStore implements DiskPlugin {
 
   abstract getFileDownloadLinks(items: string[]): Promise<string[]>;
 
+  abstract getFileDownloadLink(item: string): Promise<string>;
+
 }

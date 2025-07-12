@@ -86,10 +86,18 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
     await this.client.putFileContents(path, content);
   }
 
+  private getDownloadLinkSync(item: string): string {
+    const link = this.client.getFileDownloadLink(item);
+    return renderLink(link);
+  }
+
   async getFileDownloadLinks(items: string[]): Promise<string[]> {
     return items
-      .map(item => (this.client.getFileDownloadLink(item)))
-      .map(renderLink);
+      .map(this.getDownloadLinkSync);
+  }
+
+  async getFileDownloadLink(item: string): Promise<string> {
+    return this.getDownloadLinkSync(item);
   }
 
 }

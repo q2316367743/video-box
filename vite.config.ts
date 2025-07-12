@@ -51,6 +51,7 @@ export default defineConfig({
         main: _resolve('index.html'),
         player: _resolve('player.html'),
         tv: _resolve('tv.html'),
+        disk: _resolve('disk.html'),
       },
     },
   },

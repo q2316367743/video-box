@@ -165,7 +165,7 @@ export class DiskPluginForAList extends AbsDiskPluginStore {
     return items;
   }
 
-  private async getFileLink(path: string): Promise<string> {
+  async getFileDownloadLink(path: string): Promise<string> {
     const result = await this.request<FileInfo>('/api/fs/get', {
       method: 'POST',
       data: {
@@ -182,7 +182,7 @@ export class DiskPluginForAList extends AbsDiskPluginStore {
   }
 
   async readFileAsString(path: string): Promise<string> {
-    let url = await this.getFileLink(path);
+    let url = await this.getFileDownloadLink(path);
     return this.request<string>(url, {
       method: 'GET',
       responseType: 'text',
@@ -238,8 +238,9 @@ export class DiskPluginForAList extends AbsDiskPluginStore {
   async getFileDownloadLinks(items: string[]): Promise<string[]> {
     const links = new Array<string>();
     for (let item of items) {
-      links.push(await this.getFileLink(item));
+      links.push(await this.getFileDownloadLink(item));
     }
     return links;
   }
+
 }

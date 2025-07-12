@@ -119,7 +119,7 @@ const props = defineProps({
 })
 
 const video = shallowRef<VideoDetail>();
-const createRef = useCacheRecordStorage(LocalNameEnum.KEY_PLAYER_INDEX);
+const createRef = useCacheRecordStorage(LocalNameEnum.KEY_PLAYER_VIDEO_INDEX);
 const chapterId = createRef<string>(`/${props.plugin.props.id}/${props.defaultVideo.id}`, 'chapter', '');
 const index = createRef<number>(`/${props.plugin.props.id}/${props.defaultVideo.id}`, 'index', 0);
 

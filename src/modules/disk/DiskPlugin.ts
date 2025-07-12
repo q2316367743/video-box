@@ -82,6 +82,12 @@ export interface DiskPlugin {
 
   /**
    * 获取文件的下载链接
+   * @param item 文件路径
+   */
+  getFileDownloadLink: (item: string) => Promise<string>;
+
+  /**
+   * 获取文件的下载链接
    * @param items 文件路径
    */
   getFileDownloadLinks: (items: string[]) => Promise<string[]>;

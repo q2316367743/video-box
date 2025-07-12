@@ -101,6 +101,7 @@ class CustomerWindowForUTools implements CustomerWindow {
 
   async sendMessage<T = any>(message: IpcEvent<T>): Promise<void> {
     if (!this.win) return;
+    console.debug(this.win.webContents.id, `${this.label}:to`, message)
     window.preload.ipcRenderer.sendMessage<T>(this.win.webContents.id, `${this.label}:to`, message);
   }
 

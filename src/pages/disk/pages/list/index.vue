@@ -12,11 +12,20 @@
                   </template>
                   {{ disk.title }}
                 </t-link>
-                <t-tag>{{disk.refreshTime}}</t-tag>
-                <t-tag>{{ disk.programCount}}</t-tag>
+                <t-tag theme="primary" variant="outline">
+                  <template #icon>
+                    <time-icon/>
+                  </template>
+                  {{ disk.refreshTime }}
+                </t-tag>
+                <t-tag theme="primary" variant="outline">
+                  <file-icon/>
+                  {{ disk.programCount }}
+                </t-tag>
               </t-space>
               <t-space size="small">
-                <t-button theme="primary" variant="text" shape="square" :loading="!allowDelete" @click="handleDiskRefresh(disk)">
+                <t-button theme="primary" variant="text" shape="square" :loading="!allowDelete"
+                          @click="handleDiskRefresh(disk)">
                   <template #icon>
                     <refresh-icon/>
                   </template>
@@ -44,7 +53,7 @@
 </template>
 <script lang="ts" setup>
 import {useDiskSourceStore} from "@/store/db/DiskSourceStore";
-import {DeleteIcon, PlusIcon, RefreshIcon, VideoLibraryIcon} from "tdesign-icons-vue-next";
+import {DeleteIcon, FileIcon, PlusIcon, RefreshIcon, TimeIcon, VideoLibraryIcon} from "tdesign-icons-vue-next";
 import {openAddDiskDialog} from "@/pages/disk/pages/list/dialog/AddDiskDialog";
 import {DiskDriver, DiskSource} from "@/entities/disk/DiskSource";
 

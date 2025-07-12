@@ -39,11 +39,7 @@ async function parseMovieLoop(res: Array<FileState>, plugin: DiskPlugin, progres
         p = defaultDiskProgram(name);
       }
       const covers = findCover(name, files);
-      if (covers[0]) {
-        const c = await plugin.getFileDownloadLinks([covers[0]]);
-        p.cover = c[0];
-        console.log(p, covers, c)
-      }
+      p.cover = covers[0] || '';
       p.sessions.push({
         id: 'Session 1',
         description: "",
