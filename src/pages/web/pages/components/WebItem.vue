@@ -14,7 +14,7 @@
 </template>
 <script lang="ts" setup>
 import {VideoListItem, VideoPlugin} from "@/modules/video/VideoPlugin";
-import {usePlayerWindowStore} from "@/store";
+import {openVideoInfoDrawer} from "@/pages/web/pages/components/VideoInfoDialog";
 
 const props = defineProps({
   plugin: {
@@ -29,7 +29,7 @@ const props = defineProps({
 
 const openOne = (item: VideoListItem) => {
   if (!props.plugin) return;
-  usePlayerWindowStore().openPlayerWindow(props.plugin.props, item);
+  openVideoInfoDrawer(item, props.plugin);
 }
 </script>
 <style scoped lang="less">

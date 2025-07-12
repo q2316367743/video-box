@@ -55,7 +55,7 @@
                                  class="mt-8px">
                       <div class="play-items">
                         <t-tooltip v-for="(episode, i) in chapter.items" :key="episode.url" :content="episode.name">
-                          <div class=" play-item"
+                          <div class="play-item"
                                :class="{play: chapterId === chapter.id && index === i}"
                                @click="switchUrl(chapter.id, i)">
                             <div class=" gap-4">
@@ -98,10 +98,9 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {VideoDetail, VideoListItem, VideoPlugin} from "@/modules/video/VideoPlugin";
+import {VideoDetail, VideoPlugin} from "@/modules/video/VideoPlugin";
 import {LocalNameEnum} from "@/global/LocalNameEnum";
 import MessageUtil from "@/utils/modal/MessageUtil";
-import {LoadingPlugin} from "tdesign-vue-next";
 import {useCacheRecordStorage} from "@/hooks/CacheRecordStorage";
 import {isEmptyArray} from "@/utils/lang/FieldUtil";
 import VideoContainer from "@/nested/player/components/VideoContainer.vue";
@@ -113,7 +112,7 @@ const props = defineProps({
     required: true
   },
   defaultVideo: {
-    type: Object as PropType<VideoListItem>,
+    type: Object as PropType<VideoDetail>,
     required: true
   }
 })
@@ -129,22 +128,14 @@ const videoUrl = ref('');
 const activeTab = ref('episodes');
 const chapterTabId = ref(chapterId.value);
 
-const initialize = (p: VideoPlugin, v: VideoListItem) => {
+const initialize = (p: VideoPlugin, v: VideoDetail) => {
   title.value = v.title
   // 获取详情
-  const lp = LoadingPlugin({
-    content: '正在获取详情'
-  });
-  p.getDetail(v)
-    .then((res) => {
-      video.value = res;
-      // 默认值
-      if (!chapterId.value) chapterId.value = video.value.playUrls[0]?.id;
-      chapterTabId.value = chapterId.value;
-      switchUrl(chapterId.value, index.value);
-    })
-    .catch(e => MessageUtil.error("获取视频详情失败", e))
-    .finally(() => lp.hide());
+  video.value = v;
+  // 默认值
+  if (!chapterId.value) chapterId.value = video.value.playUrls[0]?.id;
+  chapterTabId.value = chapterId.value;
+  switchUrl(chapterId.value, index.value);
 }
 
 const playItem = (name: string, url: string) => {
@@ -217,11 +208,11 @@ onMounted(() => {
         border: 1px solid transparent;
         border-radius: var(--td-radius-default);
         background-color: var(--td-bg-color-component);
-        width: 24px;
         height: 24px;
         line-height: 24px;
         text-align: center;
         cursor: pointer;
+        padding: 4px 8px;
 
         &:hover {
           background-color: var(--td-bg-color-component-hover);
