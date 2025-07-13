@@ -10,8 +10,10 @@ import {
 } from "tdesign-icons-vue-next";
 import {usePlayerWindowStore} from "@/store";
 import {isNotEmptyString} from "@/utils/lang/FieldUtil";
+import {useCacheRecordStorage} from "@/hooks/CacheRecordStorage";
+import {LocalNameEnum} from "@/global/LocalNameEnum";
 
-function MovieDetailDrawer(movieData: VideoDetail, plugin: VideoPlugin) {
+function MovieDetailDrawer(movieData: VideoDetail, plugin: VideoPlugin, chapterId: string, idx: number) {
   const handlePlay = () => {
     usePlayerWindowStore().openPlayerWindow(plugin.props, movieData).then(console.log).catch(console.error);
   }
@@ -121,19 +123,29 @@ function MovieDetailDrawer(movieData: VideoDetail, plugin: VideoPlugin) {
           <div class="space-y-3">
             <h3 class="font-semibold">播放源</h3>
             <div class="space-y-2">
-              <Tabs defaultValue={movieData.playUrls[0].id} class="w-full">
+              <Tabs defaultValue={chapterId} class="w-full">
                 {movieData.playUrls.map((source, index) => (
                   <TabPanel key={index} label={source.name} value={source.id}>
                     <div class="mt-8px flex justify-start items-start flex-wrap content-start gap-8px">
-                      {source.items.map((item) => (
-                        <div style={{
-                          backgroundColor: 'var(--td-bg-color-component)',
-                          lineHeight: '24px',
-                          textAlign: 'center',
-                          borderRadius: 'var(--td-radius-default)',
-                          cursor: 'pointer',
-                          padding: '4px 8px'
-                        }}>{item.name}</div>
+                      {source.items.map((item, i) => (
+                        (source.id === chapterId && i === idx) ? <div style={{
+                            backgroundColor: 'var(--td-bg-color-component-active)',
+                            lineHeight: '24px',
+                            textAlign: 'center',
+                            borderRadius: 'var(--td-radius-default)',
+                            cursor: 'pointer',
+                            padding: '4px 8px',
+                            color: 'var(--td-success-color)'
+                          }}><PlayIcon/></div> :
+                          <div style={{
+                            backgroundColor: 'var(--td-bg-color-component)',
+                            lineHeight: '24px',
+                            textAlign: 'center',
+                            borderRadius: 'var(--td-radius-default)',
+                            cursor: 'pointer',
+                            padding: '4px 8px',
+                            color: 'var(--td-color-primary)'
+                          }}>{item.name}</div>
                       ))}
                     </div>
                   </TabPanel>
@@ -168,10 +180,14 @@ function MovieDetailDrawer(movieData: VideoDetail, plugin: VideoPlugin) {
 export async function openVideoInfoDrawer(item: VideoListItem, plugin: VideoPlugin) {
   // 获取详情
   const detail = await plugin.getDetail(item);
+  // 获取看到哪里了
+  const createRef = useCacheRecordStorage(LocalNameEnum.KEY_PLAYER_VIDEO_INDEX);
+  const chapterId = createRef<string>(`/${plugin.props.id}/${detail.id}`, 'chapter', detail.playUrls[0]?.name || '');
+  const index = createRef<number>(`/${plugin.props.id}/${detail.id}`, 'index', 0);
   DrawerPlugin({
     header: detail.title,
     size: '600px',
     footer: false,
-    default: MovieDetailDrawer(detail, plugin),
+    default: MovieDetailDrawer(detail, plugin, chapterId.value, index.value),
   })
 }

@@ -67,6 +67,7 @@ const fetch = () => {
     })
     .catch(e => {
       MessageUtil.error("获取资源数据出错", e);
+      bottom.value = true;
     })
     .finally(() => {
       loading.value = false;

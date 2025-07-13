@@ -1,7 +1,30 @@
 <template>
   <page-layout title="网络资源">
     <template #extra>
-      <t-button theme="primary" @click="openVideoSourceDialog()">新增</t-button>
+      <t-space size="small">
+        <t-button theme="primary" @click="openVideoSourceDialog()">新增</t-button>
+        <t-dropdown trigger="click">
+          <t-button theme="default" shape="square">
+            <template #icon>
+              <more-icon/>
+            </template>
+          </t-button>
+          <t-dropdown-menu>
+            <t-dropdown-item @click="webImport()">
+              <template #prefix-icon>
+                <file-import-icon/>
+              </template>
+              导入
+            </t-dropdown-item>
+            <t-dropdown-item @click="webExport()">
+              <template #prefix-icon>
+                <file-export-icon/>
+              </template>
+              导出
+            </t-dropdown-item>
+          </t-dropdown-menu>
+        </t-dropdown>
+      </t-space>
     </template>
     <div class="web-list">
       <empty-result v-if="sources.length === 0" title="暂无资源"/>
@@ -47,8 +70,9 @@
 <script lang="ts" setup>
 import {useVideoSourceStore} from "@/store";
 import {openVideoSourceDialog} from "@/pages/web/pages/components/VideoSourceDialog";
-import {DeleteIcon, EditIcon, SearchIcon} from "tdesign-icons-vue-next";
+import {DeleteIcon, EditIcon, FileExportIcon, FileImportIcon, MoreIcon, SearchIcon} from "tdesign-icons-vue-next";
 import {VideoSourceEntry} from "@/entities/VideoSource";
+import {webExport, webImport} from "@/pages/web/pages/list/dialog/WebTransfer";
 
 const router = useRouter();
 
@@ -89,6 +113,7 @@ const removeVideoSource = (source: VideoSourceEntry) => {
   right: 0;
   height: 56px;
   background-color: var(--td-bg-color-container);
+
   .web-search-content {
     padding: 12px;
     z-index: 1;

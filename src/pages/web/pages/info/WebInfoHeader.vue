@@ -1,7 +1,12 @@
 <template>
   <t-head-menu v-model="menuKey" theme="light">
     <template #logo>
-      <div class="logo" @click="goBack" title="返回">
+      <t-button theme="primary" shape="square" variant="text" @click="goBack">
+        <template #icon>
+          <chevron-left-icon/>
+        </template>
+      </t-button>
+      <div class="logo" title="返回">
         {{ plugin.props.title }}
       </div>
     </template>
@@ -20,6 +25,7 @@
 </template>
 <script lang="ts" setup>
 import {VideoCategory, VideoPlugin} from "@/modules/video/VideoPlugin";
+import {ChevronLeftIcon} from "tdesign-icons-vue-next";
 
 const router = useRouter();
 
@@ -45,12 +51,8 @@ const goBack = () => router.back();
   font-weight: bold;
   text-wrap: nowrap;
   white-space: nowrap;
-  transition: color 0.2s ease-in-out;
   cursor: pointer;
   user-select: none;
-
-  &:hover {
-    color: var(--td-brand-color);
-  }
+  margin-left: 6px;
 }
 </style>
