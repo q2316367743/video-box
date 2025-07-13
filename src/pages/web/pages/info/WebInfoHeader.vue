@@ -1,7 +1,7 @@
 <template>
   <t-head-menu v-model="menuKey" theme="light">
     <template #logo>
-      <t-button theme="primary" shape="square" variant="text" @click="goBack">
+      <t-button theme="primary" shape="square" variant="text" @click="goBack" class="ml-6px">
         <template #icon>
           <chevron-left-icon/>
         </template>

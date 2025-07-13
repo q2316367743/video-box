@@ -4,6 +4,7 @@ import {HomeIcon, InfoCircleIcon, InternetIcon, SettingIcon, TvIcon} from 'tdesi
 export const routes: Array<RouteRecordRaw> = [{
   name: '网盘',
   path: '/disk',
+  alias: '/',
   component: () => import('@/pages/disk/index.vue'),
   meta: {
     icon: HomeIcon,
