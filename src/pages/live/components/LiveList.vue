@@ -19,11 +19,10 @@
   </div>
 </template>
 <script lang="ts" setup>
-// @ts-ignore
 import {useFuse} from "@vueuse/integrations/useFuse";
-import {M3u8ChannelWrap} from "@/entities/LiveSource";
-import LiveListItem from "@/pages/live/components/LiveListItem.vue";
+import type {M3u8ChannelWrap} from "@/entities/LiveSource";
 import {channelsToGroup} from "@/utils/file/M3u8Util";
+import LiveListItem from "@/pages/live/components/LiveListItem.vue";
 
 type FuseResult<T> = {
   item: T

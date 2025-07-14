@@ -50,7 +50,6 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {useUtoolsColorMode} from "@/hooks/ColorMode";
 import {ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {detach} from "@/store/AppStore";
@@ -76,7 +75,6 @@ watch(() => route.path, value => {
 }, {immediate: true})
 
 // 颜色模式
-useUtoolsColorMode();
 useVideoSourceStore().init();
 useLiveSourceStore().init();
 window.preload.lib.createServer(import.meta.env.DEV ? 13001 : 13011, () => {

@@ -4,6 +4,7 @@
     "": {
       "name": "vite-utools-template",
       "dependencies": {
+        "@imengyu/vue3-context-menu": "^1.5.1",
         "@vueuse/core": "^10.11.1",
         "@vueuse/integrations": "^13.5.0",
         "artplayer": "^5.2.3",
@@ -15,6 +16,7 @@
         "less-loader": "^11.1.4",
         "pinia": "^2.3.0",
         "radash": "^12.1.0",
+        "sortablejs": "^1",
         "tdesign-icons-vue-next": "^0.3.6",
         "tdesign-vue-next": "1.13.2",
         "vue": "^3.5.13",
@@ -149,6 +151,10 @@
     "@iconify/types": ["@iconify/types@2.0.0", "http://mirrors.tencent.com/npm/@iconify/types/-/types-2.0.0.tgz", {}, "sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg=="],
 
     "@iconify/utils": ["@iconify/utils@2.3.0", "http://mirrors.tencent.com/npm/@iconify/utils/-/utils-2.3.0.tgz", { "dependencies": { "@antfu/install-pkg": "^1.0.0", "@antfu/utils": "^8.1.0", "@iconify/types": "^2.0.0", "debug": "^4.4.0", "globals": "^15.14.0", "kolorist": "^1.8.0", "local-pkg": "^1.0.0", "mlly": "^1.7.4" } }, "sha512-GmQ78prtwYW6EtzXRU1rY+KwOKfz32PD7iJh6Iyqw68GiKuoZ2A6pRtzWONz5VQJbp50mEjXh/7NkumtrAgRKA=="],
+
+    "@imengyu/vue-scroll-rect": ["@imengyu/vue-scroll-rect@0.1.4", "https://registry.npmmirror.com/@imengyu/vue-scroll-rect/-/vue-scroll-rect-0.1.4.tgz", {}, "sha512-VIVO9GrS7YXo4hk38dmu+nPm1orJjwhQ50uKCW53tR4ExOUiAnP23Xem3Oj+c6iTYbkGWGmD+4GdOYB20qdQNA=="],
+
+    "@imengyu/vue3-context-menu": ["@imengyu/vue3-context-menu@1.5.1", "https://registry.npmmirror.com/@imengyu/vue3-context-menu/-/vue3-context-menu-1.5.1.tgz", { "dependencies": { "@imengyu/vue-scroll-rect": "^0.1.4" } }, "sha512-Y3M/PVOj0Fz7lu3aviIu6NKFYjqMP1tZSffSiYy55JdAfcm/bD06dRT9RL5AccOqTSJdvcAImhiYvmBnPKtYEg=="],
 
     "@jridgewell/gen-mapping": ["@jridgewell/gen-mapping@0.3.10", "http://mirrors.tencent.com/npm/@jridgewell/gen-mapping/-/gen-mapping-0.3.10.tgz", { "dependencies": { "@jridgewell/sourcemap-codec": "^1.5.0", "@jridgewell/trace-mapping": "^0.3.24" } }, "sha512-HM2F4B9N4cA0RH2KQiIZOHAZqtP4xGS4IZ+SFe1SIbO4dyjf9MTY2Bo3vHYnm0hglWfXqBrzUBSa+cJfl3Xvrg=="],
 

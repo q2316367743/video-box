@@ -1,23 +1,26 @@
-import {DialogPlugin, Form, FormItem, Input, Select} from "tdesign-vue-next";
-import {VideoSourceEntry, videoSourceTypeOptions} from "@/entities/VideoSource";
-import {useSnowflake} from "@/hooks/Snowflake";
+import {DialogPlugin, Form, FormItem, Input, LoadingPlugin, Radio, RadioGroup, Select} from "tdesign-vue-next";
+import {VideoSourceEntry, videoSourceTypeOptions} from "@/entities/VideoSource.ts";
+import {useVideoSourceStore} from "@/store/index.ts";
+import MessageUtil from "@/utils/modal/MessageUtil.ts";
 import VideoFormForCms from "@/modules/video/impl/cms/VideoFormForCms.vue";
-import {useVideoSourceStore} from "@/store";
-import MessageUtil from "@/utils/modal/MessageUtil";
 import VideoFormForEmby from "@/modules/video/impl/emby/VideoFormForEmby.vue";
 
 export function openVideoSourceDialog(old?: VideoSourceEntry) {
   const op = !!old ? '更新' : '新增';
   const data = ref<VideoSourceEntry>(old || {
-    id: useSnowflake().nextId(),
-    createTime: Date.now(),
-    updateTime: Date.now(),
+    id: '',
+    createTime: 0,
+    updateTime: 0,
     title: '',
     type: 'CMS:JSON',
     props: {
       url: ''
-    }
-  })
+    },
+    favicon: '',
+    folder: '',
+    order: 0
+  });
+  const iconType = ref(1);
   const dp = DialogPlugin({
     header: op + '网络资源',
     placement: "center",
@@ -29,6 +32,16 @@ export function openVideoSourceDialog(old?: VideoSourceEntry) {
       <FormItem label="类型" name={'type'} required-mark rules={[{required: true}]}>
         <Select options={videoSourceTypeOptions} v-model={data.value.type}/>
       </FormItem>
+      <FormItem label="图标" name={'type'} required-mark>
+        <RadioGroup v-model={iconType.value}>
+          <Radio value={1} label={'自动获取'}/>
+          <Radio value={2} label={'文字图标'}/>
+          <Radio value={3} label={'自定义'}/>
+        </RadioGroup>
+      </FormItem>
+      {iconType.value === 3 && <FormItem label="图标地址" name={'type'} required-mark>
+        <Input v-model={data.value.favicon}/>
+      </FormItem>}
       {data.value.type === 'CMS:JSON' ?
         <VideoFormForCms v-model={data.value.props}/> :
         data.value.type === 'EMBY' ?
@@ -37,12 +50,20 @@ export function openVideoSourceDialog(old?: VideoSourceEntry) {
     </Form>,
     confirmBtn: op,
     onConfirm() {
-      (!!old ? useVideoSourceStore().update : useVideoSourceStore().add)(data.value)
+      const lp = LoadingPlugin({
+        text: '正在' + op + '...',
+        fullscreen: true,
+        zIndex: 2000
+      });
+      (!!old ? useVideoSourceStore().update : useVideoSourceStore().add)(data.value, iconType.value)
         .then(() => {
           MessageUtil.success(op + "成功");
           dp.destroy();
         })
-        .catch(e => MessageUtil.error(op + "失败", e));
+        .catch(e => MessageUtil.error(op + "失败", e))
+        .finally(() => {
+          lp.hide();
+        });
     }
   })
 }

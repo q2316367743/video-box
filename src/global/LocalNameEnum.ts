@@ -6,6 +6,8 @@ export enum LocalNameEnum {
   LIST_SOURCE_LIVE = '/list/source/live',
   LIST_SOURCE_DISK = '/list/source/disk',
 
+  LIST_FOLDER_VIDEO = '/list/folder/video',
+
   ITEM_SOURCE_LIVE_CHANNEL = '/item/source/live/channel/',
   ITEM_SOURCE_DISK = '/item/source/disk/',
 

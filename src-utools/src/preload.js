@@ -23,17 +23,17 @@ const {createServer} = require('./webdav');
 function openFile(options) {
   return new Promise((resolve, reject) => {
     const paths = utools.showOpenDialog(options);
+    if (!paths) return reject(new Error("未选择文件"));
     const path = paths[0];
-    if (path) {
-      readFile(path, (err, data) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        const blob = new Blob([data], {type: 'application/octet-stream'});
-        resolve(new File([blob], basename(path)));
-      })
-    }
+    if (!path) return reject(new Error("未选择文件"));
+    readFile(path, (err, data) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      const blob = new Blob([data], {type: 'application/octet-stream'});
+      resolve(new File([blob], basename(path)));
+    })
   })
 }
 

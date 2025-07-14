@@ -1,7 +1,9 @@
-import {VideoPluginForCmsProps} from "@/modules/video/impl/cms/VideoPluginForCms";
 import {SelectOption} from "tdesign-vue-next";
-import {VideoPluginForJellyfinProps} from "@/modules/video/impl/jellyfin/VideoPluginForJellyfin";
-import {VideoPluginForEmbyProps} from "@/modules/video/impl/emby/VideoPluginForEmby";
+import {VideoPluginForCmsProps} from "@/modules/video/impl/cms/VideoPluginForCms.ts";
+import {VideoPluginForJellyfinProps} from "@/modules/video/impl/jellyfin/VideoPluginForJellyfin.ts";
+import {VideoPluginForEmbyProps} from "@/modules/video/impl/emby/VideoPluginForEmby.ts";
+import {useSnowflake} from "@/hooks/Snowflake.ts";
+import {fetchFavicon} from "@/utils/file/HttpUtil.ts";
 
 export type VideoSourceType = {
   'CMS:JSON': VideoPluginForCmsProps,
@@ -25,6 +27,34 @@ export interface VideoSource<K extends VideoSourceTypeName> {
   title: string;
   type: K;
   props: VideoSourceType[K];
+
+  // 图标
+  favicon: string;
+  // 所在文件夹
+  folder: string;
+  // 排序
+  order: number;
 }
 
 export type VideoSourceEntry = VideoSource<VideoSourceTypeName>;
+
+export async function importVideoSourceEntry(source: Record<string, any>): Promise<VideoSourceEntry> {
+  if (!source.props) return Promise.reject(new Error("Missing source.props"));
+  if (!source.type) return Promise.reject(new Error("Missing source.type"));
+  if (!source.title) return Promise.reject(new Error("Missing source.title"));
+  if (!source.props.url) return Promise.reject(new Error("请输入网站链接"));
+  const favicon = source.favicon || await fetchFavicon(source.props.url);
+  const now = Date.now();
+  return {
+    id: useSnowflake().nextId(),
+    createTime: now,
+    updateTime: now,
+    title: source.title,
+    type: source.type,
+    props: source.props,
+    favicon,
+    // 导入的都是根目录
+    folder: '',
+    order: now
+  }
+}

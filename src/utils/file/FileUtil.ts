@@ -17,3 +17,14 @@ export function basename(path: string): string {
   }
   return items1.slice(0, items1.length - 1).join(".");
 }
+
+export function readFileAsText(file: File): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onload = () => {
+      resolve(fr.result as string);
+    }
+    fr.onerror = reject;
+    fr.readAsText(file);
+  })
+}

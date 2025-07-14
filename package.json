@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@imengyu/vue3-context-menu": "^1.5.1",
     "@vueuse/core": "^10.11.1",
     "@vueuse/integrations": "^13.5.0",
     "artplayer": "^5.2.3",
@@ -21,6 +22,7 @@
     "less-loader": "^11.1.4",
     "pinia": "^2.3.0",
     "radash": "^12.1.0",
+    "sortablejs": "^1",
     "tdesign-icons-vue-next": "^0.3.6",
     "tdesign-vue-next": "1.13.2",
     "vue": "^3.5.13",

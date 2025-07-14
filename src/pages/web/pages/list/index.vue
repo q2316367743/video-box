@@ -1,87 +1,50 @@
 <template>
   <page-layout title="网络资源">
     <template #extra>
-      <t-space size="small">
-        <t-button theme="primary" @click="openVideoSourceDialog()">新增</t-button>
-        <t-dropdown trigger="click">
-          <t-button theme="default" shape="square">
-            <template #icon>
-              <more-icon/>
-            </template>
-          </t-button>
-          <t-dropdown-menu>
-            <t-dropdown-item @click="webImport()">
-              <template #prefix-icon>
-                <file-import-icon/>
-              </template>
-              导入
-            </t-dropdown-item>
-            <t-dropdown-item @click="webExport()">
-              <template #prefix-icon>
-                <file-export-icon/>
-              </template>
-              导出
-            </t-dropdown-item>
-          </t-dropdown-menu>
-        </t-dropdown>
-      </t-space>
+
+      <t-input v-model="keyword" placeholder="请输入资源名，回车搜索" :disabled="sources.length === 0" clearable
+               @enter="openSearch" style="min-width: 400px; max-width: 600px;width: 50%">
+        <template #prefix-icon>
+          <search-icon/>
+        </template>
+      </t-input>
     </template>
-    <div class="web-list">
-      <empty-result v-if="sources.length === 0" title="暂无资源"/>
-      <t-list v-else :split="true" style="margin-top: 56px">
-        <t-list-item v-for="source in sources" :key="source.id">
-          <t-list-item-meta :description="source.type">
-            <template #title>
-              <t-link theme="primary" @click="openInfo(source.id)">{{ source.title }}</t-link>
-            </template>
-          </t-list-item-meta>
-          <template #action>
-            <t-space size="small">
-              <t-button theme="primary" shape="square" @click="openVideoSourceDialog(source)">
-                <template #icon>
-                  <edit-icon/>
-                </template>
-              </t-button>
-              <t-popconfirm content="是否立即删除" confirm-btn="删除" @confirm="removeVideoSource(source)">
-                <t-button theme="danger" shape="square">
-                  <template #icon>
-                    <delete-icon/>
-                  </template>
-                </t-button>
-              </t-popconfirm>
-            </t-space>
-          </template>
-        </t-list-item>
-      </t-list>
-    </div>
-    <div class="web-search">
-      <div class="web-search-content">
-        <t-input v-model="keyword" placeholder="请输入资源名，回车搜索" :disabled="sources.length === 0" clearable
-                 @enter="openSearch">
-          <template #prefix-icon>
-            <search-icon/>
-          </template>
-        </t-input>
+    <div class="web-list" @contextmenu="handleListContextmenu($event)">
+      <div class="web-list-content" ref="web-list-content">
+        <web-list-item v-for="view in views" :key="view.id" :view="view" @click="openInfo(view)"
+                       @contextmenu.stop="handleItemContextmenu($event, view, openInfo)"/>
+        <web-list-add @click="handleListContextmenu($event)"/>
       </div>
     </div>
     <t-back-top container=".web-list"/>
   </page-layout>
 </template>
 <script lang="ts" setup>
-import {useVideoSourceStore} from "@/store";
-import {openVideoSourceDialog} from "@/pages/web/pages/components/VideoSourceDialog";
-import {DeleteIcon, EditIcon, FileExportIcon, FileImportIcon, MoreIcon, SearchIcon} from "tdesign-icons-vue-next";
-import {VideoSourceEntry} from "@/entities/VideoSource";
-import {webExport, webImport} from "@/pages/web/pages/list/dialog/WebTransfer";
+import {
+  SearchIcon
+} from "tdesign-icons-vue-next";
+import {useSortable} from "@vueuse/integrations/useSortable";
+import {useVideoSourceStore, useWebFolderStore} from "@/store";
+import {buildWebItemViews, WebItemView} from "@/pages/web/pages/list/types/WebItem";
+import {handleItemContextmenu, handleListContextmenu} from "@/pages/web/pages/list/components/WebListContext";
+import WebListItem from "@/pages/web/pages/list/components/WebListItem.vue";
+import WebListAdd from "@/pages/web/pages/list/components/WebListAdd.vue";
 
 const router = useRouter();
 
 const keyword = ref('');
 
+const folder = computed(() => useWebFolderStore().webFolders);
 const sources = computed(() => useVideoSourceStore().sources);
 
-const openInfo = (id: string) => {
-  router.push(`/web/info/${id}`)
+const views = computed(() => buildWebItemViews(folder.value, sources.value));
+
+const openInfo = (view: WebItemView) => {
+  if (view.type === 'file') {
+    router.push(`/web/info/${view.id}`)
+  } else {
+    // TODO: 打开目录
+  }
 }
 const openSearch = () => {
   router.push({
@@ -91,9 +54,34 @@ const openSearch = () => {
     }
   })
 }
-const removeVideoSource = (source: VideoSourceEntry) => {
-  useVideoSourceStore().remove(source);
-}
+
+const contentRef = useTemplateRef('web-list-content');
+useSortable(contentRef, views, {
+  animation: 150,
+  handle: '.web-list-item',
+  onUpdate: (e) => {
+    const temp = Array.from(views.value);
+    // 移动数组。将e.oldIndex!位置移动到e.newIndex!
+    if (e.oldIndex === e.newIndex) {
+      return;
+    }
+    // 从原位置移除元素
+    const [movedItem] = temp.splice(e.oldIndex!, 1);
+    // 将元素插入到新位置
+    temp.splice(e.newIndex!, 0, movedItem);
+    // 修改
+    temp.forEach((item, order) => {
+      if (item.type === 'file') {
+        useVideoSourceStore().update({
+          id: item.id,
+          order: order
+        })
+      } else {
+        useWebFolderStore().sort(item.id, order);
+      }
+    })
+  }
+});
 </script>
 <style scoped lang="less">
 .web-list {
@@ -104,19 +92,16 @@ const removeVideoSource = (source: VideoSourceEntry) => {
   height: 100%;
   background-color: var(--td-bg-color-container);
   overflow: auto;
-}
 
-.web-search {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 56px;
-  background-color: var(--td-bg-color-container);
-
-  .web-search-content {
-    padding: 12px;
-    z-index: 1;
+  .web-list-content {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+    gap: 8px;
+    padding: 8px;
   }
 }
+
 </style>

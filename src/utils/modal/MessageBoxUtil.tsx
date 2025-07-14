@@ -73,6 +73,7 @@ export default {
   prompt(content: string, title?: string, config?: {
     confirmButtonText?: string,
     cancelButtonText?: string,
+    inputPlaceholder?: string,
     inputPattern?: RegExp,
     inputErrorMessage?: string,
     inputValue?: string,
@@ -82,6 +83,7 @@ export default {
       inputValue = '',
       confirmButtonText = '确认',
       cancelButtonText = '取消',
+      inputPlaceholder,
       onClose
     } = config || {};
     return new Promise<string>(resolve => {
@@ -95,7 +97,7 @@ export default {
       const res = DialogPlugin({
         default: () => <div>
           <Paragraph>{content}</Paragraph>
-          <Input autofocus={true} v-model={value.value} clearable={true} onEnter={onKeydown}></Input>
+          <Input autofocus={true} v-model={value.value} clearable={true} onEnter={onKeydown} placeholder={inputPlaceholder}></Input>
         </div>,
         header: title,
         draggable: true,

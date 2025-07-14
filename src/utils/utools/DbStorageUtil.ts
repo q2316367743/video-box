@@ -1,4 +1,4 @@
-import {clone} from "@/utils/lang/ObjUtil";
+import {clone} from "@/utils/lang/ObjUtil.ts";
 
 
 // 对象
