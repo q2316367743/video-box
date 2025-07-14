@@ -1,7 +1,7 @@
 <template>
   <div class="player">
     <div class="player-container">
-      <video-container :url="videoUrl"/>
+      <video-container :url="videoUrl" @next="handleNext"/>
     </div>
     <div class="player-side">
       <div class="side-container" v-if="video">
@@ -128,7 +128,7 @@ const videoUrl = ref('');
 const activeTab = ref('episodes');
 const chapterTabId = ref(chapterId.value);
 
-const initialize = (p: VideoPlugin, v: VideoDetail) => {
+const initialize = (_p: VideoPlugin, v: VideoDetail) => {
   title.value = v.title
   // 获取详情
   video.value = v;
@@ -172,10 +172,13 @@ const switchUrl = (res1: string, res2: number) => {
   index.value = 0;
 }
 
+const handleNext = () => {
+  switchUrl(chapterId.value, index.value + 1);
+}
 
 onMounted(() => {
   initialize(props.plugin, props.defaultVideo);
-})
+});
 </script>
 <style scoped lang="less">
 .player {

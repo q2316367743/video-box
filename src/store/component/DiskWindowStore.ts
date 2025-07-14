@@ -1,8 +1,10 @@
 import {defineStore} from "pinia";
-import {CustomerWindow, WindowUtil} from "@/utils/utools/WindowUtil";
-import MessageUtil from "@/utils/modal/MessageUtil";
-import {clone} from "@/utils/lang/ObjUtil";
-import {DiskInfo} from "@/entities/disk/DiskEntry";
+import {CustomerWindow, WindowUtil} from "@/utils/utools/WindowUtil.ts";
+import MessageUtil from "@/utils/modal/MessageUtil.ts";
+import {clone} from "@/utils/lang/ObjUtil.ts";
+import {DiskInfo} from "@/entities/disk/DiskEntry.ts";
+import {usePlayHistoryStore} from "@/store/db/PlayHistoryStore.ts";
+import {useSnowflake} from "@/hooks/Snowflake.ts";
 
 export const useDiskWindowStore = defineStore('disk-window-store', () => {
   let cw: CustomerWindow | null = null;
@@ -49,6 +51,15 @@ export const useDiskWindowStore = defineStore('disk-window-store', () => {
       });
       await cw.open();
       const data = clone({info, index}, true);
+      usePlayHistoryStore().add({
+        id: useSnowflake().nextId(),
+        createTime: Date.now(),
+        type: "disk",
+        cover: info.programs[index].cover,
+        title: info.programs[index].title,
+        description: info.programs[index].description,
+        payload: data
+      }).then(() => console.log("新增历史记录")).catch(e => console.error("新增历史记录失败", e));
       stop.value = false;
       const interval = setInterval(() => {
         cw?.sendMessage({

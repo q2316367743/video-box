@@ -15,6 +15,7 @@ const props = defineProps({
     required: false
   }
 });
+const emit = defineEmits(['next']);
 const art = shallowRef<Artplayer>();
 const videoRef = useTemplateRef('art-player');
 
@@ -37,11 +38,15 @@ onMounted(() => {
     fullscreenWeb: true,
     setting: true,
   });
-});
-watch(() => props.url, url => {
-  if (!art.value) return;
-  art.value.switchUrl(url);
+  art.value.on('video:ended', () => {
+    emit('next');
+  })
   art.value.play();
+});
+watch(() => props.url, async url => {
+  if (!art.value) return;
+  await art.value.switchUrl(url);
+  await art.value.play();
 })
 watch(() => props.type, type => {
   if (!art.value || !type) return;

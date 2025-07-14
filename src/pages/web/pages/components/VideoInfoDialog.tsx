@@ -1,5 +1,5 @@
 import {Button, Card, Divider, DrawerPlugin, Image, TabPanel, Tabs, Tag} from 'tdesign-vue-next'
-import {VideoListItem, VideoPlugin} from "@/modules/video/VideoPlugin";
+import {VideoListItem, VideoPlugin} from "@/modules/video/VideoPlugin.ts";
 import {
   CalendarIcon, HeartIcon,
   Location1Icon,
@@ -8,10 +8,10 @@ import {
   TimeIcon,
   UsergroupIcon
 } from "tdesign-icons-vue-next";
-import {usePlayerWindowStore} from "@/store";
-import {isNotEmptyString} from "@/utils/lang/FieldUtil";
-import {useCacheRecordStorage} from "@/hooks/CacheRecordStorage";
-import {LocalNameEnum} from "@/global/LocalNameEnum";
+import {usePlayerWindowStore} from "@/store/index.ts";
+import {isNotEmptyString} from "@/utils/lang/FieldUtil.ts";
+import {useCacheRecordStorage} from "@/hooks/CacheRecordStorage.ts";
+import {LocalNameEnum} from "@/global/LocalNameEnum.ts";
 
 
 export async function openVideoInfoDrawer(item: VideoListItem, plugin: VideoPlugin) {

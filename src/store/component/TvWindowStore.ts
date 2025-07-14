@@ -1,7 +1,10 @@
 import {defineStore} from "pinia";
-import {CustomerWindow, WindowUtil} from "@/utils/utools/WindowUtil";
-import MessageUtil from "@/utils/modal/MessageUtil";
-import {clone} from "@/utils/lang/ObjUtil";
+import {CustomerWindow, WindowUtil} from "@/utils/utools/WindowUtil.js";
+import MessageUtil from "@/utils/modal/MessageUtil.js";
+import {clone} from "@/utils/lang/ObjUtil.js";
+import {usePlayHistoryStore} from "@/store/db/PlayHistoryStore.js";
+import {useSnowflake} from "@/hooks/Snowflake.js";
+import {M3u8Channel} from "@/entities/LiveSource.js";
 
 export const useTvWindowStore = defineStore('tv-window-store', () => {
   let cw: CustomerWindow | null = null;
@@ -33,7 +36,7 @@ export const useTvWindowStore = defineStore('tv-window-store', () => {
     }
   })
 
-  async function openTvWindow(sourceId: number, url: string, name: string) {
+  async function openTvWindow(sourceId: number, item: M3u8Channel) {
     try {
       await closeTvWindow();
       cw = WindowUtil.createBrowserWindow('tv', {
@@ -47,7 +50,16 @@ export const useTvWindowStore = defineStore('tv-window-store', () => {
         backgroundColor: '#00000000',
       });
       await cw.open();
-      const data = clone({sourceId, url}, true);
+      const data = clone({sourceId, url: item.url}, true);
+      usePlayHistoryStore().add({
+        id: useSnowflake().nextId(),
+        createTime: Date.now(),
+        type: "tv",
+        cover: item.logo,
+        title: item.name,
+        description: '',
+        payload: {sourceId, item}
+      }).then(() => console.log("新增历史记录")).catch(e => console.error("新增历史记录失败", e));
       stop.value = false;
       const interval = setInterval(() => {
         cw?.sendMessage({
@@ -58,7 +70,7 @@ export const useTvWindowStore = defineStore('tv-window-store', () => {
           clearInterval(interval);
         }
       }, 1000);
-      title.value = name;
+      title.value = item.name;
       return cw;
     } catch (error) {
       title.value = '';

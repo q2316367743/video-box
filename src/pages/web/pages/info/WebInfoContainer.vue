@@ -108,7 +108,9 @@ useInfiniteScroll(containerRef, () => {
 }
 
 .web-category {
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
+
   :deep(.t-submenu) {
     margin: 0;
   }

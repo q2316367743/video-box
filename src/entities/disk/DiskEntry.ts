@@ -1,5 +1,5 @@
-import {DiskDriver, DiskSource} from "@/entities/disk/DiskSource";
-import {useSnowflake} from "@/hooks/Snowflake";
+import {DiskDriver, DiskSource} from "@/entities/disk/DiskSource.ts";
+import {useSnowflake} from "@/hooks/Snowflake.ts";
 
 /**
  * 网络硬盘节目章节，一个章节就是一个视频文件

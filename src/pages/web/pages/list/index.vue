@@ -1,7 +1,6 @@
 <template>
   <page-layout title="网络资源">
     <template #extra>
-
       <t-input v-model="keyword" placeholder="请输入资源名，回车搜索" :disabled="sources.length === 0" clearable
                @enter="openSearch" style="min-width: 400px; max-width: 600px;width: 50%">
         <template #prefix-icon>
@@ -17,6 +16,7 @@
       </div>
     </div>
     <t-back-top container=".web-list"/>
+    <web-folder v-model="model.visible" :folder="model.folder"/>
   </page-layout>
 </template>
 <script lang="ts" setup>
@@ -25,14 +25,19 @@ import {
 } from "tdesign-icons-vue-next";
 import {useSortable} from "@vueuse/integrations/useSortable";
 import {useVideoSourceStore, useWebFolderStore} from "@/store";
-import {buildWebItemViews, WebItemView} from "@/pages/web/pages/list/types/WebItem";
+import {buildWebItemViews, WebItemFolder, WebItemView} from "@/pages/web/pages/list/types/WebItem";
 import {handleItemContextmenu, handleListContextmenu} from "@/pages/web/pages/list/components/WebListContext";
 import WebListItem from "@/pages/web/pages/list/components/WebListItem.vue";
 import WebListAdd from "@/pages/web/pages/list/components/WebListAdd.vue";
+import WebFolder from "@/pages/web/pages/list/components/WebFolder.vue";
 
 const router = useRouter();
 
 const keyword = ref('');
+const model = ref({
+  visible: false,
+  folder: null as WebItemFolder | null
+})
 
 const folder = computed(() => useWebFolderStore().webFolders);
 const sources = computed(() => useVideoSourceStore().sources);
@@ -44,6 +49,10 @@ const openInfo = (view: WebItemView) => {
     router.push(`/web/info/${view.id}`)
   } else {
     // TODO: 打开目录
+    model.value = {
+      visible: true,
+      folder: view
+    }
   }
 }
 const openSearch = () => {
@@ -59,6 +68,7 @@ const contentRef = useTemplateRef('web-list-content');
 useSortable(contentRef, views, {
   animation: 150,
   handle: '.web-list-item',
+  filter: '.web-list-add',
   onUpdate: (e) => {
     const temp = Array.from(views.value);
     // 移动数组。将e.oldIndex!位置移动到e.newIndex!

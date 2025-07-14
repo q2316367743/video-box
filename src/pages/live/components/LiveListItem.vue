@@ -1,5 +1,5 @@
 <template>
-  <div v-if="item" class="live-list-item" @click="openPlayer(item.name,item.url)">
+  <div v-if="item" class="live-list-item" @click="openPlayer(item)">
     <div class="cover">
       <t-image :src="item.logo" :alt="item.name" :width="150" :height="85" fit="contain"
                :preview="false">
@@ -25,10 +25,10 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {M3u8ChannelWrap} from "@/entities/LiveSource";
 import {LoadingIcon, VideoCamera1Icon} from "tdesign-icons-vue-next";
-import {useHead} from "@/hooks/HttpRequest";
-import {useTvWindowStore} from "@/store";
+import {M3u8Channel, M3u8ChannelWrap} from "@/entities/LiveSource.js";
+import {useHead} from "@/hooks/HttpRequest.js";
+import {useTvWindowStore} from "@/store/index.js";
 
 // -1:加载中、-2:超时
 const timeout = ref(0);
@@ -69,8 +69,8 @@ function onTimeout() {
     })
 }
 
-const openPlayer = (name: string, url: string) => {
-  useTvWindowStore().openTvWindow(props.active, url, name);
+const openPlayer = (item: M3u8Channel) => {
+  useTvWindowStore().openTvWindow(props.active, item);
 
 }
 </script>

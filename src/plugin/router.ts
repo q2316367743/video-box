@@ -1,5 +1,5 @@
 import {createRouter, createWebHashHistory, RouteRecordRaw} from 'vue-router';
-import {HomeIcon, InfoCircleIcon, InternetIcon, SettingIcon, TvIcon} from 'tdesign-icons-vue-next';
+import {HistoryIcon, HomeIcon, InfoCircleIcon, InternetIcon, SettingIcon, TvIcon} from 'tdesign-icons-vue-next';
 
 export const routes: Array<RouteRecordRaw> = [{
   name: '网盘',
@@ -48,6 +48,13 @@ export const routes: Array<RouteRecordRaw> = [{
   component: () => import('@/pages/live/index.vue'),
   meta: {
     icon: TvIcon,
+  }
+}, {
+  name: '播放历史',
+  path: '/history',
+  component: () => import('@/pages/history/index.vue'),
+  meta: {
+    icon: HistoryIcon,
   }
 }, {
   name: '设置',

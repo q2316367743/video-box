@@ -9,7 +9,6 @@ export const useWebFolderStore = defineStore('folderStore', () => {
   const rev = ref<string>();
 
   listByAsync(LocalNameEnum.LIST_FOLDER_VIDEO).then(res => {
-    console.log(res)
     webFolders.value = res.list;
     rev.value = res.rev;
   });

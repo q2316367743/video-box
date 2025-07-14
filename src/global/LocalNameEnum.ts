@@ -8,8 +8,12 @@ export enum LocalNameEnum {
 
   LIST_FOLDER_VIDEO = '/list/folder/video',
 
+  LIST_HISTORY = '/list/history',
+
   ITEM_SOURCE_LIVE_CHANNEL = '/item/source/live/channel/',
   ITEM_SOURCE_DISK = '/item/source/disk/',
+
+  ITEM_HISTORY = '/item/history/',
 
   KEY_PLAYER_VIDEO_INDEX = '/key/player/video/index',
   KEY_PLAYER_VIDEO_VOLUME = '/key/player/video/volume',
