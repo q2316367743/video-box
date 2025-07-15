@@ -1,4 +1,4 @@
-import {VideoSourceEntry} from "@/entities/VideoSource";
+import {VideoSourceEntry} from "@/entities/VideoSource.js";
 
 export interface VideoPageResult {
   // 当前页
@@ -22,11 +22,13 @@ export interface VideoRecommend {
   cover: string;
   title: string;
   category: VideoCategory;
-  titleEn: string;
+  titleEn?: string;
   // 更新时间
   time: string;
   // 播放来源
   playFrom: string;
+  // 备注
+  remark?: string;
 }
 
 export interface VideoHome extends VideoPageResult {
@@ -56,10 +58,8 @@ export interface VideoListItem {
   cover: string;
   // 标题
   title: string;
-  // 标题
+  // 副标题
   subtitle: string;
-  // 英文标题
-  titleEn: string;
   // 标签
   types: Array<string>;
   // 演员表
@@ -68,9 +68,7 @@ export interface VideoListItem {
   directors: Array<string>;
   // 导演
   writers: Array<string>;
-  // 推荐
-  blurb: string;
-  // 备注
+  // 备注,更新至多少集
   remark: string;
   // 上映时间
   releaseDate: string;
@@ -84,10 +82,10 @@ export interface VideoListItem {
   releaseYear: string;
   // 每集时长
   duration: string;
-  // 内容，可能是html
+  // 内容，剧情简介，可能是html
   content: string;
-  // 播放地址
-  playUrls: Array<VideoListItemChapter>;
+  // 章节目录
+  chapters: Array<VideoListItemChapter>;
 }
 
 

@@ -4,10 +4,10 @@
   </t-form-item>
 </template>
 <script lang="ts" setup>
-import {VideoPluginForCmsProps} from "@/modules/video/impl/cms/VideoPluginForCms";
+import {VideoPluginForCmsJsonProps} from "@/modules/video/impl/cms-json/VideoPluginForCmsJson.js";
 
 const form = defineModel({
-  type: Object as PropType<VideoPluginForCmsProps>,
+  type: Object as PropType<VideoPluginForCmsJsonProps>,
   default: () => ({
     url: ''
   })

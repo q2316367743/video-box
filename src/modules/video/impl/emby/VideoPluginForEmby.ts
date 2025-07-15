@@ -1,5 +1,5 @@
-import {AbsVideoPluginForStore} from "@/modules/video/abs/AbsVideoPluginForStore";
-import {VideoSource} from "@/entities/VideoSource";
+import {AbsVideoPluginForStore} from "@/modules/video/abs/AbsVideoPluginForStore.js";
+import {VideoSource} from "@/entities/VideoSource.js";
 import {
   VideoCategoryResult, VideoCommonResult,
   VideoDetail,
@@ -7,17 +7,17 @@ import {
   VideoListItem,
   VideoRecommend,
   VideoSearchResult
-} from "@/modules/video/VideoPlugin";
+} from "@/modules/video/VideoPlugin.js";
 import {AxiosError} from "axios";
-import Constant from "@/global/Constant";
-import {EmbyAuthenticateByName} from "@/modules/video/impl/emby/types/EmbyAuthenticateByName";
-import MessageUtil from "@/utils/modal/MessageUtil";
-import {EmbyItems} from "@/modules/video/impl/emby/types/EmbyItems";
-import {EmbyResume} from "@/modules/video/impl/emby/types/EmbyResume";
-import {EmbyItemInfo} from "@/modules/video/impl/emby/types/EmbyItemsInfo";
-import {EmbyPlaybackInfo} from "@/modules/video/impl/emby/types/EmbyPlaybackInfo";
-import {EmbyView} from "@/modules/video/impl/emby/types/EmbyView";
-import {useRequest} from "@/hooks/HttpRequest";
+import Constant from "@/global/Constant.js";
+import {EmbyAuthenticateByName} from "@/modules/video/impl/emby/types/EmbyAuthenticateByName.js";
+import MessageUtil from "@/utils/modal/MessageUtil.js";
+import {EmbyItems} from "@/modules/video/impl/emby/types/EmbyItems.js";
+import {EmbyResume} from "@/modules/video/impl/emby/types/EmbyResume.js";
+import {EmbyItemInfo} from "@/modules/video/impl/emby/types/EmbyItemsInfo.js";
+import {EmbyPlaybackInfo} from "@/modules/video/impl/emby/types/EmbyPlaybackInfo.js";
+import {EmbyView} from "@/modules/video/impl/emby/types/EmbyView.js";
+import {useRequest} from "@/hooks/HttpRequest.js";
 
 export interface VideoPluginForEmbyProps {
   url: string;
@@ -122,7 +122,6 @@ export class VideoPluginForEmby extends AbsVideoPluginForStore {
       actors: res.People.filter(e => e.Type === 'Actor').map(e => e.Name),
       directors: [],
       writers: [],
-      blurb: "",
       remark: "",
       releaseDate: res.PremiereDate,
       total: res.ChildCount,
@@ -130,7 +129,7 @@ export class VideoPluginForEmby extends AbsVideoPluginForStore {
       language: res.OfficialRating || '',
       duration: "",
       content: "",
-      playUrls: [{
+      chapters: [{
         id: encodeURIComponent(this.props.title),
         name: this.props.title,
         items: info.MediaSources.map(s => ({
@@ -153,12 +152,10 @@ export class VideoPluginForEmby extends AbsVideoPluginForStore {
         cover: `${this.props.props.url}/emby/Items/${e.Id}/Images/Primary?maxHeight=450&maxWidth=300&tag=${e.ImageTags.Primary}&quality=90`,
         title: e.Name,
         subtitle: '',
-        titleEn: '',
         types: [],
         actors: [],
         directors: [],
         writers: [],
-        blurb: "",
         remark: "",
         releaseDate: "",
         total: 0,
@@ -167,7 +164,7 @@ export class VideoPluginForEmby extends AbsVideoPluginForStore {
         releaseYear: e.ProductionYear + '',
         duration: "",
         content: "",
-        playUrls: []
+        chapters: []
       } as VideoListItem))
     };
   }

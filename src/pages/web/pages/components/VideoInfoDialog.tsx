@@ -19,7 +19,7 @@ export async function openVideoInfoDrawer(item: VideoListItem, plugin: VideoPlug
   const detail = await plugin.getDetail(item);
   // 获取看到哪里了
   const createRef = useCacheRecordStorage(LocalNameEnum.KEY_PLAYER_VIDEO_INDEX);
-  const chapterId = createRef<string>(`/${plugin.props.id}/${detail.id}`, 'chapter', detail.playUrls[0]?.name || '');
+  const chapterId = createRef<string>(`/${plugin.props.id}/${detail.id}`, 'chapter', detail.chapters[0]?.name || '');
   const idx = createRef<number>(`/${plugin.props.id}/${detail.id}`, 'index', 0);
 
   const handlePlay = () => {
@@ -102,7 +102,7 @@ export async function openVideoInfoDrawer(item: VideoListItem, plugin: VideoPlug
         {/* 剧情简介 */}
         <div class="space-y-3 mt-8px">
           <h3 class="font-semibold">剧情简介</h3>
-          <p class="text-sm text-muted-foreground leading-relaxed">{detail.blurb}</p>
+          <p class="text-sm text-muted-foreground leading-relaxed" innerHTML={detail.content}></p>
         </div>
 
         <Divider/>
@@ -133,13 +133,13 @@ export async function openVideoInfoDrawer(item: VideoListItem, plugin: VideoPlug
         <Divider/>
 
         {/* 播放源 */}
-        {detail.playUrls && detail.playUrls.length > 0 && (
+        {detail.chapters && detail.chapters.length > 0 && (
           <>
             <div class="space-y-3">
               <h3 class="font-semibold">播放源</h3>
               <div class="space-y-2">
                 <Tabs defaultValue={chapterId.value} class="w-full">
-                  {detail.playUrls.map((source, index) => (
+                  {detail.chapters.map((source, index) => (
                     <TabPanel key={index} label={source.name} value={source.id}>
                       <div class="mt-8px flex justify-start items-start flex-wrap content-start gap-8px">
                         {source.items.map((item, i) => (

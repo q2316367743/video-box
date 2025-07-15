@@ -1,5 +1,5 @@
 import axios, {AxiosRequestConfig} from "axios";
-import {useBaseSettingStore} from "@/store/db/BaseSettingStore";
+import {useBaseSettingStore} from "@/store/index.js";
 
 export function useRequest<T>(url: string, config?: AxiosRequestConfig) {
   const _config: AxiosRequestConfig = {

@@ -1,12 +1,14 @@
 import {SelectOption} from "tdesign-vue-next";
-import {VideoPluginForCmsProps} from "@/modules/video/impl/cms/VideoPluginForCms.ts";
+import {VideoPluginForCmsJsonProps} from "@/modules/video/impl/cms-json/VideoPluginForCmsJson.ts";
 import {VideoPluginForJellyfinProps} from "@/modules/video/impl/jellyfin/VideoPluginForJellyfin.ts";
 import {VideoPluginForEmbyProps} from "@/modules/video/impl/emby/VideoPluginForEmby.ts";
+import {VideoPluginForCmsXmlProps} from "@/modules/video/impl/cms-xml/VideoPluginForCmsXml.js";
 import {useSnowflake} from "@/hooks/Snowflake.ts";
 import {fetchFavicon} from "@/utils/file/HttpUtil.ts";
 
 export type VideoSourceType = {
-  'CMS:JSON': VideoPluginForCmsProps,
+  'CMS:JSON': VideoPluginForCmsJsonProps,
+  'CMS:XML': VideoPluginForCmsXmlProps,
   JELLYFIN: VideoPluginForJellyfinProps,
   EMBY: VideoPluginForEmbyProps
 }
@@ -15,6 +17,9 @@ export type VideoSourceTypeName = keyof VideoSourceType;
 export const videoSourceTypeOptions: Array<SelectOption> = [{
   label: 'CMS (JSON)',
   value: 'CMS:JSON'
+}, {
+  label: 'CMS (XML)',
+  value: 'CMS:XML'
 }, {
   label: 'Emby',
   value: 'EMBY'

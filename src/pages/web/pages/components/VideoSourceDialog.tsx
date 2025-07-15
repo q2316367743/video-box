@@ -2,8 +2,9 @@ import {DialogPlugin, Form, FormItem, Input, LoadingPlugin, Radio, RadioGroup, S
 import {VideoSourceEntry, videoSourceTypeOptions} from "@/entities/VideoSource.ts";
 import {useVideoSourceStore} from "@/store/index.ts";
 import MessageUtil from "@/utils/modal/MessageUtil.ts";
-import VideoFormForCms from "@/modules/video/impl/cms/VideoFormForCms.vue";
+import VideoFormForCmsJson from "@/modules/video/impl/cms-json/VideoFormForCmsJson.vue";
 import VideoFormForEmby from "@/modules/video/impl/emby/VideoFormForEmby.vue";
+import VideoFormForCmsXml from "@/modules/video/impl/cms-xml/VideoFormForCmsXml.vue";
 
 export function openVideoSourceDialog(old?: VideoSourceEntry) {
   const op = !!old ? '更新' : '新增';
@@ -43,7 +44,9 @@ export function openVideoSourceDialog(old?: VideoSourceEntry) {
         <Input v-model={data.value.favicon}/>
       </FormItem>}
       {data.value.type === 'CMS:JSON' ?
-        <VideoFormForCms v-model={data.value.props}/> :
+        <VideoFormForCmsJson v-model={data.value.props}/> :
+        data.value.type === 'CMS:XML' ?
+          <VideoFormForCmsXml v-model={data.value.props}/> :
         data.value.type === 'EMBY' ?
           <VideoFormForEmby v-model={data.value.props}/> :
           <span>类型未知</span>}

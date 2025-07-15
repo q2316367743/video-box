@@ -11,8 +11,8 @@
             <header class="card-header">
               <div class="space-y-3">
                 <h2 class="text-2xl leading-tight ellipsis" :title="video.title">{{ video.title }}</h2>
-                <div class="text-sm" v-if="video.titleEn || video.releaseYear">
-                  {{ video.titleEn }} ({{ video.releaseYear }})
+                <div class="text-sm" v-if="video.subtitle || video.releaseYear">
+                  {{ video.subtitle }} ({{ video.releaseYear }})
                 </div>
                 <div class="flex flex-wrap gap-2">
                   <template v-for="g in video.types" :key="g">
@@ -51,7 +51,7 @@
               <t-tab-panel label="剧集列表" value="episodes">
                 <div class="space-y-2 mt-8px">
                   <t-tabs v-model="chapterTabId">
-                    <t-tab-panel v-for="chapter in video.playUrls" :label="chapter.name" :value="chapter.id"
+                    <t-tab-panel v-for="chapter in video.chapters" :label="chapter.name" :value="chapter.id"
                                  class="mt-8px">
                       <div class="play-items">
                         <t-tooltip v-for="(episode, i) in chapter.items" :key="episode.url" :content="episode.name">
@@ -133,7 +133,7 @@ const initialize = (_p: VideoPlugin, v: VideoDetail) => {
   // 获取详情
   video.value = v;
   // 默认值
-  if (!chapterId.value) chapterId.value = video.value.playUrls[0]?.id;
+  if (!chapterId.value) chapterId.value = video.value.chapters[0]?.id;
   chapterTabId.value = chapterId.value;
   switchUrl(chapterId.value, index.value);
 }
@@ -145,11 +145,11 @@ const playItem = (name: string, url: string) => {
 
 const switchUrl = (res1: string, res2: number) => {
   if (!video.value) return;
-  if (isEmptyArray(video.value.playUrls)) return MessageUtil.error("播放章节为空");
-  const target = res1 || video.value.playUrls[0]?.name;
+  if (isEmptyArray(video.value.chapters)) return MessageUtil.error("播放章节为空");
+  const target = res1 || video.value.chapters[0]?.name;
   const idx = res2 || 0;
 
-  for (let chapter of video.value.playUrls) {
+  for (let chapter of video.value.chapters) {
     if (chapter.id === target) {
       if (isEmptyArray(chapter.items)) return MessageUtil.error("章节目录为空");
       const {name, url} = chapter.items[idx];
@@ -162,7 +162,7 @@ const switchUrl = (res1: string, res2: number) => {
     }
   }
   // 没找到
-  const first = video.value.playUrls[0];
+  const first = video.value.chapters[0];
   if (isEmptyArray(first.items)) return MessageUtil.error("默认章节目录为空");
   const {name, url} = first.items[0];
   // 播放音乐
