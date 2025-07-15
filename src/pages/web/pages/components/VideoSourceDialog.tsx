@@ -21,7 +21,7 @@ export function openVideoSourceDialog(old?: VideoSourceEntry) {
     folder: '',
     order: 0
   });
-  const iconType = ref(1);
+  const iconType = ref(2);
   const dp = DialogPlugin({
     header: op + '网络资源',
     placement: "center",
@@ -35,8 +35,8 @@ export function openVideoSourceDialog(old?: VideoSourceEntry) {
       </FormItem>
       <FormItem label="图标" name={'type'} required-mark>
         <RadioGroup v-model={iconType.value}>
-          <Radio value={1} label={'自动获取'}/>
           <Radio value={2} label={'文字图标'}/>
+          <Radio value={1} label={'自动获取'}/>
           <Radio value={3} label={'自定义'}/>
         </RadioGroup>
       </FormItem>

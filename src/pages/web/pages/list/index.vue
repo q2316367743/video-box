@@ -2,7 +2,7 @@
   <page-layout title="网络资源">
     <template #extra>
       <t-input v-model="keyword" placeholder="请输入资源名，回车搜索" :disabled="sources.length === 0" clearable
-               @enter="openSearch" style="min-width: 400px; max-width: 600px;width: 50%">
+               @enter="openSearch" style="min-width: 200px; max-width: 400px;width: 33vw">
         <template #prefix-icon>
           <search-icon/>
         </template>

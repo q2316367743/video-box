@@ -1,5 +1,8 @@
 <template>
-  <t-dialog v-model:visible="visible" :header="name" placement="center" :footer="false">
+  <t-dialog v-model:visible="visible" placement="center" :footer="false" :close-btn="false" :draggable="true">
+    <template #header>
+      <div class="text-center w-full">{{ name }}</div>
+    </template>
     <div class="web-list-content" ref="web-list-content">
       <web-list-item v-for="view in views" :key="view.id" :view="view" @click="openInfo(view)"
                      @contextmenu.stop="handleItemContextmenu($event, view, openInfo)"/>

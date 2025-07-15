@@ -29,6 +29,8 @@ defineProps({
 const openOne = (item: PlayHistoryItem) => {
   usePlayHistoryStore().getContent(item.id).then(content => {
     const {type, payload} = content;
+    console.log(content);
+    // TODO: 此处有bug
     switch (type) {
       case "web":
         usePlayerWindowStore().openPlayerWindow(payload.source, payload.video);
@@ -52,12 +54,12 @@ const openOne = (item: PlayHistoryItem) => {
   cursor: pointer;
   margin-bottom: 12px;
   display: inline-block;
-  width: 100%;
 
   &__cover {
     position: relative;
     overflow: hidden;
     border-radius: var(--td-radius-medium);
+    width: 200px;
 
     :deep(img) {
       transition: transform 0.3s ease;

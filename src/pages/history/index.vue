@@ -6,17 +6,14 @@
       <t-tab-panel label="直播" value="tv"></t-tab-panel>
     </t-tabs>
     <div class="history-content">
-      <t-list :split="true">
-        <t-list-item v-for="item in items" :key="item.id">
-          <t-list-item-meta :image="item.cover" :title="item.title" :description="item.subtitle"/>
-        </t-list-item>
-      </t-list>
-      <empty-result v-if="items.length == 0" title="空空如也"/>
+      <history-item v-for="item in items" :key="item.id" :item="item"/>
     </div>
+    <empty-result v-if="items.length == 0" title="空空如也"/>
   </div>
 </template>
 <script lang="ts" setup>
 import {usePlayHistoryStore} from "@/store/db/PlayHistoryStore.ts";
+import HistoryItem from "@/pages/history/components/HistoryItem.vue";
 
 const activeKey = ref('disk');
 
@@ -34,6 +31,14 @@ const items = computed(() => usePlayHistoryStore().playHistoryItems.filter(e => 
     left: 0;
     right: 0;
     bottom: 0;
+    overflow: auto;
+    display: flex;
+    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 8px;
+    gap: 8px;
   }
 }
 </style>
