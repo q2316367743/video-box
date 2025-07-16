@@ -60,22 +60,22 @@ export async function openVideoInfoDrawer(item: VideoListItem, plugin: VideoPlug
             </div>
 
             <div class="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
-              <div class="flex items-center gap-1">
+              {detail.releaseYear && <div class="flex items-center gap-1">
                 <CalendarIcon class="h-3 w-3"/>
                 <span>{detail.releaseYear}</span>
-              </div>
-              <div class="flex items-center gap-1">
+              </div>}
+              {detail.duration && <div class="flex items-center gap-1">
                 <TimeIcon class="h-3 w-3"/>
                 <span>{detail.duration}</span>
-              </div>
-              <div class="flex items-center gap-1">
+              </div>}
+              {detail.region && <div class="flex items-center gap-1">
                 <Location1Icon class="h-3 w-3"/>
                 <span>{detail.region}</span>
-              </div>
-              <div class="flex items-center gap-1">
+              </div>}
+              {detail.language && <div class="flex items-center gap-1">
                 <UsergroupIcon class="h-3 w-3"/>
                 <span>{detail.language}</span>
-              </div>
+              </div>}
             </div>
           </div>
         </div>

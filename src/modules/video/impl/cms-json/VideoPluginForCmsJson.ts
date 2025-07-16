@@ -72,10 +72,10 @@ export class VideoPluginForCmsJson extends AbsVideoPluginForStore {
           cover: e.vod_pic,
           title: e.vod_name,
           subtitle: e.vod_sub,
-          types: e.vod_tag.split(','),
-          actors: e.vod_actor.split(','),
-          directors: e.vod_director.split(','),
-          writers: e.vod_writer.split(','),
+          types: e.vod_tag?.split(',') || [],
+          actors: e.vod_actor?.split(',') || [],
+          directors: e.vod_director?.split(',') || [],
+          writers: e.vod_writer?.split(',') || [],
           remark: e.vod_remarks,
           releaseDate: e.vod_pubdate,
           total: e.vod_total,
@@ -113,7 +113,7 @@ export class VideoPluginForCmsJson extends AbsVideoPluginForStore {
         time: e.vod_time,
         playFrom: e.vod_play_from
       })),
-      categories: cmsTreeTransfer(data.class)
+      categories: data.class ? cmsTreeTransfer(data.class) : []
     }
   }
 

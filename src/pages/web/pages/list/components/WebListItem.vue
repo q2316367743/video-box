@@ -1,5 +1,5 @@
 <template>
-  <div class="web-list-item">
+  <div class="web-list-item" :title="view.name">
     <div class="web-list-item__cover">
       <folder-icon v-if="view.type === 'folder'"/>
       <t-avatar v-else :image="view.cover">{{ view.name.substring(0, 1) }}</t-avatar>
@@ -27,6 +27,7 @@ defineProps({
   border: 1px solid transparent;
   background-color: var(--td-bg-color-container);
   user-select: none;
+  width: 64px;
 
   &:hover {
     border: 1px solid var(--td-border-level-2-color);

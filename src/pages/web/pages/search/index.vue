@@ -5,11 +5,17 @@
         <t-tag theme="primary" variant="outline" size="large" v-if="loading" closable @close="handleStop">
           正在搜索 {{ current }} / {{ total }}
         </t-tag>
-        <t-input v-model="keyword" placeholder="请输入搜索内容" @enter="handleSearch" style="width: 180px">
-          <template #prefix-icon>
-            <search-icon/>
+        <t-input-adornment>
+          <template #prepend>
+            <t-select v-model="folderSelect" style="width: 96px" :options="options"/>
           </template>
-        </t-input>
+          <t-input v-model="keyword" placeholder="请输入资源名，回车搜索" clearable
+                   @enter="handleSearch" style="min-width: 200px; max-width: 400px;width: 33vw">
+            <template #suffix-icon>
+              <search-icon/>
+            </template>
+          </t-input>
+        </t-input-adornment>
       </t-space>
     </template>
     <loading-result v-if="loading && results.length === 0" title="正在搜索中"/>
@@ -26,11 +32,13 @@
 <script lang="ts" setup>
 import {uid} from 'radash'
 import {SearchIcon} from "tdesign-icons-vue-next";
-import {useVideoSourceStore} from "@/store";
+import {useVideoSourceStore, useWebFolderStore} from "@/store";
 import {VideoListItem, VideoPlugin} from "@/modules/video/VideoPlugin";
 import {buildVideoPlugin} from "@/modules/video";
 import {VideoSourceEntry} from "@/entities/VideoSource";
 import MessageUtil from "@/utils/modal/MessageUtil";
+import {isEmptyString} from "@/utils/lang/FieldUtil.js";
+import {set} from "@/utils/lang/ArrayUtil.js";
 import WebItem from "@/pages/web/pages/components/WebItem.vue";
 
 interface Result extends VideoSourceEntry {
@@ -41,9 +49,29 @@ interface Result extends VideoSourceEntry {
 const route = useRoute();
 
 const sources = computed(() => useVideoSourceStore().sources);
+const folders = computed(() => useWebFolderStore().webFolders);
+const options = computed(() => {
+  const o = [{
+    label: '全部',
+    value: ''
+  }];
+  if (folders.value.length > 0) {
+    o.push({
+      label: '根目录',
+      value: 'root'
+    })
+    o.push(...folders.value.map(f => ({
+      label: f.name,
+      value: f.id,
+    })));
+  }
+  return o;
+})
 const pluginMap = new Map<string, VideoPlugin>();
 
 const keyword = ref(route.query.keyword as string);
+const folderSelect = ref(route.query.folder as string);
+
 const results = ref(new Array<Result>());
 const uuid = ref('');
 const loading = ref(false);
@@ -61,10 +89,22 @@ async function handleSearch() {
   try {
     loading.value = true;
     let first = true;
-    total.value = sources.value.length;
+    const folderIds = set(folders.value, 'id');
+    const temps = sources.value.filter(s => {
+      if (isEmptyString(folderSelect.value)) {
+        return true;
+      } else if (folderSelect.value === 'root') {
+        // 根目录
+        return !folderIds.has(s.folder)
+      } else {
+        return s.folder === folderSelect.value;
+      }
+    });
+
+    total.value = temps.length;
     current.value = 0;
 
-    await Promise.all(sources.value.map(async source => {
+    await Promise.all(temps.map(async source => {
       let plugin = pluginMap.get(source.id);
       if (!plugin) {
         plugin = buildVideoPlugin(source);
@@ -74,14 +114,12 @@ async function handleSearch() {
         const res = await plugin.searchVideos(k, 1)
         if (flag !== uuid.value) return;
         current.value += 1;
-        console.log(source, res);
         if (!res.data || res.data.length === 0) return;
         results.value.push({
           ...source,
           list: res.data,
           plugin: plugin
         });
-        console.log(results.value)
         if (first) {
           activeKey.value = source.id;
           first = false;

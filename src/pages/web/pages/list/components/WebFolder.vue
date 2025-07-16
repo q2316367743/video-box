@@ -1,5 +1,5 @@
 <template>
-  <t-dialog v-model:visible="visible" placement="center" :footer="false" :close-btn="false" :draggable="true">
+  <t-dialog v-model:visible="visible" placement="center" :footer="false" :close-btn="false" :draggable="true" width="484px">
     <template #header>
       <div class="text-center w-full">{{ name }}</div>
     </template>

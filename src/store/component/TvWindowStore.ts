@@ -2,8 +2,6 @@ import {defineStore} from "pinia";
 import {CustomerWindow, WindowUtil} from "@/utils/utools/WindowUtil.js";
 import MessageUtil from "@/utils/modal/MessageUtil.js";
 import {clone} from "@/utils/lang/ObjUtil.js";
-import {usePlayHistoryStore} from "@/store/db/PlayHistoryStore.js";
-import {useSnowflake} from "@/hooks/Snowflake.js";
 import {M3u8Channel} from "@/entities/LiveSource.js";
 
 export const useTvWindowStore = defineStore('tv-window-store', () => {
@@ -51,15 +49,6 @@ export const useTvWindowStore = defineStore('tv-window-store', () => {
       });
       await cw.open();
       const data = clone({sourceId, url: item.url}, true);
-      usePlayHistoryStore().add({
-        id: useSnowflake().nextId(),
-        createTime: Date.now(),
-        type: "tv",
-        cover: item.logo,
-        title: item.name,
-        description: '',
-        payload: {sourceId, item}
-      }).then(() => console.log("新增历史记录")).catch(e => console.error("新增历史记录失败", e));
       stop.value = false;
       const interval = setInterval(() => {
         cw?.sendMessage({

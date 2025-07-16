@@ -4,8 +4,6 @@ import {VideoSourceEntry} from "@/entities/VideoSource.ts";
 import {VideoListItem} from "@/modules/video/VideoPlugin.ts";
 import MessageUtil from "@/utils/modal/MessageUtil.ts";
 import {clone} from "@/utils/lang/ObjUtil.ts";
-import {usePlayHistoryStore} from "@/store/db/PlayHistoryStore.js";
-import {useSnowflake} from "@/hooks/Snowflake.js";
 
 export const usePlayerWindowStore = defineStore('player-window-store', () => {
   let cw: CustomerWindow | null = null;
@@ -55,15 +53,6 @@ export const usePlayerWindowStore = defineStore('player-window-store', () => {
         source: source,
         video: video
       }, true);
-      usePlayHistoryStore().add({
-        id: useSnowflake().nextId(),
-        createTime: Date.now(),
-        type: "web",
-        cover: video.cover,
-        title: video.title,
-        description: video.remark,
-        payload: data
-      }).then(() => console.log("新增历史记录")).catch(e => console.error("新增历史记录失败", e));
       stop.value = false;
       const interval = setInterval(() => {
         cw?.sendMessage({
