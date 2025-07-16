@@ -1,7 +1,7 @@
 <template>
   <div class="waterfall-item" @click="openOne(r)" :title="r.title">
     <div class="waterfall-item__cover">
-      <t-image :src="r.cover" :alt="r.title" lazy fit="cover" style="min-height: 150px">
+      <t-image :src="r.cover" :alt="r.title" lazy fit="cover" style="min-height: 150px" @load="handleLoad">
         <template #error>
           <img src="/video.png" :alt="r.title"/>
         </template>
@@ -15,6 +15,7 @@
 <script lang="ts" setup>
 import {VideoListItem, VideoPlugin} from "@/modules/video/VideoPlugin";
 import {openVideoInfoDrawer} from "@/pages/web/pages/components/VideoInfoDialog";
+import Macy from "macy";
 
 const props = defineProps({
   plugin: {
@@ -24,12 +25,18 @@ const props = defineProps({
   r: {
     type: Object as PropType<VideoListItem>,
     required: true
+  },
+  macy: {
+    type: Object as PropType<Macy>
   }
 });
 
 const openOne = (item: VideoListItem) => {
   if (!props.plugin) return;
   openVideoInfoDrawer(item, props.plugin);
+}
+const handleLoad = () => {
+  props.macy?.recalculateOnImageLoad();
 }
 </script>
 <style scoped lang="less">
@@ -39,7 +46,7 @@ const openOne = (item: VideoListItem) => {
   cursor: pointer;
   margin-bottom: 12px;
   display: inline-block;
-  width: 100%;
+  width: 230px;
 
   &__cover {
     position: relative;

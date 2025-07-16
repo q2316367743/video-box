@@ -20,6 +20,7 @@
     "hls.js": "^1.6.5",
     "less": "^4.2.1",
     "less-loader": "^11.1.4",
+    "macy": "^2.5.1",
     "pinia": "^2.3.0",
     "radash": "^12.1.0",
     "sortablejs": "^1",

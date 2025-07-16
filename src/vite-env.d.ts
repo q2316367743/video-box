@@ -16,7 +16,6 @@ interface OpenFileOption {
   securityScopedBookmarks?: boolean
 }
 
-
 declare global {
 
 

@@ -6,8 +6,8 @@
     <div class="web-list" ref="containerRef" :style="{height: (winSize.height.value - headerSize.height.value) + 'px'}">
       <div class="web-list-container">
         <t-empty style="margin: 15vh 0" v-if="list.length === 0 && !loading"/>
-        <div class="waterfall-list" v-if="list.length > 0">
-          <web-item v-for="r in list" :key="r.id" :r="r" :plugin="plugin"/>
+        <div class="waterfall-list" ref="listRef">
+          <web-item v-for="r in list" :key="r.id" :r="r" :plugin="plugin" :macy/>
         </div>
         <div v-if="loading" class="w-full text-center my-8px">正在加载中...</div>
         <div v-if="bottom && list.length > 0" class="w-full text-center my-8px">人家也是有底线的</div>
@@ -17,11 +17,11 @@
   </div>
 </template>
 <script lang="ts" setup>
+import Macy from "macy";
 import {VideoCategory, VideoListItem, VideoPlugin} from "@/modules/video/VideoPlugin";
 import MessageUtil from "@/utils/modal/MessageUtil";
 import WebInfoHeader from "@/pages/web/pages/info/WebInfoHeader.vue";
 import WebItem from "@/pages/web/pages/components/WebItem.vue";
-
 
 const props = defineProps({
   plugin: {
@@ -32,6 +32,10 @@ const props = defineProps({
 
 const headerRef = ref<HTMLDivElement>();
 const containerRef = ref<HTMLDivElement>();
+const listRef = ref<HTMLDivElement>();
+
+const macy = shallowRef<Macy>()
+
 const categoryValue = ref('');
 const first = ref(true);
 const loading = ref(false);
@@ -71,6 +75,7 @@ const fetch = () => {
     })
     .finally(() => {
       loading.value = false;
+      macy.value?.recalculate();
     });
 }
 
@@ -90,7 +95,29 @@ onMounted(() => {
     categories.value = res.categories;
     loading.value = false;
     first.value = false;
-  }).catch(e => MessageUtil.error("获取资源数据出错", e))
+  }).catch(e => MessageUtil.error("获取资源数据出错", e));
+
+  if (listRef.value) {
+    // 瀑布流
+    macy.value = new Macy({
+      container: listRef.value,
+      trueOrder: false,
+      waitForImages: false,
+      margin: 8,
+      columns: 3,
+      breakAt: {
+        1960: 6,
+        1600: 5,
+        1200: 4,
+        960: 3,
+        520: 2,
+        400: 1
+      }
+    });
+  }
+});
+onBeforeMount(() => {
+  macy.value?.remove();
 });
 useInfiniteScroll(containerRef, () => {
   fetch();
@@ -127,10 +154,8 @@ useInfiniteScroll(containerRef, () => {
 
   .waterfall-list {
     margin-top: 8px;
-    /* 使用 column-width 实现自适应列数 */
-    column-width: 200px;
-    column-gap: 8px;
   }
+
 
 }
 </style>
