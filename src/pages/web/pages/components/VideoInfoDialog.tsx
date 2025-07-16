@@ -1,4 +1,13 @@
-import {Button, Card, Divider, DrawerPlugin, Image, TabPanel, Tabs, Tag} from 'tdesign-vue-next'
+import {
+  Button,
+  Card,
+  Divider,
+  DrawerPlugin,
+  Image,
+  TabPanel,
+  Tabs,
+  Tag
+} from 'tdesign-vue-next'
 import {VideoListItem, VideoPlugin} from "@/modules/video/VideoPlugin.ts";
 import {
   CalendarIcon, HeartIcon,
@@ -27,17 +36,17 @@ export async function openVideoInfoDrawer(item: VideoListItem, plugin: VideoPlug
       dp.destroy?.();
     }).catch(console.error);
   }
-  
-  const dp =  DrawerPlugin({
+
+  const dp = DrawerPlugin({
     header: detail.title,
-    size: '600px',
+    size: '300px',
     footer: false,
     default: () => (
       <div class="pb-16px">
 
         {/* 海报和基本信息 */}
         <div class="flex gap-4">
-          <div class="flex-shrink-0 w-200px overflow-hidden">
+          <div class="flex-shrink-0 w-100px overflow-hidden">
             <Image
               src={detail.cover || "./movie.svg"}
               alt={detail.title}
@@ -47,7 +56,7 @@ export async function openVideoInfoDrawer(item: VideoListItem, plugin: VideoPlug
           </div>
           <div class="flex-1 space-y-3">
             <div>
-              <h1 class="text-xl font-bold leading-tight">{detail.title}</h1>
+              <div class="text-xl font-bold leading-tight">{detail.title}</div>
               <p class="text-sm text-muted-foreground">{detail.subtitle}</p>
             </div>
 
@@ -112,20 +121,22 @@ export async function openVideoInfoDrawer(item: VideoListItem, plugin: VideoPlug
           <h3 class="font-semibold">影片信息</h3>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
-              <span class="text-muted-foreground">导演：</span>
-              <span class="text-right">{detail.writers.join("、")}</span>
+              <span class="min-w-65px">导演：</span>
+              <span
+                class="text-right">{(detail.writers && detail.writers.length > 0) ? detail.writers.join("、") : '-'}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-muted-foreground">主演：</span>
-              <span class="text-right max-w-[300px]">{detail.actors.join("、")}</span>
+              <span class="min-w-65px">主演：</span>
+              <span
+                class="text-right max-w-[300px]">{(detail.actors && detail.actors.length > 0) ? detail.actors.join("、") : '-'}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-muted-foreground">语言：</span>
-              <span class="text-right">{detail.language}</span>
+              <span class="min-w-65px">语言：</span>
+              <span class="text-right">{detail.language || '-'}</span>
             </div>
             <div class="flex justify-between">
-              <span class="text-muted-foreground">制片国家：</span>
-              <span class="text-right">{detail.region}</span>
+              <span class="min-w-65px">制片国家：</span>
+              <span class="text-right">{detail.region || '-'}</span>
             </div>
           </div>
         </div>
@@ -136,7 +147,7 @@ export async function openVideoInfoDrawer(item: VideoListItem, plugin: VideoPlug
         {detail.chapters && detail.chapters.length > 0 && (
           <>
             <div class="space-y-3">
-              <h3 class="font-semibold">播放源</h3>
+              <h3 class="font-semibold mb-0">播放源</h3>
               <div class="space-y-2">
                 <Tabs defaultValue={chapterId.value} class="w-full">
                   {detail.chapters.map((source, index) => (
