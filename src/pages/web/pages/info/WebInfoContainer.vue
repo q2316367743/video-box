@@ -22,6 +22,7 @@ import {VideoCategory, VideoListItem, VideoPlugin} from "@/modules/video/VideoPl
 import MessageUtil from "@/utils/modal/MessageUtil";
 import WebInfoHeader from "@/pages/web/pages/info/WebInfoHeader.vue";
 import WebItem from "@/pages/web/pages/components/WebItem.vue";
+import {uid} from "radash";
 
 const props = defineProps({
   plugin: {
@@ -34,15 +35,17 @@ const headerRef = ref<HTMLDivElement>();
 const containerRef = ref<HTMLDivElement>();
 const listRef = ref<HTMLDivElement>();
 
-const macy = shallowRef<Macy>()
+const macy = shallowRef<Macy>();
 
 const categoryValue = ref('');
 const first = ref(true);
 const loading = ref(false);
-const pageNum = ref(1);
+const pageNum = ref(0);
 const total = ref(0);
 const list = ref<Array<VideoListItem>>([]);
 const bottom = ref(false);
+// 标记请求
+const flag = shallowRef('');
 
 const winSize = useWindowSize();
 const headerSize = useElementSize(headerRef);
@@ -62,28 +65,50 @@ const fetch = () => {
   if (bottom.value) return;
   loading.value = true;
   pageNum.value += 1;
+  if (pageNum.value === 1) {
+    // 第一页滚动到顶部
+    containerRef.value?.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "smooth"
+    })
+  }
+  const key = uid(10);
+  flag.value = key;
   props.plugin.getVideos(categoryValue.value, pageNum.value)
     .then(res => {
+      // 不是一次请求
+      if (flag.value !== key) return;
       pageNum.value = res.page;
       total.value = res.total;
       list.value.push(...res.data);
       if (pageNum.value * 20 > total.value) bottom.value = true;
+      nextTick(() => {
+        macy.value?.recalculate();
+        nextTick(() => {
+          macy.value?.recalculateOnImageLoad(true);
+        })
+      });
     })
     .catch(e => {
+      // 不是一次请求
+      if (flag.value !== key) return;
       MessageUtil.error("获取资源数据出错", e);
       bottom.value = true;
     })
     .finally(() => {
+      // 不是一次请求
+      if (flag.value !== key) return;
       loading.value = false;
-      macy.value?.recalculate();
     });
 }
 
 watch(categoryValue, () => {
-  pageNum.value = 1;
+  pageNum.value = 0;
   total.value = 0;
   list.value = [];
   bottom.value = false;
+  loading.value = false;
   fetch();
 }, {immediate: true});
 
@@ -95,7 +120,7 @@ onMounted(() => {
     categories.value = res.categories;
     loading.value = false;
     first.value = false;
-  }).catch(e => MessageUtil.error("获取资源数据出错", e));
+  }).catch(e => MessageUtil.error("获取分类数据出错", e));
 
   if (listRef.value) {
     // 瀑布流
