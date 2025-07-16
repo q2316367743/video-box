@@ -97,7 +97,7 @@ async function downloadFile(data, name) {
         }
         resolve(target);
       });
-    } else {
+    } else if (typeof data === 'string') {
       // 如果是链接
       if (/^https?:\/\//.test(data)) {
         return downloadFileFromUrl(data, target)
@@ -120,8 +120,18 @@ async function downloadFile(data, name) {
           resolve(target);
         });
       } else {
-        reject(new Error("文件内容未知"))
+        // 保存字符串
+        writeFile(target, data, {
+          encoding: 'utf-8',
+        }, e => {
+          if (e) {
+            return reject(e)
+          }
+          resolve(target);
+        });
       }
+    } else {
+      reject(new Error("文件内容未知"))
     }
   })
 }

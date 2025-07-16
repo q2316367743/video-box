@@ -30,11 +30,6 @@ export class VideoPluginForCmsXml extends AbsVideoPluginForStore {
     });
   }
 
-  async getDetail(video: VideoListItem): Promise<VideoDetail> {
-    // https://caiji.dyttzyapi.com/api.php/provide/vod?ac=videolist&ids=48327
-    return Promise.resolve({recommends: [], ...video});
-  }
-
   private async cToL(params: Record<string, any>): Promise<VideoCategoryResult> {
     const {data} = await useGet<string>(this.url, params, {
       responseType: 'text'
@@ -97,6 +92,19 @@ export class VideoPluginForCmsXml extends AbsVideoPluginForStore {
         }
       }) || []
     }
+  }
+
+
+  async getDetail(video: VideoListItem): Promise<VideoDetail> {
+    // https://caiji.dyttzyapi.com/api.php/provide/vod?ac=videolist&ids=48327
+    const results = await this.cToL({
+      ac: 'videolist',
+      ids: video.id
+    })
+    return {
+      ...results.data[0],
+      recommends: results.data.slice(1)
+    };
   }
 
   async home(page: number): Promise<VideoHome> {
