@@ -19,7 +19,9 @@
                   {{ disk.refreshTime }}
                 </t-tag>
                 <t-tag theme="primary" variant="outline">
-                  <file-icon/>
+                  <template #icon>
+                    <file-icon/>
+                  </template>
                   {{ disk.programCount }}
                 </t-tag>
               </t-space>

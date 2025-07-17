@@ -56,8 +56,8 @@ import {detach} from "@/store/AppStore";
 import {routes} from "@/plugin/router";
 import {ViewListIcon} from "tdesign-icons-vue-next";
 import {LocalNameEnum} from "@/global/LocalNameEnum";
-import {useLiveSourceStore, useVideoSourceStore} from "@/store";
 import {useUtoolsKvStorage} from "@/hooks/UtoolsKvStorage";
+import {useMyVideoItemStore} from "@/store/db/MyVideoItemStore.js";
 
 const route = useRoute();
 const router = useRouter();
@@ -74,9 +74,8 @@ watch(() => route.path, value => {
   }
 }, {immediate: true})
 
-// 颜色模式
-useVideoSourceStore().init();
-useLiveSourceStore().init();
+// 初始化数据
+useMyVideoItemStore().init();
 window.preload.lib.createServer(import.meta.env.DEV ? 13001 : 13011, () => {
 
 }, e => {

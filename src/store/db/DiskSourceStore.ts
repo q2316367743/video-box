@@ -1,16 +1,16 @@
 import {defineStore} from "pinia";
-import {DiskDriver, DiskSource, DiskSourceForm} from "@/entities/disk/DiskSource";
+import {DiskDriver, DiskSource, DiskSourceForm} from "@/entities/disk/DiskSource.js";
 import {
   getFromOneByAsync,
   listByAsync,
   removeOneByAsync,
   saveListByAsync,
   saveOneByAsync
-} from "@/utils/utools/DbStorageUtil";
-import {LocalNameEnum} from "@/global/LocalNameEnum";
-import {useSnowflake} from "@/hooks/Snowflake";
-import {DiskEntry, DiskInfo} from "@/entities/disk/DiskEntry";
-import {refreshDiskEntry} from "@/modules/disk";
+} from "@/utils/utools/DbStorageUtil.js";
+import {LocalNameEnum} from "@/global/LocalNameEnum.js";
+import {useSnowflake} from "@/hooks/Snowflake.js";
+import {DiskEntry, DiskInfo} from "@/entities/disk/DiskEntry.js";
+import {refreshDiskEntry} from "@/modules/disk/index.js";
 
 export const useDiskSourceStore = defineStore('disk-source-store', () => {
   const diskSourceList = ref<Array<DiskSource<DiskDriver>>>([]);

@@ -29,11 +29,10 @@ export const useVideoSourceStore = defineStore('source', () => {
 
   const sourceMap = computed(() => map(sources.value, 'id'));
 
-  const init = async () => {
-    const res = await listByAsync<VideoSourceEntry>(LocalNameEnum.LIST_SOURCE_VIDEO);
+  listByAsync<VideoSourceEntry>(LocalNameEnum.LIST_SOURCE_VIDEO).then(res => {
     sources.value = res.list;
     rev.value = res.rev;
-  }
+  });
 
   const add = async (source: VideoSourceEntry, iconType: number) => {
     if (!source.title) return Promise.reject(new Error("网络资源标题不能为空"));
@@ -79,5 +78,5 @@ export const useVideoSourceStore = defineStore('source', () => {
     }
   }
 
-  return {sources, sourceMap, init, add, update, remove};
+  return {sources, sourceMap, add, update, remove};
 })

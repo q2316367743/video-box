@@ -42,6 +42,7 @@ declare module 'vue' {
     TMenuItem: typeof import('tdesign-vue-next')['MenuItem']
     TParagraph: typeof import('tdesign-vue-next')['Paragraph']
     TPopconfirm: typeof import('tdesign-vue-next')['Popconfirm']
+    TProgress: typeof import('tdesign-vue-next')['Progress']
     TRadio: typeof import('tdesign-vue-next')['Radio']
     TRadioGroup: typeof import('tdesign-vue-next')['RadioGroup']
     TSelect: typeof import('tdesign-vue-next')['Select']

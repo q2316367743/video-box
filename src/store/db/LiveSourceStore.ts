@@ -1,16 +1,16 @@
 import {defineStore} from "pinia";
 import {ref} from "vue";
-import {LiveSource, M3u8Channel, M3u8Core, LiveSourceInfo} from "@/entities/LiveSource";
+import {LiveSource, M3u8Channel, M3u8Core, LiveSourceInfo} from "@/entities/LiveSource.js";
 import {
   listByAsync,
   listRecordByAsync,
   removeMultiByAsync,
   saveListByAsync
-} from "@/utils/utools/DbStorageUtil";
-import {LocalNameEnum} from "@/global/LocalNameEnum";
-import {getM3u8Channel} from "@/utils/file/M3u8Util";
-import MessageUtil from "@/utils/modal/MessageUtil";
-import {isEmptyString} from "@/utils/lang/FieldUtil";
+} from "@/utils/utools/DbStorageUtil.js";
+import {LocalNameEnum} from "@/global/LocalNameEnum.js";
+import {getM3u8Channel} from "@/utils/file/M3u8Util.js";
+import MessageUtil from "@/utils/modal/MessageUtil.js";
+import {isEmptyString} from "@/utils/lang/FieldUtil.js";
 
 const SIZE = 1000;
 
@@ -18,11 +18,11 @@ export const useLiveSourceStore = defineStore('live-source', () => {
   const liveSources = ref(new Array<LiveSource>());
   let rev: string | undefined = undefined;
 
-  async function init() {
-    const res = await listByAsync<LiveSource>(LocalNameEnum.LIST_SOURCE_LIVE);
+  listByAsync<LiveSource>(LocalNameEnum.LIST_SOURCE_LIVE).then(res => {
     liveSources.value = res.list;
     rev = res.rev;
-  }
+  })
+
 
   async function getChannel(id: number): Promise<LiveSourceInfo> {
     for (let m3u8 of liveSources.value) {
@@ -138,6 +138,6 @@ export const useLiveSourceStore = defineStore('live-source', () => {
     await removeMultiByAsync(LocalNameEnum.ITEM_SOURCE_LIVE_CHANNEL + id, true);
   }
 
-  return {liveSources, init, refreshChannels, getChannel, getChannels, add, update, remove}
+  return {liveSources, refreshChannels, getChannel, getChannels, add, update, remove}
 
 });

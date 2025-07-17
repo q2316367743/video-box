@@ -94,7 +94,6 @@ export class VideoPluginForCmsXml extends AbsVideoPluginForStore {
     }
   }
 
-
   async getDetail(video: VideoListItem): Promise<VideoDetail> {
     // https://caiji.dyttzyapi.com/api.php/provide/vod?ac=videolist&ids=48327
     const results = await this.cToL({
@@ -156,6 +155,5 @@ export class VideoPluginForCmsXml extends AbsVideoPluginForStore {
       pg: page
     });
   }
-
 
 }
