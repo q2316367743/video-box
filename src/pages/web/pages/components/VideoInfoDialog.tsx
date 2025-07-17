@@ -41,7 +41,7 @@ export async function openVideoInfoDrawer(item: VideoListItem, plugin: VideoPlug
 
     const dp = DrawerPlugin({
       header: detail.title,
-      size: '300px',
+      size: '400px',
       footer: false,
       default: () => (
         <div class="pb-16px">
