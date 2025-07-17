@@ -1,0 +1,1 @@
+create table user () comment '用户';
