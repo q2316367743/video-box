@@ -50,10 +50,12 @@ const slots = defineSlots();
     &__title {
       display: flex;
       align-items: center;
+      font-weight: bold;
+      font-size: var(--td-font-size-title-large);
 
       .subtitle {
         margin-left: 6px;
-        font-size: 0.9rem;
+        font-size: var(--td-font-size-body-medium);
         color: var(--td-text-color-secondary);
       }
     }

@@ -16,7 +16,7 @@
         </div>
 
         <div class="mt-3 flex space-x-2">
-          <t-button theme="primary">立即观看</t-button>
+          <t-button theme="primary" @click="handlePlay">立即观看</t-button>
           <t-button variant="outline">收藏</t-button>
         </div>
       </div>
@@ -28,6 +28,9 @@
 </template>
 <script lang="ts" setup>
 import {SearchResult, SearchResultDisplay} from "@/pages/home/types/SearchResult.js";
+import {usePlayerWindowStore} from "@/store/index.js";
+import {LoadingPlugin} from "tdesign-vue-next";
+import MessageUtil from "@/utils/modal/MessageUtil.js";
 
 const props = defineProps({
   item: {
@@ -52,7 +55,20 @@ watch(active, val => {
   if (target) {
     video.value = target.item;
   }
-})
+});
+
+const handlePlay = () => {
+  const target = props.item.results[active.value];
+  if (target) {
+    const {hide} = LoadingPlugin({
+      text: '正在获取详情',
+      fullscreen: true
+    });
+    target.plugin.getDetail(target.item)
+      .then(detail => usePlayerWindowStore().openPlayerWindow(target.source, detail)).catch(e => MessageUtil.error("获取失败", e))
+      .finally(() => hide());
+  }
+}
 </script>
 <style scoped lang="less">
 .search-item {

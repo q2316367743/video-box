@@ -21,12 +21,13 @@
         </div>
       </div>
       <div class="home-container">
-        <h2 className="text-2xl font-bold mb-6">{{ isSearch ? `"${keyword}"的搜索结果` : '热门推荐' }}</h2>
+        <h2 className="text-2xl font-bold mb-6" v-if="isSearch">"{{ keyword }}"的搜索结果</h2>
         <t-alert v-if="loading" close @close="handleStop">正在搜索「{{ current }} / {{ total }}」</t-alert>
         <search-item v-for="item in searchResults" :key="item.title" :item="item"/>
+        <home-recommend v-show="!isSearch" @search="handleRecommendSearch"/>
       </div>
     </div>
-    <t-back-top container=".home" />
+    <t-back-top container=".home"/>
   </div>
 </template>
 <script lang="ts" setup>
@@ -41,6 +42,7 @@ import MessageUtil from "@/utils/modal/MessageUtil.js";
 import {SearchResult, SearchResultItem} from "@/pages/home/types/SearchResult.js";
 import SearchItem from "@/pages/home/components/SearchItem.vue";
 import FolderSelect from "@/pages/home/components/FolderSelect.vue";
+import HomeRecommend from "@/pages/home/components/HomeRecommend.vue";
 
 
 const pluginMap = new Map<string, VideoPlugin>();
@@ -58,6 +60,7 @@ const total = ref(0);
 const current = ref(1);
 
 const searchResults = computed(() => Array.from(searchResultMap.value.values()));
+
 
 const openSearch = async () => {
   isSearch.value = keyword.value !== '';
@@ -130,6 +133,11 @@ function handleStop() {
   uuid.value = '';
   loading.value = false;
 }
+
+const handleRecommendSearch = (k: string) => {
+  keyword.value = k;
+  openSearch();
+}
 </script>
 <style scoped lang="less">
 .home {
@@ -141,14 +149,17 @@ function handleStop() {
   overflow: auto;
 
   .home-content {
-    max-width: 960px;
+    max-width: 1200px;
     margin: 0 auto;
   }
 
   .home-search {
+    position: sticky;
+    top: 1rem;
     margin: 0 auto;
     width: fit-content;
     transition: padding-top 0.3s ease-in-out;
+    z-index: 1;
 
     .home-search-container {
       box-shadow: var(--td-shadow-2);

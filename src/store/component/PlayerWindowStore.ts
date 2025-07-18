@@ -36,6 +36,7 @@ export const usePlayerWindowStore = defineStore('player-window-store', () => {
     }
   })
 
+  // TODO: 此处需要可以播放聚合结果|相似资源
   async function openPlayerWindow(source: VideoSourceEntry, video: VideoDetail) {
     try {
       await closePlayerWindow();

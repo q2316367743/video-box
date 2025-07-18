@@ -1,18 +1,5 @@
 <template>
   <page-layout title="网络资源">
-    <template #extra>
-      <t-input-adornment>
-        <template #prepend>
-          <t-select v-model="folderSelect" style="width: 96px" :options="options"/>
-        </template>
-        <t-input v-model="keyword" placeholder="请输入资源名，回车搜索" :disabled="sources.length === 0" clearable
-                 @enter="openSearch" style="min-width: 200px; max-width: 400px;width: 33vw">
-          <template #suffix-icon>
-            <search-icon/>
-          </template>
-        </t-input>
-      </t-input-adornment>
-    </template>
     <div class="web-list" @contextmenu="handleListContextmenu($event)">
       <div class="web-list-content" ref="web-list-content">
         <web-list-item v-for="view in views" :key="view.id" :view="view" @click="openInfo(view)"
@@ -25,22 +12,16 @@
   </page-layout>
 </template>
 <script lang="ts" setup>
-import {
-  SearchIcon
-} from "tdesign-icons-vue-next";
 import {useSortable} from "@vueuse/integrations/useSortable";
 import {useVideoSourceStore, useWebFolderStore} from "@/store";
+import {Folder} from "@/entities/Folder.js";
 import {buildWebItemViews, WebItemFolder, WebItemView} from "@/pages/web/pages/list/types/WebItem";
 import {handleItemContextmenu, handleListContextmenu} from "@/pages/web/pages/list/components/WebListContext";
 import WebListItem from "@/pages/web/pages/list/components/WebListItem.vue";
 import WebListAdd from "@/pages/web/pages/list/components/WebListAdd.vue";
 import WebFolder from "@/pages/web/pages/list/components/WebFolder.vue";
-import {Folder} from "@/entities/Folder.js";
 
 const router = useRouter();
-
-const keyword = ref('');
-const folderSelect = ref('');
 
 const model = ref({
   visible: false,
@@ -51,43 +32,16 @@ const folder = computed<Array<Folder>>(() => useWebFolderStore().webFolders);
 const sources = computed(() => useVideoSourceStore().sources);
 
 const views = computed(() => buildWebItemViews(folder.value, sources.value));
-const options = computed(() => {
-  const o = [{
-    label: '全部',
-    value: ''
-  }];
-  if (folder.value.length > 0) {
-    o.push({
-      label: '根目录',
-      value: 'root'
-    })
-    o.push(...folder.value.map(f => ({
-      label: f.name,
-      value: f.id,
-    })));
-  }
-  return o;
-})
 
 const openInfo = (view: WebItemView) => {
   if (view.type === 'file') {
     router.push(`/web/info/${view.id}`)
   } else {
-    // TODO: 打开目录
     model.value = {
       visible: true,
       folder: view
     }
   }
-}
-const openSearch = () => {
-  router.push({
-    path: '/web/search',
-    query: {
-      keyword: keyword.value,
-      folder: folderSelect.value
-    }
-  })
 }
 
 const contentRef = useTemplateRef('web-list-content');
