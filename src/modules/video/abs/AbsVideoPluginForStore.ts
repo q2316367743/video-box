@@ -4,16 +4,16 @@ import {
   VideoHome, VideoListItem,
   VideoPlugin,
   VideoSearchResult
-} from "@/modules/video/VideoPlugin";
-import {getItem, removeItem, setItem} from "@/utils/utools/DbStorageUtil";
-import {VideoSourceEntry} from "@/entities/VideoSource";
-import {LocalNameEnum} from "@/global/LocalNameEnum";
+} from "@/modules/video/VideoPlugin.js";
+import {getItem, removeItem, setItem} from "@/utils/utools/DbStorageUtil.js";
+import {VideoSourceEntry} from "@/entities/VideoSource.js";
+import {LocalNameEnum} from "@/global/LocalNameEnum.js";
 
 export abstract class AbsVideoPluginForStore implements VideoPlugin {
 
   abstract props: VideoSourceEntry;
 
-  abstract getDetail(video: VideoListItem): Promise<VideoDetail>;
+  abstract getDetail(video: VideoListItem | string): Promise<VideoDetail>;
 
   abstract getVideos(categoryId: string, page: number): Promise<VideoCategoryResult>;
 

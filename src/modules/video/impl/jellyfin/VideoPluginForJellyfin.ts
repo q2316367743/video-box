@@ -1,9 +1,15 @@
-import {AbsVideoPluginForStore} from "@/modules/video/abs/AbsVideoPluginForStore";
-import {VideoSource} from "@/entities/VideoSource";
-import {VideoCategoryResult, VideoDetail, VideoHome, VideoListItem, VideoSearchResult} from "@/modules/video/VideoPlugin";
+import {AbsVideoPluginForStore} from "@/modules/video/abs/AbsVideoPluginForStore.js";
+import {VideoSource} from "@/entities/VideoSource.js";
+import {
+  VideoCategoryResult,
+  VideoDetail,
+  VideoHome,
+  VideoListItem,
+  VideoSearchResult
+} from "@/modules/video/VideoPlugin.js";
 import {AxiosRequestConfig} from "axios";
-import Constant from "@/global/Constant";
-import {useRequest} from "@/hooks/HttpRequest";
+import Constant from "@/global/Constant.js";
+import {useRequest} from "@/hooks/HttpRequest.js";
 
 export interface VideoPluginForJellyfinProps {
   url: string;
@@ -37,7 +43,7 @@ export class VideoPluginForJellyfin extends AbsVideoPluginForStore {
 
   }
 
-  getDetail(video: VideoListItem): Promise<VideoDetail> {
+  getDetail(video: VideoListItem | string): Promise<VideoDetail> {
     return Promise.resolve({} as VideoDetail);
   }
 

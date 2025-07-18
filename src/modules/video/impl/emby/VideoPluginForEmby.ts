@@ -94,13 +94,14 @@ export class VideoPluginForEmby extends AbsVideoPluginForStore {
 
   }
 
-  async getDetail(video: VideoListItem): Promise<VideoDetail> {
+  async getDetail(video: VideoListItem | string): Promise<VideoDetail> {
+    const videoId = typeof video === 'string' ? video : video.id;
     let profile = await this.getProfile();
     const [res, info, rec] = await Promise.all([
       // 基础信息
-      this.request<EmbyItemInfo>(`/emby/Users/${profile.User.Id}/Items/${video.id}`, {}),
+      this.request<EmbyItemInfo>(`/emby/Users/${profile.User.Id}/Items/${videoId}`, {}),
       // 播放信息
-      this.request<EmbyPlaybackInfo>(`/emby/Items/${video.id}/PlaybackInfo`, {
+      this.request<EmbyPlaybackInfo>(`/emby/Items/${videoId}/PlaybackInfo`, {
         UserId: profile.User.Id,
         StartTimeTicks: 0,
         IsPlayback: false,
@@ -109,7 +110,7 @@ export class VideoPluginForEmby extends AbsVideoPluginForStore {
         reqformat: "json"
       }),
       // 推荐信息
-      this.request<EmbyItems>(`/emby/Items/${video.id}/Similar`, {
+      this.request<EmbyItems>(`/emby/Items/${videoId}/Similar`, {
         Limit: 12,
         UserId: profile.User.Id,
         ImageTypeLimit: 1,
@@ -117,7 +118,13 @@ export class VideoPluginForEmby extends AbsVideoPluginForStore {
         EnableTotalRecordCount: false
       })]);
     return {
-      ...video,
+      cover: res.ImageTags.Primary,
+      id: res.Id,
+      releaseYear: res.ProductionYear + '',
+      subtitle: res.SortName,
+      title: res.Name,
+      // TODO: 此处异常
+      type: res.Type === 'Series' ? 'Series' : 'Movie',
       types: res.Genres,
       actors: res.People.filter(e => e.Type === 'Actor').map(e => e.Name),
       directors: [],
@@ -133,8 +140,8 @@ export class VideoPluginForEmby extends AbsVideoPluginForStore {
         id: encodeURIComponent(this.props.title),
         name: this.props.title,
         items: info.MediaSources.map(s => ({
-          name: video.title,
-          url: `${this.props.props.url}/emby/videos/${video.id}/original.mp4?DeviceId=${Constant.id}&MediaSourceId=${s.Id}&PlaySessionId=${info.PlaySessionId}&api_key=${profile.AccessToken}`
+          name: res.Name,
+          url: `${this.props.props.url}/emby/videos/${videoId}/original.mp4?DeviceId=${Constant.id}&MediaSourceId=${s.Id}&PlaySessionId=${info.PlaySessionId}&api_key=${profile.AccessToken}`
         }))
       }],
       recommends: this.embyItemsToItem(1, rec).data

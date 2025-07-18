@@ -129,8 +129,8 @@ export interface VideoPlugin {
 
   /**
    * 获取视频的信息
-   * @param video 视频信息
+   * @param video 视频信息ID
    */
-  getDetail(video: VideoListItem): Promise<VideoDetail>;
+  getDetail(video: VideoListItem | string): Promise<VideoDetail>;
 
 }

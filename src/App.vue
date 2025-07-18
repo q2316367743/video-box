@@ -3,11 +3,6 @@
     <div class="app-side" style="z-index: 50" :style="{width: collapsed?'64px':'232px'}">
       <t-menu v-model="path" :collapsed="collapsed"
               style="height: 100vh;border-right: 1px solid var(--td-border-level-1-color)">
-        <template #logo>
-          <div class="ml-16px">
-            <t-avatar :image="avatar">匿名用户</t-avatar>
-          </div>
-        </template>
         <template #operations>
           <t-button theme="primary" variant="text" shape="square" @click="toggleCollapsed()">
             <template #icon>
@@ -62,7 +57,6 @@ import {useMyVideoItemStore} from "@/store/db/MyVideoItemStore.js";
 const route = useRoute();
 const router = useRouter();
 const path = ref('/');
-const avatar = utools.getUser()?.avatar;
 
 const collapsed = useUtoolsKvStorage(LocalNameEnum.KEY_APP_COLLAPSED, true);
 

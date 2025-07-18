@@ -1,9 +1,10 @@
 import {defineStore} from "pinia";
 import {CustomerWindow, WindowUtil} from "@/utils/utools/WindowUtil.ts";
 import {VideoSourceEntry} from "@/entities/VideoSource.ts";
-import {VideoListItem} from "@/modules/video/VideoPlugin.ts";
+import {VideoDetail} from "@/modules/video/VideoPlugin.ts";
 import MessageUtil from "@/utils/modal/MessageUtil.ts";
 import {clone} from "@/utils/lang/ObjUtil.ts";
+import {useMyVideoItemStore} from "@/store/db/MyVideoItemStore.js";
 
 export const usePlayerWindowStore = defineStore('player-window-store', () => {
   let cw: CustomerWindow | null = null;
@@ -35,7 +36,7 @@ export const usePlayerWindowStore = defineStore('player-window-store', () => {
     }
   })
 
-  async function openPlayerWindow(source: VideoSourceEntry, video: VideoListItem) {
+  async function openPlayerWindow(source: VideoSourceEntry, video: VideoDetail) {
     try {
       await closePlayerWindow();
       cw = WindowUtil.createBrowserWindow('player', {
@@ -54,6 +55,14 @@ export const usePlayerWindowStore = defineStore('player-window-store', () => {
         video: video
       }, true);
       stop.value = false;
+      useMyVideoItemStore().post({
+        type: "watched",
+        from: 'web',
+        payload: `${source.id}/${video.id}`,
+        cover: video.cover,
+        title: video.title,
+        description: video.remark,
+      }).then(() => console.debug("添加到播放记录"))
       const interval = setInterval(() => {
         cw?.sendMessage({
           event: 'initialize',

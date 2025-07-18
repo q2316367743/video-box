@@ -15,6 +15,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SubPageLayout: typeof import('./src/components/PageLayout/SubPageLayout.vue')['default']
     SuccessResult: typeof import('./src/components/Result/SuccessResult.vue')['default']
+    TAlert: typeof import('tdesign-vue-next')['Alert']
     TAvatar: typeof import('tdesign-vue-next')['Avatar']
     TBackTop: typeof import('tdesign-vue-next')['BackTop']
     TButton: typeof import('tdesign-vue-next')['Button']

@@ -85,11 +85,11 @@ export class VideoPluginForCmsJson extends AbsVideoPluginForStore {
     }
   }
 
-  async getDetail(video: VideoListItem): Promise<VideoDetail> {
+  async getDetail(video: VideoListItem | string): Promise<VideoDetail> {
     // https://caiji.dyttzyapi.com/api.php/provide/vod?ac=videolist&ids=48327
     const results = await this.cToL({
       ac: 'videolist',
-      ids: video.id
+      ids: typeof video === 'string' ? video : video.id
     })
     return {
       ...results.data[0],

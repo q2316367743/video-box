@@ -21,7 +21,7 @@ export function useRequest<T>(url: string, config?: AxiosRequestConfig) {
     }
   }
   if (config && (config.adapter === 'fetch' || config.adapter === 'xhr')) {
-    // 指定使用fetch才会使用自定义的
+    // 指定使用fetch才会使用系统的fetch
     return axios.request<T>(_config)
   }
   return window.preload.lib.axiosInstance.request<T>(_config);

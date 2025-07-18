@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {MyVideoItem, MyVideoItemForm} from "@/entities/MyVideoItem.ts";
+import {MyVideoItem, MyVideoItemCore, MyVideoItemForm} from "@/entities/MyVideoItem.ts";
 import {
   listByAsync,
   saveListByAsync,
@@ -17,9 +17,19 @@ export const useMyVideoItemStore = defineStore('playHistoryStore', () => {
     rev.value = res.rev;
   });
 
-  const add = async (data: MyVideoItemForm) => {
-    const id = `${data.type}/${data.from}/${data.payload}`;
-    if (ids.value.has(id)) return;
+  // 构建ID
+  const buildId = (data: MyVideoItemCore) => `${data.type}/${data.from}/${data.payload}`;
+  const exists = (data: MyVideoItemCore): boolean => ids.value.has(buildId(data));
+
+  const post = async (data: MyVideoItemForm) => {
+    const id = buildId(data);
+    if (ids.value.has(id)) {
+      // 如果存在，则删除旧的
+      const index = playHistoryItems.value.findIndex(e => e.id === id);
+      if (index > -1) {
+        playHistoryItems.value.splice(index, 1);
+      }
+    }
     // 去重
     playHistoryItems.value.push({
       ...data,
@@ -37,6 +47,6 @@ export const useMyVideoItemStore = defineStore('playHistoryStore', () => {
     }
   }
 
-  return {playHistoryItems, init, add, del};
+  return {playHistoryItems, init, exists, post, del};
 
 })

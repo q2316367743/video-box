@@ -20,6 +20,7 @@ import {
 import {usePlayerWindowStore} from "@/store/index.ts";
 import {isNotEmptyString} from "@/utils/lang/FieldUtil.ts";
 import MessageUtil from "@/utils/modal/MessageUtil.js";
+import {useMyVideoItemStore} from "@/store/db/MyVideoItemStore.js";
 
 
 export async function openVideoInfoDrawer(item: VideoListItem, plugin: VideoPlugin) {
@@ -28,6 +29,10 @@ export async function openVideoInfoDrawer(item: VideoListItem, plugin: VideoPlug
     fullscreen: true
   })
   try {
+
+    // 获取播放记录
+    const existLiked = useMyVideoItemStore().exists({type: 'liked', from: 'web', payload: item.id});
+    const existFollowing = useMyVideoItemStore().exists({type: 'following', from: 'web', payload: item.id});
 
     // 获取详情
     const detail = await plugin.getDetail(item);
@@ -94,18 +99,18 @@ export async function openVideoInfoDrawer(item: VideoListItem, plugin: VideoPlug
           {/* 操作按钮 */}
           <div class="flex gap-2 mt-16px">
             <Button theme={'primary'} class="flex-1 gap-2" onClick={handlePlay}>{{
-              icon: () => <PlayIcon class="h-4 w-4"/>,
+              icon: () => <PlayIcon/>,
               default: () => <span>立即播放</span>
             }}</Button>
-            <Button theme={'primary'} variant="outline" shape={'square'}>
-              <PlusIcon class="h-4 w-4"/>
-            </Button>
-            <Button theme={'primary'} variant="outline" shape={'square'}>
-              <HeartIcon class="h-4 w-4"/>
-            </Button>
-            <Button theme={'primary'} variant="outline" shape={'square'}>
-              <ShareIcon class="h-4 w-4"/>
-            </Button>
+            <Button theme={'primary'} variant="outline" shape={'square'} disabled={existFollowing}>{{
+              icon: () => <PlusIcon/>
+            }}</Button>
+            <Button theme={'primary'} variant="outline" shape={'square'} disabled={existLiked}>{{
+              icon: () => <HeartIcon/>
+            }}</Button>
+            <Button theme={'primary'} variant="outline" shape={'square'}>{{
+              icon: () => <ShareIcon/>
+            }}</Button>
           </div>
 
           <Divider/>
