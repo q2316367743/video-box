@@ -154,8 +154,6 @@ const handleRecommendSearch = (k: string) => {
   }
 
   .home-search {
-    position: sticky;
-    top: 1rem;
     margin: 0 auto;
     width: fit-content;
     transition: padding-top 0.3s ease-in-out;

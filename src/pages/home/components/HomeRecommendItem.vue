@@ -1,7 +1,7 @@
 <template>
   <div
-    class="home-recommend-item relative w-full rounded-lg bg-transparent cursor-pointer transition-all duration-300 ease-in-out hover:scale-[1.05] hover:z-[500]">
-    <div class="relative aspect-[2/3] overflow-hidden rounded-lg">
+    class="home-recommend-item">
+    <div class="home-recommend-item__cover">
       <img :alt="item.title"
            referrerpolicy="no-referrer" loading="lazy"
            decoding="async" data-nimg="fill"
@@ -15,7 +15,9 @@
     </div>
     <div class="mt-2 text-center">
       <div class="relative"><span
-        class="block text-sm font-semibold truncate text-gray-900 dark:text-gray-100 transition-colors duration-300 ease-in-out group-hover:text-green-600 dark:group-hover:text-green-400 peer">{{ item.title }}</span>
+        class="block text-sm font-semibold truncate text-gray-900 dark:text-gray-100 transition-colors duration-300 ease-in-out group-hover:text-green-600 dark:group-hover:text-green-400 peer">{{
+          item.title
+        }}</span>
         <div
           class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1 bg-gray-800 text-white text-xs rounded-md shadow-lg opacity-0 invisible peer-hover:opacity-100 peer-hover:visible transition-all duration-200 ease-out delay-100 whitespace-nowrap pointer-events-none">
           {{ item.title }}
@@ -38,5 +40,21 @@ defineProps({
 .home-recommend-item {
   width: 218px;
   margin-bottom: 8px;
+  position: relative;
+  border-radius: var(--td-radius-medium);
+  cursor: pointer;
+  transition: all 300ms ease-in-out;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &__cover {
+    width: 218px;
+    position: relative;
+    aspect-ratio: 2 / 3;
+    overflow: hidden;
+    border-radius: var(--td-radius-medium);
+  }
 }
 </style>

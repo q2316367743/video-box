@@ -1,8 +1,8 @@
 <template>
   <empty-result v-if="following.length === 0" title="空空如也"/>
-  <div class="p-4">
+  <div class="p-4 my-following">
     <div class="space-y-4">
-      <div v-for="item in following" :key="item.id" class="flex border rounded-lg p-3">
+      <div v-for="item in following" :key="item.id" class="flex border rounded-lg p-3 cursor-pointer">
         <img
           :src="item.cover"
           :alt="item.title"

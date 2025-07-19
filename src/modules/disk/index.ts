@@ -1,9 +1,9 @@
-import {DiskDriver, DiskSource, DiskSourceForm} from "@/entities/disk/DiskSource";
-import {DiskEntry, DiskProgram} from "@/entities/disk/DiskEntry";
-import {DiskPlugin} from "@/modules/disk/DiskPlugin";
-import {DiskPluginForAList} from "@/modules/disk/impl/DiskPluginForAList";
-import {DiskPluginForWebDAV} from "@/modules/disk/impl/DiskPluginForWebDAV";
-import {parseMovie} from "@/modules/disk/parser/MovieParser";
+import {DiskDriver, DiskSource, DiskSourceForm} from "@/entities/disk/DiskSource.js";
+import {DiskEntry, DiskProgram} from "@/entities/disk/DiskEntry.js";
+import {DiskPlugin} from "@/modules/disk/DiskPlugin.js";
+import {DiskPluginForAList} from "@/modules/disk/impl/DiskPluginForAList.js";
+import {DiskPluginForWebDAV} from "@/modules/disk/impl/DiskPluginForWebDAV.js";
+import {parseMovie} from "@/modules/disk/parser/MovieParser.js";
 
 export function buildDiskPlugin(source: DiskSourceForm<DiskDriver>): DiskPlugin {
   switch (source.driver) {

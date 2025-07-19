@@ -71,6 +71,11 @@ export async function douBanRecentHotMovie(limit: number, category?: string, typ
   // https://m.douban.com/rexxar/api/v2/subject/recent_hot/movie?limit=50&category=tv&type=tv
   const {data} = await useGet<DouBanRecentHotResult>(
     'https://m.douban.com/rexxar/api/v2/subject/recent_hot/movie',
-    {limit, category, type})
+    {limit, category, type}, {
+      headers: {
+        'Referer': 'https://movie.douban.com/',
+        'Origin': 'https://movie.douban.com'
+      }
+    })
   return data;
 }

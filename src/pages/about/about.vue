@@ -25,7 +25,7 @@
           </div>
         </div>
       </t-card>
-      <t-tabs default-value="watched" class="mt-8px">
+      <t-tabs v-model="activeKey" class="mt-8px">
         <t-tab-panel value="watched" label="看过的影视"/>
         <t-tab-panel value="liked" label="喜欢的影视"/>
         <t-tab-panel value="following" label="在追的影视"/>
@@ -42,7 +42,6 @@
 <script lang="ts" setup>
 import {useErrorStore} from "@/store";
 import Constant from "@/global/Constant.js";
-import {useMyVideoItemStore} from "@/store/db/MyVideoItemStore.js";
 import MyWatched from "@/pages/about/components/MyWatched.vue";
 import MyLiked from "@/pages/about/components/MyLiked.vue";
 import MyFollowing from "@/pages/about/components/MyFollowing.vue";

@@ -18,6 +18,9 @@ export enum LocalNameEnum {
   KEY_PLAYER_VIDEO_VOLUME = '/key/player/video/volume',
   KEY_PLAYER_DISK_INDEX = '/key/player/disk/index',
 
+  KEY_HOME_RECOMMEND_MOVIE = '/key/home/recommend/movie',
+  KEY_HOME_RECOMMEND_TV = '/key/home/recommend/tv',
+
   KEY_SOURCE_ACTIVE_LIVE = '/key/source/active/live',
 
   KEY_SETTING_BASE = '/key/setting/base',

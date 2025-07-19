@@ -1,8 +1,8 @@
 <template>
   <empty-result v-if="liked.length === 0" title="空空如也"/>
-  <div class="p-4">
+  <div class="p-4 my-liked">
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-      <div v-for="item in liked" :key="item.id" class="border rounded-lg overflow-hidden">
+      <div v-for="item in liked" :key="item.id" class="border rounded-lg overflow-hidden cursor-pointer">
         <img
           :src="item.cover"
           :alt="item.title"

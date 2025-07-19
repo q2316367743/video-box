@@ -1,7 +1,7 @@
-import {useVideoSourceStore} from "@/store";
-import MessageUtil from "@/utils/modal/MessageUtil";
-import {importVideoSourceEntry} from "@/entities/VideoSource";
-import {readFileAsText} from "@/utils/file/FileUtil";
+import {useVideoSourceStore} from "@/store/index.js";
+import MessageUtil from "@/utils/modal/MessageUtil.js";
+import {importVideoSourceEntry} from "@/entities/VideoSource.js";
+import {readFileAsText} from "@/utils/file/FileUtil.js";
 
 export function webExport() {
   window.preload.dialog.downloadFile(
@@ -20,7 +20,6 @@ export async function webImport() {
     }]
   })
   const data = await readFileAsText(file);
-  // TODO JSON导入
   const records = JSON.parse(data);
   if (!Array.isArray(records)) {
     return MessageUtil.error("导入数据格式错误");
@@ -28,7 +27,7 @@ export async function webImport() {
   for (let record of records) {
     try {
       const entry = await importVideoSourceEntry(record);
-      await useVideoSourceStore().add(entry);
+      await useVideoSourceStore().add(entry, 3);
     } catch (e) {
       return MessageUtil.error(`导入数据格式错误`, e);
     }
