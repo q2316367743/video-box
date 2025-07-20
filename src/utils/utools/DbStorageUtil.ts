@@ -8,11 +8,11 @@ import {clone} from "@/utils/lang/ObjUtil.ts";
  * @param key 键
  */
 export function getItem<T>(key: string): T | null {
-    let value = utools.dbStorage.getItem(key);
-    if (typeof value === 'undefined' || value == null) {
-        return null;
-    }
-    return value;
+  let value = utools.dbStorage.getItem(key);
+  if (typeof value === 'undefined' || value == null) {
+    return null;
+  }
+  return value;
 }
 
 /**
@@ -21,11 +21,11 @@ export function getItem<T>(key: string): T | null {
  * @param defaultValue 默认值
  */
 export function getItemByDefault<T>(key: string, defaultValue: T): T {
-    let value = utools.dbStorage.getItem(key);
-    if (typeof value === 'undefined' || value == null) {
-        return defaultValue;
-    }
-    return value;
+  let value = utools.dbStorage.getItem(key);
+  if (typeof value === 'undefined' || value == null) {
+    return defaultValue;
+  }
+  return value;
 }
 
 /**
@@ -34,7 +34,7 @@ export function getItemByDefault<T>(key: string, defaultValue: T): T {
  * @param value 值
  */
 export function setItem<T = any>(key: string, value: T) {
-    utools.dbStorage.setItem(key, toRaw(value));
+  utools.dbStorage.setItem(key, toRaw(value));
 }
 
 /**
@@ -49,19 +49,19 @@ export function removeItem(key: string) {
 
 export interface DbList<T> {
 
-    list: Array<T>;
+  list: Array<T>;
 
-    rev?: string;
+  rev?: string;
 
 }
 
 export interface DbRecord<T> {
 
-    id: string;
+  id: string;
 
-    record: T;
+  record: T;
 
-    rev?: string;
+  rev?: string;
 
 }
 
@@ -74,14 +74,14 @@ export interface DbRecord<T> {
  * @param key 键
  */
 export async function listByAsync<T = any>(key: string): Promise<DbList<T>> {
-    const res = await utools.db.promises.get(key);
-    if (res) {
-        return {
-            list: res.value || new Array<T>(),
-            rev: res._rev
-        };
-    }
-    return {list: []};
+  const res = await utools.db.promises.get(key);
+  if (res) {
+    return {
+      list: res.value || new Array<T>(),
+      rev: res._rev
+    };
+  }
+  return {list: []};
 }
 
 /**
@@ -91,36 +91,36 @@ export async function listByAsync<T = any>(key: string): Promise<DbList<T>> {
  * @param rev 恢复值
  */
 export async function saveListByAsync<T>(key: string, records: Array<T>, rev?: string): Promise<undefined | string> {
-    try {
-        const res = await utools.db.promises.put({
-            _id: key,
-            _rev: rev,
-            value: toRaw(records)
-        });
-        if (res.error) {
-            if (res.message === "Document update conflict") {
-                // 查询后更新
-                const res = await utools.db.promises.get(key);
-                return await saveListByAsync(key, records, res ? res._rev : undefined);
-            } else if (res.message === 'An object could not be cloned.') {
-                return await saveListByAsync(key, clone(records, true), rev);
-            } else if (res.message === "DataCloneError: Failed to execute 'put' on 'IDBObjectStore': [object Array] could not be cloned.") {
-                return await saveListByAsync(key, clone(records, true), rev);
-            } else if (res.message === "DataCloneError: Failed to execute 'put' on 'IDBObjectStore': #<Object> could not be cloned.") {
-                return await saveListByAsync(key, clone(records, true), rev);
-            }
-            console.error(res)
-            return Promise.reject(res.message);
-        }
-        return res.rev;
-    } catch (e: any) {
-        if (e.message === "An object could not be cloned.") {
-            // 查询后更新
-            return await saveListByAsync(key, clone(records, true), rev);
-        } else {
-            return Promise.reject(e);
-        }
+  try {
+    const res = await utools.db.promises.put({
+      _id: key,
+      _rev: rev,
+      value: toRaw(records)
+    });
+    if (res.error) {
+      if (res.message === "Document update conflict") {
+        // 查询后更新
+        const res = await utools.db.promises.get(key);
+        return await saveListByAsync(key, records, res ? res._rev : undefined);
+      } else if (res.message === 'An object could not be cloned.') {
+        return await saveListByAsync(key, clone(records, true), rev);
+      } else if (res.message === "DataCloneError: Failed to execute 'put' on 'IDBObjectStore': [object Array] could not be cloned.") {
+        return await saveListByAsync(key, clone(records, true), rev);
+      } else if (res.message === "DataCloneError: Failed to execute 'put' on 'IDBObjectStore': #<Object> could not be cloned.") {
+        return await saveListByAsync(key, clone(records, true), rev);
+      }
+      console.error(res)
+      return Promise.reject(res.message);
     }
+    return res.rev;
+  } catch (e: any) {
+    if (e.message === "An object could not be cloned.") {
+      // 查询后更新
+      return await saveListByAsync(key, clone(records, true), rev);
+    } else {
+      return Promise.reject(e);
+    }
+  }
 }
 
 /**
@@ -128,13 +128,13 @@ export async function saveListByAsync<T>(key: string, records: Array<T>, rev?: s
  * @param key 多个键，如果是数组，则绝对匹配，如果是字符串，则前缀匹配
  */
 export async function listRecordByAsync<T>(key?: string | string[]): Promise<Array<DbRecord<T>>> {
-    // @ts-ignore
-    const items = await utools.db.promises.allDocs(key);
-    return items.filter(e => !!e).map(item => ({
-        id: item._id,
-        record: item.value,
-        rev: item._rev
-    }));
+  // @ts-ignore
+  const items = await utools.db.promises.allDocs(key);
+  return items.filter(e => !!e).map(item => ({
+    id: item._id,
+    record: item.value,
+    rev: item._rev
+  }));
 }
 
 // --------------------------------------- 单一对象操作 ---------------------------------------
@@ -145,15 +145,15 @@ export async function listRecordByAsync<T>(key?: string | string[]): Promise<Arr
  * @param defaultValue 默认值
  */
 export async function getFromOneWithDefaultByAsync<T>(key: string, defaultValue: T): Promise<DbRecord<T>> {
-    const res = await utools.db.promises.get(key);
-    if (!res) {
-        return {record: defaultValue, id: key}
-    }
-    return Promise.resolve({
-        id: key,
-        record: Object.assign(defaultValue || {}, res.value),
-        rev: res._rev
-    });
+  const res = await utools.db.promises.get(key);
+  if (!res) {
+    return {record: defaultValue, id: key}
+  }
+  return Promise.resolve({
+    id: key,
+    record: Object.assign(defaultValue || {}, res.value),
+    rev: res._rev
+  });
 }
 
 /**
@@ -161,15 +161,15 @@ export async function getFromOneWithDefaultByAsync<T>(key: string, defaultValue:
  * @param key 键
  */
 export async function getFromOneByAsync<T = any>(key: string): Promise<DbRecord<T | null>> {
-    const res = await utools.db.promises.get(key);
-    if (!res) {
-        return {record: null, id: key}
-    }
-    return Promise.resolve({
-        id: key,
-        record: res.value,
-        rev: res._rev
-    });
+  const res = await utools.db.promises.get(key);
+  if (!res) {
+    return {record: null, id: key}
+  }
+  return Promise.resolve({
+    id: key,
+    record: res.value,
+    rev: res._rev
+  });
 }
 
 /**
@@ -180,39 +180,39 @@ export async function getFromOneByAsync<T = any>(key: string): Promise<DbRecord<
  * @param err 错误处理函数
  */
 export async function saveOneByAsync<T>(key: string, value: T, rev?: string, err?: (e: Error) => void): Promise<undefined | string> {
-    try {
-        const res = await utools.db.promises.put({
-            _id: key,
-            _rev: rev,
-            value: toRaw(value)
-        });
-        if (res.error) {
-            if (res.message === "Document update conflict") {
-                // 查询后更新
-                const res = await utools.db.promises.get(key);
-                return await saveOneByAsync(key, value, res ? res._rev : undefined);
-            } else if (res.message === "DataCloneError: Failed to execute 'put' on 'IDBObjectStore': #<Object> could not be cloned.") {
-                return await saveOneByAsync(key, clone(value, true), rev);
-            }
-            console.error(res);
-            if (err) {
-                err(new Error(res.message));
-            } else {
-                return Promise.reject(res.message);
-            }
-        }
-        return Promise.resolve(res.rev);
-    } catch (e: any) {
-        if (e.message === "An object could not be cloned.") {
-            // 查询后更新
-            return await saveOneByAsync(key, clone(value, true), rev);
-        } else if (e.message === "DataCloneError: Failed to execute 'put' on 'IDBObjectStore': #<Object> could not be cloned.") {
-            return await saveOneByAsync(key, clone(value, true), rev);
-        } else {
-            console.error(e);
-            return Promise.reject(e);
-        }
+  try {
+    const res = await utools.db.promises.put({
+      _id: key,
+      _rev: rev,
+      value: toRaw(value)
+    });
+    if (res.error) {
+      if (res.message === "Document update conflict") {
+        // 查询后更新
+        const res = await utools.db.promises.get(key);
+        return await saveOneByAsync(key, value, res ? res._rev : undefined);
+      } else if (res.message === "DataCloneError: Failed to execute 'put' on 'IDBObjectStore': #<Object> could not be cloned.") {
+        return await saveOneByAsync(key, clone(value, true), rev);
+      }
+      console.error(res);
+      if (err) {
+        err(new Error(res.message));
+      } else {
+        return Promise.reject(res.message);
+      }
     }
+    return Promise.resolve(res.rev);
+  } catch (e: any) {
+    if (e.message === "An object could not be cloned.") {
+      // 查询后更新
+      return await saveOneByAsync(key, clone(value, true), rev);
+    } else if (e.message === "DataCloneError: Failed to execute 'put' on 'IDBObjectStore': #<Object> could not be cloned.") {
+      return await saveOneByAsync(key, clone(value, true), rev);
+    } else {
+      console.error(e);
+      return Promise.reject(e);
+    }
+  }
 }
 
 /**
@@ -221,12 +221,12 @@ export async function saveOneByAsync<T>(key: string, value: T, rev?: string, err
  * @param ignoreError 是否忽略异常
  */
 export async function removeOneByAsync(key: string, ignoreError: boolean = false): Promise<void> {
-    const res = await utools.db.promises.remove(key);
-    if (res.error) {
-        if (!ignoreError) {
-            return Promise.reject(res.message);
-        }
+  const res = await utools.db.promises.remove(key);
+  if (res.error) {
+    if (!ignoreError) {
+      return Promise.reject(res.message);
     }
+  }
 }
 
 // --------------------------------------- 批量操作 ---------------------------------------
@@ -237,30 +237,30 @@ export async function removeOneByAsync(key: string, ignoreError: boolean = false
  * @param ignoreError 是否忽略异常，默认不忽略
  */
 export async function removeMultiByAsync(key: string, ignoreError: boolean = false): Promise<void> {
-    const items = await utools.db.promises.allDocs(key);
-    for (let item of items) {
-        await removeOneByAsync(item._id, ignoreError);
-    }
+  const items = await utools.db.promises.allDocs(key);
+  for (let item of items) {
+    await removeOneByAsync(item._id, ignoreError);
+  }
 }
 
 
 // --------------------------------------- 临时存储 ---------------------------------------
 
 export function getStrBySession<T>(key: string): T | null {
-    const item = sessionStorage.getItem(key);
-    if (!item) {
-        return null
-    }
-    try {
-        return JSON.parse(item)['value'];
-    } catch (e) {
-        sessionStorage.removeItem(key);
-        return null;
-    }
+  const item = sessionStorage.getItem(key);
+  if (!item) {
+    return null
+  }
+  try {
+    return JSON.parse(item)['value'];
+  } catch (e) {
+    sessionStorage.removeItem(key);
+    return null;
+  }
 }
 
 export function setStrBySession(key: string, value: string) {
-    sessionStorage.setItem(key, value);
+  sessionStorage.setItem(key, value);
 }
 
 // --------------------------------------- 附件 ---------------------------------------
@@ -272,12 +272,12 @@ export function setStrBySession(key: string, value: string) {
  * @return url
  */
 export async function postAttachment(docId: string, attachment: Blob | File): Promise<string> {
-    const buffer = await attachment.arrayBuffer();
-    const res = await utools.db.promises.postAttachment(docId, new Uint8Array(buffer), "application/octet-stream");
-    if (res.error) {
-        return Promise.reject(res.message);
-    }
-    return Promise.resolve("attachment:" + docId);
+  const buffer = await attachment.arrayBuffer();
+  const res = await utools.db.promises.postAttachment(docId, new Uint8Array(buffer), "application/octet-stream");
+  if (res.error) {
+    return Promise.reject(res.message);
+  }
+  return Promise.resolve("attachment:" + docId);
 }
 
 /**
@@ -286,12 +286,12 @@ export async function postAttachment(docId: string, attachment: Blob | File): Pr
  * @return 文件链接
  */
 export async function getAttachmentByAsync(docId: string): Promise<string> {
-    const data = await utools.db.promises.getAttachment(docId);
-    if (!data) {
-        return Promise.resolve("./logo.png")
-    }
-    const blob = new Blob([data]);
-    return Promise.resolve(window.URL.createObjectURL(blob));
+  const data = await utools.db.promises.getAttachment(docId);
+  if (!data) {
+    return Promise.resolve("./logo.png")
+  }
+  const blob = new Blob([data]);
+  return Promise.resolve(window.URL.createObjectURL(blob));
 }
 
 /**
@@ -299,11 +299,11 @@ export async function getAttachmentByAsync(docId: string): Promise<string> {
  * @param docId 文档ID
  */
 export function getAttachmentBySync(docId: string): string {
-    const data = utools.db.getAttachment(docId);
-    if (!data) {
-        return "./logo.png";
-    }
-    const blob = new Blob([data]);
-    return window.URL.createObjectURL(blob);
+  const data = utools.db.getAttachment(docId);
+  if (!data) {
+    return "./logo.png";
+  }
+  const blob = new Blob([data]);
+  return window.URL.createObjectURL(blob);
 
 }

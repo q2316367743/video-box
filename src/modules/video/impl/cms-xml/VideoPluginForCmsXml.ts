@@ -40,36 +40,36 @@ export class VideoPluginForCmsXml extends AbsVideoPluginForStore {
       limit: Number(list['@_pagesize']),
       page: Number(list['@_page']),
       total: Number(list['@_recordcount']),
-      data: (list.video as Array<any>)?.map(e => {
+      data: ((Array.isArray(list.video) ? list.video : [list.video]) as Array<any>)?.map(e => {
         const chapters = new Array<VideoListItemChapter>();
-          const dds: Array<any> = Array.isArray(e.dl.dd) ? e.dl.dd : [e.dl.dd];
-          dds.forEach((dd) => {
-            if (typeof dd === 'string') {
-              chapters.push({
-                id: this.props.id,
-                name: this.props.title,
-                items: dd.split('#').map(e => {
-                  const temp = e.split('$');
-                  return {
-                    name: temp[0],
-                    url: temp[1]
-                  }
-                })
+        const dds: Array<any> = Array.isArray(e.dl.dd) ? e.dl.dd : [e.dl.dd];
+        dds.forEach((dd) => {
+          if (typeof dd === 'string') {
+            chapters.push({
+              id: this.props.id,
+              name: this.props.title,
+              items: dd.split('#').map(e => {
+                const temp = e.split('$');
+                return {
+                  name: temp[0],
+                  url: temp[1]
+                }
               })
-            }else {
-              chapters.push({
-                id: encodeURIComponent(dd['@_flag']),
-                name: dd['@_flag'],
-                items: (dd['#text'] as string).split('#').map(ddString => {
-                  const temp = ddString.split('$');
-                  return {
-                    name: temp[0],
-                    url: temp[1]
-                  }
-                })
+            })
+          } else {
+            chapters.push({
+              id: encodeURIComponent(dd['@_flag']),
+              name: dd['@_flag'],
+              items: (dd['#text'] as string).split('#').map(ddString => {
+                const temp = ddString.split('$');
+                return {
+                  name: temp[0],
+                  url: temp[1]
+                }
               })
-            }
-          })
+            })
+          }
+        })
         return {
           id: e.id + '',
           type: 'Series',

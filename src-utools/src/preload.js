@@ -139,6 +139,7 @@ async function downloadFile(data, name) {
 
 const axiosInstance = axios.create({
   adapter: 'http',
+  timeout: 15000,
   httpsAgent: new https.Agent({rejectUnauthorized: true}),
   headers: {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',

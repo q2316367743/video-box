@@ -21,9 +21,11 @@ import {usePlayerWindowStore} from "@/store/index.ts";
 import {isNotEmptyString} from "@/utils/lang/FieldUtil.ts";
 import MessageUtil from "@/utils/modal/MessageUtil.js";
 import {useMyVideoItemStore} from "@/store/db/MyVideoItemStore.js";
+import {MyVideoItemForm} from "@/entities/MyVideoItem.js";
 
 
-export async function openVideoInfoDrawer(item: VideoListItem, plugin: VideoPlugin) {
+export async function openVideoInfoDrawer(item: VideoListItem | string, plugin: VideoPlugin) {
+  const itemId = typeof item === 'string' ? item : item.id;
   const lp = LoadingPlugin({
     text: '正在获取详情',
     fullscreen: true
@@ -31,8 +33,8 @@ export async function openVideoInfoDrawer(item: VideoListItem, plugin: VideoPlug
   try {
 
     // 获取播放记录
-    const existLiked = useMyVideoItemStore().exists({type: 'liked', from: 'web', payload: item.id});
-    const existFollowing = useMyVideoItemStore().exists({type: 'following', from: 'web', payload: item.id});
+    const existLiked = ref(useMyVideoItemStore().exists({type: 'liked', from: 'web', payload: plugin.props.id + '/' + itemId}));
+    const existFollowing = ref(useMyVideoItemStore().exists({type: 'following', from: 'web', payload: plugin.props.id + '/' + itemId}));
 
     // 获取详情
     const detail = await plugin.getDetail(item);
@@ -43,6 +45,29 @@ export async function openVideoInfoDrawer(item: VideoListItem, plugin: VideoPlug
         dp.destroy?.();
       }).catch(console.error);
     }
+    const handleMy = (type: 'liked' | 'following', onSuccess: (exist: boolean) => void, onError: (e: Error) => void) => {
+      const data: MyVideoItemForm = {
+        type,
+        from: 'web',
+        payload: plugin.props.id + '/' + itemId,
+        cover: detail.cover,
+        title: detail.title,
+        description: detail.remark
+      };
+      useMyVideoItemStore().toggle(data)
+        .then(() => {
+          onSuccess(useMyVideoItemStore().exists(data))
+        })
+        .catch(onError)
+    }
+    const toggleFollowing = () => handleMy('following', exist => {
+      MessageUtil.success((exist ? '' : '取消') + "在追成功");
+      existFollowing.value = exist;
+    }, e => MessageUtil.error("操作成功", e));
+    const toggleLiked = () => handleMy('liked', exist => {
+      MessageUtil.success((exist ? '' : '取消') + "喜欢成功");
+      existLiked.value = exist;
+    }, e => MessageUtil.error("操作成功", e));
 
     const dp = DrawerPlugin({
       header: detail.title,
@@ -102,10 +127,11 @@ export async function openVideoInfoDrawer(item: VideoListItem, plugin: VideoPlug
               icon: () => <PlayIcon/>,
               default: () => <span>立即播放</span>
             }}</Button>
-            <Button theme={'primary'} variant="outline" shape={'square'} disabled={existFollowing}>{{
+            <Button theme={'primary'} variant={existFollowing.value ? 'base' : 'outline'} shape={'square'}
+                    onClick={toggleFollowing}>{{
               icon: () => <PlusIcon/>
             }}</Button>
-            <Button theme={'primary'} variant="outline" shape={'square'} disabled={existLiked}>{{
+            <Button theme={'primary'} variant={existLiked.value ? 'base' : 'outline'} shape={'square'} onClick={toggleLiked}>{{
               icon: () => <HeartIcon/>
             }}</Button>
             <Button theme={'primary'} variant="outline" shape={'square'}>{{

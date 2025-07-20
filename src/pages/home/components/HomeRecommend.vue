@@ -18,7 +18,7 @@
 </template>
 <script lang="ts" setup>
 import {douBanRecentHotMovie, douBanRecentHotTv} from "@/modules/open/douban/DouBanTvApi.js";
-import {useAsyncLocalStorage} from "@/hooks/AsyncLocalStorage.js";
+import {useDailyStorage} from "@/hooks/DailyStorage.js";
 import {LocalNameEnum} from "@/global/LocalNameEnum.js";
 import HomeRecommendContent from "@/pages/home/components/HomeRecommendContent.vue";
 
@@ -29,7 +29,7 @@ const {
   data: movieRecommend,
   loading: movieLoading,
   refresh: movieRefresh
-} = useAsyncLocalStorage(LocalNameEnum.KEY_HOME_RECOMMEND_MOVIE, () => douBanRecentHotMovie(50));
+} = useDailyStorage(LocalNameEnum.KEY_HOME_RECOMMEND_MOVIE, () => douBanRecentHotMovie(50));
 
 const movieRecommendItems = computed(() => movieRecommend.value?.items || []);
 const movieRecommendTags = computed(() => movieRecommend.value?.recommend_tags || []);
@@ -37,7 +37,7 @@ const {
   data: tvRecommend,
   loading: tvLoading,
   refresh: tvRefresh
-} = useAsyncLocalStorage(LocalNameEnum.KEY_HOME_RECOMMEND_TV, () => douBanRecentHotTv(50));
+} = useDailyStorage(LocalNameEnum.KEY_HOME_RECOMMEND_TV, () => douBanRecentHotTv(50));
 
 const tvRecommendItems = computed(() => tvRecommend.value?.items || []);
 const tvRecommendTags = computed(() => tvRecommend.value?.recommend_tags || []);

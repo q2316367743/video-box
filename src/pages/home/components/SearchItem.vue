@@ -17,7 +17,7 @@
 
         <div class="mt-3 flex space-x-2">
           <t-button theme="primary" @click="handlePlay">立即观看</t-button>
-          <t-button variant="outline">收藏</t-button>
+          <t-button variant="outline" @click="handleView">查看</t-button>
         </div>
       </div>
     </div>
@@ -31,6 +31,7 @@ import {SearchResult, SearchResultDisplay} from "@/pages/home/types/SearchResult
 import {usePlayerWindowStore} from "@/store/index.js";
 import {LoadingPlugin} from "tdesign-vue-next";
 import MessageUtil from "@/utils/modal/MessageUtil.js";
+import {openVideoInfoDrawer} from "@/pages/web/pages/components/VideoInfoDialog.js";
 
 const props = defineProps({
   item: {
@@ -67,6 +68,15 @@ const handlePlay = () => {
     target.plugin.getDetail(target.item)
       .then(detail => usePlayerWindowStore().openPlayerWindow(target.source, detail)).catch(e => MessageUtil.error("获取失败", e))
       .finally(() => hide());
+  }
+}
+
+const handleView = () => {
+  const {item} = props;
+  const {results} = item;
+  const result = results[active.value];
+  if (result) {
+    openVideoInfoDrawer(result.item, result.plugin);
   }
 }
 </script>

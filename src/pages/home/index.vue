@@ -22,7 +22,7 @@
       </div>
       <div class="home-container">
         <h2 className="text-2xl font-bold mb-6" v-if="isSearch">"{{ keyword }}"的搜索结果</h2>
-        <t-alert v-if="loading" close @close="handleStop">正在搜索「{{ current }} / {{ total }}」</t-alert>
+        <t-alert v-if="loading && isSearch" close @close="handleStop">正在搜索「{{ current }} / {{ total }}」</t-alert>
         <search-item v-for="item in searchResults" :key="item.title" :item="item"/>
         <home-recommend v-show="!isSearch" @search="handleRecommendSearch"/>
       </div>
@@ -44,6 +44,7 @@ import SearchItem from "@/pages/home/components/SearchItem.vue";
 import FolderSelect from "@/pages/home/components/FolderSelect.vue";
 import HomeRecommend from "@/pages/home/components/HomeRecommend.vue";
 
+const route = useRoute();
 
 const pluginMap = new Map<string, VideoPlugin>();
 
@@ -65,7 +66,9 @@ const searchResults = computed(() => Array.from(searchResultMap.value.values()))
 const openSearch = async () => {
   isSearch.value = keyword.value !== '';
   searchResultMap.value.clear();
-  if (!keyword.value) return;
+  if (!isSearch.value) {
+    return handleStop();
+  }
   const flag = uid(8);
   const k = keyword.value;
   uuid.value = flag;
@@ -121,7 +124,9 @@ const openSearch = async () => {
       }
     }));
   } catch (e) {
-    MessageUtil.error("搜索失败", e);
+    if (flag === uuid.value) {
+      MessageUtil.error("搜索失败", e);
+    }
   } finally {
     if (flag === uuid.value) {
       loading.value = false;
@@ -138,6 +143,13 @@ const handleRecommendSearch = (k: string) => {
   keyword.value = k;
   openSearch();
 }
+
+onMounted(() => {
+  const {keyword} = route.query;
+  if (keyword) {
+    handleRecommendSearch(`${keyword}`)
+  }
+})
 </script>
 <style scoped lang="less">
 .home {

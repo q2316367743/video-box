@@ -32,9 +32,10 @@
       </t-tabs>
     </div>
     <div class="about-container">
-      <my-watched v-if="activeKey === 'watched'"/>
-      <my-liked v-else-if="activeKey === 'liked'"/>
-      <my-following v-else-if="activeKey === 'following'"/>
+      <empty-result v-if="items.length === 0" title="空空如也"/>
+      <div class="flex flex-wrap justify-start items-start content-start gap-8px">
+        <my-video-item v-for="item in items" :key="item.id" :item="item" :type="activeKey"/>
+      </div>
     </div>
     <t-back-top container=".about-container"/>
   </div>
@@ -42,14 +43,17 @@
 <script lang="ts" setup>
 import {useErrorStore} from "@/store";
 import Constant from "@/global/Constant.js";
-import MyWatched from "@/pages/about/components/MyWatched.vue";
-import MyLiked from "@/pages/about/components/MyLiked.vue";
-import MyFollowing from "@/pages/about/components/MyFollowing.vue";
+import MyVideoItem from "@/pages/about/components/MyVideoItem.vue";
+import {useMyVideoItemStore} from "@/store/db/MyVideoItemStore.js";
 
 const activeKey = ref('watched');
 
 const {changeConsole} = useErrorStore();
 const {consoleShow} = toRefs(useErrorStore());
+
+const items = computed(() => useMyVideoItemStore().playHistoryItems
+  .filter(e => e.type === activeKey.value)
+  .sort((a, b) => b.createTime - a.createTime));
 
 const user = utools.getUser() || {
   nickname: '匿名用户',

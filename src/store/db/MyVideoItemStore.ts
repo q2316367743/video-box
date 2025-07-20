@@ -47,6 +47,18 @@ export const useMyVideoItemStore = defineStore('playHistoryStore', () => {
     }
   }
 
-  return {playHistoryItems, init, exists, post, del};
+  const toggle = async (data: MyVideoItemForm) => {
+    const id = buildId(data);
+    const idx = playHistoryItems.value.findIndex(e => e.id === id);
+    if (idx > -1) {
+      // 存在责删除
+      await del(id);
+    } else {
+      // 不存在则新增
+      await post(data);
+    }
+  }
+
+  return {playHistoryItems, init, exists, post, del, toggle};
 
 })
