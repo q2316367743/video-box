@@ -5,6 +5,12 @@ import {VideoDetail} from "@/modules/video/VideoPlugin.ts";
 import MessageUtil from "@/utils/modal/MessageUtil.ts";
 import {clone} from "@/utils/lang/ObjUtil.ts";
 import {useMyVideoItemStore} from "@/store/db/MyVideoItemStore.js";
+import {SearchResultItem} from "@/pages/home/types/SearchResult.js";
+
+interface WebDataDetail extends VideoDetail {
+  // 相似
+  similar: Array<SearchResultItem>;
+}
 
 export const usePlayerWindowStore = defineStore('player-window-store', () => {
   let cw: CustomerWindow | null = null;
@@ -37,7 +43,7 @@ export const usePlayerWindowStore = defineStore('player-window-store', () => {
   })
 
   // TODO: 此处需要可以播放聚合结果|相似资源
-  async function openPlayerWindow(source: VideoSourceEntry, video: VideoDetail) {
+  async function openPlayerWindow(source: VideoSourceEntry, video: WebDataDetail) {
     try {
       await closePlayerWindow();
       cw = WindowUtil.createBrowserWindow('player', {

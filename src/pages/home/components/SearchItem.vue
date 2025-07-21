@@ -66,7 +66,10 @@ const handlePlay = () => {
       fullscreen: true
     });
     target.plugin.getDetail(target.item)
-      .then(detail => usePlayerWindowStore().openPlayerWindow(target.source, detail)).catch(e => MessageUtil.error("获取失败", e))
+      .then(detail => usePlayerWindowStore().openPlayerWindow(target.source, {
+        ...detail,
+        similar: props.item.results
+      })).catch(e => MessageUtil.error("获取失败", e))
       .finally(() => hide());
   }
 }

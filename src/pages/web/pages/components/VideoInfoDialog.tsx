@@ -33,15 +33,23 @@ export async function openVideoInfoDrawer(item: VideoListItem | string, plugin: 
   try {
 
     // 获取播放记录
-    const existLiked = ref(useMyVideoItemStore().exists({type: 'liked', from: 'web', payload: plugin.props.id + '/' + itemId}));
-    const existFollowing = ref(useMyVideoItemStore().exists({type: 'following', from: 'web', payload: plugin.props.id + '/' + itemId}));
+    const existLiked = ref(useMyVideoItemStore().exists({
+      type: 'liked',
+      from: 'web',
+      payload: plugin.props.id + '/' + itemId
+    }));
+    const existFollowing = ref(useMyVideoItemStore().exists({
+      type: 'following',
+      from: 'web',
+      payload: plugin.props.id + '/' + itemId
+    }));
 
     // 获取详情
     const detail = await plugin.getDetail(item);
     const chapterId = detail.chapters[0]?.id || '';
 
     const handlePlay = () => {
-      usePlayerWindowStore().openPlayerWindow(plugin.props, detail).then(() => {
+      usePlayerWindowStore().openPlayerWindow(plugin.props, {...detail, similar: []}).then(() => {
         dp.destroy?.();
       }).catch(console.error);
     }
@@ -131,7 +139,8 @@ export async function openVideoInfoDrawer(item: VideoListItem | string, plugin: 
                     onClick={toggleFollowing}>{{
               icon: () => <PlusIcon/>
             }}</Button>
-            <Button theme={'primary'} variant={existLiked.value ? 'base' : 'outline'} shape={'square'} onClick={toggleLiked}>{{
+            <Button theme={'primary'} variant={existLiked.value ? 'base' : 'outline'} shape={'square'}
+                    onClick={toggleLiked}>{{
               icon: () => <HeartIcon/>
             }}</Button>
             <Button theme={'primary'} variant="outline" shape={'square'}>{{

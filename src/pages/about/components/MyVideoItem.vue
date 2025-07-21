@@ -51,7 +51,7 @@ const handleClick = async (item: MyVideoItem) => {
     const detail = await plugin.getDetail(videoId);
     // 打开
     try {
-      await usePlayerWindowStore().openPlayerWindow(source, detail);
+      await usePlayerWindowStore().openPlayerWindow(source, {...detail, similar: []});
     } catch (e) {
       MessageUtil.error("打开失败，进行搜索", e);
       // 跳转搜索
