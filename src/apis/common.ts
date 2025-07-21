@@ -11,11 +11,16 @@ const http = axios.create({
   timeout: 5000,
 });
 
-export async function useRequest<T>(url: string, config?: AxiosRequestConfig) {
+export async function useRequest<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
   const {data} = await http.request<Result<T>>({
     ...config,
     url,
   });
+  if (config && config.responseType === 'text') {
+    // 字符串
+    // @ts-ignore
+    return data;
+  }
   if (data.code !== 200) {
     MessageUtil.error("请求失败", data.msg);
     return Promise.reject(new Error(data.msg));
@@ -47,11 +52,19 @@ export function usePost<T = any>(url: string, data?: any, config?: AxiosRequestC
   })
 }
 
-
 export function usePut<T = any>(url: string, data?: any, config?: AxiosRequestConfig) {
   return useRequest<T>(url, {
     ...config,
     data,
     method: 'PUT'
+  })
+}
+
+
+export function useDelete<T = any>(url: string, data?: any, config?: AxiosRequestConfig) {
+  return useRequest<T>(url, {
+    ...config,
+    data,
+    method: 'DELETE'
   })
 }

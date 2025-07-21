@@ -1,84 +1,41 @@
 <template>
   <sub-page-layout title="资源搜索">
     <template #extra>
-      <t-space size="small">
-        <t-tag theme="primary" variant="outline" size="large" v-if="loading" closable @close="handleStop">
-          正在搜索 {{ current }} / {{ total }}
-        </t-tag>
-        <t-input-adornment>
-          <template #prepend>
-            <t-select v-model="folderSelect" style="width: 96px" :options="options"/>
-          </template>
-          <t-input v-model="keyword" placeholder="请输入资源名，回车搜索" clearable
-                   @enter="handleSearch" style="min-width: 200px; max-width: 400px;width: 33vw">
-            <template #suffix-icon>
-              <search-icon/>
-            </template>
-          </t-input>
-        </t-input-adornment>
-      </t-space>
+      <t-input v-model="keyword" placeholder="请输入资源名，回车搜索" clearable
+               @enter="handleSearch" style="min-width: 200px; max-width: 400px;width: 33vw" :disabled="loading">
+        <template #suffix-icon>
+          <search-icon/>
+        </template>
+      </t-input>
     </template>
     <loading-result v-if="loading && results.length === 0" title="正在搜索中"/>
     <empty-result v-else-if="results.length === 0" title="暂无资源"/>
-    <t-tabs v-model="activeKey">
-      <t-tab-panel v-for="r in results" :value="r.id" :label="r.title">
-        <div class="waterfall-list">
-          <web-item v-for="i in r.list" :key="i.id" :r="i" :plugin="r.plugin"/>
-        </div>
-      </t-tab-panel>
-    </t-tabs>
+    <div class="waterfall-list" v-else>
+      <web-item v-for="r in results" :key="r.id" :r="r"/>
+    </div>
   </sub-page-layout>
 </template>
 <script lang="ts" setup>
 import {uid} from 'radash'
 import {SearchIcon} from "tdesign-icons-vue-next";
-import {useVideoSourceStore, useWebFolderStore} from "@/store";
-import {VideoListItem, VideoPlugin} from "@/modules/video/VideoPlugin";
-import {buildVideoPlugin} from "@/modules/video";
-import {VideoSourceEntry} from "@/entities/VideoSource";
+import {VideoListItem} from "@/modules/video/VideoPlugin";
 import MessageUtil from "@/utils/modal/MessageUtil";
-import {isEmptyString} from "@/utils/lang/FieldUtil.js";
-import {set} from "@/utils/lang/ArrayUtil.js";
+import {pluginWebSearch} from "@/apis/plugin-web/index.js";
 import WebItem from "@/pages/web/pages/components/WebItem.vue";
-
-interface Result extends VideoSourceEntry {
-  list: Array<VideoListItem>;
-  plugin: VideoPlugin;
-}
 
 const route = useRoute();
 
-const sources = computed(() => useVideoSourceStore().sources);
-const folders = computed(() => useWebFolderStore().webFolders);
-const options = computed(() => {
-  const o = [{
-    label: '全部',
-    value: ''
-  }];
-  if (folders.value.length > 0) {
-    o.push({
-      label: '根目录',
-      value: 'root'
-    })
-    o.push(...folders.value.map(f => ({
-      label: f.name,
-      value: f.id,
-    })));
-  }
-  return o;
-})
-const pluginMap = new Map<string, VideoPlugin>();
+const id = route.params.id as string;
+
 
 const keyword = ref(route.query.keyword as string);
-const folderSelect = ref(route.query.folder as string);
 
-const results = ref(new Array<Result>());
+const results = ref(new Array<VideoListItem>());
 const uuid = ref('');
 const loading = ref(false);
-const activeKey = ref('');
 
+const page = ref(1);
 const total = ref(0);
-const current = ref(1);
 
 async function handleSearch() {
   results.value = [];
@@ -88,49 +45,10 @@ async function handleSearch() {
   uuid.value = flag;
   try {
     loading.value = true;
-    let first = true;
-    const folderIds = set(folders.value, 'id');
-    const temps = sources.value.filter(s => {
-      if (isEmptyString(folderSelect.value)) {
-        return true;
-      } else if (folderSelect.value === 'root') {
-        // 根目录
-        return !folderIds.has(s.folder)
-      } else {
-        return s.folder === folderSelect.value;
-      }
-    });
-
-    total.value = temps.length;
-    current.value = 0;
-
-    await Promise.all(temps.map(async source => {
-      let plugin = pluginMap.get(source.id);
-      if (!plugin) {
-        plugin = buildVideoPlugin(source);
-        pluginMap.set(source.id, plugin);
-      }
-      try {
-        const res = await plugin.searchVideos(k, 1)
-        if (flag !== uuid.value) return;
-        current.value += 1;
-        if (!res.data || res.data.length === 0) return;
-        results.value.push({
-          ...source,
-          list: res.data,
-          plugin: plugin
-        });
-        if (first) {
-          activeKey.value = source.id;
-          first = false;
-        }
-      } catch (e) {
-        if (flag === uuid.value) {
-          MessageUtil.error(source.title + "搜索失败", e);
-          current.value += 1;
-        }
-      }
-    }));
+    const res = await pluginWebSearch(id, k, page.value);
+    page.value = res.page;
+    total.value = res.total;
+    results.value = res.data;
   } catch (e) {
     MessageUtil.error("搜索失败", e);
   } finally {
@@ -140,12 +58,6 @@ async function handleSearch() {
   }
 }
 
-function handleStop() {
-  uuid.value = '';
-  loading.value = false;
-}
-
-onMounted(handleSearch)
 </script>
 <style scoped lang="less">
 

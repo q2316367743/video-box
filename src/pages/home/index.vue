@@ -7,9 +7,8 @@
             <template #prepend>
               <folder-select v-model="folder" size="large" style="width: 96px"/>
             </template>
-            <t-input v-model="keyword" placeholder="请输入资源名，回车搜索" clearable :disabled="sources.length === 0"
-                     size="large" @enter="openSearch" @clear="openSearch"
-                     style="width: 40vw;min-width: 350px;max-width: 550px;"/>
+            <t-input v-model="keyword" placeholder="请输入资源名，回车搜索" clearable size="large" @enter="openSearch"
+                     @clear="openSearch" style="width: 40vw;min-width: 350px;max-width: 550px;"/>
             <template #append>
               <t-button theme="primary" shape="square" size="large" @click="openSearch">
                 <template #icon>
@@ -31,25 +30,19 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {SearchIcon} from "tdesign-icons-vue-next";
-import {useVideoSourceStore, useWebFolderStore} from "@/store/index.js";
-import {VideoPlugin} from "@/modules/video/VideoPlugin.js";
 import {uid} from "radash";
-import {set} from "@/utils/lang/ArrayUtil.js";
-import {isEmptyString} from "@/utils/lang/FieldUtil.js";
-import {buildVideoPlugin} from "@/modules/video/index.js";
+import {SearchIcon} from "tdesign-icons-vue-next";
 import MessageUtil from "@/utils/modal/MessageUtil.js";
 import {SearchResult, SearchResultItem} from "@/pages/home/types/SearchResult.js";
 import SearchItem from "@/pages/home/components/SearchItem.vue";
 import HomeRecommend from "@/pages/home/components/HomeRecommend.vue";
+import {sourceWebList} from "@/apis/source-web/index.js";
+import {pluginWebSearch} from "@/apis/plugin-web/index.js";
 
 const route = useRoute();
 
-const pluginMap = new Map<string, VideoPlugin>();
-
-const folder = ref('');
+const folder = ref('all');
 const keyword = ref('');
-const sources = computed(() => useVideoSourceStore().sources);
 const isSearch = ref(false)
 
 const searchResultMap = ref(new Map<string, SearchResult>());
@@ -73,35 +66,19 @@ const openSearch = async () => {
   uuid.value = flag;
   try {
     loading.value = true;
-    const {webFolders} = useWebFolderStore();
-    const folderIds = set(webFolders, 'id');
-    const temps = sources.value.filter(s => {
-      if (isEmptyString(folder.value)) {
-        return true;
-      } else if (folder.value === 'root') {
-        // 根目录
-        return !folderIds.has(s.folder)
-      } else {
-        return s.folder === folder.value;
-      }
-    });
+    const temps = await sourceWebList(folder.value);
 
     total.value = temps.length;
     current.value = 1;
 
     await Promise.all(temps.map(async source => {
-      let plugin = pluginMap.get(source.id);
-      if (!plugin) {
-        plugin = buildVideoPlugin(source);
-        pluginMap.set(source.id, plugin);
-      }
       try {
-        const res = await plugin.searchVideos(k, 1)
+        const res = await pluginWebSearch(source.id, k, 1)
         if (flag !== uuid.value) return;
         current.value += 1;
         if (!res.data || res.data.length === 0) return;
         res.data.forEach(item => {
-          const resultItem: SearchResultItem = {source, item, plugin}
+          const resultItem: SearchResultItem = {source, item}
           const old = searchResultMap.value.get(item.title);
           if (old) {
             // 存在

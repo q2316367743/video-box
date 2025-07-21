@@ -1,5 +1,3 @@
-import {useUtoolsColorMode} from "@/hooks/ColorMode";
-
-export const detach = ref(utools.getWindowType() !== 'main')
+import {useUtoolsColorMode} from "@/hooks/ColorMode.js";
 
 export const {isDark, colorMode} = useUtoolsColorMode();

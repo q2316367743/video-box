@@ -1,5 +1,4 @@
-import {useUtoolsDbStorage} from "@/hooks/UtoolsObjStorage";
-import {LocalNameEnum} from "@/global/LocalNameEnum";
-import {defaultBaseSetting} from "@/entities/BaseSetting";
+import {LocalNameEnum} from "@/global/LocalNameEnum.js";
+import {defaultBaseSetting} from "@/entities/BaseSetting.js";
 
-export const useBaseSettingStore = useUtoolsDbStorage(LocalNameEnum.KEY_SETTING_BASE, defaultBaseSetting);
+export const useBaseSettingStore = useLocalStorage(LocalNameEnum.KEY_SETTING_BASE, defaultBaseSetting);

@@ -13,15 +13,15 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {VideoListItem, VideoPlugin} from "@/modules/video/VideoPlugin";
+import {VideoListItem} from "@/modules/video/VideoPlugin";
 import {openVideoInfoDrawer} from "@/pages/web/pages/components/VideoInfoDialog";
 import Macy from "macy";
 
+const route = useRoute();
+
+const id = route.params.id as string;
+
 const props = defineProps({
-  plugin: {
-    type: Object as PropType<VideoPlugin>,
-    required: true
-  },
   r: {
     type: Object as PropType<VideoListItem>,
     required: true
@@ -32,8 +32,7 @@ const props = defineProps({
 });
 
 const openOne = (item: VideoListItem) => {
-  if (!props.plugin) return;
-  openVideoInfoDrawer(item, props.plugin);
+  openVideoInfoDrawer(item, id);
 }
 const handleLoad = () => {
   props.macy?.recalculateOnImageLoad();

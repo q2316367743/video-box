@@ -6,7 +6,6 @@
 </template>
 <script lang="ts" setup>
 import {VideoDetail, VideoPlugin} from "@/modules/video/VideoPlugin";
-import {buildVideoPlugin} from "@/modules/video";
 import Player from "@/nested/player/components/Player.vue";
 
 let isInit = false
@@ -18,7 +17,6 @@ subWindow.receiveMsg(({event, data}) => {
   if (event === 'initialize') {
     if (isInit) return;
     isInit = true;
-    plugin.value = buildVideoPlugin(data.source);
     video.value = data.video;
     subWindow.sendMsg({event: 'initialized', data: null})
   }

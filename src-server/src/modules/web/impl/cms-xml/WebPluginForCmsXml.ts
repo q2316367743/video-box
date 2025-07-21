@@ -8,7 +8,7 @@ import {
   WebListItemChapter,
   WebSearchResult,
 } from "@/modules/web/WebPlugin";
-import { SourceWeb } from "@/types/SourceWeb";
+import { SourceWebView } from "@/types/SourceWeb";
 import { cmsTreeTransfer } from "@/modules/web/common/CmsUtil";
 import { useGet } from "@/global/http";
 
@@ -17,11 +17,11 @@ export interface WebPluginForCmsXmlProps {
 }
 
 export class WebPluginForCmsXml extends AbsWebPluginForStore {
-  public props: SourceWeb;
+  public props: SourceWebView;
   private readonly url: string;
   private readonly parser: XMLParser;
 
-  constructor(props: SourceWeb) {
+  constructor(props: SourceWebView) {
     super(props.id);
     this.props = props;
     this.url = props.props.url;

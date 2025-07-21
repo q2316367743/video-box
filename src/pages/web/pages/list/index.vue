@@ -20,7 +20,6 @@ import WebItemContent from "@/pages/web/pages/list/components/WebItemContent.vue
 
 const router = useRouter();
 
-
 const contentRef = ref()
 const init = () => {
   contentRef.value?.init();

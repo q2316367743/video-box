@@ -1,5 +1,5 @@
 import CtxMenu from "@imengyu/vue3-context-menu";
-import {isDark, useVideoSourceStore, useWebFolderStore} from "@/store/index.ts";
+import {isDark} from "@/store/index.ts";
 import {
   ChevronRightIcon,
   CircleIcon,
@@ -16,8 +16,8 @@ import MessageBoxUtil from "@/utils/modal/MessageBoxUtil.tsx";
 import MessageUtil from "@/utils/modal/MessageUtil.ts";
 import {DialogPlugin, Paragraph} from "tdesign-vue-next";
 import {WebItemView} from "@/views/WebItemView.js";
-import {folderWebPost} from "@/apis/folder-web/index.js";
-import {sourceWebMove} from "@/apis/source-web/index.js";
+import {folderWebDelete, folderWebPost, folderWebRename} from "@/apis/folder-web/index.js";
+import {sourceWebDelete, sourceWebMove} from "@/apis/source-web/index.js";
 import FolderSelect from "@/components/FolderSelect/FolderSelect.vue";
 
 function moveFileToFolder(source: WebItemView, update: () => void) {
@@ -101,9 +101,8 @@ export const handleItemContextmenu = (e: MouseEvent, source: WebItemView, openIn
           confirmButtonText: '确定',
           cancelButtonText: '取消',
         }).then(name => {
-          useWebFolderStore().rename(source.id, name)
-            .then(() => MessageUtil.success('重命名成功'))
-            .catch(e => MessageUtil.error("删除失败", e));
+          folderWebRename(source.id, name)
+            .then(() => MessageUtil.success('重命名成功'));
         })
       },
       {
@@ -113,7 +112,7 @@ export const handleItemContextmenu = (e: MouseEvent, source: WebItemView, openIn
           confirmButtonText: '确定',
           cancelButtonText: '取消',
         }).then(() => {
-          useWebFolderStore().del(source.id)
+          folderWebDelete(source.id)
             .then(() => MessageUtil.success('解散成功'))
             .catch(e => MessageUtil.error("解散失败", e));
         })
@@ -141,9 +140,7 @@ export const handleItemContextmenu = (e: MouseEvent, source: WebItemView, openIn
           confirmButtonText: '确定',
           cancelButtonText: '取消',
         }).then(() => {
-          useVideoSourceStore().remove(source.id)
-            .then(() => MessageUtil.success('删除成功'))
-            .catch(e => MessageUtil.error("删除失败", e));
+          sourceWebDelete(source.id).then(() => MessageUtil.success('删除成功'))
         })
       }
     ]

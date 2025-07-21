@@ -6,7 +6,7 @@ interface ColorModeResult {
 }
 
 export const useUtoolsColorMode = (): ColorModeResult => {
-  const colorMode = ref<ColorModeType>(utools.dbStorage.getItem('/key/color-mode') || 'auto');
+  const colorMode = ref<ColorModeType>((localStorage.getItem('/key/color-mode') as any) || 'auto');
   const isDark = computed(() => {
     if (colorMode.value === 'dark') {
       return true;
@@ -39,7 +39,7 @@ export const useUtoolsColorMode = (): ColorModeResult => {
   renderColorMode();
 
   watch(colorMode, val => {
-    utools.dbStorage.setItem('/key/color-mode', val);
+    localStorage.setItem('/key/color-mode', val);
     renderColorMode();
   });
 

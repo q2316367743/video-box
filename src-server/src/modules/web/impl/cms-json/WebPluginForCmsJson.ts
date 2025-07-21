@@ -6,7 +6,7 @@ import {
   WebSearchResult
 } from "@/modules/web/WebPlugin";
 import {CmsHomeResult, CmsWebList} from "@/modules/web/impl/cms-json/WebTypeForCmsJson";
-import {SourceWeb} from "@/types/SourceWeb";
+import {SourceWebView} from "@/types/SourceWeb";
 import {cmsTreeTransfer} from "@/modules/web/common/CmsUtil";
 import { useGet } from "@/global/http";
 
@@ -16,10 +16,10 @@ export interface WebPluginForCmsJsonProps {
 
 export class WebPluginForCmsJson extends AbsWebPluginForStore {
 
-  public props: SourceWeb;
+  public props: SourceWebView;
   private readonly url: string;
 
-  constructor(props: SourceWeb) {
+  constructor(props: SourceWebView) {
     super(props.id);
     this.props = props;
     this.url = props.props.url;

@@ -1,4 +1,4 @@
-import { SourceWeb } from "@/types/SourceWeb";
+import { SourceWebView } from "@/types/SourceWeb";
 import {
   WebCategoryResult,
   WebDetail,
@@ -11,7 +11,7 @@ import { LocalNameEnum } from "@/global/LocalNameEnum";
 import { storage } from "@/global/db";
 
 export abstract class AbsWebPluginForStore implements WebPlugin {
-  abstract props: SourceWeb;
+  abstract props: SourceWebView;
 
   abstract getDetail(video: WebListItem | string): Promise<WebDetail>;
 

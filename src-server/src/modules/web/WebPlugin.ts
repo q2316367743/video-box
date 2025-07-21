@@ -1,4 +1,4 @@
-import {SourceWeb} from "@/types/SourceWeb";
+import {SourceWebView} from "@/types/SourceWeb";
 
 export interface WebPageResult {
   // 当前页
@@ -105,7 +105,7 @@ export interface WebSearchResult extends WebCommonResult {
 
 export interface WebPlugin {
 
-  props: SourceWeb;
+  props: SourceWebView;
 
   /**
    * 获取首页数据

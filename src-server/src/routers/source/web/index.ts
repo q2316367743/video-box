@@ -1,76 +1,21 @@
 import { Elysia, t } from "elysia";
 import { db } from "@/global/db";
-import { WebItemView } from "@/views/WebItemView";
-import { Folder } from "@/types/Folder";
-import { SourceWeb } from "@/types/SourceWeb";
 import { Result } from "@/views/Result";
 // 子路由
+import sourceWebHome from "./source-web-home";
 import sourceWebImport from "./source-web-import";
 import sourceWebInfo from "./source-web-info";
 import sourceWebMove from "./source-web-move";
+import sourceWebList from "./source-web-list";
 
 const app = new Elysia({ prefix: "/api/source/web" });
 
-app.use(sourceWebImport).use(sourceWebInfo).use(sourceWebMove);
-
-// 查询首页
-app.get(
-  "home/:folder",
-  async ({ params }) => {
-    const { folder } = params;
-    const views = new Array<WebItemView>();
-    if (folder === "0") {
-      const { rows: folders } = await db.sql`select * from folder_web`;
-      if (folders) {
-        (folders as Array<any> as Array<Folder>).forEach((f) => {
-          views.push({
-            id: f.id,
-            name: f.name,
-            cover: "",
-            folder: true,
-            order: f.order,
-          });
-        });
-      }
-    }
-    let files: Array<SourceWeb> = [];
-    if (folder === "0") {
-      // 根目录
-      // 查询源
-      const { rows } = await db.sql`
-      select * from source_web
-      where folder = '0'
-      or folder not in (select id from folder_web);
-      `;
-      if (rows) {
-        files = rows as Array<any>;
-      }
-    } else {
-      // 指定目录
-      const { rows } =
-        await db.sql`select * from source_web where folder = ${folder};`;
-      if (rows) {
-        files = rows as Array<any>;
-      }
-    }
-    files.forEach((f) => {
-      views.push({
-        id: f.id,
-        name: f.title,
-        cover: "",
-        folder: false,
-        order: f.order,
-      });
-    });
-    views.sort((a, b) => b.order - a.order);
-    return Result.success(views);
-  },
-  {
-    params: t.Object({
-      folder: t.String(),
-    }),
-  }
-);
+app
+  .use(sourceWebHome)
+  .use(sourceWebImport)
+  .use(sourceWebInfo)
+  .use(sourceWebMove)
+  .use(sourceWebList);
 
 // 新增
 app.post(

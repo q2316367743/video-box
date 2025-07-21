@@ -2,9 +2,9 @@ import { Elysia } from "elysia";
 // 插件
 import { runMigrations } from "./plugins/migrate";
 // 路由
-import folderWebRoutes from "@/routers/folder-web";
-import sourceWebRoutes from "@/routers/source-web";
-import pluginWebRoutes from "@/routers/plugin-web";
+import folderWebRoutes from "@/routers/folder/web";
+import sourceWebRoutes from "@/routers/source/web";
+import pluginWebRoutes from "@/routers/plugin/web";
 import { Result } from "./views/Result";
 
 const app = new Elysia();

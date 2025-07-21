@@ -1,5 +1,5 @@
 <template>
-  <div :class="{main: true,'bg-color': true, detach: detach}">
+  <div :class="{main: true,'bg-color': true}">
     <div class="app-side" style="z-index: 50" :style="{width: collapsed?'64px':'232px'}">
       <t-menu v-model="path" :collapsed="collapsed"
               style="height: 100vh;border-right: 1px solid var(--td-border-level-1-color)">
@@ -47,7 +47,6 @@
 <script lang="ts" setup>
 import {ref, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
-import {detach} from "@/store/AppStore";
 import {routes} from "@/plugin/router";
 import {ViewListIcon} from "tdesign-icons-vue-next";
 import {LocalNameEnum} from "@/global/LocalNameEnum";
@@ -77,13 +76,6 @@ window.preload.lib.createServer(import.meta.env.DEV ? 13001 : 13011, () => {
 })
 
 const toggleCollapsed = useToggle(collapsed);
-
-utools.onPluginEnter(action => {
-  detach.value = utools.getWindowType() !== 'main';
-  // 对关键字进行处理
-  console.log(action);
-});
-
 
 </script>
 <style scoped lang="less">

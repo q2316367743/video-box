@@ -26,7 +26,7 @@ onMounted(() => {
     // 显示全部
     options.value.push({
       label: '全部',
-      value: ''
+      value: 'all'
     });
   }
   folderWebList().then(webFolders => {

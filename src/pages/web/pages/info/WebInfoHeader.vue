@@ -7,7 +7,7 @@
         </template>
       </t-button>
       <div class="logo" title="返回">
-        {{ plugin.props.title }}
+        {{ sourceWeb?.title }}
       </div>
     </template>
     <template v-for="menu in menus">
@@ -26,8 +26,12 @@
 <script lang="ts" setup>
 import {VideoCategory, VideoPlugin} from "@/modules/video/VideoPlugin";
 import {ChevronLeftIcon} from "tdesign-icons-vue-next";
+import {SourceWeb} from "@/views/SourceWeb.js";
 
 const router = useRouter();
+const route = useRoute();
+
+const id = route.params.id as string;
 
 const menuKey = defineModel({
   type: String,
@@ -38,9 +42,8 @@ defineProps({
     type: Object as PropType<Array<VideoCategory>>,
     default: []
   },
-  plugin: {
-    type: Object as PropType<VideoPlugin>,
-    required: true
+  sourceWeb: {
+    type: Object as PropType<SourceWeb>,
   }
 });
 const goBack = () => router.back();

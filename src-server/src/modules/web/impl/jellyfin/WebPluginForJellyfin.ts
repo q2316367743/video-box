@@ -1,5 +1,5 @@
 import { AbsWebPluginForStore } from "@/modules/web/abs/AbsWebPluginForStore";
-import { SourceWeb } from "@/types/SourceWeb";
+import { SourceWebView } from "@/types/SourceWeb";
 import {
   WebCategoryResult,
   WebDetail,
@@ -18,9 +18,9 @@ export interface WebPluginForJellyfinProps {
 }
 
 export class WebPluginForJellyfin extends AbsWebPluginForStore {
-  public props: SourceWeb;
+  public props: SourceWebView;
 
-  constructor(props: SourceWeb) {
+  constructor(props: SourceWebView) {
     super(props.id);
     this.props = props;
   }

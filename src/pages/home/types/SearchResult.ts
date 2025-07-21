@@ -1,10 +1,10 @@
 import {VideoSourceEntry} from "@/entities/VideoSource.js";
 import {VideoListItem, VideoPlugin} from "@/modules/video/VideoPlugin.js";
+import {SourceWeb} from "@/views/SourceWeb.js";
 
 export interface SearchResultItem {
-  source: VideoSourceEntry;
+  source: SourceWeb;
   item: VideoListItem;
-  plugin: VideoPlugin;
 }
 
 export interface SearchResultDisplay {

@@ -1,5 +1,5 @@
 import { AbsWebPluginForStore } from "@/modules/web/abs/AbsWebPluginForStore";
-import { SourceWeb } from "@/types/SourceWeb";
+import { SourceWebView } from "@/types/SourceWeb";
 import {
   WebCategoryResult,
   WebCommonResult,
@@ -25,7 +25,7 @@ export interface WebPluginForEmbyProps {
 }
 
 export class WebPluginForEmby extends AbsWebPluginForStore {
-  public props: SourceWeb;
+  public props: SourceWebView;
   private readonly PARAMS: Record<string, string> = {
     "X-Emby-Client": APP_ID,
     "X-Emby-Device-Name": APP_NAME,
@@ -34,7 +34,7 @@ export class WebPluginForEmby extends AbsWebPluginForStore {
     "X-Emby-Language": "zh-cn",
   };
 
-  constructor(props: SourceWeb) {
+  constructor(props: SourceWebView) {
     super(props.id);
     this.props = props;
   }

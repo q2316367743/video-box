@@ -15,12 +15,13 @@ import {LoadingPlugin} from "tdesign-vue-next";
 import CtxMenu from "@imengyu/vue3-context-menu";
 import {useMyVideoItemStore} from "@/store/db/MyVideoItemStore.js";
 import {MyVideoItem} from "@/entities/MyVideoItem.js";
-import {isDark, usePlayerWindowStore, useVideoSourceStore} from "@/store/index.js";
+import {isDark, usePlayerWindowStore} from "@/store/index.js";
 import MessageUtil from "@/utils/modal/MessageUtil.js";
-import {buildVideoPlugin} from "@/modules/video/index.js";
 import {DeleteIcon, InfoCircleIcon} from "tdesign-icons-vue-next";
 import MessageBoxUtil from "@/utils/modal/MessageBoxUtil.js";
 import {openVideoInfoDrawer} from "@/pages/web/pages/components/VideoInfoDialog.js";
+import {sourceWebInfo} from "@/apis/source-web/index.js";
+import {pluginWebDetail} from "@/apis/plugin-web/index.js";
 
 defineProps({
   item: {
@@ -43,15 +44,12 @@ const handleClick = async (item: MyVideoItem) => {
   (async () => {
     const [sourceId, videoId] = item.payload.split('/');
     // 获取网络资源
-    const source = useVideoSourceStore().sourceMap.get(sourceId);
+    const source = sourceWebInfo(sourceId);
     if (!source) return Promise.reject(new Error("资源不存在"));
-    // 获取插件
-    const plugin = buildVideoPlugin(source);
-    if (!plugin) return Promise.reject(new Error("插件不存在"));
-    const detail = await plugin.getDetail(videoId);
+    const detail = await pluginWebDetail(sourceId, videoId);
     // 打开
     try {
-      await usePlayerWindowStore().openPlayerWindow(source, {...detail, similar: []});
+      await usePlayerWindowStore().openPlayerWindow(sourceId, {...detail, similar: []});
     } catch (e) {
       MessageUtil.error("打开失败，进行搜索", e);
       // 跳转搜索
@@ -76,13 +74,7 @@ const handleContextmenu = (e: MouseEvent, item: MyVideoItem) => {
       icon: () => h(InfoCircleIcon, {style: {color: 'var(--td-error-color)'}}),
       onClick() {
         const [sourceId, videoId] = item.payload.split('/');
-        // 获取网络资源
-        const source = useVideoSourceStore().sourceMap.get(sourceId);
-        if (!source) return Promise.reject(new Error("资源不存在"));
-        // 获取插件
-        const plugin = buildVideoPlugin(source);
-        if (!plugin) return Promise.reject(new Error("插件不存在"));
-        openVideoInfoDrawer(videoId, plugin);
+        openVideoInfoDrawer(sourceId, videoId);
       }
     }, {
       label: () => h('span', {style: {color: 'var(--td-error-color)'}}, '删除'),

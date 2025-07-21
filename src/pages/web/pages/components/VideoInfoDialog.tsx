@@ -22,9 +22,10 @@ import {isNotEmptyString} from "@/utils/lang/FieldUtil.ts";
 import MessageUtil from "@/utils/modal/MessageUtil.js";
 import {useMyVideoItemStore} from "@/store/db/MyVideoItemStore.js";
 import {MyVideoItemForm} from "@/entities/MyVideoItem.js";
+import {pluginWebDetail} from "@/apis/plugin-web/index.js";
 
 
-export async function openVideoInfoDrawer(item: VideoListItem | string, plugin: VideoPlugin) {
+export async function openVideoInfoDrawer(item: VideoListItem | string, id: string) {
   const itemId = typeof item === 'string' ? item : item.id;
   const lp = LoadingPlugin({
     text: '正在获取详情',
@@ -36,20 +37,20 @@ export async function openVideoInfoDrawer(item: VideoListItem | string, plugin: 
     const existLiked = ref(useMyVideoItemStore().exists({
       type: 'liked',
       from: 'web',
-      payload: plugin.props.id + '/' + itemId
+      payload: id + '/' + itemId
     }));
     const existFollowing = ref(useMyVideoItemStore().exists({
       type: 'following',
       from: 'web',
-      payload: plugin.props.id + '/' + itemId
+      payload: id + '/' + itemId
     }));
 
     // 获取详情
-    const detail = await plugin.getDetail(item);
+    const detail = await pluginWebDetail(id, itemId);
     const chapterId = detail.chapters[0]?.id || '';
 
     const handlePlay = () => {
-      usePlayerWindowStore().openPlayerWindow(plugin.props, {...detail, similar: []}).then(() => {
+      usePlayerWindowStore().openPlayerWindow({} as any, {...detail, similar: []}).then(() => {
         dp.destroy?.();
       }).catch(console.error);
     }
@@ -57,7 +58,7 @@ export async function openVideoInfoDrawer(item: VideoListItem | string, plugin: 
       const data: MyVideoItemForm = {
         type,
         from: 'web',
-        payload: plugin.props.id + '/' + itemId,
+        payload: id + '/' + itemId,
         cover: detail.cover,
         title: detail.title,
         description: detail.remark
