@@ -4,8 +4,14 @@ import { WebItemView } from "@/views/WebItemView";
 import { Folder } from "@/types/Folder";
 import { SourceWeb } from "@/types/SourceWeb";
 import { Result } from "@/views/Result";
+// 子路由
+import sourceWebImport from "./source-web-import";
+import sourceWebInfo from "./source-web-info";
+import sourceWebMove from "./source-web-move";
 
 const app = new Elysia({ prefix: "/api/source/web" });
+
+app.use(sourceWebImport).use(sourceWebInfo).use(sourceWebMove);
 
 // 查询首页
 app.get(
@@ -13,17 +19,19 @@ app.get(
   async ({ params }) => {
     const { folder } = params;
     const views = new Array<WebItemView>();
-    const { rows: folders } = await db.sql`select * from folder_web`;
-    if (folders) {
-      (folders as Array<any> as Array<Folder>).forEach((f) => {
-        views.push({
-          id: f.id,
-          name: f.name,
-          cover: "",
-          folder: true,
-          order: f.order,
+    if (folder === "0") {
+      const { rows: folders } = await db.sql`select * from folder_web`;
+      if (folders) {
+        (folders as Array<any> as Array<Folder>).forEach((f) => {
+          views.push({
+            id: f.id,
+            name: f.name,
+            cover: "",
+            folder: true,
+            order: f.order,
+          });
         });
-      });
+      }
     }
     let files: Array<SourceWeb> = [];
     if (folder === "0") {
@@ -50,7 +58,7 @@ app.get(
         id: f.id,
         name: f.title,
         cover: "",
-        folder: true,
+        folder: false,
         order: f.order,
       });
     });
@@ -116,9 +124,9 @@ app.put(
     const { title, type, props, favicon, folder, order } = body;
     try {
       await db.sql`
-  update source_web set title = ${title}, type = ${type}, props = ${JSON.stringify(
+  update source_web set title = ${title}, \`type\` = ${type}, props = ${JSON.stringify(
         props
-      )}, favicon = ${favicon}, folder = ${folder}, order = ${order}
+      )}, favicon = ${favicon}, folder = ${folder}, \`order\` = ${order}
   where id = ${id};
   `;
       return Result.success();

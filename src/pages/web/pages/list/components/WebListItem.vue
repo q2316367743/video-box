@@ -1,15 +1,15 @@
 <template>
   <div class="web-list-item" :title="view.name">
     <div class="web-list-item__cover">
-      <folder-icon v-if="view.type === 'folder'"/>
+      <folder-icon v-if="view.folder"/>
       <t-avatar v-else :image="view.cover">{{ view.name.substring(0, 1) }}</t-avatar>
     </div>
     <div class="web-list-item__name ellipsis">{{ view.name }}</div>
   </div>
 </template>
 <script lang="ts" setup>
-import {WebItemView} from "@/pages/web/pages/list/types/WebItem";
 import {FolderIcon} from "tdesign-icons-vue-next";
+import {WebItemView} from "@/views/WebItemView.js";
 
 defineProps({
   view: {

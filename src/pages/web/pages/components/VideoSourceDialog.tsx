@@ -1,19 +1,18 @@
 import {DialogPlugin, Form, FormItem, Input, LoadingPlugin, Radio, RadioGroup, Select} from "tdesign-vue-next";
-import {VideoSourceEntry, videoSourceTypeOptions} from "@/entities/VideoSource.ts";
-import {useVideoSourceStore} from "@/store/index.ts";
+import {videoSourceTypeOptions} from "@/entities/VideoSource.ts";
 import MessageUtil from "@/utils/modal/MessageUtil.ts";
+import {SourceWebForm} from "@/views/SourceWeb.js";
+import {sourceWebAdd, sourceWebInfo, sourceWebUpdate} from "@/apis/source-web/index.js";
+import {SourceWebTypeEnum} from "@/enum/SourceWebTypeEnum.js";
 import VideoFormForCmsJson from "@/modules/video/impl/cms-json/VideoFormForCmsJson.vue";
 import VideoFormForEmby from "@/modules/video/impl/emby/VideoFormForEmby.vue";
 import VideoFormForCmsXml from "@/modules/video/impl/cms-xml/VideoFormForCmsXml.vue";
 
-export function openVideoSourceDialog(old?: VideoSourceEntry) {
+export function openVideoSourceDialog(update: () => void, old?: string) {
   const op = !!old ? '更新' : '新增';
-  const data = ref<VideoSourceEntry>(old || {
-    id: '',
-    createTime: 0,
-    updateTime: 0,
+  const data = ref<SourceWebForm>({
     title: '',
-    type: 'CMS:JSON',
+    type: SourceWebTypeEnum.CMS_JSON,
     props: {
       url: ''
     },
@@ -21,6 +20,9 @@ export function openVideoSourceDialog(old?: VideoSourceEntry) {
     folder: '',
     order: 0
   });
+  if (old) {
+    sourceWebInfo(old).then(res => data.value = res);
+  }
   const iconType = ref(2);
   const dp = DialogPlugin({
     header: op + '网络资源',
@@ -43,13 +45,13 @@ export function openVideoSourceDialog(old?: VideoSourceEntry) {
       {iconType.value === 3 && <FormItem label="图标地址" name={'type'} required-mark>
         <Input v-model={data.value.favicon}/>
       </FormItem>}
-      {data.value.type === 'CMS:JSON' ?
+      {data.value.type === SourceWebTypeEnum.CMS_JSON ?
         <VideoFormForCmsJson v-model={data.value.props}/> :
-        data.value.type === 'CMS:XML' ?
+        data.value.type === SourceWebTypeEnum.CMS_XML ?
           <VideoFormForCmsXml v-model={data.value.props}/> :
-        data.value.type === 'EMBY' ?
-          <VideoFormForEmby v-model={data.value.props}/> :
-          <span>类型未知</span>}
+          data.value.type === SourceWebTypeEnum.EMBY ?
+            <VideoFormForEmby v-model={data.value.props}/> :
+            <span>类型未知</span>}
     </Form>,
     confirmBtn: op,
     onConfirm() {
@@ -58,12 +60,12 @@ export function openVideoSourceDialog(old?: VideoSourceEntry) {
         fullscreen: true,
         zIndex: 2000
       });
-      (!!old ? useVideoSourceStore().update : useVideoSourceStore().add)(data.value, iconType.value)
+      (!!old ? sourceWebUpdate(old, data.value) : sourceWebAdd(data.value))
         .then(() => {
           MessageUtil.success(op + "成功");
           dp.destroy();
+          update()
         })
-        .catch(e => MessageUtil.error(op + "失败", e))
         .finally(() => {
           lp.hide();
         });

@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     EmptyResult: typeof import('./src/components/Result/EmptyResult.vue')['default']
+    FolderSelect: typeof import('./src/components/FolderSelect/FolderSelect.vue')['default']
     InfoResult: typeof import('./src/components/Result/InfoResult.vue')['default']
     LoadingResult: typeof import('./src/components/Result/LoadingResult.vue')['default']
     PageLayout: typeof import('./src/components/PageLayout/PageLayout.vue')['default']
@@ -54,5 +55,6 @@ declare module 'vue' {
     TTabs: typeof import('tdesign-vue-next')['Tabs']
     TTag: typeof import('tdesign-vue-next')['Tag']
     TTooltip: typeof import('tdesign-vue-next')['Tooltip']
+    TUpload: typeof import('tdesign-vue-next')['Upload']
   }
 }

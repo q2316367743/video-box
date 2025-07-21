@@ -1,77 +1,54 @@
 <template>
   <page-layout title="网络资源">
-    <div class="web-list" @contextmenu="handleListContextmenu($event)">
-      <div class="web-list-content" ref="web-list-content">
-        <web-list-item v-for="view in views" :key="view.id" :view="view" @click="openInfo(view)"
-                       @contextmenu.stop="handleItemContextmenu($event, view, openInfo)"/>
-        <web-list-add @click="handleListContextmenu($event)"/>
-      </div>
+    <template #extra>
+      <t-upload accept="application/json" :request-method="handleImportMethod" :show-upload-progress="false">
+        <t-button theme="primary">导入</t-button>
+      </t-upload>
+    </template>
+    <div class="web-list" @contextmenu="handleListContextmenu($event, init)">
+      <web-item-content folder="0" ref="contentRef"/>
     </div>
     <t-back-top container=".web-list"/>
-    <web-folder v-model="model.visible" :folder="model.folder"/>
   </page-layout>
 </template>
 <script lang="ts" setup>
-import {useSortable} from "@vueuse/integrations/useSortable";
-import {useVideoSourceStore, useWebFolderStore} from "@/store";
-import {Folder} from "@/entities/Folder.js";
-import {buildWebItemViews, WebItemFolder, WebItemView} from "@/pages/web/pages/list/types/WebItem";
-import {handleItemContextmenu, handleListContextmenu} from "@/pages/web/pages/list/components/WebListContext";
-import WebListItem from "@/pages/web/pages/list/components/WebListItem.vue";
-import WebListAdd from "@/pages/web/pages/list/components/WebListAdd.vue";
-import WebFolder from "@/pages/web/pages/list/components/WebFolder.vue";
+import {UploadProps} from "tdesign-vue-next";
+import MessageUtil from "@/utils/modal/MessageUtil.js";
+import {handleListContextmenu} from "@/pages/web/pages/list/components/WebListContext";
+import {sourceWebImport} from "@/apis/source-web/index.js";
+import WebItemContent from "@/pages/web/pages/list/components/WebItemContent.vue";
 
 const router = useRouter();
 
-const model = ref({
-  visible: false,
-  folder: null as WebItemFolder | null
-})
 
-const folder = computed<Array<Folder>>(() => useWebFolderStore().webFolders);
-const sources = computed(() => useVideoSourceStore().sources);
-
-const views = computed(() => buildWebItemViews(folder.value, sources.value));
-
-const openInfo = (view: WebItemView) => {
-  if (view.type === 'file') {
-    router.push(`/web/info/${view.id}`)
-  } else {
-    model.value = {
-      visible: true,
-      folder: view
-    }
-  }
+const contentRef = ref()
+const init = () => {
+  contentRef.value?.init();
 }
 
-const contentRef = useTemplateRef('web-list-content');
-useSortable(contentRef, views, {
-  animation: 150,
-  handle: '.web-list-item',
-  filter: '.web-list-add',
-  onUpdate: (e) => {
-    const temp = Array.from(views.value);
-    // 移动数组。将e.oldIndex!位置移动到e.newIndex!
-    if (e.oldIndex === e.newIndex) {
-      return;
-    }
-    // 从原位置移除元素
-    const [movedItem] = temp.splice(e.oldIndex!, 1);
-    // 将元素插入到新位置
-    temp.splice(e.newIndex!, 0, movedItem);
-    // 修改
-    temp.forEach((item, order) => {
-      if (item.type === 'file') {
-        useVideoSourceStore().update({
-          id: item.id,
-          order: order
-        })
-      } else {
-        useWebFolderStore().sort(item.id, order);
+
+const handleImportMethod: UploadProps['requestMethod'] = async (file) => {
+  const target = (Array.isArray(file) ? file : [file])[0];
+  if (target) {
+    const {raw} = target;
+    if (raw) {
+      await sourceWebImport(raw);
+      // 导入成功，重新初始化
+      MessageUtil.success("导入成功")
+      init();
+      return {
+        status: 'success',
+        response: {
+          url: 'https://tdesign.gtimg.com/site/avatar.jpg',
+        },
       }
-    })
+    }
   }
-});
+  return {
+    status: 'fail',
+    response: {},
+  }
+};
 </script>
 <style scoped lang="less">
 .web-list {

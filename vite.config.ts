@@ -55,5 +55,10 @@ export default defineConfig({
       },
     },
   },
-
+  server: {
+    proxy: {
+      // 字符串简写（等价于对象写法）
+      '/api': 'http://localhost:52411',
+    },
+  },
 });

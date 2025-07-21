@@ -5,7 +5,7 @@
         <div class="home-search-container">
           <t-input-adornment>
             <template #prepend>
-              <folder-select v-model="folder"/>
+              <folder-select v-model="folder" size="large" style="width: 96px"/>
             </template>
             <t-input v-model="keyword" placeholder="请输入资源名，回车搜索" clearable :disabled="sources.length === 0"
                      size="large" @enter="openSearch" @clear="openSearch"
@@ -41,7 +41,6 @@ import {buildVideoPlugin} from "@/modules/video/index.js";
 import MessageUtil from "@/utils/modal/MessageUtil.js";
 import {SearchResult, SearchResultItem} from "@/pages/home/types/SearchResult.js";
 import SearchItem from "@/pages/home/components/SearchItem.vue";
-import FolderSelect from "@/pages/home/components/FolderSelect.vue";
 import HomeRecommend from "@/pages/home/components/HomeRecommend.vue";
 
 const route = useRoute();

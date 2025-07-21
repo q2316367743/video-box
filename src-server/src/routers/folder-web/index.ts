@@ -1,7 +1,6 @@
 import { Elysia, t } from "elysia";
 import { db } from "@/global/db.js";
 import { Result } from "@/views/Result.js";
-import { Folder } from "@/types/Folder.js";
 import { useSnowflake } from "@/utils/Snowflake";
 
 const app = new Elysia({ prefix: "/api/folder/web" });

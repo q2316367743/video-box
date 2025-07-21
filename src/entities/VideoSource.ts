@@ -16,13 +16,13 @@ export type VideoSourceTypeName = keyof VideoSourceType;
 
 export const videoSourceTypeOptions: Array<SelectOption> = [{
   label: 'CMS (JSON)',
-  value: 'CMS:JSON'
+  value: 1
 }, {
   label: 'CMS (XML)',
-  value: 'CMS:XML'
+  value: 2
 }, {
   label: 'Emby',
-  value: 'EMBY'
+  value: 3
 }]
 
 export interface VideoSource<K extends VideoSourceTypeName> {

@@ -1,10 +1,13 @@
+import { SourceWebTypeEnum } from "@/enum/SourceWebTypeEnum";
+
 export interface SourceWeb {
   id: string;
   create_time: number;
   update_time: number;
   title: string;
-  type: number;
-  props: Record<string, any>;
+  type: SourceWebTypeEnum;
+  // 此处需要处理，本质是个json对象
+  props: string;
 
   // 图标
   favicon: string;
