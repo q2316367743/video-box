@@ -29,6 +29,11 @@ app.get(
       keyword: t.String(),
       page: t.Number(),
     }),
+    detail: {
+      tags: ["plugin/web"],
+      summary: "获取网络插件搜索",
+      description: "获取网络插件搜索",
+    },
   }
 );
 

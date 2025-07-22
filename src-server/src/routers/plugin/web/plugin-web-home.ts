@@ -28,6 +28,11 @@ app.get(
     query: t.Object({
       page: t.Number(),
     }),
+    detail: {
+      tags: ["plugin/web"],
+      summary: "获取网络插件首页",
+      description: "获取网络插件首页",
+    },
   }
 );
 

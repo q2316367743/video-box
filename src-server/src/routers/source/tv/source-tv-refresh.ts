@@ -54,6 +54,11 @@ app.put(
     params: t.Object({
       id: t.String(),
     }),
+    detail: {
+      tags: ["source/tv"],
+      summary: "刷新电视资源",
+      description: "刷新电视资源",
+    },
   }
 );
 

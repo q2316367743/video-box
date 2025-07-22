@@ -52,6 +52,11 @@ app.get(
     params: t.Object({
       folder: t.String(),
     }),
+    detail: {
+      tags: ["source/web"], 
+      summary: "查询网络资源列表",
+      description: "查询网络资源列表",
+    },
   }
 );
 

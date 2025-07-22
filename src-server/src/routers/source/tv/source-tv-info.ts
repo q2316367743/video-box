@@ -25,6 +25,11 @@ app.get(
     params: t.Object({
       id: t.String(),
     }),
+    detail: {
+      tags: ["source/tv"],
+      summary: "获取电视资源",
+      description: "获取电视资源",
+    },
   }
 );
 

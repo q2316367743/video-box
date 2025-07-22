@@ -16,6 +16,11 @@ app.post(
   },
   {
     body: t.Record(t.String(), t.Any()),
+    detail: {
+      tags: ["proxy"],
+      summary: "HTTP 代理",
+      description: "使用axios发送请求，解决前端跨域问题",
+    },
   }
 );
 

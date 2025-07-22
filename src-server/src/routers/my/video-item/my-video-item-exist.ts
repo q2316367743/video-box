@@ -18,6 +18,11 @@ app.get(
       from: t.String(),
       payload: t.String(),
     }),
+    detail: {
+      tags: ["my/video-item"],
+      summary: "判断我的视频是否存在",
+      description: "判断我的视频是否存在",
+    },
   }
 );
 

@@ -28,6 +28,11 @@ app.get(
     query: t.Object({
       videoId: t.String(),
     }),
+    detail: {
+      tags: ["plugin/web"],
+      summary: "获取网络插件详情",
+      description: "获取网络插件详情",
+    },
   }
 );
 

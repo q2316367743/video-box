@@ -20,6 +20,11 @@ app.post(
         default: false,
       }),
     }),
+    detail: {
+      tags: ["source/tv"],
+      summary: "添加电视资源",
+      description: "添加电视资源",
+    },
   }
 );
 

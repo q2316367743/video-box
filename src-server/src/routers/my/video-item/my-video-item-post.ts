@@ -32,6 +32,11 @@ app.post(
       title: t.String(),
       description: t.String(),
     }),
+    detail: {
+      tags: ["my/video-item"],
+      summary: "添加我的视频",
+      description: "添加我的视频",
+    },
   }
 );
 

@@ -29,6 +29,11 @@ app.put(
       title: t.String(),
       description: t.String(),
     }),
+    detail: {
+      tags: ["my/video-item"],
+      summary: "切换我的视频",
+      description: "切换我的视频",
+    },
   }
 );
 

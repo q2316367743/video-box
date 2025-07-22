@@ -27,6 +27,11 @@ app.put(
         order: t.Number(),
       })
     ),
+    detail: {
+      tags: ["source/web"],
+      summary: "更新网络资源排序",
+      description: "更新网络资源排序",
+    },
   }
 );
 

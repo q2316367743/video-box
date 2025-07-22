@@ -15,6 +15,11 @@ app.delete(
     params: t.Object({
       id: t.String(),
     }),
+    detail: {
+      tags: ["my/video-item"],
+      summary: "删除我的视频",
+      description: "删除我的视频",
+    },
   }
 );
 

@@ -6,10 +6,20 @@ import { useSnowflake } from "@/utils/Snowflake";
 const app = new Elysia({ prefix: "/api/folder/web" });
 
 // 查询全部文件夹
-app.get("list", async () => {
-  const { rows } = await db.sql`select * from folder_web`;
-  return Result.success(rows || []);
-});
+app.get(
+  "list",
+  async () => {
+    const { rows } = await db.sql`select * from folder_web`;
+    return Result.success(rows || []);
+  },
+  {
+    detail: {
+      tags: ["folder/web"],
+      summary: "查询全部文件夹",
+      description: "查询全部文件夹",
+    },
+  }
+);
 
 // 创建一个文件夹
 app.post(
@@ -23,6 +33,11 @@ app.post(
     body: t.Object({
       name: t.String(),
     }),
+    detail: {
+      tags: ["folder/web"],
+      summary: "创建一个文件夹",
+      description: "创建一个文件夹",
+    },
   }
 );
 
@@ -45,6 +60,11 @@ app.put(
       id: t.String(),
       name: t.String(),
     }),
+    detail: {
+      tags: ["folder/web"],
+      summary: "重命名文件夹",
+      description: "重命名文件夹",
+    },
   }
 );
 
@@ -67,6 +87,11 @@ app.put(
       id: t.String(),
       order: t.Number(),
     }),
+    detail: {
+      tags: ["folder/web"],
+      summary: "重排序文件夹",
+      description: "重排序文件夹",
+    },
   }
 );
 
@@ -88,6 +113,11 @@ app.delete(
     body: t.Object({
       id: t.String(),
     }),
+    detail: {
+      tags: ["folder/web"],
+      summary: "删除文件夹",
+      description: "删除文件夹",
+    },
   }
 );
 

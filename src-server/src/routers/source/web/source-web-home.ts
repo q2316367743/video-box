@@ -75,6 +75,11 @@ app.get(
     params: t.Object({
       folder: t.String(),
     }),
+    detail: {
+      tags: ["source/web"],
+      summary: "查询首页网络资源",
+      description: "查询首页 0-根目录（文件夹+文件） root-根目录（文件） all-全部（文件） 其他-指定目录（文件）",
+    },
   }
 );
 

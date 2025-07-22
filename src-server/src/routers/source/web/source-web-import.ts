@@ -50,6 +50,11 @@ app.post(
         maxSize: "1m",
       }),
     }),
+    detail: {
+      tags: ["source/web"],
+      summary: "导入网络资源",
+      description: "导入网络资源",
+    },
   }
 );
 

@@ -34,6 +34,11 @@ app.get(
     params: t.Object({
       id: t.String(),
     }),
+    detail: {
+      tags: ["source/web"],
+      summary: "查询网络资源详情",
+      description: "查询网络资源详情",
+    },
   }
 );
 

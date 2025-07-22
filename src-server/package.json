@@ -7,6 +7,8 @@
     "pglite": "bun run src/postgre-server.ts"
   },
   "dependencies": {
+    "@elysiajs/static": "^1.3.0",
+    "@elysiajs/swagger": "^1.3.1",
     "@rasla/logify": "^5.0.0",
     "db0": "^0.3.2",
     "elysia": "latest",

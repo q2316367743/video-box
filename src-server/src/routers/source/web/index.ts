@@ -45,6 +45,11 @@ app.post(
       folder: t.String(),
       order: t.Number(),
     }),
+    detail: {
+      tags: ["source/web"],
+      summary: "新增一个网络资源",
+      description: "新增一个网络资源",
+    },
   }
 );
 
@@ -60,6 +65,11 @@ app.delete(
     params: t.Object({
       id: t.String(),
     }),
+    detail: {
+      tags: ["source/web"],
+      summary: "删除一个网络资源",
+      description: "删除一个网络资源",
+    },
   }
 );
 
@@ -93,6 +103,11 @@ app.put(
       folder: t.String(),
       order: t.Number(),
     }),
+    detail: {
+      tags: ["source/web"],
+      summary: "更新一个网络资源",
+      description: "更新一个网络资源",
+    },
   }
 );
 

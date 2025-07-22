@@ -24,6 +24,11 @@ app.put(
         default: false,
       }),
     }),
+    detail: {
+      tags: ["source/tv"],
+      summary: "更新电视资源",
+      description: "更新电视资源",
+    },
   }
 );
 

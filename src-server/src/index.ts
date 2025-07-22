@@ -1,5 +1,7 @@
 import { Elysia } from "elysia";
 import { logger } from "@rasla/logify";
+import { staticPlugin } from "@elysiajs/static";
+import { swagger } from "@elysiajs/swagger";
 // 插件
 import { runMigrations } from "./plugins/migrate";
 import { Result } from "./views/Result";
@@ -14,7 +16,33 @@ import proxyRoutes from "@/routers/proxy";
 const app = new Elysia();
 
 // 使用插件
-app.use(logger());
+app
+  .use(logger())
+  .use(
+    staticPlugin({
+      assets: "public",
+      prefix: "/",
+    })
+  )
+  .use(
+    swagger({
+      documentation: {
+        info: {
+          title: "Video Box API",
+          version: "1.0.0",
+          description: "Video Box API documentation",
+        },
+        tags: [
+          { name: "folder/web", description: "文件夹-网络资源" },
+          { name: "source/web", description: "源-网络资源" },
+          { name: "source/tv", description: "源-电视资源" },
+          { name: "plugin/web", description: "插件-网络资源" },
+          { name: "my/video-item", description: "我的-视频资源" },
+          { name: "proxy", description: "代理" },
+        ],
+      },
+    })
+  );
 
 // 全局 afterHandle 钩子
 app.onAfterHandle(({ response }) => {
