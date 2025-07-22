@@ -78,8 +78,7 @@
               </t-tab-panel>
               <t-tab-panel label="相关推荐" value="recommendations" v-if="recommends.length > 0">
                 <div class="space-y-4 mt-8px">
-                  <disk-recommend v-for="recommend in recommends" :key="recommend.id" :plugin="plugin"
-                                  :recommend="recommend"/>
+                  <disk-recommend v-for="recommend in recommends" :key="recommend.id" :recommend="recommend"/>
                 </div>
               </t-tab-panel>
             </t-tabs>
@@ -93,7 +92,6 @@
 <script lang="ts" setup>
 import {shuffle} from "radash";
 import {DiskInfo} from "@/entities/disk/DiskEntry";
-import {DiskPlugin} from "@/modules/disk/DiskPlugin";
 import {useCacheRecordStorage} from "@/hooks/CacheRecordStorage";
 import {LocalNameEnum} from "@/global/LocalNameEnum";
 import MessageUtil from "@/utils/modal/MessageUtil";
@@ -104,10 +102,6 @@ import {PlayIcon} from "tdesign-icons-vue-next";
 const props = defineProps({
   info: {
     type: Object as PropType<DiskInfo>,
-    required: true
-  },
-  plugin: {
-    type: Object as PropType<DiskPlugin>,
     required: true
   },
   index: {
@@ -137,7 +131,7 @@ const videoUrl = computedAsync(async () => {
     return "";
   }
   console.log(chapter)
-  return props.plugin.getFileDownloadLink(chapter.path)
+  return ''
 })
 
 const switchUrl = (res1: string, res2: number) => {

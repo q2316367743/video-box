@@ -1,4 +1,4 @@
-import {useGet} from "@/hooks/HttpRequest.js";
+import {useGet} from "@/apis/common.js";
 
 export interface DouBanRecentHotResult {
   category: string;
@@ -53,9 +53,9 @@ interface Pic {
   normal: string;
 }
 
-export async function douBanRecentHotTv(limit: number, category?: string, type?: string) {
+export function douBanRecentHotTv(limit: number, category?: string, type?: string) {
   // https://m.douban.com/rexxar/api/v2/subject/recent_hot/tv?limit=50&category=tv&type=tv
-  const {data} = await useGet<DouBanRecentHotResult>(
+  return  useGet<DouBanRecentHotResult>(
     'https://m.douban.com/rexxar/api/v2/subject/recent_hot/tv',
     {limit, category, type}, {
       headers: {
@@ -63,13 +63,12 @@ export async function douBanRecentHotTv(limit: number, category?: string, type?:
         'Origin': 'https://movie.douban.com'
       }
     })
-  return data;
 }
 
 
-export async function douBanRecentHotMovie(limit: number, category?: string, type?: string) {
+export function douBanRecentHotMovie(limit: number, category?: string, type?: string) {
   // https://m.douban.com/rexxar/api/v2/subject/recent_hot/movie?limit=50&category=tv&type=tv
-  const {data} = await useGet<DouBanRecentHotResult>(
+  return  useGet<DouBanRecentHotResult>(
     'https://m.douban.com/rexxar/api/v2/subject/recent_hot/movie',
     {limit, category, type}, {
       headers: {
@@ -77,5 +76,4 @@ export async function douBanRecentHotMovie(limit: number, category?: string, typ
         'Origin': 'https://movie.douban.com'
       }
     })
-  return data;
 }

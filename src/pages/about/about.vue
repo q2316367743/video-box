@@ -12,7 +12,7 @@
             <div>
               <div class="text-xl font-bold mb-4px">{{ user.nickname }}</div>
               <t-tag theme="success" v-if="user.type === 'member'">
-                uTools 会员
+                会员
               </t-tag>
             </div>
           </div>
@@ -44,22 +44,25 @@
 import {useErrorStore} from "@/store";
 import Constant from "@/global/Constant.js";
 import MyVideoItem from "@/pages/about/components/MyVideoItem.vue";
-import {useMyVideoItemStore} from "@/store/db/MyVideoItemStore.js";
+import {MyVideoItemView} from "@/views/MyVideoItemView.js";
+import {myVideoItemList} from "@/apis/my/video-item.js";
 
 const activeKey = ref('watched');
 
 const {changeConsole} = useErrorStore();
 const {consoleShow} = toRefs(useErrorStore());
 
-const items = computed(() => useMyVideoItemStore().playHistoryItems
-  .filter(e => e.type === activeKey.value)
-  .sort((a, b) => b.createTime - a.createTime));
+const items = ref(new Array<MyVideoItemView>());
 
-const user = utools.getUser() || {
+const user = {
   nickname: '匿名用户',
   type: 'user',
   avatar: './user.png'
 }
+
+const init = () => myVideoItemList().then(res => items.value = res);
+
+onMounted(init)
 </script>
 <style scoped lang="less">
 .about {

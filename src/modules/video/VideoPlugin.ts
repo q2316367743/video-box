@@ -1,5 +1,3 @@
-import {VideoSourceEntry} from "@/entities/VideoSource.js";
-
 export interface VideoPageResult {
   // 当前页
   page: number;
@@ -101,36 +99,4 @@ export interface VideoCategoryResult extends VideoCommonResult {
 }
 
 export interface VideoSearchResult extends VideoCommonResult {
-}
-
-export interface VideoPlugin {
-
-  props: VideoSourceEntry;
-
-  /**
-   * 获取首页数据
-   * @param page 页码
-   */
-  home(page: number): Promise<VideoHome>;
-
-  /**
-   * 获取分类下的视频
-   * @param categoryId 分类ID
-   * @param page 页码
-   */
-  getVideos(categoryId: string, page: number): Promise<VideoCategoryResult>;
-
-  /**
-   * 根据关键字搜索视频
-   * @param keyword 关键字
-   * @param page 页码
-   */
-  searchVideos(keyword: string, page: number): Promise<VideoSearchResult>;
-
-  /**
-   * 获取视频的信息
-   * @param video 视频信息ID
-   */
-  getDetail(video: VideoListItem | string): Promise<VideoDetail>;
-
 }

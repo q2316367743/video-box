@@ -28,10 +28,8 @@
 </template>
 <script lang="ts" setup>
 import {SearchResult, SearchResultDisplay} from "@/pages/home/types/SearchResult.js";
-import {usePlayerWindowStore} from "@/store/index.js";
-import {LoadingPlugin} from "tdesign-vue-next";
-import MessageUtil from "@/utils/modal/MessageUtil.js";
 import {openVideoInfoDrawer} from "@/pages/web/pages/components/VideoInfoDialog.js";
+import {openWebPlayer} from "@/plugin/player.js";
 
 const props = defineProps({
   item: {
@@ -61,16 +59,7 @@ watch(active, val => {
 const handlePlay = () => {
   const target = props.item.results[active.value];
   if (target) {
-    const {hide} = LoadingPlugin({
-      text: '正在获取详情',
-      fullscreen: true
-    });
-    target.plugin.getDetail(target.item)
-      .then(detail => usePlayerWindowStore().openPlayerWindow(target.source, {
-        ...detail,
-        similar: props.item.results
-      })).catch(e => MessageUtil.error("获取失败", e))
-      .finally(() => hide());
+    openWebPlayer(target.source.id, target.item.id);
   }
 }
 
@@ -79,7 +68,7 @@ const handleView = () => {
   const {results} = item;
   const result = results[active.value];
   if (result) {
-    openVideoInfoDrawer(result.item, result.plugin);
+    openVideoInfoDrawer(result.source.id, result.item.id);
   }
 }
 </script>

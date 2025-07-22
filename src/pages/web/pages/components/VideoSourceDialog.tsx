@@ -1,9 +1,8 @@
 import {DialogPlugin, Form, FormItem, Input, LoadingPlugin, Radio, RadioGroup, Select} from "tdesign-vue-next";
-import {videoSourceTypeOptions} from "@/entities/VideoSource.ts";
 import MessageUtil from "@/utils/modal/MessageUtil.ts";
 import {SourceWebForm} from "@/views/SourceWeb.js";
-import {sourceWebAdd, sourceWebInfo, sourceWebUpdate} from "@/apis/source-web/index.js";
-import {SourceWebTypeEnum} from "@/enum/SourceWebTypeEnum.js";
+import {sourceWebAdd, sourceWebInfo, sourceWebUpdate} from "@/apis/source/web.js";
+import {SourceWebTypeEnum, sourceWebTypeOptions} from "@/enum/SourceWebTypeEnum.js";
 import VideoFormForCmsJson from "@/modules/video/impl/cms-json/VideoFormForCmsJson.vue";
 import VideoFormForEmby from "@/modules/video/impl/emby/VideoFormForEmby.vue";
 import VideoFormForCmsXml from "@/modules/video/impl/cms-xml/VideoFormForCmsXml.vue";
@@ -33,7 +32,7 @@ export function openVideoSourceDialog(update: () => void, old?: string) {
         <Input v-model={data.value.title}/>
       </FormItem>
       <FormItem label="类型" name={'type'} required-mark rules={[{required: true}]}>
-        <Select options={videoSourceTypeOptions} v-model={data.value.type}/>
+        <Select options={sourceWebTypeOptions} v-model={data.value.type}/>
       </FormItem>
       <FormItem label="图标" name={'type'} required-mark>
         <RadioGroup v-model={iconType.value}>

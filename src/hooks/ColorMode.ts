@@ -5,7 +5,9 @@ interface ColorModeResult {
   isDark: ComputedRef<boolean>;
 }
 
-export const useUtoolsColorMode = (): ColorModeResult => {
+const isDarkColors = () => window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+export const useColorMode = (): ColorModeResult => {
   const colorMode = ref<ColorModeType>((localStorage.getItem('/key/color-mode') as any) || 'auto');
   const isDark = computed(() => {
     if (colorMode.value === 'dark') {
@@ -13,14 +15,14 @@ export const useUtoolsColorMode = (): ColorModeResult => {
     } else if (colorMode.value === 'light') {
       return false;
     }
-    return utools.isDarkColors();
+    return isDarkColors();
   });
 
   function onAutoColor() {
     if (colorMode.value != 'auto') {
       return;
     }
-    document.body.setAttribute('arco-theme', utools.isDarkColors() ? 'dark' : 'light');
+    document.documentElement.setAttribute("theme-mode", isDarkColors() ? 'dark' : 'light');
 
   }
 
@@ -28,11 +30,11 @@ export const useUtoolsColorMode = (): ColorModeResult => {
 
   function renderColorMode() {
     if (colorMode.value === 'light') {
-      document.body.setAttribute('arco-theme', 'light');
+      document.documentElement.setAttribute("theme-mode", "light");
     } else if (colorMode.value === 'dark') {
-      document.body.setAttribute('arco-theme', 'dark');
+      document.documentElement.setAttribute("theme-mode", "dark");
     } else {
-      document.body.setAttribute('arco-theme', utools.isDarkColors() ? 'dark' : 'light');
+      document.documentElement.setAttribute("theme-mode", isDarkColors() ? 'dark' : 'light');
     }
   }
 

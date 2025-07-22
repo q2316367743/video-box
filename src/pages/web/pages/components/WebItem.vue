@@ -32,7 +32,7 @@ const props = defineProps({
 });
 
 const openOne = (item: VideoListItem) => {
-  openVideoInfoDrawer(item, id);
+  openVideoInfoDrawer(id, item.id);
 }
 const handleLoad = () => {
   props.macy?.recalculateOnImageLoad();

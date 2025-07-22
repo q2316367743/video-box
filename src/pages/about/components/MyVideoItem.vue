@@ -11,21 +11,19 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {LoadingPlugin} from "tdesign-vue-next";
 import CtxMenu from "@imengyu/vue3-context-menu";
-import {useMyVideoItemStore} from "@/store/db/MyVideoItemStore.js";
-import {MyVideoItem} from "@/entities/MyVideoItem.js";
-import {isDark, usePlayerWindowStore} from "@/store/index.js";
-import MessageUtil from "@/utils/modal/MessageUtil.js";
+import {isDark} from "@/store/index.js";
 import {DeleteIcon, InfoCircleIcon} from "tdesign-icons-vue-next";
 import MessageBoxUtil from "@/utils/modal/MessageBoxUtil.js";
+import MessageUtil from "@/utils/modal/MessageUtil.js";
 import {openVideoInfoDrawer} from "@/pages/web/pages/components/VideoInfoDialog.js";
-import {sourceWebInfo} from "@/apis/source-web/index.js";
-import {pluginWebDetail} from "@/apis/plugin-web/index.js";
+import {openWebPlayer} from "@/plugin/player.js";
+import {MyVideoItemView} from "@/views/MyVideoItemView.js";
+import {myVideoItemDelete} from "@/apis/my/video-item.js";
 
 defineProps({
   item: {
-    type: Object as PropType<MyVideoItem>,
+    type: Object as PropType<MyVideoItemView>,
     required: true
   },
   type: {
@@ -34,37 +32,14 @@ defineProps({
   }
 });
 
-const router = useRouter();
-
-const handleClick = async (item: MyVideoItem) => {
-  const lp = LoadingPlugin({
-    text: '正在打开',
-    fullscreen: true
-  });
-  (async () => {
-    const [sourceId, videoId] = item.payload.split('/');
-    // 获取网络资源
-    const source = sourceWebInfo(sourceId);
-    if (!source) return Promise.reject(new Error("资源不存在"));
-    const detail = await pluginWebDetail(sourceId, videoId);
-    // 打开
-    try {
-      await usePlayerWindowStore().openPlayerWindow(sourceId, {...detail, similar: []});
-    } catch (e) {
-      MessageUtil.error("打开失败，进行搜索", e);
-      // 跳转搜索
-      await router.push({
-        path: '/',
-        query: {
-          keyword: item.title
-        }
-      })
-    }
-  })().catch(e => MessageUtil.error("打开失败", e))
-    .finally(() => lp.hide());
+const handleClick = async (item: MyVideoItemView) => {
+  const [sourceId, videoId] = item.payload.split('/');
+  openWebPlayer(sourceId, videoId);
 }
 
-const handleContextmenu = (e: MouseEvent, item: MyVideoItem) => {
+const handleContextmenu = (e: MouseEvent, item: MyVideoItemView) => {
+  e.preventDefault();
+  e.stopPropagation();
   CtxMenu.showContextMenu({
     x: e.x,
     y: e.y,
@@ -82,9 +57,8 @@ const handleContextmenu = (e: MouseEvent, item: MyVideoItem) => {
       onClick() {
         MessageBoxUtil.confirm("是否删除此记录", "删除记录", {
           confirmButtonText: '删除'
-        }).then(() => useMyVideoItemStore().del(item.id)
-          .then(() => MessageUtil.success("删除成功"))
-          .catch(e => MessageUtil.error("删除失败", e)));
+        }).then(() => myVideoItemDelete(item.id)
+          .then(() => MessageUtil.success("删除成功")));
       }
     }]
   })

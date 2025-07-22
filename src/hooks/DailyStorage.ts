@@ -1,6 +1,5 @@
 import dayjs from 'dayjs';
 import MessageUtil from "@/utils/modal/MessageUtil.js";
-import {useUtoolsDbAsync} from "@/hooks/UtoolsDbAsync.js";
 
 interface DailyStorageValue<T> {
   date: string;
@@ -20,19 +19,9 @@ interface DailyStorageResult<T> {
  */
 export const useDailyStorage = <T extends Record<string, any>>(key: string, initialFunc: () => Promise<T>): DailyStorageResult<T> => {
   const today = dayjs().format("YYYY-MM-DD");
-  const _data = useUtoolsDbAsync<DailyStorageValue<T> | null>(key, null, {
-    onInitial: () => {
-      if (_data.value === null) {
-        // 数据不存在，刷新
-        refresh();
-        return;
-      }
-      const {date} = _data.value;
-      if (today !== date) {
-        // 不是今天，也刷新
-        refresh();
-      }
-    }
+  const _data = useLocalStorage<DailyStorageValue<T | null>>(key, {
+    date: '',
+    data: null
   });
   const _loading = ref(false);
   const refresh = () => {
@@ -48,5 +37,6 @@ export const useDailyStorage = <T extends Record<string, any>>(key: string, init
   };
   const data = computed(() => _data.value?.data || null);
   const loading = computed(() => _loading.value);
+  if (!_data.value?.data || _data.value.date !== today) refresh();
   return {data, loading, refresh};
 }

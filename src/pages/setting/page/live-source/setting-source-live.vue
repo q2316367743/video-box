@@ -7,7 +7,7 @@
             <questionnaire-icon/>
           </template>
         </t-button>
-        <t-button theme="primary" variant="text" shape="square" @click="openAddDispositionDialog()">
+        <t-button theme="primary" variant="text" shape="square" @click="openAddDispositionDialog(init)">
           <template #icon>
             <plus-icon/>
           </template>
@@ -15,21 +15,25 @@
       </t-space>
     </template>
     <t-list>
-      <disposition-item v-for="item in liveSources" :key="item.id" :item="item"/>
+      <disposition-item v-for="item in liveSources" :key="item.id" :item="item" @update="init"/>
     </t-list>
   </page-layout>
 </template>
 <script lang="ts" setup>
-import {computed} from "vue";
-import {useLiveSourceStore} from "@/store";
 import {openAddDispositionDialog} from "@/pages/setting/page/live-source/edit";
 import DispositionItem from "@/pages/setting/page/live-source/components/DispositionItem.vue";
-import Constant from "@/global/Constant";
 import {PlusIcon, QuestionnaireIcon} from "tdesign-icons-vue-next";
+import {sourceTvList} from "@/apis/source/tv.js";
+import {SourceTv} from "@/views/SourceTv.js";
+import Constant from "@/global/Constant.js";
 
-const liveSources = computed(() => useLiveSourceStore().liveSources);
+const liveSources = ref(new Array<SourceTv>());
 
-const showHelp = () => utools.shellOpenExternal(Constant.help);
+const showHelp = () => window.open(Constant.help);
+
+const init = () => sourceTvList().then(res => liveSources.value = res)
+
+onMounted(init)
 </script>
 <style scoped lang="less">
 .disposition {

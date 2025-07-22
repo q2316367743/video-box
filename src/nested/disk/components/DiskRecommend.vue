@@ -16,21 +16,16 @@
 </template>
 <script lang="ts" setup>
 import {DiskProgram} from "@/entities/disk/DiskEntry";
-import {DiskPlugin} from "@/modules/disk/DiskPlugin";
 
 const props = defineProps({
   recommend: {
     type: Object as PropType<DiskProgram>,
     required: true
   },
-  plugin: {
-    type: Object as PropType<DiskPlugin>,
-    required: true
-  },
 });
 const cover = computedAsync(async () => {
   if (!props.recommend.cover) return './video.png';
-  return await props.plugin.getFileDownloadLink(props.recommend.cover);
+  return '';
 }, './video.png');
 </script>
 <style scoped lang="less">

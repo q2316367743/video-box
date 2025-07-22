@@ -5,16 +5,18 @@ import { Elysia, t } from "elysia";
 const app = new Elysia();
 
 app.get(
-  "exist/:id",
+  "exist",
   async ({ params }) => {
-    const { id } = params;
+    const { type, from, payload } = params;
     const { rows } =
-      await db.sql`select count(1) as \`exist\` from my_video_item where id = ${id}`;
-    return Result.success(rows && ((rows[0]["count"] as number) || 0) > 0);
+      await db.sql`select * from my_video_item where type = ${type} and from = ${from} and payload = ${payload}`;
+    return Result.success(rows && rows.length > 0);
   },
   {
     params: t.Object({
-      id: t.String(),
+      type: t.String(),
+      from: t.String(),
+      payload: t.String(),
     }),
   }
 );

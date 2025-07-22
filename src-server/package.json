@@ -9,6 +9,7 @@
   "dependencies": {
     "db0": "^0.3.2",
     "elysia": "latest",
+    "radash": "^12.1.1",
     "unstorage": "^1.16.1"
   },
   "devDependencies": {

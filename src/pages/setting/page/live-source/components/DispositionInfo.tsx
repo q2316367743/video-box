@@ -1,8 +1,8 @@
-import {useLiveSourceStore} from "@/store";
 import {DrawerPlugin, List, ListItem, ListItemMeta, Space, Tag} from "tdesign-vue-next";
+import {sourceTvInfo} from "@/apis/source/tv.js";
 
-export async function openDispositionInfo(id: number) {
-  const info = await useLiveSourceStore().getChannel(id);
+export async function openDispositionInfo(id: string) {
+  const info = await sourceTvInfo(id);
   DrawerPlugin({
     header: info.name,
     size: '75%',

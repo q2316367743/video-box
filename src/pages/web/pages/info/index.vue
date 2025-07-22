@@ -18,14 +18,14 @@
 </template>
 <script lang="ts" setup>
 import Macy from "macy";
-import {VideoCategory, VideoListItem, VideoPlugin} from "@/modules/video/VideoPlugin";
+import {VideoCategory, VideoListItem} from "@/modules/video/VideoPlugin";
 import MessageUtil from "@/utils/modal/MessageUtil";
 import WebInfoHeader from "@/pages/web/pages/info/WebInfoHeader.vue";
 import WebItem from "@/pages/web/pages/components/WebItem.vue";
 import {uid} from "radash";
 import {pluginWebHome, pluginWebList} from "@/apis/plugin-web/index.js";
 import {SourceWeb} from "@/views/SourceWeb.js";
-import {sourceWebInfo} from "@/apis/source-web/index.js";
+import {sourceWebInfo} from "@/apis/source/web.js";
 
 const route = useRoute();
 

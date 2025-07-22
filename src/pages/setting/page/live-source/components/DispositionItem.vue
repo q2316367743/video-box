@@ -18,7 +18,7 @@
           <template #icon>
             <time-icon/>
           </template>
-          <span>{{ prettyDate(item.updateTime) }}</span>
+          <span>{{ prettyDate(item.update_time) }}</span>
         </t-tag>
       </t-space>
     </div>
@@ -29,14 +29,14 @@
             <info-circle-icon/>
           </template>
         </t-button>
-        <t-button theme="primary" variant="text" shape="square" :loading @click="refresh()"
+        <t-button theme="primary" variant="text" shape="square" :loading @click="refresh(item.id)"
                   :disabled="item.url.trim() === ''">
           <template #icon>
             <refresh-icon/>
           </template>
         </t-button>
         <t-button theme="primary" variant="text" shape="square" :loading
-                  @click="openUpdateDispositionDialog(item, refresh)">
+                  @click="openUpdateDispositionDialog(item, () => $emit('update'))">
           <template #icon>
             <edit-icon/>
           </template>
@@ -53,46 +53,39 @@
   </t-list-item>
 </template>
 <script lang="ts" setup>
-import {useLiveSourceStore} from "@/store";
 import MessageUtil from "@/utils/modal/MessageUtil";
 import {prettyDate} from "@/utils/lang/FormatUtil";
 import {openUpdateDispositionDialog} from "@/pages/setting/page/live-source/edit";
 import {openDispositionInfo} from "@/pages/setting/page/live-source/components/DispositionInfo";
-import {LiveSource} from "@/entities/LiveSource";
 import {DeleteIcon, EditIcon, InfoCircleIcon, LoadingIcon, RefreshIcon, TimeIcon} from "tdesign-icons-vue-next";
+import {SourceTv} from "@/views/SourceTv.js";
+import {sourceTvDel, sourceTvRefresh} from "@/apis/source/tv.js";
+import {LoadingPlugin} from "tdesign-vue-next";
 
-const props = defineProps({
-  item: Object as PropType<LiveSource>
+defineProps({
+  item: Object as PropType<SourceTv>
 });
+const emit = defineEmits(['update']);
 
 const loading = ref(false);
 
-onMounted(() => {
-  if (props.item) {
-    if ((props.item.updateTime === 0 || !props.item.success) && props.item.url.trim() !== '') {
-      // 新的 要刷新
-      loading.value = true;
-      useLiveSourceStore().refreshChannels(props.item.id)
-        .catch(e => MessageUtil.error("刷新失败", e))
-        .finally(() => loading.value = false);
-    }
-  }
-});
-
-function refresh() {
-  if (props.item && props.item.url.trim() !== '') {
-    loading.value = true;
-    useLiveSourceStore().refreshChannels(props.item.id)
-      .then(() => MessageUtil.success("刷新成功"))
-      .catch(e => MessageUtil.error("刷新失败", e))
-      .finally(() => loading.value = false);
-  }
+function refresh(id: string) {
+  const {hide} = LoadingPlugin({
+    text: '正在刷新中',
+    fullscreen: true
+  });
+  sourceTvRefresh(id).then(() => {
+    MessageUtil.success("刷新成功");
+    emit("update");
+  }).finally(hide);
 }
 
-function onRemove(id: number) {
-  useLiveSourceStore().remove(id)
-    .then(() => MessageUtil.success("删除成功"))
-    .catch(e => MessageUtil.error("删除失败", e))
+function onRemove(id: string) {
+  sourceTvDel(id)
+    .then(() => {
+      MessageUtil.success("删除成功");
+      emit("update");
+    })
 }
 
 </script>

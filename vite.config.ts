@@ -49,7 +49,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: _resolve('index.html'),
-        player: _resolve('player.html'),
+        web: _resolve('web.html'),
         tv: _resolve('tv.html'),
         disk: _resolve('disk.html'),
       },

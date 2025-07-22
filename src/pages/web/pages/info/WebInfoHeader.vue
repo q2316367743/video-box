@@ -24,7 +24,7 @@
   </t-head-menu>
 </template>
 <script lang="ts" setup>
-import {VideoCategory, VideoPlugin} from "@/modules/video/VideoPlugin";
+import {VideoCategory} from "@/modules/video/VideoPlugin";
 import {ChevronLeftIcon} from "tdesign-icons-vue-next";
 import {SourceWeb} from "@/views/SourceWeb.js";
 

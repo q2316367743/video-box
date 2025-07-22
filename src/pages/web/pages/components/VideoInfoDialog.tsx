@@ -8,7 +8,6 @@ import {
   Tabs,
   Tag
 } from 'tdesign-vue-next'
-import {VideoListItem, VideoPlugin} from "@/modules/video/VideoPlugin.ts";
 import {
   CalendarIcon, HeartIcon,
   Location1Icon,
@@ -17,16 +16,15 @@ import {
   TimeIcon,
   UsergroupIcon
 } from "tdesign-icons-vue-next";
-import {usePlayerWindowStore} from "@/store/index.ts";
 import {isNotEmptyString} from "@/utils/lang/FieldUtil.ts";
 import MessageUtil from "@/utils/modal/MessageUtil.js";
-import {useMyVideoItemStore} from "@/store/db/MyVideoItemStore.js";
-import {MyVideoItemForm} from "@/entities/MyVideoItem.js";
 import {pluginWebDetail} from "@/apis/plugin-web/index.js";
+import {openWebPlayer} from "@/plugin/player.js";
+import {myVideoItemExist, myVideoItemToggle} from "@/apis/my/video-item.js";
+import {MyVideoItemForm, MyVideoItemFromEnum, MyVideoItemTypeEnum} from "@/views/MyVideoItemView.js";
 
 
-export async function openVideoInfoDrawer(item: VideoListItem | string, id: string) {
-  const itemId = typeof item === 'string' ? item : item.id;
+export async function openVideoInfoDrawer(sourceId: string, videoId: string) {
   const lp = LoadingPlugin({
     text: '正在获取详情',
     fullscreen: true
@@ -34,46 +32,47 @@ export async function openVideoInfoDrawer(item: VideoListItem | string, id: stri
   try {
 
     // 获取播放记录
-    const existLiked = ref(useMyVideoItemStore().exists({
-      type: 'liked',
-      from: 'web',
-      payload: id + '/' + itemId
-    }));
-    const existFollowing = ref(useMyVideoItemStore().exists({
-      type: 'following',
-      from: 'web',
-      payload: id + '/' + itemId
-    }));
+    const existLiked = ref(false);
+    const existFollowing = ref(false);
+    myVideoItemExist({
+      type: MyVideoItemTypeEnum.FOLLOWING,
+      from: MyVideoItemFromEnum.WEB,
+      payload: sourceId + '/' + videoId
+    }).then(res => existFollowing.value = res);
+    myVideoItemExist({
+      type: MyVideoItemTypeEnum.LIKED,
+      from: MyVideoItemFromEnum.WEB,
+      payload: sourceId + '/' + videoId
+    }).then(res => existLiked.value = res);
 
     // 获取详情
-    const detail = await pluginWebDetail(id, itemId);
+    const detail = await pluginWebDetail(sourceId, videoId);
     const chapterId = detail.chapters[0]?.id || '';
 
     const handlePlay = () => {
-      usePlayerWindowStore().openPlayerWindow({} as any, {...detail, similar: []}).then(() => {
-        dp.destroy?.();
-      }).catch(console.error);
+      openWebPlayer(sourceId, videoId);
+      dp.destroy?.();
     }
-    const handleMy = (type: 'liked' | 'following', onSuccess: (exist: boolean) => void, onError: (e: Error) => void) => {
+    const handleMy = (type: MyVideoItemTypeEnum, onSuccess: (exist: boolean) => void, onError: (e: Error) => void) => {
       const data: MyVideoItemForm = {
         type,
-        from: 'web',
-        payload: id + '/' + itemId,
+        from: MyVideoItemFromEnum.WEB,
+        payload: sourceId + '/' + videoId,
         cover: detail.cover,
         title: detail.title,
         description: detail.remark
       };
-      useMyVideoItemStore().toggle(data)
+      myVideoItemToggle(data)
         .then(() => {
-          onSuccess(useMyVideoItemStore().exists(data))
+          myVideoItemExist(data).then(onSuccess)
         })
         .catch(onError)
     }
-    const toggleFollowing = () => handleMy('following', exist => {
+    const toggleFollowing = () => handleMy(MyVideoItemTypeEnum.FOLLOWING, exist => {
       MessageUtil.success((exist ? '' : '取消') + "在追成功");
       existFollowing.value = exist;
     }, e => MessageUtil.error("操作成功", e));
-    const toggleLiked = () => handleMy('liked', exist => {
+    const toggleLiked = () => handleMy(MyVideoItemTypeEnum.LIKED, exist => {
       MessageUtil.success((exist ? '' : '取消') + "喜欢成功");
       existLiked.value = exist;
     }, e => MessageUtil.error("操作成功", e));

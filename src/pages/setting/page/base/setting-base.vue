@@ -26,11 +26,19 @@
           <t-input type="password" v-model="useBaseSettingStore.proxy.password"/>
         </t-form-item>
       </template>
+      <t-form-item label="颜色模式">
+        <t-radio-group v-model="colorMode">
+          <t-radio value="auto" label="自动"/>
+          <t-radio value="light" label="白天"/>
+          <t-radio value="dark" label="黑夜"/>
+        </t-radio-group>
+      </t-form-item>
     </t-form>
   </page-layout>
 </template>
 <script lang="ts" setup>
 import {useBaseSettingStore} from "@/store/db/BaseSettingStore";
+import {colorMode} from "@/store/index.js";
 </script>
 <style scoped lang="less">
 

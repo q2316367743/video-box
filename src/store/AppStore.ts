@@ -1,3 +1,3 @@
-import {useUtoolsColorMode} from "@/hooks/ColorMode.js";
+import {useColorMode} from "@/hooks/ColorMode.js";
 
-export const {isDark, colorMode} = useUtoolsColorMode();
+export const {isDark, colorMode} = useColorMode();

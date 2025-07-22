@@ -1,4 +1,4 @@
-import {Folder} from "@/entities/Folder.js";
+import {Folder} from "@/views/Folder.js";
 import {useDelete, useGet, usePost, usePut} from "@/apis/common.js";
 
 export function folderWebList(): Promise<Array<Folder>> {

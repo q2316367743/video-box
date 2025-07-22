@@ -1,28 +1,23 @@
 <template>
   <div class="main">
-    <tv-container v-if="isInit" :source-id="sourceId" :default-url="defaultUrl"/>
+    <tv-container v-if="info" :source-id="sourceId" :video-id="videoId" :info="info"/>
     <loading-result v-else title="正在加载中"/>
   </div>
 </template>
 <script lang="ts" setup>
+import {sourceTvInfo} from "@/apis/source/tv.js";
+import {SourceTvInfo} from "@/views/SourceTv.js";
 import TvContainer from "@/nested/tv/components/TvContainer.vue";
 
-let isInit = ref(false);
-const sourceId = ref(0);
-const defaultUrl = ref('');
+const p = new URLSearchParams(location.search);
+const sourceId = p.get('source') || '';
+const videoId = p.get('video') || '';
 
-const subWindow = window.preload.ipcRenderer.buildSubWindow('tv');
-subWindow.receiveMsg(({event, data}) => {
-  console.log(event, data);
-  if (event === 'initialize') {
-    if (isInit.value) return;
-    // 直播链接、直播源ID
-    sourceId.value = data.sourceId;
-    defaultUrl.value = data.url;
-    isInit.value = true;
-    subWindow.sendMsg({event: 'initialized', data: null})
-  }
-});
+const info = ref<SourceTvInfo>();
+
+onMounted(() => {
+  sourceTvInfo(sourceId).then(res => info.value = res);
+})
 </script>
 <style lang="less">
 #app {

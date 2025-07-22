@@ -36,7 +36,7 @@ import MessageUtil from "@/utils/modal/MessageUtil.js";
 import {SearchResult, SearchResultItem} from "@/pages/home/types/SearchResult.js";
 import SearchItem from "@/pages/home/components/SearchItem.vue";
 import HomeRecommend from "@/pages/home/components/HomeRecommend.vue";
-import {sourceWebList} from "@/apis/source-web/index.js";
+import {sourceWebList} from "@/apis/source/web.js";
 import {pluginWebSearch} from "@/apis/plugin-web/index.js";
 
 const route = useRoute();

@@ -15,7 +15,7 @@
 import {UploadProps} from "tdesign-vue-next";
 import MessageUtil from "@/utils/modal/MessageUtil.js";
 import {handleListContextmenu} from "@/pages/web/pages/list/components/WebListContext";
-import {sourceWebImport} from "@/apis/source-web/index.js";
+import {sourceWebImport} from "@/apis/source/web.js";
 import WebItemContent from "@/pages/web/pages/list/components/WebItemContent.vue";
 
 const router = useRouter();

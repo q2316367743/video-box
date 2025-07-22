@@ -17,7 +17,7 @@ import MessageUtil from "@/utils/modal/MessageUtil.ts";
 import {DialogPlugin, Paragraph} from "tdesign-vue-next";
 import {WebItemView} from "@/views/WebItemView.js";
 import {folderWebDelete, folderWebPost, folderWebRename} from "@/apis/folder-web/index.js";
-import {sourceWebDelete, sourceWebMove} from "@/apis/source-web/index.js";
+import {sourceWebDelete, sourceWebMove} from "@/apis/source/web.js";
 import FolderSelect from "@/components/FolderSelect/FolderSelect.vue";
 
 function moveFileToFolder(source: WebItemView, update: () => void) {
@@ -44,6 +44,8 @@ function moveFileToFolder(source: WebItemView, update: () => void) {
 }
 
 export const handleListContextmenu = (e: MouseEvent, update: () => void) => {
+  e.preventDefault();
+  e.stopPropagation();
   CtxMenu.showContextMenu({
     x: e.x,
     y: e.y,
@@ -82,6 +84,8 @@ export const handleListContextmenu = (e: MouseEvent, update: () => void) => {
 
 
 export const handleItemContextmenu = (e: MouseEvent, source: WebItemView, openInfo: (source: WebItemView) => void, update: () => void) => {
+  e.preventDefault();
+  e.stopPropagation();
   CtxMenu.showContextMenu({
     x: e.x,
     y: e.y,

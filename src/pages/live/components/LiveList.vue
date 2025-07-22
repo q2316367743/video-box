@@ -20,9 +20,9 @@
 </template>
 <script lang="ts" setup>
 import {useFuse} from "@vueuse/integrations/useFuse";
-import type {M3u8ChannelWrap} from "@/entities/LiveSource";
-import {channelsToGroup} from "@/utils/file/M3u8Util";
+import {channelsToGroup} from "@/views/SourceTv.js";
 import LiveListItem from "@/pages/live/components/LiveListItem.vue";
+import {SourceTvChannelView} from "@/views/SourceTv.js";
 
 type FuseResult<T> = {
   item: T
@@ -32,7 +32,7 @@ type FuseResult<T> = {
 
 const props = defineProps({
   channels: {
-    type: Object as PropType<Array<M3u8ChannelWrap>>,
+    type: Object as PropType<Array<SourceTvChannelView>>,
     default: []
   },
   loading: {
@@ -40,8 +40,8 @@ const props = defineProps({
     default: false
   },
   active: {
-    type: Number,
-    default: 0
+    type: String,
+    default: ''
   },
   keyword: {
     type: String,
@@ -60,7 +60,7 @@ const groupNames = computed(() => [{
   label: e.group,
   value: e.group
 }))]);
-const items = computed<Array<M3u8ChannelWrap>>(() => {
+const items = computed<Array<SourceTvChannelView>>(() => {
   if (activeKey.value === '') {
     return props.channels;
   }
@@ -85,7 +85,7 @@ const currentlyLoadedCount = ref(initialLoadCount);
 
 // 当前加载的项目
 const currentlyLoadedResults = computed(() => {
-  const c: Array<FuseResult<M3u8ChannelWrap>> = results.value.slice(0, currentlyLoadedCount.value);
+  const c: Array<FuseResult<SourceTvChannelView>> = results.value.slice(0, currentlyLoadedCount.value);
   return c.map(e => e.item)
 });
 

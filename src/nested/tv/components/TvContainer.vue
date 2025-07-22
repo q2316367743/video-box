@@ -1,7 +1,8 @@
 <template>
   <div class="tv-container">
     <div class="tv-content">
-      <tv-player :url="url"/>
+      <tv-player v-if="url" :url="url"/>
+      <empty-result v-else title="系统异常，该频道无有效url"/>
     </div>
     <div class="tv-side">
       <div class="tv-side-content" v-if="info">
@@ -13,10 +14,10 @@
           ref="list"
           :scroll="{ type: 'virtual', rowHeight: 70, bufferSize: 10, threshold: 10 }"
         >
-          <t-list-item v-for="channel in info.channels" :key="channel.url">
+          <t-list-item v-for="channel in info.channels" :key="channel.id">
             <div
               class="flex items-center justify-between p-4 rounded-lg cursor-pointer transition-all hover:shadow-sm play-item"
-              :class="{play: channel.url === url}"
+              :class="{play: channel.id === channelId}"
               @click="switchUrl(channel)">
               <div class="flex items-center gap-4">
                 <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium index">
@@ -35,32 +36,32 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {useLiveSourceStore} from "@/store";
-import {LiveSourceInfo, M3u8Channel} from "@/entities/LiveSource";
 import TvPlayer from "@/nested/tv/components/TvPlayer.vue";
+import {SourceTvChannel, SourceTvInfo} from "@/views/SourceTv.js";
+import {map} from "@/utils/lang/ArrayUtil.js";
 
 const props = defineProps({
-  defaultUrl: {
+  sourceId: {
     type: String,
     required: true
   },
-  sourceId: {
-    type: Number,
+  videoId: {
+    type: String,
+    required: true
+  },
+  info: {
+    type: Object as PropType<SourceTvInfo>,
     required: true
   }
 });
-const info = shallowRef<LiveSourceInfo>();
-const url = ref(props.defaultUrl);
+const channelId = ref(props.videoId);
+const channelMap = map(props.info.channels as Array<SourceTvChannel>, 'id')
+const url = computed(() => channelMap.get(channelId.value)?.url);
 
-const switchUrl = (channel: M3u8Channel) => {
-  url.value = channel.url;
+const switchUrl = (channel: SourceTvChannel) => {
+  channelId.value = channel.id;
 }
 
-onMounted(async () => {
-  // 获取视频源
-  await useLiveSourceStore().init();
-  info.value = await useLiveSourceStore().getChannel(props.sourceId);
-})
 </script>
 <style scoped lang="less">
 .tv-container {

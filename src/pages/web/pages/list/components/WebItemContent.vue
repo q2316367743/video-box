@@ -9,7 +9,7 @@
 import {handleItemContextmenu} from "@/pages/web/pages/list/components/WebListContext.js";
 import WebListItem from "@/pages/web/pages/list/components/WebListItem.vue";
 import {WebItemView} from "@/views/WebItemView.js";
-import {sourceWebHome} from "@/apis/source-web/index.js";
+import {sourceWebHome} from "@/apis/source/web.js";
 import {useSortable} from "@vueuse/integrations/useSortable";
 import {openWebFolderDialog} from "@/pages/web/pages/list/components/WebFolder.js";
 

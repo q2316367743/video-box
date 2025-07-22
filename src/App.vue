@@ -50,14 +50,12 @@ import {useRoute, useRouter} from "vue-router";
 import {routes} from "@/plugin/router";
 import {ViewListIcon} from "tdesign-icons-vue-next";
 import {LocalNameEnum} from "@/global/LocalNameEnum";
-import {useUtoolsKvStorage} from "@/hooks/UtoolsKvStorage";
-import {useMyVideoItemStore} from "@/store/db/MyVideoItemStore.js";
 
 const route = useRoute();
 const router = useRouter();
 const path = ref('/');
 
-const collapsed = useUtoolsKvStorage(LocalNameEnum.KEY_APP_COLLAPSED, true);
+const collapsed = useLocalStorage(LocalNameEnum.KEY_APP_COLLAPSED, true);
 
 watch(path, value => router.push(value));
 
@@ -67,13 +65,6 @@ watch(() => route.path, value => {
   }
 }, {immediate: true})
 
-// 初始化数据
-useMyVideoItemStore().init();
-window.preload.lib.createServer(import.meta.env.DEV ? 13001 : 13011, () => {
-
-}, e => {
-  console.error(e);
-})
 
 const toggleCollapsed = useToggle(collapsed);
 

@@ -26,18 +26,21 @@
 </template>
 <script lang="ts" setup>
 import {LoadingIcon, VideoCamera1Icon} from "tdesign-icons-vue-next";
-import {M3u8Channel, M3u8ChannelWrap} from "@/entities/LiveSource.js";
-import {useHead} from "@/hooks/HttpRequest.js";
-import {useTvWindowStore} from "@/store/index.js";
+import {SourceTvChannelView} from "@/views/SourceTv.js";
+import {openTvWindow} from "@/plugin/player.js";
+import {useHead} from "@/apis/common.js";
 
 // -1:加载中、-2:超时
 const timeout = ref(0);
 
 const props = defineProps({
-  item: Object as PropType<M3u8ChannelWrap>,
+  item: {
+    type: Object as PropType<SourceTvChannelView>,
+    required: true
+  },
   active: {
-    type: Number,
-    default: 0
+    type: String,
+    default: ''
   }
 });
 
@@ -47,7 +50,7 @@ function onTimeout() {
   if (!props.item) {
     return;
   }
-  if (props.item.disableTimeout) {
+  if (!props.item.timeout) {
     // 禁用超时检测
     return;
   }
@@ -69,9 +72,8 @@ function onTimeout() {
     })
 }
 
-const openPlayer = (item: M3u8Channel) => {
-  useTvWindowStore().openTvWindow(props.active, item);
-
+const openPlayer = (item: SourceTvChannelView) => {
+  openTvWindow(props.active, item.id);
 }
 </script>
 <style scoped lang="less">

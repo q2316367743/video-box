@@ -1,5 +1,4 @@
-import {VideoSourceEntry} from "@/entities/VideoSource.js";
-import {VideoListItem, VideoPlugin} from "@/modules/video/VideoPlugin.js";
+import {VideoListItem} from "@/modules/video/VideoPlugin.js";
 import {SourceWeb} from "@/views/SourceWeb.js";
 
 export interface SearchResultItem {
