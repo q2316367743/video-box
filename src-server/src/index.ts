@@ -1,4 +1,5 @@
 import { Elysia } from "elysia";
+import { logger } from "@rasla/logify";
 // 插件
 import { runMigrations } from "./plugins/migrate";
 import { Result } from "./views/Result";
@@ -8,8 +9,12 @@ import sourceWebRoutes from "@/routers/source/web";
 import sourceTvRoutes from "@/routers/source/tv";
 import pluginWebRoutes from "@/routers/plugin/web";
 import myVideoItemRoutes from "@/routers/my/video-item";
+import proxyRoutes from "@/routers/proxy";
 
 const app = new Elysia();
+
+// 使用插件
+app.use(logger());
 
 // 全局 afterHandle 钩子
 app.onAfterHandle(({ response }) => {
@@ -27,7 +32,8 @@ app
   .use(sourceWebRoutes)
   .use(sourceTvRoutes)
   .use(pluginWebRoutes)
-  .use(myVideoItemRoutes);
+  .use(myVideoItemRoutes)
+  .use(proxyRoutes);
 
 runMigrations()
   .then(() => {

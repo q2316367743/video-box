@@ -1,4 +1,4 @@
-import {useGet} from "@/apis/common.js";
+import {proxyHttp} from "@/apis/proxy.js";
 
 export interface DouBanRecentHotResult {
   category: string;
@@ -53,27 +53,29 @@ interface Pic {
   normal: string;
 }
 
-export function douBanRecentHotTv(limit: number, category?: string, type?: string) {
+export async function douBanRecentHotTv(limit: number, category?: string, type?: string) {
   // https://m.douban.com/rexxar/api/v2/subject/recent_hot/tv?limit=50&category=tv&type=tv
-  return  useGet<DouBanRecentHotResult>(
-    'https://m.douban.com/rexxar/api/v2/subject/recent_hot/tv',
-    {limit, category, type}, {
-      headers: {
-        'Referer': 'https://movie.douban.com/',
-        'Origin': 'https://movie.douban.com'
-      }
-    })
+  return await proxyHttp<DouBanRecentHotResult>({
+    url: 'https://m.douban.com/rexxar/api/v2/subject/recent_hot/tv',
+    params: {limit, category, type},
+    headers: {
+      'Referer': 'https://movie.douban.com/',
+      'Origin': 'https://movie.douban.com',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
+    },
+  });
 }
 
 
-export function douBanRecentHotMovie(limit: number, category?: string, type?: string) {
+export async function douBanRecentHotMovie(limit: number, category?: string, type?: string) {
   // https://m.douban.com/rexxar/api/v2/subject/recent_hot/movie?limit=50&category=tv&type=tv
-  return  useGet<DouBanRecentHotResult>(
-    'https://m.douban.com/rexxar/api/v2/subject/recent_hot/movie',
-    {limit, category, type}, {
-      headers: {
-        'Referer': 'https://movie.douban.com/',
-        'Origin': 'https://movie.douban.com'
-      }
-    })
+  return await proxyHttp<DouBanRecentHotResult>({
+    url: 'https://m.douban.com/rexxar/api/v2/subject/recent_hot/movie',
+    params: {limit, category, type},
+    headers: {
+      'Referer': 'https://movie.douban.com/',
+      'Origin': 'https://movie.douban.com',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
+    }
+  });
 }
