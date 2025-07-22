@@ -31,6 +31,7 @@ defineProps({
     required: true
   }
 });
+const emit = defineEmits(['update']);
 
 const handleClick = async (item: MyVideoItemView) => {
   const [sourceId, videoId] = item.payload.split('/');
@@ -58,7 +59,10 @@ const handleContextmenu = (e: MouseEvent, item: MyVideoItemView) => {
         MessageBoxUtil.confirm("是否删除此记录", "删除记录", {
           confirmButtonText: '删除'
         }).then(() => myVideoItemDelete(item.id)
-          .then(() => MessageUtil.success("删除成功")));
+          .then(() => {
+            emit('update')
+            MessageUtil.success("删除成功");
+          }));
       }
     }]
   })

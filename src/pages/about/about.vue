@@ -34,7 +34,7 @@
     <div class="about-container">
       <empty-result v-if="items.length === 0" title="空空如也"/>
       <div class="flex flex-wrap justify-start items-start content-start gap-8px">
-        <my-video-item v-for="item in items" :key="item.id" :item="item" :type="activeKey"/>
+        <my-video-item v-for="item in items" :key="item.id" :item="item" :type="activeKey" @update="init"/>
       </div>
     </div>
     <t-back-top container=".about-container"/>

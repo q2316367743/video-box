@@ -7,6 +7,7 @@ import sourceWebImport from "./source-web-import";
 import sourceWebInfo from "./source-web-info";
 import sourceWebMove from "./source-web-move";
 import sourceWebList from "./source-web-list";
+import sourceWebSort from "./source-web-sort";
 
 const app = new Elysia({ prefix: "/api/source/web" });
 
@@ -15,7 +16,8 @@ app
   .use(sourceWebImport)
   .use(sourceWebInfo)
   .use(sourceWebMove)
-  .use(sourceWebList);
+  .use(sourceWebList)
+  .use(sourceWebSort);
 
 // 新增
 app.post(

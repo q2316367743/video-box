@@ -18,8 +18,6 @@ import {handleListContextmenu} from "@/pages/web/pages/list/components/WebListCo
 import {sourceWebImport} from "@/apis/source/web.js";
 import WebItemContent from "@/pages/web/pages/list/components/WebItemContent.vue";
 
-const router = useRouter();
-
 const contentRef = ref()
 const init = () => {
   contentRef.value?.init();

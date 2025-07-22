@@ -19,7 +19,7 @@ import {
 import {isNotEmptyString} from "@/utils/lang/FieldUtil.ts";
 import MessageUtil from "@/utils/modal/MessageUtil.js";
 import {pluginWebDetail} from "@/apis/plugin-web/index.js";
-import {openWebPlayer} from "@/plugin/player.js";
+import {copyWebShare, openWebPlayer} from "@/plugin/player.js";
 import {myVideoItemExist, myVideoItemToggle} from "@/apis/my/video-item.js";
 import {MyVideoItemForm, MyVideoItemFromEnum, MyVideoItemTypeEnum} from "@/views/MyVideoItemView.js";
 
@@ -53,7 +53,7 @@ export async function openVideoInfoDrawer(sourceId: string, videoId: string) {
       openWebPlayer(sourceId, videoId);
       dp.destroy?.();
     }
-    const handleMy = (type: MyVideoItemTypeEnum, onSuccess: (exist: boolean) => void, onError: (e: Error) => void) => {
+    const handleMy = (type: MyVideoItemTypeEnum, onSuccess: (exist: boolean) => void) => {
       const data: MyVideoItemForm = {
         type,
         from: MyVideoItemFromEnum.WEB,
@@ -66,20 +66,20 @@ export async function openVideoInfoDrawer(sourceId: string, videoId: string) {
         .then(() => {
           myVideoItemExist(data).then(onSuccess)
         })
-        .catch(onError)
     }
     const toggleFollowing = () => handleMy(MyVideoItemTypeEnum.FOLLOWING, exist => {
       MessageUtil.success((exist ? '' : '取消') + "在追成功");
       existFollowing.value = exist;
-    }, e => MessageUtil.error("操作成功", e));
+    });
     const toggleLiked = () => handleMy(MyVideoItemTypeEnum.LIKED, exist => {
       MessageUtil.success((exist ? '' : '取消') + "喜欢成功");
       existLiked.value = exist;
-    }, e => MessageUtil.error("操作成功", e));
+    });
 
     const dp = DrawerPlugin({
-      header: detail.title,
-      size: '400px',
+      header: false,
+      closeBtn: false,
+      size: '500px',
       footer: false,
       default: () => (
         <div class="pb-16px">
@@ -143,7 +143,7 @@ export async function openVideoInfoDrawer(sourceId: string, videoId: string) {
                     onClick={toggleLiked}>{{
               icon: () => <HeartIcon/>
             }}</Button>
-            <Button theme={'primary'} variant="outline" shape={'square'}>{{
+            <Button theme={'primary'} variant="outline" shape={'square'} onClick={() => copyWebShare(sourceId, videoId)}>{{
               icon: () => <ShareIcon/>
             }}</Button>
           </div>

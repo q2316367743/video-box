@@ -19,5 +19,5 @@ export function myVideoItemPost(data: MyVideoItemForm) {
 
 
 export function myVideoItemToggle(data: MyVideoItemForm) {
-  return usePut('/api/my/video-item/list', data)
+  return usePut('/api/my/video-item/toggle', data)
 }

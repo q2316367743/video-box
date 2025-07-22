@@ -43,3 +43,7 @@ export function sourceWebUpdate(id: string, data: SourceWebForm) {
 export function sourceWebDelete(id: string) {
   return useDelete(`/api/source/web/delete/${id}`);
 }
+
+export function sourceWebSort(data: Array<{ id: string, folder: boolean, order: number }>) {
+  return usePut('/api/source/web/sort', data);
+}

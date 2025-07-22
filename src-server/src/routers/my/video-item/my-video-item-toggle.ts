@@ -1,22 +1,22 @@
 import { db } from "@/global/db";
 import { Result } from "@/views/Result";
 import { Elysia, t } from "elysia";
-import { buildId } from "./common";
+import { useSnowflake } from "@/utils/Snowflake";
 
 const app = new Elysia();
 
 app.put(
   "toggle",
   async ({ body }) => {
-    const { type, from, payload, cover, totle, description } = body;
-    const id = buildId({ type, from, payload });
+    const { type, from, payload, cover, title, description } = body;
     // 如果存在记录则删除，不存在则新增
-    const { rows } = await db.sql`select * from my_video_item where id = ${id}`;
+    const { rows } =
+      await db.sql`select * from my_video_item where \`type\` = ${type} and \`from\` = ${from} and payload = ${payload}`;
     if (rows && rows.length > 0) {
-      await db.sql`delete from my_video_item where id = ${id}`;
+      await db.sql`delete from my_video_item where \`id\` = ${rows[0].id}`;
     } else {
-      await db.sql`insert into my_video_item (id, type, from, payload, cover, totle, description) 
-    values (${id}, ${type}, ${from}, ${payload}, ${cover}, ${totle}, ${description})`;
+      await db.sql`insert into my_video_item (id, \`type\`, \`from\`, payload, cover, title, \`description\`) 
+    values (${useSnowflake().nextId()}, ${type}, ${from}, ${payload}, ${cover}, ${title}, ${description})`;
     }
     return Result.success();
   },
@@ -26,7 +26,7 @@ app.put(
       from: t.Number(),
       payload: t.String(),
       cover: t.String(),
-      totle: t.String(),
+      title: t.String(),
       description: t.String(),
     }),
   }
