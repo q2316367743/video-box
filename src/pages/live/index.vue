@@ -68,17 +68,8 @@ onMounted(() => {
 </script>
 <style scoped lang="less">
 .live {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
 
   .live-header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
     border-bottom: 1px solid var(--td-border-level-2-color);
     display: flex;
     justify-content: space-between;
@@ -86,11 +77,7 @@ onMounted(() => {
   }
 
   .live-container {
-    position: absolute;
-    top: 57px;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    min-height: 100vh;
   }
 }
 </style>

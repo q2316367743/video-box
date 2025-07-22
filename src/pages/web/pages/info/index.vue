@@ -1,9 +1,9 @@
 <template>
   <div class="web-content">
-    <div class="web-category" ref="headerRef">
+    <div class="web-category">
       <web-info-header v-model="categoryValue" :menus="categoryOptions" :source-web="sourceWeb"/>
     </div>
-    <div class="web-list" ref="containerRef" :style="{height: (winSize.height.value - headerSize.height.value) + 'px'}">
+    <div class="web-list">
       <div class="web-list-container">
         <t-empty style="margin: 15vh 0" v-if="list.length === 0 && !loading"/>
         <div class="waterfall-list" ref="listRef">
@@ -26,13 +26,12 @@ import {uid} from "radash";
 import {pluginWebHome, pluginWebList} from "@/apis/plugin-web/index.js";
 import {SourceWeb} from "@/views/SourceWeb.js";
 import {sourceWebInfo} from "@/apis/source/web.js";
+import {emitScrollToTop, onScrollToBottom} from "@/store/index.js";
 
 const route = useRoute();
 
 const id = route.params.id as string;
 
-const headerRef = ref<HTMLDivElement>();
-const containerRef = ref<HTMLDivElement>();
 const listRef = ref<HTMLDivElement>();
 
 const macy = shallowRef<Macy>();
@@ -46,9 +45,6 @@ const list = ref<Array<VideoListItem>>([]);
 const bottom = ref(false);
 // 标记请求
 const flag = shallowRef('');
-
-const winSize = useWindowSize();
-const headerSize = useElementSize(headerRef);
 
 // 分类
 const categories = ref<Array<VideoCategory>>([]);
@@ -68,11 +64,7 @@ const fetch = () => {
   pageNum.value += 1;
   if (pageNum.value === 1) {
     // 第一页滚动到顶部
-    containerRef.value?.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: "smooth"
-    })
+    emitScrollToTop.trigger();
   }
   const key = uid(10);
   flag.value = key;
@@ -142,19 +134,17 @@ onMounted(() => {
       }
     });
   }
+  onScrollToBottom.on(fetch)
 });
 onBeforeMount(() => {
   macy.value?.remove();
+  onScrollToBottom.off(fetch);
 });
-useInfiniteScroll(containerRef, () => {
-  fetch();
-})
 </script>
 <style scoped lang="less">
 .web-content {
   position: relative;
   width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -162,8 +152,12 @@ useInfiniteScroll(containerRef, () => {
 }
 
 .web-category {
+  position: sticky;
+  top: 80px;
   overflow-x: auto;
   overflow-y: hidden;
+  background-color: var(--td-bg-color-container);
+  z-index: 49;
 
   :deep(.t-submenu) {
     margin: 0;
@@ -172,7 +166,6 @@ useInfiniteScroll(containerRef, () => {
 
 .web-list {
   flex: auto;
-  height: 500px;
   overflow: auto;
 
   .web-list-container {

@@ -1,5 +1,5 @@
 <template>
-  <router-view/>
+  <div>剧集</div>
 </template>
 <script lang="ts" setup>
 </script>

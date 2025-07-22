@@ -10,12 +10,29 @@ import {
 } from 'tdesign-icons-vue-next';
 
 export const routes: Array<RouteRecordRaw> = [{
-  name: '首页',
+  name: '主页',
   path: '/',
+  redirect: '/home/list'
+}, {
+  name: '首页',
+  path: '/home',
   component: () => import("@/pages/home/index.vue"),
   meta: {
     icon: HomeIcon
-  }
+  },
+  children: [{
+    name: '首页列表',
+    path: 'list',
+    component: () => import('@/pages/home/pages/list/index.vue'),
+  },{
+    name: '首页电影',
+    path: 'movie',
+    component: () => import('@/pages/home/pages/movie/index.vue'),
+  },{
+    name: '首页剧集',
+    path: 'series',
+    component: () => import('@/pages/home/pages/series/index.vue'),
+  }]
 },
   // {
   //   name: '网盘',

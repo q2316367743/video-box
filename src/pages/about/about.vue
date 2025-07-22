@@ -71,12 +71,6 @@ onMounted(init)
   position: relative;
 
   .about-container {
-    position: absolute;
-    top: 150px;
-    left: 8px;
-    right: 8px;
-    bottom: 8px;
-    overflow-y: auto;
   }
 }
 </style>

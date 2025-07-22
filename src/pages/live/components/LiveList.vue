@@ -109,17 +109,8 @@ watch(() => props.active, () => {
 </script>
 <style scoped lang="less">
 .live-list {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
 
   .live-list-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
 
     .loading-more {
       width: 100%;
@@ -131,11 +122,6 @@ watch(() => props.active, () => {
     bottom: 0;
 
     .container-content {
-      position: absolute;
-      top: 48px;
-      left: 0;
-      right: 0;
-      bottom: 0;
       width: calc(100% - 16px);
       padding: 8px;
       display: flex;

@@ -2,16 +2,18 @@
   <div class="web-list-content" ref="web-list-content">
     <web-list-item v-for="view in views" :key="view.id" :view="view" @click="openInfo(view)"
                    @contextmenu.stop="handleItemContextmenu($event, view, openInfo, init)"/>
+    <web-list-add v-if="folder === '0'" @click="handleListContextmenu($event, init)"/>
   </div>
 
 </template>
 <script lang="ts" setup>
-import {useSortable, moveArrayElement} from "@vueuse/integrations/useSortable";
-import {handleItemContextmenu} from "@/pages/web/pages/list/components/WebListContext.js";
+import {useSortable} from "@vueuse/integrations/useSortable";
+import {handleItemContextmenu, handleListContextmenu} from "@/pages/web/pages/list/components/WebListContext.js";
 import WebListItem from "@/pages/web/pages/list/components/WebListItem.vue";
 import {WebItemView} from "@/views/WebItemView.js";
 import {sourceWebHome, sourceWebSort} from "@/apis/source/web.js";
 import {openWebFolderDialog} from "@/pages/web/pages/list/components/WebFolder.js";
+import WebListAdd from "@/pages/web/pages/list/components/WebListAdd.vue";
 
 const router = useRouter();
 

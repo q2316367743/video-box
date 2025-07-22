@@ -8,7 +8,7 @@ interface Result<T> {
 }
 
 const http = axios.create({
-  timeout: 5000,
+  timeout: 10000,
 });
 
 export async function useRequest<T>(url: string, config?: AxiosRequestConfig): Promise<T> {

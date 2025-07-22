@@ -1,19 +1,23 @@
 <template>
   <div class="home-recommend">
-    <div class="home-recommend-header">
-      <div class="home-recommend-title">热门剧集</div>
-      <t-button theme="primary" variant="text" @click="tvRefresh" :loading="tvLoading">刷新</t-button>
-    </div>
-    <div class="home-recommend-content">
-      <home-recommend-content :movies="tvRecommendItems" @search="$emit('search', $event)"/>
-    </div>
-    <div class="home-recommend-header">
-      <div class="home-recommend-title">热门电影</div>
-      <t-button theme="primary" variant="text" @click="movieRefresh" :loading="movieLoading">刷新</t-button>
-    </div>
-    <div class="home-recommend-content">
-      <home-recommend-content :movies="movieRecommendItems" @search="$emit('search', $event)"/>
-    </div>
+    <t-card hover-shadow>
+      <div class="home-recommend-header">
+        <div class="home-recommend-title">热门剧集</div>
+        <t-button theme="primary" variant="text" @click="tvRefresh" :loading="tvLoading">刷新</t-button>
+      </div>
+      <div class="home-recommend-content">
+        <home-recommend-content :movies="tvRecommendItems" @search="$emit('search', $event)"/>
+      </div>
+    </t-card>
+    <t-card hover-shadow class="mt-16px">
+      <div class="home-recommend-header">
+        <div class="home-recommend-title">热门电影</div>
+        <t-button theme="primary" variant="text" @click="movieRefresh" :loading="movieLoading">刷新</t-button>
+      </div>
+      <div class="home-recommend-content">
+        <home-recommend-content :movies="movieRecommendItems" @search="$emit('search', $event)"/>
+      </div>
+    </t-card>
   </div>
 </template>
 <script lang="ts" setup>

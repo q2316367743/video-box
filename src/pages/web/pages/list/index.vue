@@ -1,15 +1,12 @@
 <template>
-  <page-layout title="网络资源">
-    <template #extra>
-      <t-upload accept="application/json" :request-method="handleImportMethod" :show-upload-progress="false">
-        <t-button theme="primary">导入</t-button>
-      </t-upload>
-    </template>
-    <div class="web-list" @contextmenu="handleListContextmenu($event, init)">
-      <web-item-content folder="0" ref="contentRef"/>
-    </div>
-    <t-back-top container=".web-list"/>
-  </page-layout>
+  <!--  <template #extra>-->
+  <!--    <t-upload accept="application/json" :request-method="handleImportMethod" :show-upload-progress="false">-->
+  <!--      <t-button theme="primary">导入</t-button>-->
+  <!--    </t-upload>-->
+  <!--  </template>-->
+  <div class="web-list" @contextmenu="handleListContextmenu($event, init)">
+    <web-item-content folder="0" ref="contentRef"/>
+  </div>
 </template>
 <script lang="ts" setup>
 import {UploadProps} from "tdesign-vue-next";
@@ -49,14 +46,7 @@ const handleImportMethod: UploadProps['requestMethod'] = async (file) => {
 </script>
 <style scoped lang="less">
 .web-list {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--td-bg-color-container);
-  overflow: auto;
-
+  min-height: 60vh;
   .web-list-content {
     display: flex;
     justify-content: flex-start;
