@@ -59,7 +59,7 @@ watch(active, val => {
 const handlePlay = () => {
   const target = props.item.results[active.value];
   if (target) {
-    openWebPlayer(target.source.id, target.item.id);
+    openWebPlayer(target.source.id, target.item.id, props.item.results);
   }
 }
 

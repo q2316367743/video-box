@@ -174,6 +174,14 @@ onMounted(() => {
   if (!chapterId.value) chapterId.value = v.chapters[0]?.id;
   chapterTabId.value = chapterId.value;
   switchUrl(chapterId.value, index.value);
+
+  window.opener.postMessage('LOADED', location.origin);
+  // 接收父窗口发来的 items
+  window.addEventListener('message', (e) => {
+    if (e.source !== window.opener) return;
+    // TODO: 此处吧推荐显示出来
+    console.log('收到父窗口的 items:', e.data);
+  });
 });
 </script>
 <style scoped lang="less">
