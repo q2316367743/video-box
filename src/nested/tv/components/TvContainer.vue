@@ -39,6 +39,7 @@
 import TvPlayer from "@/nested/tv/components/TvPlayer.vue";
 import {SourceTvChannel, SourceTvInfo} from "@/views/SourceTv.js";
 import {map} from "@/utils/lang/ArrayUtil.js";
+import {proxyUrl} from "@/apis/proxy.js";
 
 const props = defineProps({
   sourceId: {
@@ -56,7 +57,7 @@ const props = defineProps({
 });
 const channelId = ref(props.videoId);
 const channelMap = map(props.info.channels as Array<SourceTvChannel>, 'id')
-const url = computed(() => channelMap.get(channelId.value)?.url);
+const url = computed(() => proxyUrl(channelMap.get(channelId.value)?.url));
 
 const switchUrl = (channel: SourceTvChannel) => {
   channelId.value = channel.id;

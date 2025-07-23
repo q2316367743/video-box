@@ -1,4 +1,5 @@
 import { db } from "@/global/db";
+import { Result } from "@/views/Result";
 import { Elysia, t } from "elysia";
 
 const app = new Elysia();
@@ -8,9 +9,8 @@ app.put(
   async ({ params, body }) => {
     const { id } = params;
     const { name, url, timeout } = body;
-    db.sql`update source_tv set name = ${name}, url = ${url}, timeout = ${
-      timeout ? 1 : 0
-    } where id = ${id};`;
+    db.sql`update source_tv set name = ${name}, url = ${url}, timeout = ${timeout} where id = ${id};`;
+    return Result.success();
   },
   {
     params: t.Object({
@@ -20,8 +20,8 @@ app.put(
       name: t.String(),
       url: t.String(),
       // 默认禁用超时检测
-      timeout: t.Boolean({
-        default: false,
+      timeout: t.Integer({
+        default: 1,
       }),
     }),
     detail: {

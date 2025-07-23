@@ -29,6 +29,7 @@ import {LoadingIcon, VideoCamera1Icon} from "tdesign-icons-vue-next";
 import {SourceTvChannelView} from "@/views/SourceTv.js";
 import {openTvWindow} from "@/plugin/player.js";
 import {useHead} from "@/apis/common.js";
+import {proxyHttp} from "@/apis/proxy.js";
 
 // -1:加载中、-2:超时
 const timeout = ref(0);
@@ -60,9 +61,11 @@ function onTimeout() {
   }
   timeout.value = -1;
   const now = Date.now();
-  useHead(props.item.url, {}, {
-    timeout: 5000
-  })
+  proxyHttp({
+    url: props.item.url,
+    method: 'HEAD',
+    timeout: 5000,
+  }, {ignoreError: true})
     .then(() => {
       timeout.value = Date.now() - now;
     })
@@ -121,6 +124,7 @@ const openPlayer = (item: SourceTvChannelView) => {
     padding: 2px 4px;
     color: #fff;
     border-radius: 0 var(--td-radius-medium) 0 var(--td-radius-medium);
+    z-index: 2;
 
     &.red {
       background-color: var(--td-error-color);

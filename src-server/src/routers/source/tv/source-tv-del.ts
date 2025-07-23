@@ -1,4 +1,5 @@
 import { db } from "@/global/db";
+import { Result } from "@/views/Result";
 import { Elysia, t } from "elysia";
 
 const app = new Elysia();
@@ -7,6 +8,7 @@ app.delete(
   "delete/:id",
   async ({ params }) => {
     db.sql`delete from source_tv where id = ${params.id}`;
+    return Result.success();
   },
   {
     params: t.Object({

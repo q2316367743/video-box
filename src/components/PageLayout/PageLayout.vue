@@ -63,12 +63,6 @@ const slots = defineSlots();
   }
 
   .page-container {
-    position: absolute;
-    top: 56px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow: auto;
   }
 }
 </style>

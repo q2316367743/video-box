@@ -1,11 +1,7 @@
 <template>
   <t-list-item v-if="item" class="disposition-item">
     <div>
-      <t-list-item-meta :title="item.name">
-        <template #description>
-          <div style="width: 60vw;word-wrap: break-word">{{ item.url }}</div>
-        </template>
-      </t-list-item-meta>
+      <t-list-item-meta :title="item.name" :description="item.url" />
       <t-space style="margin-top: 8px;">
         <t-tag theme="primary" v-if="loading">
           <template #icon>
@@ -63,11 +59,11 @@ import {sourceTvDel, sourceTvRefresh} from "@/apis/source/tv.js";
 import {LoadingPlugin} from "tdesign-vue-next";
 
 defineProps({
-  item: Object as PropType<SourceTv>
+  item: Object as PropType<SourceTv>,
+  loading: Boolean
 });
 const emit = defineEmits(['update']);
 
-const loading = ref(false);
 
 function refresh(id: string) {
   const {hide} = LoadingPlugin({

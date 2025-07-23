@@ -8,6 +8,7 @@ import {
   TvIcon,
   User1Icon
 } from 'tdesign-icons-vue-next';
+import {emitScrollToTop} from "@/store/index.js";
 
 export const routes: Array<RouteRecordRaw> = [{
   name: '主页',
@@ -95,7 +96,7 @@ export const routes: Array<RouteRecordRaw> = [{
       component: () => import('@/pages/setting/page/base/setting-base.vue'),
     }, {
       name: '直播源设置',
-      path: 'live-source',
+      path: 'live',
       component: () => import('@/pages/setting/page/live-source/setting-source-live.vue'),
     }]
   }, {
@@ -111,4 +112,6 @@ export const router = createRouter({
   history: createWebHashHistory(),
   routes
 });
+
+router.afterEach(() => emitScrollToTop.trigger().catch(console.error))
 

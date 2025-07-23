@@ -12,8 +12,8 @@ function buildForm(data: Ref<SourceTvForm>) {
       default: () => <Input v-model={data.value.url} clearable={true} showLimitNumber={true} maxlength={255}/>,
       help: () => <span>如果不设置，则视为自定义订阅。</span>
     }}</FormItem>
-    <FormItem label={'禁用超时检测'} label-align={'top'}>
-      <Switch v-model={data.value.timeout}/>
+    <FormItem label={'超时检测'} label-align={'top'}>
+      <Switch v-model={data.value.timeout} customValue={[1, 0]}/>
     </FormItem>
   </Form>
 }

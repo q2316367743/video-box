@@ -34,4 +34,6 @@ VOLUME /app/video-box/data
 VOLUME /app/video-box/files
 EXPOSE 52411
 
+ENV NODE_ENV=production
+
 CMD ["./runtime/server"]

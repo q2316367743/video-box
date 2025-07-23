@@ -19,7 +19,7 @@
         </div>
         <div class="flex-46px text-sm ">来源：</div>
         <div class="w-120px">
-          <t-select v-model="active" :options="options"/>
+          <t-select v-model="active" :options="options" clearable/>
         </div>
       </div>
     </div>
@@ -54,7 +54,7 @@ watch(active, val => {
   sourceTvInfo(val)
     .then(res => channels.value = res.channels.map(e => ({...e, timeout: res.timeout !== 0})))
     .finally(() => loading.value = false);
-})
+}, {immediate: true})
 
 onMounted(() => {
   sourceTvList().then(res => {

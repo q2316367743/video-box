@@ -1,7 +1,7 @@
 <template>
   <!-- 导航栏 -->
   <header
-    class="app-header">
+    class="app-header" :class="{shadow: showShadow}">
     <div class="app-header-container">
       <!-- Logo -->
       <div class="flex items-center gap-2">
@@ -30,10 +30,9 @@
         <theme-switch v-model="colorMode"/>
         <!-- 用户头像 -->
         <div class="relative ml-8px" @click="toMy">
-          <button
-            class="w-10 h-10 rounded-full overflow-hidden border-2 border-transparent transition-colors cursor-pointer">
+          <div class="w-32px h-32px rounded-full cursor-pointer overflow-hidden">
             <img src="/user.png" alt="用户头像" class="w-full h-full object-cover">
-          </button>
+          </div>
         </div>
       </div>
     </div>
@@ -45,6 +44,13 @@ import {colorMode} from "@/store/index.js";
 
 const route = useRoute();
 const router = useRouter();
+
+defineProps({
+  showShadow: {
+    type: Boolean,
+    default: false
+  }
+});
 
 const path = ref('/home/list');
 
@@ -71,8 +77,12 @@ export default defineComponent({
   z-index: 50;
   transition: all 0.3s;
   backdrop-filter: blur(10px);
-  box-shadow: var(--td-shadow-2);
+  border-bottom: 1px solid var(--td-border-level-2-color);
   background-color: var(--td-bg-color-container);
+
+  &.shadow {
+    box-shadow: var(--td-shadow-2);
+  }
 
   .app-header-container {
     margin: 0 auto;

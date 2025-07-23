@@ -14,7 +14,7 @@ app.get(
     if (!row) return Result.error("直播源不存在2");
     // 查询全部的渠道
     const channels =
-      await db.sql`select * from source_tv_channel where source_id = ${params.id}`;
+      await db.sql`select * from source_tv_channel where source_tv_id = ${params.id}`;
     if (!channels.rows) return Result.error("直播源渠道不存在");
     return Result.success({
       ...row,

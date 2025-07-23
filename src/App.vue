@@ -1,7 +1,7 @@
 <template>
-  <div class="main" ref="mainRef">
-    <app-header/>
-    <div class="pt-96px max-w-1200px mx-auto">
+  <div class="main" ref="mainRef" @scroll="handleScroll">
+    <app-header :show-shadow="showShadow"/>
+    <div class="pt-96px max-w-1200px mx-auto" style="min-height: calc(100vh - 253px);overflow-x: hidden">
       <router-view v-slot="{ Component }">
         <keep-alive :exclude="['about', /^setting/]">
           <component :is="Component"/>
@@ -21,6 +21,7 @@ const route = useRoute();
 const router = useRouter();
 const path = ref('/');
 const mainRef=  ref();
+const showShadow = ref(false);
 
 watch(path, value => router.push(value));
 
@@ -39,7 +40,10 @@ emitScrollToTop.on(() => {
     left: 0,
     behavior: "smooth"
   })
-})
+});
+const handleScroll = (e: Event) => {
+  showShadow.value = (e.target as HTMLDivElement)?.scrollTop > 10
+}
 </script>
 <style scoped lang="less">
 .main {

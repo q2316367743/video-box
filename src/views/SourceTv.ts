@@ -1,6 +1,7 @@
 export interface SourceTvForm {
   name: string;
   url: string;
+  // 是否进行超时检测
   timeout: number;
 }
 

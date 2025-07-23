@@ -1,5 +1,6 @@
 import {SourceTv, SourceTvForm, SourceTvInfo} from "@/views/SourceTv.js";
-import {useGet, usePost, usePut} from "@/apis/common.js";
+import {useDelete, useGet, usePost, usePut} from "@/apis/common.js";
+import {Task} from "@/views/Task.js";
 
 export function sourceTvAdd(data: SourceTvForm) {
   return usePost('/api/source/tv/add', data);
@@ -10,7 +11,7 @@ export function sourceTvList() {
 }
 
 export function sourceTvDel(id: string) {
-  return usePost('/api/source/tv/del', {id});
+  return useDelete(`/api/source/tv/delete/${id}`);
 }
 
 export function sourceTvUpdate(id: string, data: SourceTvForm) {
@@ -18,9 +19,13 @@ export function sourceTvUpdate(id: string, data: SourceTvForm) {
 }
 
 export function sourceTvInfo(id: string) {
-  return useGet<SourceTvInfo>('/api/source/tv/info/${id}');
+  return useGet<SourceTvInfo>(`/api/source/tv/info/${id}`);
 }
 
 export function sourceTvRefresh(id: string) {
   return usePut(`/api/source/tv/refresh/${id}`);
+}
+
+export function sourceTvTask(ids: Array<string>) {
+  return usePost<Array<Task>>('/api/source/tv/task', ids);
 }
