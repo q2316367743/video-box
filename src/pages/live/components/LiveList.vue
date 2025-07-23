@@ -6,7 +6,7 @@
       <t-tabs v-model="activeKey">
         <t-tab-panel v-for="name in groupNames" :key="name.value" :label="name.label" :value="name.value"/>
       </t-tabs>
-      <div class="container-content" ref="contentContainer" @scroll="handleScroll">
+      <div class="container-content" ref="contentContainer">
         <!-- 仅渲染当前加载的项目 -->
         <LiveListItem v-for="item in currentlyLoadedResults" :key="item.id" :item="item" :active/>
         <!-- 加载更多提示 -->
@@ -23,6 +23,7 @@ import {useFuse} from "@vueuse/integrations/useFuse";
 import {channelsToGroup} from "@/views/SourceTv.js";
 import LiveListItem from "@/pages/live/components/LiveListItem.vue";
 import {SourceTvChannelView} from "@/views/SourceTv.js";
+import {onScrollToBottom} from "@/store/index.js";
 
 type FuseResult<T> = {
   item: T
@@ -102,7 +103,11 @@ const handleScroll = () => {
 onMounted(() => {
   // 初始加载
   currentlyLoadedCount.value = initialLoadCount;
+  onScrollToBottom.on(handleScroll);
 });
+onBeforeUnmount(() => {
+  onScrollToBottom.off(handleScroll);
+})
 watch(() => props.active, () => {
   activeKey.value = '';
 })
