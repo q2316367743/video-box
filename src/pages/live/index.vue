@@ -18,8 +18,8 @@
           </t-input>
         </div>
         <div class="flex-46px text-sm ">来源：</div>
-        <div class="w-120px">
-          <t-select v-model="active" :options="options" clearable/>
+        <div>
+          <t-select v-model="active" :options="options" clearable auto-width/>
         </div>
       </div>
     </div>

@@ -33,6 +33,7 @@
         </t-list>
       </div>
     </div>
+    <t-back-top container=".play-items" />
   </div>
 </template>
 <script lang="ts" setup>
@@ -57,7 +58,7 @@ const props = defineProps({
 });
 const channelId = ref(props.videoId);
 const channelMap = map(props.info.channels as Array<SourceTvChannel>, 'id')
-const url = computed(() => proxyUrl(channelMap.get(channelId.value)?.url));
+const url = computed(() => proxyUrl(channelMap.get(channelId.value)!.url));
 
 const switchUrl = (channel: SourceTvChannel) => {
   channelId.value = channel.id;
@@ -92,7 +93,7 @@ const switchUrl = (channel: SourceTvChannel) => {
     padding: 8px;
 
     .play-items {
-      height: calc(100vh - 120px);
+      height: calc(100vh - 128px);
       border: 1px solid var(--td-border-level-2-color);
       margin-top: 8px;
       border-radius: var(--td-radius-medium);
