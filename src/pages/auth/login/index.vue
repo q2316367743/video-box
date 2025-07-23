@@ -76,13 +76,24 @@
       <div class="title">欢迎,</div>
       <div class="subtitle"><span>登录</span><span>影视盒子</span></div>
     </div>
-    <input type="email" placeholder="用户名" name="email" class="input">
-    <input type="password" placeholder="密码" name="password" class="input">
+    <input v-model="username" type="text" placeholder="用户名" name="username" class="input">
+    <input v-model="password" type="password" placeholder="密码" name="password" class="input">
     <button class="button-confirm" @click="handleSubmit">Let`s go →</button>
   </div>
 </template>
 <script setup lang="ts">
-const handleSubmit = () => {
+import MessageUtil from "@/utils/modal/MessageUtil.js";
+import {useUserStore} from "@/store/UserStore.js";
 
+const route = useRoute();
+const router = useRouter();
+
+const username = ref('');
+const password = ref('');
+
+const handleSubmit = () => {
+  useUserStore().login(username.value, password.value)
+    .then(() => router.push(route.query.redirect || '/'))
+    .catch(MessageUtil.error);
 }
 </script>

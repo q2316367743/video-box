@@ -1,6 +1,6 @@
 <template>
   <!-- 导航栏 -->
-  <header v-if="show" class="app-header" :class="{shadow: showShadow}">
+  <header class="app-header" :class="{shadow: showShadow}">
     <div class="app-header-container">
       <!-- Logo -->
       <div class="flex items-center gap-2">
@@ -12,7 +12,7 @@
       </div>
 
       <!-- 导航链接 - 桌面版 -->
-      <nav class="hidden md:flex items-center gap-6">
+      <nav class="hidden md:flex items-center gap-6" v-if="show">
         <t-head-menu v-model="path">
           <t-menu-item value="/home/list">首页</t-menu-item>
           <!--          <t-menu-item value="/home/movie">电影</t-menu-item>-->
@@ -28,11 +28,17 @@
         <!-- 主题切换按钮 -->
         <theme-switch v-model="colorMode"/>
         <!-- 用户头像 -->
-        <div class="relative ml-8px" @click="toMy">
-          <div class="w-32px h-32px rounded-full cursor-pointer overflow-hidden">
-            <img src="/user.png" alt="用户头像" class="w-full h-full object-cover">
+        <t-dropdown trigger="click" :disabled="!show">
+          <div class="relative ml-8px">
+            <div class="w-32px h-32px rounded-full cursor-pointer overflow-hidden">
+              <img src="/user.png" alt="用户头像" class="w-full h-full object-cover">
+            </div>
           </div>
-        </div>
+          <t-dropdown-menu>
+            <t-dropdown-item @click="toMy">个人中心</t-dropdown-item>
+            <t-dropdown-item @click="handleLogout">登出</t-dropdown-item>
+          </t-dropdown-menu>
+        </t-dropdown>
       </div>
     </div>
 
@@ -40,9 +46,12 @@
 </template>
 <script lang="ts" setup>
 import {colorMode} from "@/store/index.js";
+import {useUserStore} from "@/store/UserStore.js";
+import MessageUtil from "@/utils/modal/MessageUtil.js";
 
 const route = useRoute();
 const router = useRouter();
+const {logout} = useUserStore();
 
 defineProps({
   showShadow: {
@@ -62,7 +71,10 @@ watch(() => route.path, val => {
   if (path.value !== val) path.value = val;
 });
 
-const toMy = () => router.push('/about')
+const toMy = () => router.push('/about');
+const handleLogout = () => {
+  logout().then(() => MessageUtil.success("登出成功"));
+}
 </script>
 <script lang="ts">
 export default defineComponent({
@@ -80,6 +92,8 @@ export default defineComponent({
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--td-border-level-2-color);
   background-color: var(--td-bg-color-container);
+  height: 80px;
+
 
   &.shadow {
     box-shadow: var(--td-shadow-2);
@@ -91,6 +105,7 @@ export default defineComponent({
     display: flex;
     align-items: center;
     justify-content: space-between;
+    height: 56px;
   }
 }
 </style>

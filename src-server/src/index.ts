@@ -2,6 +2,7 @@ import { Elysia, ValidationError } from "elysia";
 import { logger, error as err } from "@rasla/logify";
 import { staticPlugin } from "@elysiajs/static";
 import { swagger } from "@elysiajs/swagger";
+import jwt from "@elysiajs/jwt";
 // 插件
 import { runMigrations } from "./plugins/migrate";
 import { Result } from "./views/Result";
@@ -12,6 +13,7 @@ import sourceTvRoutes from "@/routers/source/tv";
 import pluginWebRoutes from "@/routers/plugin/web";
 import myVideoItemRoutes from "@/routers/my/video-item";
 import proxyRoutes from "@/routers/proxy";
+import authRoutes from "@/routers/auth";
 
 const app = new Elysia();
 
@@ -45,12 +47,20 @@ app
           { name: "plugin/web", description: "插件-网络资源" },
           { name: "my/video-item", description: "我的-视频资源" },
           { name: "proxy", description: "代理" },
+          { name: "auth", description: "认证" },
         ],
       },
     })
+  )
+  .use(
+    jwt({
+      name: "jwt",
+      secret: process.env.JWT_SECRET || "123456",
+      exp: "7d",
+    })
   );
 
-// 全局 afterHandle 钩子
+// 全局钩子
 app
   .onAfterHandle(({ response }) => {
     if (response instanceof Result) {
@@ -65,33 +75,64 @@ app
     // 设为正常
     set.status = 200;
     // 打印错误
-    err(JSON.stringify(error));
-    console.log(error);
+    err("onError: " + JSON.stringify(error));
     return new Response(
-      JSON.stringify(
-        new Result(
-          typeof status === "number" ? status : 500,
-          error instanceof ValidationError
-            ? "ValidationError"
-            : error instanceof Error
-            ? error.message
-            : `${error}`,
-          error
-        )
-      ),
+      error instanceof Result
+        ? JSON.stringify(error)
+        : JSON.stringify(
+            new Result(
+              typeof status === "number" ? status : 500,
+              error instanceof ValidationError
+                ? "ValidationError"
+                : error instanceof Error
+                ? error.message
+                : `${error}`,
+              error
+            )
+          ),
       {
         headers: { "Content-Type": "application/json" },
       }
     );
+  })
+  // @ts-ignore
+  .onRequest(async ({ jwt, request }) => {
+    // 只拦截 /api/ 开头的路径
+    const url = new URL(request.url);
+    if (!url.pathname.startsWith("/api/")) return;
+    if (url.pathname.startsWith("/api/auth")) return;
+    console.log(url.pathname);
+
+    const token = request.headers.get("authorization");
+    console.log("token", token);
+    if (!token) {
+      err("onRequest: not auth");
+      return new Response(JSON.stringify(Result.notAuth()), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    try {
+      console.log(token);
+      await jwt.verify(token);
+    } catch (e) {
+      err("onRequest: token expired");
+      err(JSON.stringify(e));
+      return new Response(JSON.stringify(Result.tokenExpired()), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
   });
 
+// 注册路由
 app
   .use(folderWebRoutes)
   .use(sourceWebRoutes)
   .use(sourceTvRoutes)
   .use(pluginWebRoutes)
   .use(myVideoItemRoutes)
-  .use(proxyRoutes);
+  .use(proxyRoutes)
+  .use(authRoutes);
 
 runMigrations()
   .then(() => {

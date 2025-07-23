@@ -29,11 +29,12 @@ COPY ./public ./public
 COPY ./migrations ./migrations
 
 ENV NODE_ENV=production
+ENV JWT_SECRET=123456
+ENV USERNAME=admin
+ENV PASSWORD=123456
 
 VOLUME /app/video-box/data
 VOLUME /app/video-box/files
 EXPOSE 52411
-
-ENV NODE_ENV=production
 
 CMD ["./runtime/server"]

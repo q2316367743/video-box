@@ -21,4 +21,18 @@ export class Result<T>{
     return new Result<T>(500, msg, data);
   }
 
+  public static notAuth() {
+    return new Result(401, '未登录', null);
+  }
+
+  // 登录过期
+  public static tokenExpired() {
+    return new Result(403, '登录过期', null);
+  }
+  
+  // 认证信息错误
+  public static authError() {
+    return new Result(402, '认证信息错误', null);
+  }
+
 }

@@ -107,17 +107,9 @@ export const routes: Array<RouteRecordRaw> = [{
       icon: User1Icon,
     }
   }, {
-    name: '认证',
-    path: '/auth',
-    component: () => import('@/pages/auth/index.vue'),
-    meta: {
-      icon: SettingIcon,
-    },
-    children: [{
-      name: '登录',
-      path: 'login',
-      component: () => import('@/pages/auth/login/index.vue'),
-    }]
+    name: '认证-登录',
+    path: '/auth/login',
+    component: () => import('@/pages/auth/login/index.vue'),
   }];
 
 export const router = createRouter({
