@@ -1,6 +1,7 @@
 <template>
   <div class="main">
-    <tv-container v-if="info" :source-id="sourceId" :video-id="videoId" :info="info"/>
+    <empty-result v-if="error" title="影片详情获取失败"/>
+    <tv-container v-else-if="info" :source-id="sourceId" :video-id="videoId" :info="info"/>
     <loading-result v-else title="正在加载中"/>
   </div>
 </template>
@@ -13,10 +14,11 @@ const p = new URLSearchParams(location.search);
 const sourceId = p.get('source') || '';
 const videoId = p.get('video') || '';
 
+const error = ref(false)
 const info = ref<SourceTvInfo>();
 
 onMounted(() => {
-  sourceTvInfo(sourceId).then(res => info.value = res);
+  sourceTvInfo(sourceId).then(res => info.value = res).catch(() => error.value = true);
 })
 </script>
 <style lang="less">

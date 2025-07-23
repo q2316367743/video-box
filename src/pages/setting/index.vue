@@ -3,6 +3,7 @@
     <t-aside style="border-right: 1px solid var(--td-border-level-2-color)">
       <t-menu v-model="active">
         <t-menu-item value="base">基础设置</t-menu-item>
+        <t-menu-item value="web">网络资源设置</t-menu-item>
         <t-menu-item value="live">直播设置</t-menu-item>
       </t-menu>
     </t-aside>

@@ -1,5 +1,7 @@
 <template>
-  <player v-if="video" :v="video" :video-id="videoId" :source-id="sourceId"/>
+  <empty-result v-if="error" title="影片详情获取失败"/>
+  <player v-else-if="video" :v="video" :s="source" :video-id="videoId" :source-id="sourceId" :search-items="searchItems"
+          @choose="handleChoose"/>
   <loading-result v-else title="正在获取资源详情"/>
 </template>
 <script lang="ts" setup>
@@ -7,19 +9,45 @@ import MessageUtil from "@/utils/modal/MessageUtil.js";
 import {pluginWebDetail} from "@/apis/plugin-web/index.js";
 import {VideoDetail} from "@/modules/video/VideoPlugin.js";
 import Player from "@/nested/web/components/Player.vue";
+import {SearchResultItem} from "@/pages/home/types/SearchResult.js";
+import {sourceWebInfo} from "@/apis/source/web.js";
+import {SourceWeb} from "@/views/SourceWeb.js";
 
 const p = new URLSearchParams(location.search);
-const sourceId = p.get('source') || '';
-const videoId = p.get('video') || '';
+const sourceId = ref(p.get('source') || '');
+const videoId = ref(p.get('video') || '');
 
+const error = ref(false)
 const video = ref<VideoDetail>();
+const source = ref<SourceWeb>()
+const searchItems = ref(new Array<SearchResultItem>());
+
+const init = () => {
+  if (!sourceId.value || !videoId.value) return MessageUtil.error("参数异常");
+  pluginWebDetail(sourceId.value, videoId.value).then(v => video.value = v).catch(() => error.value = true);
+  sourceWebInfo(sourceId.value).then(res => source.value = res)
+}
+
+const handleChoose = (index: number) => {
+  const item = searchItems.value[index];
+  if (!item) return;
+  sourceId.value = item.source.id;
+  videoId.value = item.item.id;
+  error.value = false;
+  video.value = undefined;
+  nextTick(init);
+}
+
 
 onMounted(() => {
-  if (!sourceId || !videoId) return MessageUtil.error("参数异常");
-  pluginWebDetail(sourceId, videoId)
-    .then(v => {
-      video.value = v;
-    });
+  init();
+  window.opener.postMessage('LOADED', location.origin);
+  // 接收父窗口发来的 items
+  window.addEventListener('message', (e) => {
+    if (e.source !== window.opener) return;
+    console.log('收到父窗口的 items:', e.data);
+    searchItems.value = e.data;
+  });
 });
 </script>
 <style scoped lang="less">

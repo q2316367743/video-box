@@ -87,8 +87,8 @@ export default defineComponent({
   top: 0;
   left: 0;
   right: 0;
-  z-index: 50;
-  transition: all 0.3s;
+  z-index: 501;
+  transition: all 0.3s, background-color 0s;
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--td-border-level-2-color);
   background-color: var(--td-bg-color-container);

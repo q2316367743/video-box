@@ -20,6 +20,9 @@ export enum LocalNameEnum {
 
   KEY_HOME_RECOMMEND_MOVIE = '/key/home/recommend/movie',
   KEY_HOME_RECOMMEND_TV = '/key/home/recommend/tv',
+  KEY_HOME_FOLDER = '/key/home/folder',
+
+  KEY_WEB_LIST_FOLDER = '/key/web/list/folder',
 
   KEY_SOURCE_ACTIVE_LIVE = '/key/source/active/live',
 

@@ -18,8 +18,8 @@ import MessageBoxUtil from "@/utils/modal/MessageBoxUtil.js";
 import MessageUtil from "@/utils/modal/MessageUtil.js";
 import {openVideoInfoDrawer} from "@/pages/web/pages/components/VideoInfoDialog.js";
 import {openWebPlayer} from "@/plugin/player.js";
-import {MyVideoItemView} from "@/views/MyVideoItemView.js";
-import {myVideoItemDelete} from "@/apis/my/video-item.js";
+import {MyVideoItemFromEnum, MyVideoItemTypeEnum, MyVideoItemView} from "@/views/MyVideoItemView.js";
+import {myVideoItemDelete, myVideoItemPost} from "@/apis/my/video-item.js";
 
 defineProps({
   item: {
@@ -35,6 +35,14 @@ const emit = defineEmits(['update']);
 
 const handleClick = async (item: MyVideoItemView) => {
   const [sourceId, videoId] = item.payload.split('/');
+  await myVideoItemPost({
+    title: item.title,
+    cover: item.cover,
+    description: item.description,
+    type: MyVideoItemTypeEnum.WATCHED,
+    from: MyVideoItemFromEnum.WEB,
+    payload: `${sourceId}/${videoId}`
+  })
   openWebPlayer(sourceId, videoId);
 }
 

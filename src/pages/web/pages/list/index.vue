@@ -1,61 +1,37 @@
 <template>
-  <!--  <template #extra>-->
-  <!--    <t-upload accept="application/json" :request-method="handleImportMethod" :show-upload-progress="false">-->
-  <!--      <t-button theme="primary">导入</t-button>-->
-  <!--    </t-upload>-->
-  <!--  </template>-->
-  <div class="web-list" @contextmenu="handleListContextmenu($event, init)">
-    <web-item-content folder="0" ref="contentRef"/>
-  </div>
+  <t-layout class="web-list">
+    <t-aside>
+      <t-menu v-model="folder">
+        <t-menu-item value="all">全部</t-menu-item>
+        <t-menu-item value="root" v-if="folders.length>0">根目录</t-menu-item>
+        <t-menu-item v-for="f in folders" :key="f.id" :value="f.id">{{ f.name }}</t-menu-item>
+      </t-menu>
+    </t-aside>
+    <t-content class="web-list-content">
+      <web-item-content :folder="folder"/>
+    </t-content>
+  </t-layout>
 </template>
 <script lang="ts" setup>
-import {UploadProps} from "tdesign-vue-next";
-import MessageUtil from "@/utils/modal/MessageUtil.js";
-import {handleListContextmenu} from "@/pages/web/pages/list/components/WebListContext";
-import {sourceWebImport} from "@/apis/source/web.js";
+import {Folder} from "@/views/Folder.js";
+import {folderWebList} from "@/apis/folder-web/index.js";
+import {LocalNameEnum} from "@/global/LocalNameEnum.js";
 import WebItemContent from "@/pages/web/pages/list/components/WebItemContent.vue";
 
-const contentRef = ref()
-const init = () => {
-  contentRef.value?.init();
-}
+const folder = useSessionStorage(LocalNameEnum.KEY_WEB_LIST_FOLDER, 'all');
+const folders = ref(new Array<Folder>());
 
-const handleImportMethod: UploadProps['requestMethod'] = async (file) => {
-  const target = (Array.isArray(file) ? file : [file])[0];
-  if (target) {
-    const {raw} = target;
-    if (raw) {
-      await sourceWebImport(raw);
-      // 导入成功，重新初始化
-      MessageUtil.success("导入成功")
-      init();
-      return {
-        status: 'success',
-        response: {
-          url: 'https://tdesign.gtimg.com/site/avatar.jpg',
-        },
-      }
-    }
-  }
-  return {
-    status: 'fail',
-    response: {},
-  }
-};
-onMounted(init);
+onMounted(() => {
+  folderWebList().then(res => folders.value = res.sort((a, b) => a.order - b.order))
+});
 </script>
 <style scoped lang="less">
 .web-list {
-  min-height: 60vh;
+  height: 100%;
 
   .web-list-content {
-    display: flex;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    align-content: flex-start;
-    gap: 8px;
-    padding: 8px;
+    background-color: var(--td-bg-color-container);
+    border-left: 1px solid var(--td-border-level-2-color);
   }
 }
 

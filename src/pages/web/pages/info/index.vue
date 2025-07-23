@@ -1,13 +1,15 @@
 <template>
   <div class="web-content">
-    <div class="web-category">
-      <web-info-header v-model="categoryValue" :menus="categoryOptions" :source-web="sourceWeb"/>
-    </div>
+    <t-affix :offset-top="80" container=".main">
+      <div class="web-category">
+        <web-info-header v-model="categoryValue" :menus="categoryOptions" :source-web="sourceWeb"/>
+      </div>
+    </t-affix>
     <div class="web-list">
       <div class="web-list-container">
         <t-empty style="margin: 15vh 0" v-if="list.length === 0 && !loading"/>
         <div class="waterfall-list" ref="listRef">
-          <web-item v-for="r in list" :key="r.id" :r="r" :macy/>
+          <web-item v-for="r in list" :key="r.id" :r="r" :macy :source-id="sourceWeb?.id"/>
         </div>
         <div v-if="loading" class="w-full text-center my-8px">正在加载中...</div>
         <div v-if="bottom && list.length > 0" class="w-full text-center my-8px">人家也是有底线的</div>
@@ -152,8 +154,6 @@ onBeforeMount(() => {
 }
 
 .web-category {
-  position: sticky;
-  top: 80px;
   overflow-x: auto;
   overflow-y: hidden;
   background-color: var(--td-bg-color-container);
@@ -166,7 +166,6 @@ onBeforeMount(() => {
 
 .web-list {
   flex: auto;
-  overflow: auto;
 
   .web-list-container {
     margin: 8px;

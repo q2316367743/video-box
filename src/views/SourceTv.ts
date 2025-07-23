@@ -32,6 +32,7 @@ export interface SourceTvInfo extends SourceTv {
 
 export interface SourceTvChannelView extends SourceTvChannel {
   timeout: boolean;
+  sourceId: string;
 }
 
 export interface SourceTvGroup {

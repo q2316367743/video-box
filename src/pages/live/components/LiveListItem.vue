@@ -28,8 +28,9 @@
 import {LoadingIcon, VideoCamera1Icon} from "tdesign-icons-vue-next";
 import {SourceTvChannelView} from "@/views/SourceTv.js";
 import {openTvWindow} from "@/plugin/player.js";
-import {useHead} from "@/apis/common.js";
 import {proxyHttp} from "@/apis/proxy.js";
+import {myVideoItemPost} from "@/apis/my/video-item.js";
+import {MyVideoItemFromEnum, MyVideoItemTypeEnum} from "@/views/MyVideoItemView.js";
 
 // -1:加载中、-2:超时
 const timeout = ref(0);
@@ -76,6 +77,14 @@ function onTimeout() {
 }
 
 const openPlayer = (item: SourceTvChannelView) => {
+  myVideoItemPost({
+    title: item.name,
+    cover: item.logo,
+    description: '',
+    type: MyVideoItemTypeEnum.WATCHED,
+    from: MyVideoItemFromEnum.TV,
+    payload: `${item.sourceId}/${item.id}`
+  })
   openTvWindow(props.active, item.id);
 }
 </script>

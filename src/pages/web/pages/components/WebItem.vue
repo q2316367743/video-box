@@ -1,7 +1,7 @@
 <template>
   <div class="waterfall-item" @click="openOne(r)" :title="r.title">
     <div class="waterfall-item__cover">
-      <t-image :src="r.cover" :alt="r.title" lazy fit="cover" style="min-height: 150px" @load="handleLoad">
+      <t-image :src="r.cover" :alt="r.title" lazy fit="cover" style="min-height: 100px" @load="handleLoad">
         <template #error>
           <img src="/video.png" :alt="r.title"/>
         </template>
@@ -16,8 +16,12 @@
 import {VideoListItem} from "@/modules/video/VideoPlugin";
 import {openVideoInfoDrawer} from "@/pages/web/pages/components/VideoInfoDialog";
 import Macy from "macy";
+import {openWebPlayer} from "@/plugin/player.js";
+import {myVideoItemPost} from "@/apis/my/video-item.js";
+import {MyVideoItemFromEnum, MyVideoItemTypeEnum} from "@/views/MyVideoItemView.js";
 
 const route = useRoute();
+const controlState = useKeyModifier('Control')
 
 const id = route.params.id as string;
 
@@ -26,13 +30,27 @@ const props = defineProps({
     type: Object as PropType<VideoListItem>,
     required: true
   },
+  sourceId: {
+    type: String,
+  },
   macy: {
     type: Object as PropType<Macy>
   }
 });
 
 const openOne = (item: VideoListItem) => {
-  openVideoInfoDrawer(id, item.id);
+  if (controlState.value) {
+    myVideoItemPost({
+      title: item.title,
+      cover: item.cover,
+      description: item.remark,
+      type: MyVideoItemTypeEnum.WATCHED,
+      from: MyVideoItemFromEnum.WEB,
+      payload: `${props.sourceId}/${item.id}`
+    })
+    openWebPlayer(id, item.id);
+  }
+  else openVideoInfoDrawer(id, item.id);
 }
 const handleLoad = () => {
   props.macy?.recalculateOnImageLoad();

@@ -20,7 +20,7 @@ import {isNotEmptyString} from "@/utils/lang/FieldUtil.ts";
 import MessageUtil from "@/utils/modal/MessageUtil.js";
 import {pluginWebDetail} from "@/apis/plugin-web/index.js";
 import {copyWebShare, openWebPlayer} from "@/plugin/player.js";
-import {myVideoItemExist, myVideoItemToggle} from "@/apis/my/video-item.js";
+import {myVideoItemExist, myVideoItemPost, myVideoItemToggle} from "@/apis/my/video-item.js";
 import {MyVideoItemForm, MyVideoItemFromEnum, MyVideoItemTypeEnum} from "@/views/MyVideoItemView.js";
 
 
@@ -50,6 +50,14 @@ export async function openVideoInfoDrawer(sourceId: string, videoId: string) {
     const chapterId = detail.chapters[0]?.id || '';
 
     const handlePlay = () => {
+      myVideoItemPost({
+        title: detail.title,
+        cover: detail.cover,
+        description: detail.remark,
+        type: MyVideoItemTypeEnum.WATCHED,
+        from: MyVideoItemFromEnum.WEB,
+        payload: `${sourceId}/${videoId}`
+      })
       openWebPlayer(sourceId, videoId);
       dp.destroy?.();
     }

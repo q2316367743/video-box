@@ -30,6 +30,8 @@
 import {SearchResult, SearchResultDisplay} from "@/pages/home/types/SearchResult.js";
 import {openVideoInfoDrawer} from "@/pages/web/pages/components/VideoInfoDialog.js";
 import {openWebPlayer} from "@/plugin/player.js";
+import {myVideoItemPost} from "@/apis/my/video-item.js";
+import {MyVideoItemFromEnum, MyVideoItemTypeEnum} from "@/views/MyVideoItemView.js";
 
 const props = defineProps({
   item: {
@@ -59,6 +61,14 @@ watch(active, val => {
 const handlePlay = () => {
   const target = props.item.results[active.value];
   if (target) {
+    myVideoItemPost({
+      title: target.item.title,
+      cover: target.item.cover,
+      description: target.item.remark,
+      type: MyVideoItemTypeEnum.WATCHED,
+      from: MyVideoItemFromEnum.WEB,
+      payload: `${target.source.id}/${target.item.id}`
+    })
     openWebPlayer(target.source.id, target.item.id, props.item.results);
   }
 }

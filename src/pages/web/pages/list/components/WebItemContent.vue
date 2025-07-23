@@ -1,19 +1,17 @@
 <template>
-  <div class="web-list-content" ref="web-list-content">
-    <web-list-item v-for="view in views" :key="view.id" :view="view" @click="openInfo(view)"
-                   @contextmenu.stop="handleItemContextmenu($event, view, openInfo, init)"/>
-    <web-list-add v-if="folder === '0'" @click="handleListContextmenu($event, init)"/>
+  <div class="web-list-content" >
+    <t-row :gutter="[16,16]" ref="web-list-content">
+      <t-col v-for="view in views" :key="view.id" :span="4">
+        <web-list-item :view="view"/>
+      </t-col>
+    </t-row>
   </div>
-
 </template>
 <script lang="ts" setup>
-import {useSortable} from "@vueuse/integrations/useSortable";
-import {handleItemContextmenu, handleListContextmenu} from "@/pages/web/pages/list/components/WebListContext.js";
-import WebListItem from "@/pages/web/pages/list/components/WebListItem.vue";
 import {WebItemView} from "@/views/WebItemView.js";
 import {sourceWebHome, sourceWebSort} from "@/apis/source/web.js";
-import {openWebFolderDialog} from "@/pages/web/pages/list/components/WebFolder.js";
-import WebListAdd from "@/pages/web/pages/list/components/WebListAdd.vue";
+import WebListItem from "@/pages/web/pages/list/components/WebListItem.vue";
+import {useSortable} from "@vueuse/integrations/useSortable";
 
 const router = useRouter();
 
@@ -29,8 +27,8 @@ const views = ref(new Array<WebItemView>());
 const contentRef = useTemplateRef('web-list-content');
 useSortable(contentRef, views, {
   animation: 150,
-  handle: '.web-list-item',
-  filter: '.web-list-add',
+  // draggable: '.web-list-item',
+  handle: '.web-list-item__move',
   onUpdate(e) {
     const temp = Array.from(views.value);
     // 移动数组。将e.oldIndex!位置移动到e.newIndex!
@@ -50,18 +48,10 @@ useSortable(contentRef, views, {
   }
 });
 
-const openInfo = (view: WebItemView) => {
-  if (view.folder) {
-    openWebFolderDialog(view)
-  } else {
-    router.push(`/web/info/${view.id}`)
-  }
-}
+watch(() => props.folder, val => {
+  sourceWebHome(val).then(res => views.value = res.sort((a, b) => a.order - b.order));
+}, {immediate: true})
 
-const init = () => {
-  sourceWebHome(props.folder).then(res => views.value = res.sort((a, b) => a.order - b.order));
-}
-defineExpose({init})
 </script>
 <style scoped lang="less">
 .web-list-content {

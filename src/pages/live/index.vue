@@ -52,7 +52,7 @@ watch(active, val => {
     return;
   }
   sourceTvInfo(val)
-    .then(res => channels.value = res.channels.map(e => ({...e, timeout: res.timeout !== 0})))
+    .then(res => channels.value = res.channels.map(e => ({...e, timeout: res.timeout !== 0, sourceId: res.id})))
     .finally(() => loading.value = false);
 }, {immediate: true})
 
