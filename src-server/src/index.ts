@@ -101,10 +101,8 @@ app
     const url = new URL(request.url);
     if (!url.pathname.startsWith("/api/")) return;
     if (url.pathname.startsWith("/api/auth")) return;
-    console.log(url.pathname);
 
     const token = request.headers.get("authorization");
-    console.log("token", token);
     if (!token) {
       err("onRequest: not auth");
       return new Response(JSON.stringify(Result.notAuth()), {
@@ -113,7 +111,6 @@ app
     }
 
     try {
-      console.log(token);
       await jwt.verify(token);
     } catch (e) {
       err("onRequest: token expired");

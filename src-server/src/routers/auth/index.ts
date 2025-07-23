@@ -11,7 +11,6 @@ app.post(
   // @ts-ignore
   async ({ jwt, body }) => {
     const { USERNAME = "admin", PASSWORD = "123456" } = process.env;
-    console.log(USERNAME, PASSWORD, body);
     if (body.username !== USERNAME || body.password !== PASSWORD) {
       return Result.success({
         success: false,
