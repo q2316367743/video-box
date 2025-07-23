@@ -1,9 +1,10 @@
 // plugins/migrate.ts
+import { APP_MIGRATION_DIR } from "@/global/constant";
 import { db } from "@/global/db.js";
 import { readdir, readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
-const APP_MIGRATION_DIR = resolve(process.cwd(), "migrations");
+const dir = process.env.NODE_ENV === 'production' ? APP_MIGRATION_DIR : resolve(process.cwd(), "migrations");
 
 async function getLatestVersion() {
   const { rows } =
@@ -42,7 +43,7 @@ export async function runMigrations() {
   console.log("2. 获取当前版本");
   const current = await getLatestVersion();
   console.log("当前版本: ", current);
-  const files = await readdir(APP_MIGRATION_DIR);
+  const files = await readdir(dir);
   const pending = files
     .filter((f) => f.endsWith(".sql"))
     .map((f) => ({
@@ -53,7 +54,7 @@ export async function runMigrations() {
     .sort((a, b) => a.version - b.version);
 
   for (const { file, version } of pending) {
-    const sql = await readFile(resolve(APP_MIGRATION_DIR, file), "utf8");
+    const sql = await readFile(resolve(dir, file), "utf8");
     console.log("开始处理文件：", file, ",版本：", version);
     await db.exec("BEGIN");
     try {

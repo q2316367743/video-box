@@ -25,11 +25,11 @@ export const routes: Array<RouteRecordRaw> = [{
     name: '首页列表',
     path: 'list',
     component: () => import('@/pages/home/pages/list/index.vue'),
-  },{
+  }, {
     name: '首页电影',
     path: 'movie',
     component: () => import('@/pages/home/pages/movie/index.vue'),
-  },{
+  }, {
     name: '首页剧集',
     path: 'series',
     component: () => import('@/pages/home/pages/series/index.vue'),
@@ -106,6 +106,18 @@ export const routes: Array<RouteRecordRaw> = [{
     meta: {
       icon: User1Icon,
     }
+  }, {
+    name: '认证',
+    path: '/auth',
+    component: () => import('@/pages/auth/index.vue'),
+    meta: {
+      icon: SettingIcon,
+    },
+    children: [{
+      name: '登录',
+      path: 'login',
+      component: () => import('@/pages/auth/login/index.vue'),
+    }]
   }];
 
 export const router = createRouter({

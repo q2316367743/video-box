@@ -52,7 +52,7 @@ const loading = ref(false);
 const total = ref(0);
 const current = ref(1);
 
-const searchResults = computed(() => Array.from(searchResultMap.value.values()).sort((a,b) => (b.results.length - a.results.length)));
+const searchResults = computed(() => Array.from(searchResultMap.value.values()).sort((a, b) => (b.results.length - a.results.length)));
 
 const openSearch = async () => {
   isSearch.value = keyword.value !== '';

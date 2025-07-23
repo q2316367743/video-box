@@ -1,7 +1,6 @@
 <template>
   <!-- 导航栏 -->
-  <header
-    class="app-header" :class="{shadow: showShadow}">
+  <header v-if="show" class="app-header" :class="{shadow: showShadow}">
     <div class="app-header-container">
       <!-- Logo -->
       <div class="flex items-center gap-2">
@@ -54,12 +53,14 @@ defineProps({
 
 const path = ref('/home/list');
 
+const show = computed(() => !route.path.startsWith("/auth/"));
+
 watch(path, value => {
-  router.push(value);
+  if (value !== route.path) router.push(value);
 });
 watch(() => route.path, val => {
   if (path.value !== val) path.value = val;
-})
+});
 
 const toMy = () => router.push('/about')
 </script>

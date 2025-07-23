@@ -61,8 +61,6 @@ const openInfo = (view: WebItemView) => {
 const init = () => {
   sourceWebHome(props.folder).then(res => views.value = res.sort((a, b) => a.order - b.order));
 }
-
-onMounted(init);
 defineExpose({init})
 </script>
 <style scoped lang="less">

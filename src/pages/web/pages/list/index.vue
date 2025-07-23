@@ -20,7 +20,6 @@ const init = () => {
   contentRef.value?.init();
 }
 
-
 const handleImportMethod: UploadProps['requestMethod'] = async (file) => {
   const target = (Array.isArray(file) ? file : [file])[0];
   if (target) {
@@ -43,10 +42,12 @@ const handleImportMethod: UploadProps['requestMethod'] = async (file) => {
     response: {},
   }
 };
+onMounted(init);
 </script>
 <style scoped lang="less">
 .web-list {
   min-height: 60vh;
+
   .web-list-content {
     display: flex;
     justify-content: flex-start;
