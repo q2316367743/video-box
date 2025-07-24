@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export const KB = 1024.0;
 export const MB = 1024 * KB;
 export const GB = 1024 * MB;
@@ -63,4 +65,12 @@ export function prettyDateTime(date: number, showZero = false) {
   let minute = Math.floor(date / 60);
   let second = Math.floor(date % 60);
   return `${padStartNumber(minute, 2, '0')}:${padStartNumber(second, 2, '0')}`;
+}
+
+export function toDateString(date: number | string | Date) {
+  return dayjs(date).format('YYYY-MM-DD');
+}
+export function toDateTimeString(date: number | string | Date) {
+  return dayjs(date).format('YYYY-MM-DD HH:mm:ss');
+
 }

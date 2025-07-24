@@ -1,19 +1,17 @@
 <template>
-  <div class="web-list-content" >
+  <div class="web-list-content">
     <t-row :gutter="[16,16]" ref="web-list-content">
-      <t-col v-for="view in views" :key="view.id" :span="4">
-        <web-list-item :view="view"/>
+      <t-col v-for="view in views" :key="view.id" :span="4" :xs="6" :sm="4">
+        <web-list-item :view="view" :folder/>
       </t-col>
     </t-row>
   </div>
 </template>
 <script lang="ts" setup>
-import {WebItemView} from "@/views/WebItemView.js";
-import {sourceWebHome, sourceWebSort} from "@/apis/source/web.js";
+import {sourceWebList, sourceWebSort} from "@/apis/source/web.js";
 import WebListItem from "@/pages/web/pages/list/components/WebListItem.vue";
 import {useSortable} from "@vueuse/integrations/useSortable";
-
-const router = useRouter();
+import {SourceWeb} from "@/views/SourceWeb.js";
 
 const props = defineProps({
   folder: {
@@ -22,10 +20,10 @@ const props = defineProps({
   }
 });
 
-const views = ref(new Array<WebItemView>());
+const views = ref(new Array<SourceWeb>());
 
 const contentRef = useTemplateRef('web-list-content');
-useSortable(contentRef, views, {
+const {option} = useSortable(contentRef, views, {
   animation: 150,
   // draggable: '.web-list-item',
   handle: '.web-list-item__move',
@@ -42,14 +40,15 @@ useSortable(contentRef, views, {
     // 修改
     sourceWebSort(temp.map((item, order) => ({
       id: item.id,
-      folder: item.folder,
+      folder: false,
       order: order
     })))
   }
 });
 
 watch(() => props.folder, val => {
-  sourceWebHome(val).then(res => views.value = res.sort((a, b) => a.order - b.order));
+  sourceWebList(val).then(res => views.value = res.sort((a, b) => a.order - b.order));
+  option('disabled', val === 'all');
 }, {immediate: true})
 
 </script>

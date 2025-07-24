@@ -15,8 +15,14 @@ export interface SourceWeb {
   folder: string;
   // 排序
   order: number;
-}
 
+  // 刷新时间
+  refresh_time: number;
+  // 重试次数
+  retry_count: number;
+  // 延迟时间
+  delay_time: number;
+}
 
 export interface SourceWebView {
   id: string;

@@ -27,6 +27,7 @@
   </t-card>
 </template>
 <script lang="ts" setup>
+import {SelectOption, Space, Tag} from "tdesign-vue-next";
 import {SearchResult, SearchResultDisplay} from "@/pages/home/types/SearchResult.js";
 import {openVideoInfoDrawer} from "@/pages/web/pages/components/VideoInfoDialog.js";
 import {openWebPlayer} from "@/plugin/player.js";
@@ -43,11 +44,18 @@ const props = defineProps({
 const active = ref(0);
 const video = ref<SearchResultDisplay>(props.item);
 
-const options = computed(() => {
+const options = computed<Array<SelectOption>>(() => {
   const {item} = props;
   return item.results.map((r, i) => ({
-    label: r.source.title,
-    value: i
+    label: `${r.source.title}:${r.source.delay_time > 0 ? (r.source.delay_time + 'ms') : '超时'}`,
+    value: i,
+    content: () => h(Space, {}, [
+      h("div", {}, r.source.title),
+      h(Tag, {
+          theme: r.source.delay_time < 0 ? 'danger' : r.source.delay_time < 1000 ? 'success' : r.source.delay_time < 5000 ? 'warning' : 'danger'
+        },
+        r.source.delay_time < 0 ? '超时' : r.source.delay_time + 'ms')
+    ])
   }));
 });
 

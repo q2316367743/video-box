@@ -34,6 +34,7 @@ declare module 'vue' {
     TEmpty: typeof import('tdesign-vue-next')['Empty']
     TForm: typeof import('tdesign-vue-next')['Form']
     TFormItem: typeof import('tdesign-vue-next')['FormItem']
+    THeader: typeof import('tdesign-vue-next')['Header']
     THeadMenu: typeof import('tdesign-vue-next')['HeadMenu']
     ThemeSwitch: typeof import('./src/components/ThemeSwitch.vue')['default']
     TIcon: typeof import('tdesign-vue-next')['Icon']

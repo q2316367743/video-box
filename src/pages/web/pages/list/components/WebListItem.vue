@@ -1,40 +1,56 @@
 <template>
-  <div class="web-list-item" :title="view.name">
+  <div class="web-list-item">
     <div class="top">
-      <span class="title">{{ view.name }}</span>
-      <span class="status online">325ms</span>
+      <span class="title ellipsis" :title="sourceWeb.title">{{ sourceWeb.title }}</span>
+      <t-tooltip :content="toDateTimeString(sourceWeb.refresh_time)">
+        <t-tag v-if="sourceWeb.delay_time < 0" theme="danger">超时</t-tag>
+        <t-tag v-else-if="sourceWeb.delay_time < 1000" theme="success">{{ sourceWeb.delay_time }}ms</t-tag>
+        <t-tag v-else-if="sourceWeb.delay_time < 5000" theme="warning">{{ sourceWeb.delay_time }}ms</t-tag>
+        <t-tag v-else theme="danger">{{ sourceWeb.delay_time }}ms</t-tag>
+      </t-tooltip>
     </div>
     <div class="actions">
-      <t-button theme="primary" @click="openInfo(view)">打开</t-button>
-      <t-button theme="primary">测速</t-button>
-      <div class="web-list-item__move">
+      <t-button theme="primary" @click="openInfo()">打开</t-button>
+      <t-button theme="primary" variant="outline" :loading="loading" @click="handleRefresh()">测速</t-button>
+      <div class="web-list-item__move" v-if="folder !== 'all'">
         <drag-move-icon/>
       </div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import {WebItemView} from "@/views/WebItemView.js";
-import {openWebFolderDialog} from "@/pages/setting/page/web-source/components/WebFolder.js";
 import {DragMoveIcon} from "tdesign-icons-vue-next";
+import {SourceWeb} from "@/views/SourceWeb.js";
+import {toDateTimeString} from "@/utils/lang/FormatUtil.js";
+import {sourceWebInfo, sourceWebRefresh} from "@/apis/source/web.js";
 
-defineProps({
+const props = defineProps({
   view: {
-    type: Object as PropType<WebItemView>,
+    type: Object as PropType<SourceWeb>,
     required: true,
+  },
+  folder: {
+    type: String,
+    default: '0'
   }
 });
 
 const router = useRouter();
 
-const openInfo = (view: WebItemView) => {
-  if (view.folder) {
-    openWebFolderDialog(view)
-  } else {
-    router.push(`/web/info/${view.id}`)
-  }
+const sourceWeb = ref(props.view);
+const loading = ref(false);
+
+const openInfo = () => {
+  router.push(`/web/info/${sourceWeb.value.id}`)
 }
 
+const handleRefresh = () => {
+  if (loading.value) return;
+  loading.value = true;
+  sourceWebRefresh(sourceWeb.value.id)
+    .then(() => sourceWebInfo(props.view.id).then(res => sourceWeb.value = res))
+    .finally(() => loading.value = false);
+}
 </script>
 <style scoped lang="less">
 .web-list-item {
@@ -51,11 +67,6 @@ const openInfo = (view: WebItemView) => {
     justify-content: space-between;
     align-items: center;
 
-    .status {
-      font-size: 13px;
-      padding: 2px 6px;
-      border-radius: 4px;
-    }
 
     .online {
       background: #005c5c;

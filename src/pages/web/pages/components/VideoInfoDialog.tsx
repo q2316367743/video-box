@@ -105,7 +105,7 @@ export async function openVideoInfoDrawer(sourceId: string, videoId: string) {
             <div class="flex-1 space-y-3">
               <div>
                 <div class="text-xl font-bold leading-tight">{detail.title}</div>
-                <p class="text-sm text-muted-foreground">{detail.subtitle}</p>
+                {detail.subtitle && <div class="text-sm mt-4px">{detail.subtitle}</div>}
               </div>
 
               <div class="flex gap-1 flex-wrap">
