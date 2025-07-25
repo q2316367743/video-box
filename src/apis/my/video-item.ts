@@ -14,7 +14,7 @@ export function myVideoItemList() {
 }
 
 export function myVideoItemPost(data: MyVideoItemForm) {
-  return usePost('/api/my/video-item/post')
+  return usePost('/api/my/video-item/post', data)
 }
 
 

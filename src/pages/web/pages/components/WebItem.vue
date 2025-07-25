@@ -40,6 +40,9 @@ const props = defineProps({
 
 const openOne = (item: VideoListItem) => {
   if (controlState.value) {
+    openVideoInfoDrawer(id, item.id);
+  }
+  else {
     myVideoItemPost({
       title: item.title,
       cover: item.cover,
@@ -50,7 +53,6 @@ const openOne = (item: VideoListItem) => {
     })
     openWebPlayer(id, item.id);
   }
-  else openVideoInfoDrawer(id, item.id);
 }
 const handleLoad = () => {
   props.macy?.recalculateOnImageLoad();

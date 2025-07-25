@@ -15,7 +15,7 @@
         <div class="card relative" v-if="active === 'info'">
           <header class="card-header">
             <div class="space-y-3">
-              <h2 class="text-2xl leading-tight ellipsis mt-0" :title="video.title">{{ video.title }}</h2>
+              <h2 class="text-2xl leading-tight mt-0" :title="video.title">{{ video.title }}</h2>
               <div class="text-sm" v-if="video.subtitle || video.releaseYear">
                 {{ video.subtitle }} ({{ video.releaseYear }})
               </div>
@@ -25,6 +25,9 @@
                     {{ g }}
                   </t-tag>
                 </template>
+              </div>
+              <div v-if="s">
+                <t-tag theme="primary">{{ s.title }}</t-tag>
               </div>
             </div>
           </header>
@@ -46,9 +49,6 @@
               </div>
             </div>
           </section>
-          <div class="absolute top-0 right-0" v-if="s">
-            <t-tag theme="primary">{{ s.title }}</t-tag>
-          </div>
         </div>
 
         <!-- 剧集列表 -->
