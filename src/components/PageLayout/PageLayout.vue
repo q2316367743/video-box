@@ -35,7 +35,7 @@ const slots = defineSlots();
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 12px 11px;
+    padding: 12px 12px 11px 0;
     height: 56px;
     line-height: 32px;
     border-bottom: 1px solid var(--td-border-level-2-color);

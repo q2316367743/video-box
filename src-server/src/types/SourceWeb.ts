@@ -24,6 +24,8 @@ export interface SourceWeb {
   delay_time: number;
   // 是否启用
   is_enabled: number;
+  // 官网
+  detail: string;
 }
 
 export interface SourceWebView extends Omit<SourceWeb, "props" | "is_enabled"> {

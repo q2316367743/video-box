@@ -148,8 +148,7 @@ onMounted(() => {
   }
 
   .home-container {
-    margin: 3rem 2rem;
-
+    margin: 16px;
   }
 }
 </style>

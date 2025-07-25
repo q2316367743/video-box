@@ -1,5 +1,5 @@
 <template>
-  <page-layout title="直播源设置" :subtitle="liveSources.length + '个列表'">
+  <page-layout :title="liveSources.length + '个列表'">
     <template #extra>
       <t-space size="small">
         <t-button theme="primary" variant="text" shape="square" @click="showHelp()">
@@ -48,12 +48,4 @@ useIntervalFn(() => {
 onMounted(init)
 </script>
 <style scoped lang="less">
-.disposition {
-  height: 100%;
-
-  .main {
-    width: 100%;
-    margin-top: 8px;
-  }
-}
 </style>

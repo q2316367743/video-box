@@ -2,6 +2,8 @@ import { Elysia, t } from "elysia";
 import { db } from "@/global/db.js";
 import { Result } from "@/views/Result.js";
 import { useSnowflake } from "@/utils/Snowflake";
+import { deleteById, insert, selectById, updateById } from "@/utils/SqlUtil";
+import { Folder } from "@/types/Folder";
 
 const app = new Elysia({ prefix: "/api/folder/web" });
 
@@ -9,7 +11,7 @@ const app = new Elysia({ prefix: "/api/folder/web" });
 app.get(
   "list",
   async () => {
-    const { rows } = await db.sql`select * from folder_web`;
+    const { rows } = await db.sql`select * from folder_web order by \`order\``;
     return Result.success(rows || []);
   },
   {
@@ -26,7 +28,10 @@ app.post(
   "post",
   async ({ body }) => {
     const { name } = body;
-    await db.sql`insert into folder_web (id, name) values (${useSnowflake().nextId()}, ${name})`;
+    insert("folder_web", {
+      id: useSnowflake().nextId(),
+      name,
+    });
     return Result.success();
   },
   {
@@ -47,12 +52,16 @@ app.put(
   async ({ body }) => {
     const { id, name } = body;
     // 先查询
-    const { rows } = await db.sql`select * from folder_web where id = ${id}`;
-    if (!rows || rows.length === 0) {
+    const folder = await selectById("folder_web", id);
+    if (!folder) {
       return Result.error("文件夹不存在");
     }
     // 再重命名
-    await db.sql`update folder_web set name = ${name}, update_time = ${Date.now()} where id = ${id}`;
+    await updateById<Folder>('folder_web', id, {
+      name: name,
+      update_time: Date.now()
+    })
+
     return Result.success();
   },
   {
@@ -74,12 +83,15 @@ app.put(
   async ({ body }) => {
     const { id, order } = body;
     // 先查询
-    const { rows } = await db.sql`select * from folder_web where id = ${id}`;
-    if (!rows || rows.length === 0) {
+    const folder = await selectById("folder_web", id);
+    if (!folder) {
       return Result.error("文件夹不存在");
     }
-    // 再重命名
-    await db.sql`update folder_web set order = ${order}, update_time = ${Date.now()} where id = ${id}`;
+    // 再排序
+    await updateById<Folder>('folder_web', id, {
+      order,
+      update_time: Date.now()
+    })
     return Result.success();
   },
   {
@@ -101,12 +113,12 @@ app.delete(
   async ({ body }) => {
     const { id } = body;
     // 先查询
-    const { rows } = await db.sql`select * from folder_web where id = ${id}`;
-    if (!rows || rows.length === 0) {
+    const folder = await selectById("folder_web", id);
+    if (!folder) {
       return Result.error("文件夹不存在");
     }
     // 再删除
-    await db.sql`delete from folder_web where id = ${id}`;
+    await deleteById('folder_web', id);
     return Result.success();
   },
   {

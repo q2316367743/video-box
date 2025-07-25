@@ -1,9 +1,9 @@
 <template>
   <div class="web-list-item">
     <div class="top">
-      <span class="title ellipsis" :title="sourceWeb.title">{{ sourceWeb.title }}</span>
+      <t-link  class="title" :title="sourceWeb.title">{{ sourceWeb.title }}</t-link>
       <t-tooltip :content="toDateTimeString(sourceWeb.refresh_time)">
-        <t-tag v-if="sourceWeb.delay_time < 0" theme="danger">超时</t-tag>
+        <t-tag v-if="sourceWeb.delay_time < 0" color="var(--td-gray-color-12)">超时</t-tag>
         <t-tag v-else-if="sourceWeb.delay_time < 1000" theme="success">{{ sourceWeb.delay_time }}ms</t-tag>
         <t-tag v-else-if="sourceWeb.delay_time < 5000" theme="warning">{{ sourceWeb.delay_time }}ms</t-tag>
         <t-tag v-else theme="danger">{{ sourceWeb.delay_time }}ms</t-tag>
@@ -12,14 +12,10 @@
     <div class="actions">
       <t-button theme="primary" @click="openInfo()">打开</t-button>
       <t-button theme="primary" variant="outline" :loading="loading" @click="handleRefresh()">测速</t-button>
-      <div class="web-list-item__move" v-if="folder !== 'all'">
-        <drag-move-icon/>
-      </div>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import {DragMoveIcon} from "tdesign-icons-vue-next";
 import {SourceWeb} from "@/views/SourceWeb.js";
 import {toDateTimeString} from "@/utils/lang/FormatUtil.js";
 import {sourceWebInfo, sourceWebRefresh} from "@/apis/source/web.js";
@@ -28,10 +24,6 @@ const props = defineProps({
   view: {
     type: Object as PropType<SourceWeb>,
     required: true,
-  },
-  folder: {
-    type: String,
-    default: '0'
   }
 });
 

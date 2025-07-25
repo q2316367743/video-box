@@ -1,6 +1,6 @@
 import { Elysia, t } from "elysia";
 import { Result } from "@/views/Result";
-import { getById, updateById } from "@/utils/SqlUtil";
+import { selectById, updateById } from "@/utils/SqlUtil";
 import { SourceWeb } from "@/types/SourceWeb";
 
 const app = new Elysia();
@@ -11,7 +11,7 @@ app.put(
   async ({ params }) => {
     const { id } = params;
     try {
-      const source = await getById<SourceWeb>("source_web", id);
+      const source = await selectById<SourceWeb>("source_web", id);
       if (!source) {
         return Result.error("资源不存在");
       }

@@ -1,6 +1,6 @@
 <template>
   <footer class="app-footer">
-    <div class="container mx-auto px-4">
+    <div class="container mx-auto">
       <div class="flex flex-col md:flex-row justify-between items-center">
         <div class="mb-4 md:mb-0">
           <div class="flex items-center justify-center md:justify-start">
@@ -25,7 +25,7 @@
         </div>
 
         <div class="text-center md:text-right">
-          <p class="text-gray-500 text-sm max-w-md">
+          <p class="text-gray-500 text-sm ">
             免责声明：本站仅为视频搜索工具，不存储、上传或分发任何视频内容。
             所有视频均来自第三方API接口。如有侵权，请联系相关内容提供方。
           </p>
@@ -54,7 +54,7 @@ export default defineComponent({
 <style scoped lang="less">
 .app-footer {
   margin-top: 8px;
-  padding: 24px 0;
+  padding: 24px 12px;
   border-top: 1px solid var(--td-border-level-2-color);
 }
 </style>

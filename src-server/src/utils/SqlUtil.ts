@@ -50,7 +50,7 @@ export async function getOne<T extends TableLike>(
   return list[0];
 }
 
-export async function getFirst<T extends TableLike>(
+export async function selectFirst<T extends TableLike>(
   tableName: string,
   params: Partial<T> = {}
 ): Promise<T | null> {
@@ -61,7 +61,7 @@ export async function getFirst<T extends TableLike>(
   return list[0];
 }
 
-export async function getById<T extends TableLike>(
+export async function selectById<T extends TableLike>(
   tableName: string,
   id: string
 ): Promise<T | null> {

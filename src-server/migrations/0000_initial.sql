@@ -20,7 +20,8 @@ create table source_web (
   refresh_time integer default CURRENT_TIMESTAMP not null,
   retry_count integer default 0 not null,
   delay_time integer default 0 not null,
-  is_enabled boolean default true not null
+  is_enabled integer default 1 not null,
+  detail VARCHAR(255) default '' not null
 );
 -- 我的视频数据
 CREATE TABLE my_video_item (

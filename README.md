@@ -35,7 +35,6 @@ bun run dev
 - Fuse.js 7.1.0 (模糊搜索库)
 - Unplugin Auto Import 0.18.6 (自动导入插件)
 - UnoCSS 66.1.0-beta.12 (原子化CSS框架)
-- IDB-Keyval (IndexedDB封装)
 - @imengyu/vue3-context-menu 1.5.1 (右键菜单)
 - FLV.js 1.6.2 (FLV格式视频播放)
 - @vueuse/core 10.11.1 和 @vueuse/integrations 13.5.0 (Vue组合式API增强)

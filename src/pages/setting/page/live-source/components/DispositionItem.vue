@@ -86,6 +86,4 @@ function onRemove(id: string) {
 
 </script>
 <style scoped>
-.disposition-item {
-}
 </style>
