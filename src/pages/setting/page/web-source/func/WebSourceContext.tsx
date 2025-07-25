@@ -20,16 +20,14 @@ export function addFolderWeb(update: () => void) {
   })
 }
 
-export function removeFolderWeb(source: Folder) {
-  MessageBoxUtil.confirm('确定要解散该文件夹吗？', '解散', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-  }).then(() => {
-    folderWebDelete(source.id)
-      .then(() => MessageUtil.success('解散成功'))
-      .catch(e => MessageUtil.error("解散失败", e));
-  })
+export function removeFolderWeb(source: Folder, update: () => void) {
+  folderWebDelete(source.id)
+    .then(() => {
+      update();
+      MessageUtil.success('解散成功')
+    });
 }
+
 export function webSourceExport() {
   adminSourceWebExport().then(() => MessageUtil.success("导出成功"))
     .catch(e => MessageUtil.error("导出失败", e))

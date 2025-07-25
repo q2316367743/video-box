@@ -1,7 +1,7 @@
 <template>
   <div class="main" ref="mainRef" @scroll="handleScroll">
     <app-header :show-shadow="showShadow"/>
-    <div class="pt-96px max-w-1200px mx-auto" style="min-height: calc(100vh - 253px);overflow-x: hidden">
+    <div class="pt-80px max-w-1200px mx-auto" style="min-height: calc(100vh - 237px);overflow-x: hidden">
       <router-view/>
     </div>
     <app-footer/>

@@ -105,15 +105,16 @@ export async function insert<T extends TableLike>(
   const query = new Array<string>();
   const values = new Array<any>();
   for (const key in params) {
+    if (key === "id") continue;
     query.push(`${key}`);
     values.push(params[key]);
   }
-  const statement = db.prepare(
-    `insert into ${tableName} (id, ${query.join(", ")}) values (?, ${list(
-      0,
-      query.length,
-      "?"
-    ).join(", ")})`
-  );
-  return statement.run(useSnowflake().nextId(), ...values);
+  const sql = `insert into ${tableName} (id, ${query.join(
+    ", "
+  )}) values (${list(0, query.length, "?").join(", ")})`;
+  debug("insert sql:\t\t" + sql);
+  debug("insert values:\t" + values);
+  const statement = db.prepare(sql);
+  const r = await statement.run(useSnowflake().nextId(), ...values);
+  debug("insert result:\t" + r.success);
 }

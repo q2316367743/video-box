@@ -1,7 +1,6 @@
 import { Elysia, t } from "elysia";
 import { db } from "@/global/db.js";
 import { Result } from "@/views/Result.js";
-import { useSnowflake } from "@/utils/Snowflake";
 import { deleteById, insert, selectById, updateById } from "@/utils/SqlUtil";
 import { Folder } from "@/types/Folder";
 
@@ -29,7 +28,6 @@ app.post(
   async ({ body }) => {
     const { name } = body;
     insert("folder_web", {
-      id: useSnowflake().nextId(),
       name,
     });
     return Result.success();
@@ -57,10 +55,10 @@ app.put(
       return Result.error("文件夹不存在");
     }
     // 再重命名
-    await updateById<Folder>('folder_web', id, {
+    await updateById<Folder>("folder_web", id, {
       name: name,
-      update_time: Date.now()
-    })
+      update_time: Date.now(),
+    });
 
     return Result.success();
   },
@@ -81,24 +79,22 @@ app.put(
 app.put(
   "order",
   async ({ body }) => {
-    const { id, order } = body;
-    // 先查询
-    const folder = await selectById("folder_web", id);
-    if (!folder) {
-      return Result.error("文件夹不存在");
+    for (const item of body) {
+      await updateById<Folder>("folder_web", item.id, {
+        order: item.order,
+        update_time: Date.now(),
+      });
     }
     // 再排序
-    await updateById<Folder>('folder_web', id, {
-      order,
-      update_time: Date.now()
-    })
     return Result.success();
   },
   {
-    body: t.Object({
-      id: t.String(),
-      order: t.Number(),
-    }),
+    body: t.Array(
+      t.Object({
+        id: t.String(),
+        order: t.Number(),
+      })
+    ),
     detail: {
       tags: ["folder/web"],
       summary: "重排序文件夹",
@@ -112,14 +108,27 @@ app.delete(
   "delete",
   async ({ body }) => {
     const { id } = body;
-    // 先查询
-    const folder = await selectById("folder_web", id);
-    if (!folder) {
-      return Result.error("文件夹不存在");
+    try {
+      await db.exec("BEGIN");
+      // 先查询
+      const folder = await selectById("folder_web", id);
+      if (!folder) {
+        return Result.error("文件夹不存在");
+      }
+      // 再删除
+      await deleteById("folder_web", id);
+      // 批量更新源
+      await db.sql`update source_web set folder = '' where folder = ${id}`;
+      // 提交事务
+      await db.exec("COMMIT");
+      return Result.success();
+    } catch (e) {
+      console.error("删除文件夹失败", e);
+      await db.exec("ROLLBACK");
+      return Result.error(
+        "删除文件夹失败," + (e instanceof Error ? e.message : e)
+      );
     }
-    // 再删除
-    await deleteById('folder_web', id);
-    return Result.success();
   },
   {
     body: t.Object({

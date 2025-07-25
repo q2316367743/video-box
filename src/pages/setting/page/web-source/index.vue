@@ -17,13 +17,7 @@
               <template #prefix-icon>
                 <file-add-icon/>
               </template>
-              新增网络资源
-            </t-dropdown-item>
-            <t-dropdown-item @click="addFolderWeb(init)">
-              <template #prefix-icon>
-                <folder-add-icon/>
-              </template>
-              新增文件夹
+              新增
             </t-dropdown-item>
             <t-dropdown-item @click="webSourceExport()">
               <template #prefix-icon>
@@ -53,7 +47,7 @@ import {UploadProps} from "tdesign-vue-next";
 import MessageUtil from "@/utils/modal/MessageUtil.js";
 import {ChevronDownIcon, FileAddIcon, FileExportIcon, FileImportIcon, FolderAddIcon} from "tdesign-icons-vue-next";
 import {openVideoSourceDialog} from "@/pages/setting/page/web-source/func/VideoSourceDialog.js";
-import {addFolderWeb, webSourceExport} from "@/pages/setting/page/web-source/func/WebSourceContext.js";
+import {webSourceExport} from "@/pages/setting/page/web-source/func/WebSourceContext.js";
 import {adminSourceWebImport, adminSourceWebList} from "@/apis/admin/source/web.js";
 import {Folder} from "@/views/Folder.js";
 import {SourceWeb} from "@/views/SourceWeb.js";

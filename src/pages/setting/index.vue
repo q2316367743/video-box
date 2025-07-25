@@ -1,6 +1,6 @@
 <template>
   <app-page v-model="active" :menus>
-    <router-view />
+    <router-view/>
   </app-page>
 </template>
 <script lang="ts">
@@ -14,10 +14,13 @@ export default defineComponent({
     menus: [{
       value: '/setting/base',
       label: '基础设置'
-    },{
+    }, {
       value: '/setting/web',
       label: '网络资源设置'
-    },{
+    }, {
+      value: '/setting/folder',
+      label: '文件夹设置'
+    }, {
       value: '/setting/live',
       label: '直播设置'
     }]

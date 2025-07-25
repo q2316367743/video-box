@@ -13,6 +13,11 @@ export function folderWebRename(id: string, name: string) {
   return usePut('/api/folder/web/rename', {id, name});
 }
 
+
+export function folderWebSort(data: Array<{ id: string, order: number }>) {
+  return usePut('/api/folder/web/order', data);
+}
+
 export function folderWebDelete(id: string) {
   return useDelete('/api/folder/web/delete', {id});
 }

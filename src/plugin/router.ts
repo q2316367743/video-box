@@ -102,6 +102,10 @@ export const routes: Array<RouteRecordRaw> = [{
       name: '网络资源设置',
       path: 'web',
       component: () => import('@/pages/setting/page/web-source/index.vue'),
+    }, {
+      name: '文件夹设置',
+      path: 'folder',
+      component: () => import('@/pages/setting/page/web-folder/index.vue'),
     }]
   }, {
     name: '关于',
