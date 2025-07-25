@@ -8,11 +8,16 @@ import pluginWebRoutes from "@/routers/plugin/web";
 import myVideoItemRoutes from "@/routers/my/video-item";
 import proxyRoutes from "@/routers/proxy";
 import authRoutes from "@/routers/auth";
+import adminRouters from "@/routers/admin";
 import { registerJob } from "./modules/job";
 import { registerElysiaPlugin } from "./plugins/elysia_plugin";
 import { registerElysiaHook } from "./plugins/elysia_hook";
 
-const app = new Elysia();
+const app = new Elysia({
+  serve: {
+    idleTimeout: 30,
+  }
+});
 
 // 注册插件
 registerElysiaPlugin(app);
@@ -23,6 +28,7 @@ registerElysiaHook(app);
 
 // 注册路由
 app
+  .use(adminRouters)
   .use(folderWebRoutes)
   .use(sourceWebRoutes)
   .use(sourceTvRoutes)

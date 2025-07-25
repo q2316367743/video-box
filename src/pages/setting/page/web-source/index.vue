@@ -1,20 +1,57 @@
 <template>
   <page-layout title="网络资源管理">
     <template #extra>
-      <t-upload accept="application/json" :request-method="handleImportMethod" :show-upload-progress="false">
-        <t-button theme="primary">导入</t-button>
-      </t-upload>
+      <t-space size="small">
+        <t-dropdown trigger="click" max-column-width="200px">
+          <t-button theme="primary">
+            新增
+            <template #suffix>
+              <chevron-down-icon/>
+            </template>
+          </t-button>
+          <t-dropdown-menu>
+            <t-dropdown-item @click="openVideoSourceDialog(init)">
+              <template #prefix-icon>
+                <file-add-icon/>
+              </template>
+              新增网络资源
+            </t-dropdown-item>
+            <t-dropdown-item @click="addFolderWeb(init)">
+              <template #prefix-icon>
+                <folder-add-icon/>
+              </template>
+              新增文件夹
+            </t-dropdown-item>
+            <t-dropdown-item @click="webSourceExport()">
+              <template #prefix-icon>
+                <file-export-icon/>
+              </template>
+              导出
+            </t-dropdown-item>
+          </t-dropdown-menu>
+        </t-dropdown>
+        <t-upload accept="application/json" :request-method="handleImportMethod" :show-upload-progress="false">
+          <t-button theme="primary">
+            <template #icon>
+              <file-import-icon/>
+            </template>
+            导入
+          </t-button>
+        </t-upload>
+      </t-space>
     </template>
-    <div class="web-list" @contextmenu="handleListContextmenu($event, init)">
-      <web-source-content folder="0" ref="contentRef"/>
+    <div class="web-list">
+      <web-source-content ref="contentRef"/>
     </div>
   </page-layout>
 </template>
 <script lang="ts" setup>
 import {UploadProps} from "tdesign-vue-next";
 import MessageUtil from "@/utils/modal/MessageUtil.js";
-import {handleListContextmenu} from "@/pages/web/pages/list/components/WebListContext";
-import {sourceWebImport} from "@/apis/source/web.js";
+import {ChevronDownIcon, FileAddIcon, FileExportIcon, FileImportIcon, FolderAddIcon} from "tdesign-icons-vue-next";
+import {openVideoSourceDialog} from "@/pages/setting/page/web-source/func/VideoSourceDialog.js";
+import {addFolderWeb, webSourceExport} from "@/pages/setting/page/web-source/func/WebSourceContext.js";
+import {adminSourceWebImport} from "@/apis/admin/source/web.js";
 import WebSourceContent from "@/pages/setting/page/web-source/components/WebSourceContent.vue";
 
 const contentRef = ref()
@@ -27,7 +64,7 @@ const handleImportMethod: UploadProps['requestMethod'] = async (file) => {
   if (target) {
     const {raw} = target;
     if (raw) {
-      await sourceWebImport(raw);
+      await adminSourceWebImport(raw);
       // 导入成功，重新初始化
       MessageUtil.success("导入成功")
       init();
@@ -44,7 +81,6 @@ const handleImportMethod: UploadProps['requestMethod'] = async (file) => {
     response: {},
   }
 };
-onMounted(init);
 </script>
 <style scoped lang="less">
 .web-list {

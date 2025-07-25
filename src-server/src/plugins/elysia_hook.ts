@@ -18,6 +18,7 @@ export function registerElysiaHook(app: Elysia) {
   .onError(({ status, error, set }) => {
     // 设为正常
     set.status = 200;
+    console.log(error)
     // 打印错误
     err("onError: " + JSON.stringify(error));
     return new Response(

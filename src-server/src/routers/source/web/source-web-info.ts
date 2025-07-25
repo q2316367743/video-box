@@ -15,6 +15,7 @@ export async function getSourceWebInfo(
       return {
         ...(row as any as SourceWeb),
         props: JSON.parse(row.props as string),
+        is_enabled: row.is_enabled !== 0,
       };
     }
   }

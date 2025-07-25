@@ -1,7 +1,8 @@
 import {DialogPlugin, Form, FormItem, Input, LoadingPlugin, Radio, RadioGroup, Select} from "tdesign-vue-next";
 import MessageUtil from "@/utils/modal/MessageUtil.ts";
 import {SourceWebForm} from "@/views/SourceWeb.js";
-import {sourceWebAdd, sourceWebInfo, sourceWebUpdate} from "@/apis/source/web.js";
+import {sourceWebInfo} from "@/apis/source/web.js";
+import {adminSourceWebAdd, adminSourceWebUpdate} from "@/apis/admin/source/web.js";
 import {SourceWebTypeEnum, sourceWebTypeOptions} from "@/enum/SourceWebTypeEnum.js";
 import VideoFormForCmsJson from "@/modules/video/impl/cms-json/VideoFormForCmsJson.vue";
 import VideoFormForEmby from "@/modules/video/impl/emby/VideoFormForEmby.vue";
@@ -59,7 +60,7 @@ export function openVideoSourceDialog(update: () => void, old?: string) {
         fullscreen: true,
         zIndex: 2000
       });
-      (!!old ? sourceWebUpdate(old, data.value) : sourceWebAdd(data.value))
+      (!!old ? adminSourceWebUpdate(old, data.value) : adminSourceWebAdd(data.value))
         .then(() => {
           MessageUtil.success(op + "成功");
           dp.destroy();

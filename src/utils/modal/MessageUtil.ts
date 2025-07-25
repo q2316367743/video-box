@@ -1,5 +1,5 @@
 import {MessagePlugin} from 'tdesign-vue-next';
-import Optional from "@/utils/lang/Optional";
+import Optional from "@/utils/lang/Optional.js";
 
 function render(message: string, e?: any) {
   if (e instanceof Error) {

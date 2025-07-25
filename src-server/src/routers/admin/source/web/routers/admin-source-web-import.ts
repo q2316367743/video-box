@@ -23,6 +23,10 @@ export async function importVideoSourceEntry(
     // 导入的都是根目录
     folder: "",
     order: now,
+    is_enabled: 1,
+    delay_time: 0,
+    refresh_time: 0,
+    retry_count: 0
   };
 }
 

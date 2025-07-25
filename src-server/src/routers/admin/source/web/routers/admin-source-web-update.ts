@@ -1,22 +1,8 @@
 import { Elysia, t } from "elysia";
-import { db } from "@/global/db";
 import { Result } from "@/views/Result";
-// 子路由
-import sourceWebInfo from "./source-web-info";
-import sourceWebMove from "./source-web-move";
-import sourceWebList from "./source-web-list";
-import sourceWebSort from "./source-web-sort";
-import sourceWebRefresh from "./source-web-refresh";
+import { updateById } from "@/utils/SqlUtil";
 
-const app = new Elysia({ prefix: "/api/source/web" });
-
-app
-  .use(sourceWebInfo)
-  .use(sourceWebMove)
-  .use(sourceWebList)
-  .use(sourceWebSort)
-  .use(sourceWebRefresh);
-
+const app = new Elysia();
 
 // 更新
 app.put(
@@ -25,12 +11,14 @@ app.put(
     const { id } = params;
     const { title, type, props, favicon, folder, order } = body;
     try {
-      await db.sql`
-  update source_web set title = ${title}, \`type\` = ${type}, props = ${JSON.stringify(
-        props
-      )}, favicon = ${favicon}, folder = ${folder}, \`order\` = ${order}
-  where id = ${id};
-  `;
+      updateById("source_web", id, {
+        title,
+        type,
+        props: JSON.stringify(props),
+        favicon,
+        folder,
+        order,
+      });
       return Result.success();
     } catch (e) {
       return Result.error(e instanceof Error ? e.message : `${e}`);

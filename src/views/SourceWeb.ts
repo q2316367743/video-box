@@ -1,4 +1,4 @@
-import { SourceWebTypeEnum } from "@/enum/SourceWebTypeEnum.js";
+import {SourceWebTypeEnum} from "@/enum/SourceWebTypeEnum.js";
 
 export interface SourceWebForm {
   title: string;
@@ -12,16 +12,19 @@ export interface SourceWebForm {
   folder: string;
   // 排序
   order: number;
+}
+
+export interface SourceWeb extends SourceWebForm {
+  id: string;
+  create_time: number;
+  update_time: number;
   // 刷新时间
   refresh_time: number;
   // 重试次数
   retry_count: number;
   // 延迟时间
   delay_time: number;
-}
 
-export interface SourceWeb extends SourceWebForm{
-  id: string;
-  create_time: number;
-  update_time: number;
+  // 是否启用
+  is_enabled: boolean;
 }
