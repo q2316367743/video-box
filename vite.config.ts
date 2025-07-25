@@ -45,7 +45,7 @@ export default defineConfig({
   ],
   base: "./",
   build: {
-    outDir: "src-utools/dist",
+    outDir: "src-server/public",
     rollupOptions: {
       input: {
         main: _resolve('index.html'),

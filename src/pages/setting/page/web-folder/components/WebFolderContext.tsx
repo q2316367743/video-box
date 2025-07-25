@@ -35,12 +35,10 @@ export function updateFolderWeb(source: Folder, update: () => void) {
   })
 }
 
-export function removeFolderWeb(source: Folder) {
-  MessageBoxUtil.confirm('确定要删除该文件夹吗？', '删除文件夹', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-  }).then(() => {
-    folderWebDelete(source.id)
-      .then(() => MessageUtil.success('删除成功'));
-  })
+export function removeFolderWeb(source: Folder, update: () => void) {
+  folderWebDelete(source.id)
+    .then(() => {
+      update();
+      MessageUtil.success('删除成功')
+    });
 }

@@ -15,7 +15,9 @@
       <t-space size="small">
         <t-button theme="success" :loading @click="handleRefresh">刷新</t-button>
         <t-button theme="primary" :loading @click="handleUpdate">编辑</t-button>
-        <t-button theme="danger" :loading @click="handleDelete">删除</t-button>
+        <t-popconfirm content="删除后无法恢复，是否继续" @confirm="handleDelete">
+          <t-button theme="danger" :loading>删除</t-button>
+        </t-popconfirm>
       </t-space>
       <web-source-folder-select v-model="source.folder" :folders="folders" :loading @change="handleMove"/>
     </div>
@@ -30,7 +32,6 @@ import MessageUtil from "@/utils/modal/MessageUtil.js";
 import {Folder} from "@/views/Folder.js";
 import WebSourceFolderSelect from "@/pages/setting/page/web-source/components/WebSourceFolderSelect.vue";
 import {toDateTimeString} from "@/utils/lang/FormatUtil.js";
-import {DragMoveIcon} from "tdesign-icons-vue-next";
 
 const props = defineProps({
   view: {

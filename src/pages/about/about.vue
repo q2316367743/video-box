@@ -18,8 +18,7 @@
           </div>
 
           <div class="text-right">
-            <div class="text-lg font-semibold select-none cursor-pointer" @dblclick="changeConsole()"
-                 :style="{color: consoleShow ? 'var(--td-success-color)': ''}">{{ Constant.name }}
+            <div class="text-lg font-semibold select-none cursor-pointer">{{ Constant.name }}
             </div>
             <div class="text-gray-500">{{ Constant.version }}</div>
           </div>
@@ -41,7 +40,6 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {useErrorStore} from "@/store";
 import Constant from "@/global/Constant.js";
 import MyVideoItem from "@/pages/about/components/MyVideoItem.vue";
 import {MyVideoItemView} from "@/views/MyVideoItemView.js";
@@ -49,8 +47,6 @@ import {myVideoItemList} from "@/apis/my/video-item.js";
 
 const activeKey = ref('watched');
 
-const {changeConsole} = useErrorStore();
-const {consoleShow} = toRefs(useErrorStore());
 
 const items = ref(new Array<MyVideoItemView>());
 

@@ -1,17 +1,16 @@
-import { Elysia, t } from "elysia";
-import { db } from "@/global/db.js";
-import { Result } from "@/views/Result.js";
-import { useSnowflake } from "@/utils/Snowflake";
+import {Elysia, t} from "elysia";
+import {Result} from "@/views/Result.js";
+import {useSnowflake} from "@/utils/Snowflake";
 
-const app = new Elysia({ prefix: "/api/auth" });
+const app = new Elysia({prefix: "/api/auth"});
 
 // 登录
 app.post(
   "login",
   // @ts-ignore
-  async ({ jwt, body }) => {
-    const { USERNAME = "admin", PASSWORD = "123456" } = process.env;
-    if (body.username !== USERNAME || body.password !== PASSWORD) {
+  async ({jwt, body}) => {
+    const {ADMIN_USERNAME = "admin", ADMIN_PASSWORD = "123456"} = process.env;
+    if (body.username !== ADMIN_USERNAME || body.password !== ADMIN_PASSWORD) {
       return Result.success({
         success: false,
         message: "用户名或密码错误",
@@ -20,7 +19,7 @@ app.post(
     return Result.success({
       success: true,
       message: "登录成功",
-      token: jwt.sign({ id: useSnowflake().nextId() }),
+      token: jwt.sign({id: useSnowflake().nextId()}),
     });
   },
   {

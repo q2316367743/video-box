@@ -93,7 +93,7 @@ const password = ref('');
 
 const handleSubmit = () => {
   useUserStore().login(username.value, password.value)
-    .then(() => router.push(route.query.redirect || '/'))
+    .then(() => router.push(route.query.redirect as string || '/'))
     .catch(MessageUtil.error);
 }
 </script>

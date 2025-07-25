@@ -3,9 +3,11 @@ import flvjs from 'flv.js';
 import Artplayer from "artplayer";
 
 export function playFlv(video: HTMLVideoElement, url: string, art: Artplayer) {
+  // @ts-ignore
   if (flvjs.isSupported()) {
     if (art.flv) art.flv.destroy();
-    const flv = flvjs.createPlayer({ type: 'flv', url });
+    // @ts-ignore
+    const flv = flvjs.createPlayer({type: 'flv', url});
     flv.attachMediaElement(video);
     flv.load();
     art.flv = flv;
@@ -16,8 +18,10 @@ export function playFlv(video: HTMLVideoElement, url: string, art: Artplayer) {
 }
 
 export function playM3u8(video: HTMLVideoElement, url: string, art: Artplayer) {
+  // @ts-ignore
   if (Hls.isSupported()) {
     if (art.hls) art.hls.destroy();
+    // @ts-ignore
     const hls = new Hls();
     hls.loadSource(url);
     hls.attachMedia(video);

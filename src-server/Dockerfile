@@ -1,16 +1,18 @@
-FROM oven/bun AS build
+FROM oven/bun:1.2.8 AS build
 
 WORKDIR /app
 
 # 缓存包安装
 COPY package.json package.json
 COPY bun.lock bun.lock
-
-RUN bun install
-
+COPY tsconfig.json tsconfig.json
 COPY ./src ./src
 
 ENV NODE_ENV=production
+
+RUN bun install
+RUN bun install
+
 
 RUN bun build \
   --compile \
@@ -29,9 +31,9 @@ COPY ./public ./public
 COPY ./migrations ./migrations
 
 ENV NODE_ENV=production
-ENV JWT_SECRET=123456
-ENV USERNAME=admin
-ENV PASSWORD=123456
+ENV ADMIN_JWT_SECRET=123456
+ENV ADMIN_USERNAME=admin
+ENV ADMIN_PASSWORD=123456
 
 VOLUME /app/video-box/data
 VOLUME /app/video-box/files
