@@ -22,9 +22,8 @@
 <script lang="ts" setup>
 import {Folder} from "@/views/Folder.js";
 import {folderWebList, folderWebSort} from "@/apis/folder-web/index.js";
-import {addFolderWeb, removeFolderWeb} from "@/pages/setting/page/web-source/func/WebSourceContext.js";
 import {useSortable} from "@vueuse/integrations/useSortable";
-import {updateFolderWeb} from "@/pages/setting/page/web-folder/components/WebFolderContext.js";
+import {updateFolderWeb, addFolderWeb, removeFolderWeb} from "@/pages/setting/page/web-folder/components/WebFolderContext.js";
 
 const folders = ref(new Array<Folder>());
 const contentRef = useTemplateRef<HTMLDivElement>('web-folder-content');

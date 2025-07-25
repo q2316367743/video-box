@@ -106,7 +106,7 @@ export async function insert<T extends TableLike>(
   const values = new Array<any>();
   for (const key in params) {
     if (key === "id") continue;
-    query.push(`${key}`);
+    query.push(`\`${key}\``);
     values.push(params[key]);
   }
   const sql = `insert into ${tableName} (id, ${query.join(

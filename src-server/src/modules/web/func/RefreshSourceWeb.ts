@@ -2,13 +2,13 @@ import { useHead } from "@/global/http";
 import { SourceWeb } from "@/types/SourceWeb";
 import { updateById } from "@/utils/SqlUtil";
 import { debug } from "@rasla/logify";
+import { AxiosError } from "axios";
 
 export async function refreshSourceWeb(sourceWeb: SourceWeb) {
   const { url = "" } = JSON.parse(sourceWeb.props);
   if (!url) return Promise.reject("url不能为空");
   const start = Date.now();
-  try {
-    await useHead(url);
+  const onSuccess = async () => {
     const end = Date.now();
     debug(`刷新「${sourceWeb.title}」耗时：${end - start}ms`);
     // 更新
@@ -19,7 +19,9 @@ export async function refreshSourceWeb(sourceWeb: SourceWeb) {
       delay_time: end - start,
       is_enabled: 1,
     })
-  } catch (error) {
+  }
+  const onError = async (error: AxiosError) => {
+    
     const now = Date.now();
     debug(`刷新「${sourceWeb.title}」失败：${error}`);
     await updateById('source_web', sourceWeb.id, {
@@ -33,6 +35,14 @@ export async function refreshSourceWeb(sourceWeb: SourceWeb) {
         : sourceWeb.is_enabled,
       delay_time: -1,
     })
+  }
+  try {
+    await useHead(url);
+    await onSuccess()
+  } catch (error) {
+    const err = error as AxiosError;
+    if (err.status === 404) await onSuccess();
+    else await onError(err);
   }
 
   return fetch(url);

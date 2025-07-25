@@ -1,5 +1,5 @@
-import { AbsWebPluginForStore } from "@/modules/web/abs/AbsWebPluginForStore";
-import { SourceWebView } from "@/types/SourceWeb";
+import {AbsWebPluginForStore} from "@/modules/web/abs/AbsWebPluginForStore";
+import {SourceWebView} from "@/types/SourceWeb";
 import {
   WebCategoryResult,
   WebCommonResult,
@@ -9,20 +9,14 @@ import {
   WebRecommend,
   WebSearchResult,
 } from "@/modules/web/WebPlugin.js";
-import { EmbyAuthenticateByName } from "@/modules/web/impl/emby/types/EmbyAuthenticateByName.js";
-import { EmbyItems } from "@/modules/web/impl/emby/types/EmbyItems.js";
-import { EmbyResume } from "@/modules/web/impl/emby/types/EmbyResume.js";
-import { EmbyItemInfo } from "@/modules/web/impl/emby/types/EmbyItemsInfo.js";
-import { EmbyPlaybackInfo } from "@/modules/web/impl/emby/types/EmbyPlaybackInfo.js";
-import { EmbyView } from "@/modules/web/impl/emby/types/EmbyView.js";
-import { APP_ID, APP_NAME, APP_VERSION } from "@/global/constant";
-import { useRequest } from "@/global/http";
-
-export interface WebPluginForEmbyProps {
-  url: string;
-  username: string;
-  password: string;
-}
+import {EmbyAuthenticateByName} from "@/modules/web/impl/emby/types/EmbyAuthenticateByName.js";
+import {EmbyItems} from "@/modules/web/impl/emby/types/EmbyItems.js";
+import {EmbyResume} from "@/modules/web/impl/emby/types/EmbyResume.js";
+import {EmbyItemInfo} from "@/modules/web/impl/emby/types/EmbyItemsInfo.js";
+import {EmbyPlaybackInfo} from "@/modules/web/impl/emby/types/EmbyPlaybackInfo.js";
+import {EmbyView} from "@/modules/web/impl/emby/types/EmbyView.js";
+import {APP_ID, APP_NAME, APP_VERSION} from "@/global/constant";
+import {useRequest} from "@/global/http";
 
 export class WebPluginForEmby extends AbsWebPluginForStore {
   public props: SourceWebView;
@@ -47,7 +41,7 @@ export class WebPluginForEmby extends AbsWebPluginForStore {
         const formData = new FormData();
         formData.append("Username", this.props.props.username);
         formData.append("Pw", this.props.props.password);
-        const { data } = await useRequest("/emby/Users/authenticatebyname", {
+        const {data} = await useRequest("/emby/Users/authenticatebyname", {
           baseURL: this.props.props.url,
           method: "POST",
           data: formData,
@@ -71,7 +65,7 @@ export class WebPluginForEmby extends AbsWebPluginForStore {
   private async request<T>(url: string, params?: Record<string, any>) {
     let profile = await this.getProfile();
     try {
-      const { data } = await useRequest<T>(url, {
+      const {data} = await useRequest<T>(url, {
         baseURL: this.props.props.url,
         params: {
           ...params,
@@ -155,7 +149,7 @@ export class WebPluginForEmby extends AbsWebPluginForStore {
       limit: 20,
       total: res.TotalRecordCount,
       data: res.Items.filter(
-        (e) => e.MediaType === "Web" || e.Type === "Series"
+        (e) => e.MediaType === "Web" || e.MediaType === "Video" || e.Type === "Series"
       ).map(
         (e) =>
           ({
