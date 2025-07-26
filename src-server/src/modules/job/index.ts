@@ -9,8 +9,8 @@ export function registerJob(app: Elysia) {
   app.use(
     cron({
       name: "sourceWebDelay",
-      // 每10分钟执行一次
-      pattern: "*/10 * * * *",
+      // 每30分钟执行一次
+      pattern: "*/30 * * * *",
       async run() {
         const { rows } =
           await db.sql`select * from source_web where retry_count < 3;`;

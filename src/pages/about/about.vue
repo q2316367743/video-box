@@ -1,38 +1,36 @@
 <template>
   <div class="about">
-    <div class="p-8px max-w-4xl mx-auto">
-      <t-card size="small">
-        <div class="flex justify-between items-center">
-          <div class="flex items-center space-x-4">
-            <t-avatar
-              :image="user.avatar"
-              size="48px"
-              class="border-2 border-yellow-400"
-            />
-            <div>
-              <div class="text-xl font-bold mb-4px">{{ user.nickname }}</div>
-              <t-tag theme="success" v-if="user.type === 'member'">
-                会员
-              </t-tag>
-            </div>
-          </div>
-
-          <div class="text-right">
-            <div class="text-lg font-semibold select-none cursor-pointer">{{ Constant.name }}
-            </div>
-            <div class="text-gray-500">{{ Constant.version }}</div>
+    <t-card size="small">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center space-x-4">
+          <t-avatar
+            :image="user.avatar"
+            size="48px"
+            class="border-2 border-yellow-400"
+          />
+          <div>
+            <div class="text-xl font-bold mb-4px">{{ user.nickname }}</div>
+            <t-tag theme="success" v-if="user.type === 'member'">
+              会员
+            </t-tag>
           </div>
         </div>
-      </t-card>
-      <t-tabs v-model="activeKey" class="mt-8px">
-        <t-tab-panel value="watched" label="看过的影视"/>
-        <t-tab-panel value="liked" label="喜欢的影视"/>
-        <t-tab-panel value="following" label="在追的影视"/>
-      </t-tabs>
-    </div>
+
+        <div class="text-right">
+          <div class="text-lg font-semibold select-none cursor-pointer">{{ Constant.name }}
+          </div>
+          <div class="text-gray-500">{{ Constant.version }}</div>
+        </div>
+      </div>
+    </t-card>
+    <t-tabs v-model="activeKey" class="mt-8px">
+      <t-tab-panel value="watched" label="看过的影视"/>
+      <t-tab-panel value="liked" label="喜欢的影视"/>
+      <t-tab-panel value="following" label="在追的影视"/>
+    </t-tabs>
     <div class="about-container">
       <empty-result v-if="items.length === 0" title="空空如也"/>
-      <div class="flex flex-wrap justify-start items-start content-start gap-8px">
+      <div class="about-content">
         <my-video-item v-for="item in items" :key="item.id" :item="item" :type="activeKey" @update="init"/>
       </div>
     </div>
@@ -65,8 +63,15 @@ onMounted(init)
   width: 100%;
   height: 100%;
   position: relative;
+  margin-top: 16px;
 
   .about-container {
+    .about-content {
+      display: grid;
+      gap: 8px;
+      margin: 8px;
+      grid-template-columns:repeat(auto-fill, minmax(120px, 1fr));
+    }
   }
 }
 </style>

@@ -1,4 +1,4 @@
-FROM oven/bun:1.2.8 AS build
+FROM oven/bun:1.2.19 AS build
 
 WORKDIR /app
 
@@ -11,8 +11,6 @@ COPY ./src ./src
 ENV NODE_ENV=production
 
 RUN bun install
-RUN bun install
-
 
 RUN bun build \
   --compile \

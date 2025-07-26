@@ -8,7 +8,7 @@
               <folder-select v-model="folder" size="large" style="width: 96px"/>
             </template>
             <t-input v-model="keyword" placeholder="请输入资源名，回车搜索" clearable size="large" @enter="openSearch"
-                     @clear="openSearch" style="width: 40vw;min-width: 350px;max-width: 550px;"/>
+                     @clear="openSearch" style="width: 50vw;max-width: 550px;"/>
             <template #append>
               <t-button theme="primary" shape="square" size="large" @click="openSearch">
                 <template #icon>
@@ -136,10 +136,10 @@ onMounted(() => {
   }
 
   .home-search {
-    margin: 0 auto;
     width: fit-content;
     transition: padding-top 0.3s ease-in-out;
     z-index: 1;
+    margin: 0 auto 64px;
 
     .home-search-container {
       box-shadow: var(--td-shadow-2);

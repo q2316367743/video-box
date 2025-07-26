@@ -1,7 +1,7 @@
 <template>
   <div v-if="item" class="live-list-item" @click="openPlayer(item)">
     <div class="cover">
-      <t-image :src="item.logo" :alt="item.name" :width="150" :height="85" fit="contain"
+      <t-image :src="item.logo" :alt="item.name" :width="170" :height="85" fit="contain"
                :preview="false">
         <template #error>
           <div class="flex justify-center items-center h-85px w-full">
@@ -104,8 +104,8 @@ const openPlayer = (item: SourceTvChannelView) => {
   }
 
   .cover {
-    width: 150px;
-    height: 85px;
+    width: 173px;
+    height: 103px;
     object-fit: cover;
     overflow-y: hidden;
 

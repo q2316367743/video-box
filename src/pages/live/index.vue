@@ -3,24 +3,17 @@
     <div class="live-header">
       <!-- 顶部工具栏 -->
       <div class="flex items-center gap-4">
-        <div class="title">电视直播</div>
-        <t-tag class="text-xs">
-          {{ channels.length || 0 }} 个频道
-        </t-tag>
-      </div>
-
-      <div class="flex items-center gap-4">
         <div class="w-180px">
-          <t-input placeholder="请输入频道名" v-model="keyword">
+          <t-input placeholder="请输入频道名" v-model="keyword" clearable>
             <template #prefix-icon>
               <search-icon/>
             </template>
           </t-input>
         </div>
-        <div class="flex-46px text-sm ">来源：</div>
-        <div>
+      </div>
+
+      <div class="flex items-center gap-4">
           <t-select v-model="active" :options="options" clearable auto-width/>
-        </div>
       </div>
     </div>
     <div class="live-container">

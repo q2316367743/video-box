@@ -8,7 +8,7 @@ const dir = process.env.NODE_ENV === 'production' ? APP_MIGRATION_DIR : resolve(
 
 async function getLatestVersion() {
   const { rows } =
-    await db.sql`SELECT COALESCE(MAX(version), 0) AS version FROM schema_version;`;
+    await db.sql`SELECT COALESCE(MAX(version), -1) AS version FROM schema_version;`;
   if (rows) {
     const row = rows[0];
     if (row) {

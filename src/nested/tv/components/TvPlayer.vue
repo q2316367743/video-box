@@ -17,10 +17,9 @@ const videoRef = useTemplateRef('art-player');
 
 onMounted(() => {
   if (!videoRef.value) return;
-  console.log(props)
   art.value = new Artplayer({
     container: videoRef.value,
-    url: props.url,
+    url: '',
     type: 'm3u8',
     customType: {
       m3u8: playM3u8
@@ -35,11 +34,11 @@ onMounted(() => {
     setting: true,
   });
 });
-watch(() => props.url, url => {
+watch(() => props.url, async url => {
   if (!art.value) return;
-  art.value.switchUrl(url);
-  art.value.play()
-})
+  await art.value.switchUrl(url);
+  await art.value.play()
+}, {immediate: true})
 </script>
 <style scoped lang="less">
 .art-player {
