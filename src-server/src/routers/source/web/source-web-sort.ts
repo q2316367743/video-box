@@ -1,6 +1,6 @@
-import { db } from "@/global/db";
 import { Result } from "@/views/Result";
 import { Elysia, t } from "elysia";
+import {folderWebDao, sourceWebDao} from "@/dao";
 
 const app = new Elysia();
 
@@ -11,10 +11,14 @@ app.put(
     for (const element of body) {
       if (element.folder) {
         // 更新文件夹
-        await db.sql`update folder_web set \`order\` = ${element.order} where id = ${element.id}`;
+        await folderWebDao.updateById(element.id, {
+          order: element.order
+        })
       } else {
         // 更新源
-        await db.sql`update source_web set \`order\` = ${element.order} where id = ${element.id}`;
+        await sourceWebDao.updateById(element.id, {
+          order: element.order
+        })
       }
     }
     return Result.success();

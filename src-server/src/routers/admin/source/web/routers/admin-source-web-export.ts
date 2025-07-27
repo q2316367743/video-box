@@ -1,7 +1,6 @@
-import { db } from "@/global/db";
-import { SourceWeb } from "@/types/SourceWeb";
-import { Result } from "@/views/Result";
-import { Elysia, t } from "elysia";
+import {Result} from "@/views/Result";
+import {Elysia} from "elysia";
+import {sourceWebDao} from "@/dao";
 
 const app = new Elysia();
 
@@ -9,10 +8,10 @@ app.post(
   "export",
   async () => {
     // 获取全部的源
-    const { rows } = await db.sql`select * from source_web`;
+    const rows = await sourceWebDao.selectList();
     if (rows) {
       const data = rows.map((row) => ({
-        ...(row as any as SourceWeb),
+        ...row,
         props: JSON.parse(row.props as string),
       }));
       return Result.success(data);

@@ -1,6 +1,7 @@
-import { Elysia, t } from "elysia";
-import { Result } from "@/views/Result";
-import { deleteById } from "@/utils/SqlUtil";
+import {Elysia, t} from "elysia";
+import {Result} from "@/views/Result";
+import {deleteById} from "@/utils/SqlUtil";
+import {sourceWebDao} from "@/dao";
 // 子路由
 
 const app = new Elysia();
@@ -8,9 +9,9 @@ const app = new Elysia();
 // 删除
 app.delete(
   "delete/:id",
-  async ({ params }) => {
-    const { id } = params;
-    deleteById('source_web', id);
+  async ({params}) => {
+    const {id} = params;
+    await sourceWebDao.deleteById(id);
     return Result.success();
   },
   {

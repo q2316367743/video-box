@@ -1,17 +1,17 @@
-import { Elysia, t } from "elysia";
-import { Result } from "@/views/Result";
-import { updateById } from "@/utils/SqlUtil";
+import {Elysia, t} from "elysia";
+import {Result} from "@/views/Result";
+import {sourceWebDao} from "@/dao";
 
 const app = new Elysia();
 
 // 更新
 app.put(
   "update/:id",
-  async ({ params, body }) => {
-    const { id } = params;
-    const { title, type, props, favicon, folder, order } = body;
+  async ({params, body}) => {
+    const {id} = params;
+    const {title, type, props, favicon, folder, order} = body;
     try {
-      updateById("source_web", id, {
+      await sourceWebDao.updateById(id, {
         title,
         type,
         props: JSON.stringify(props),

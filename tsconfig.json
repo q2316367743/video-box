@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ES6",
     "useDefineForClassFields": true,
-    "module": "Node16",
-    "moduleResolution": "node16",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "strict": true,
     "jsx": "preserve",
@@ -22,7 +22,7 @@
         "./src/*"
       ]
     },
-    "noEmit": true,
+    "noEmit": true
   },
   "include": [
     "src/**/*.ts",

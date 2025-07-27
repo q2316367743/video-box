@@ -1,6 +1,6 @@
-import { Elysia, t } from "elysia";
-import { Result } from "@/views/Result";
-import { insert } from "@/utils/SqlUtil";
+import {Elysia, t} from "elysia";
+import {Result} from "@/views/Result";
+import {sourceWebDao} from "@/dao";
 // 子路由
 
 const app = new Elysia();
@@ -8,10 +8,10 @@ const app = new Elysia();
 // 新增
 app.post(
   "add",
-  async ({ body }) => {
-    const { title, type, props, favicon, folder, order } = body;
+  async ({body}) => {
+    const {title, type, props, favicon, folder, order} = body;
     try {
-      await insert("source_web", {
+      await sourceWebDao.insert({
         title,
         type,
         props: JSON.stringify(props),

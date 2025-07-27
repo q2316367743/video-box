@@ -1,6 +1,6 @@
-import { db } from "@/global/db";
 import { Result } from "@/views/Result";
 import { Elysia, t } from "elysia";
+import {sourceWebDao} from "@/dao";
 
 const app = new Elysia();
 
@@ -9,7 +9,7 @@ app.post(
   "move",
   async ({ body }) => {
     const { id, folder } = body;
-    await db.sql`update source_web set folder = ${folder}, update_time = ${Date.now()} where id = ${id}`;
+    await sourceWebDao.updateById(id, {update_time: Date.now(), folder});
     return Result.success();
   },
   {

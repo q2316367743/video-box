@@ -1,6 +1,5 @@
 <template>
-  <t-checkbox class="my-video-item"
-       @click="handleClick(item)" @contextmenu="handleContextmenu($event, item)">
+  <div class="my-video-item" @click="handleClick(item)" @contextmenu="handleContextmenu($event, item)">
     <img
       :src="item.cover"
       :alt="item.title"
@@ -8,7 +7,7 @@
     />
     <div class="video-item__title ellipsis">{{ item.title }}</div>
     <div class="video-item__subtitle">{{ item.description }}</div>
-  </t-checkbox>
+  </div>
 </template>
 <script lang="ts" setup>
 import CtxMenu from "@imengyu/vue3-context-menu";

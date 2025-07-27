@@ -1,6 +1,6 @@
-import { selectList } from "@/utils/SqlUtil";
-import { Result } from "@/views/Result";
-import { Elysia, t } from "elysia";
+import {Result} from "@/views/Result";
+import {Elysia} from "elysia";
+import {sourceWebDao} from "@/dao";
 
 const app = new Elysia();
 
@@ -9,9 +9,9 @@ const app = new Elysia();
  */
 app.get(
   "list",
-  async ({ query }) => {
-    const { is_enabled } = query;
-    const list = await selectList("source_web", { is_enabled });
+  async ({query}) => {
+    const {is_enabled} = query;
+    const list = await sourceWebDao.selectList({is_enabled: is_enabled as any});
     list.sort((a, b) => b.order - a.order);
     return Result.success(
       list.map((e) => ({

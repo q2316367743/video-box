@@ -1,8 +1,8 @@
-import { db } from "@/global/db";
 import { SourceWeb } from "@/types/SourceWeb";
 import { useSnowflake } from "@/utils/Snowflake";
 import { Result } from "@/views/Result";
 import { Elysia, t } from "elysia";
+import {sourceWebDao} from "@/dao";
 
 export async function importVideoSourceEntry(
   source: Record<string, any>
@@ -26,7 +26,8 @@ export async function importVideoSourceEntry(
     is_enabled: 1,
     delay_time: 0,
     refresh_time: 0,
-    retry_count: 0
+    retry_count: 0,
+    detail: "",
   };
 }
 
@@ -40,8 +41,7 @@ app.post(
     for (const element of json) {
       try {
         const source = await importVideoSourceEntry(element);
-        await db.sql`insert into source_web (id, create_time, update_time, title, \`type\`, favicon, folder, \`order\`, props) 
-        values (${source.id}, ${source.create_time}, ${source.update_time}, ${source.title}, ${source.type}, ${source.favicon}, ${source.folder}, ${source.order}, ${source.props})`;
+        await sourceWebDao.insert(source);
       } catch (error) {
         console.error(error);
       }

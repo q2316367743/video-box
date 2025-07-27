@@ -1,16 +1,17 @@
-import { Elysia, t } from "elysia";
-import { db } from "@/global/db.js";
-import { Result } from "@/views/Result.js";
-import { deleteById, insert, selectById, updateById } from "@/utils/SqlUtil";
-import { Folder } from "@/types/Folder";
+import {Elysia, t} from "elysia";
+import {db} from "@/global/db.js";
+import {Result} from "@/views/Result.js";
+import {Folder} from "@/types/Folder";
+import {QueryWrapper} from "@/modules/database/QueryWrapper";
+import {folderWebDao, sourceWebDao} from "@/dao";
 
-const app = new Elysia({ prefix: "/api/folder/web" });
+const app = new Elysia({prefix: "/api/folder/web"});
 
 // 查询全部文件夹
 app.get(
   "list",
   async () => {
-    const { rows } = await db.sql`select * from folder_web order by \`order\``;
+    const rows = await folderWebDao.selectList(new QueryWrapper<Folder>().orderByAsc("order"))
     return Result.success(rows || []);
   },
   {
@@ -25,11 +26,9 @@ app.get(
 // 创建一个文件夹
 app.post(
   "post",
-  async ({ body }) => {
-    const { name } = body;
-    insert("folder_web", {
-      name,
-    });
+  async ({body}) => {
+    const {name} = body;
+    await folderWebDao.insert({name});
     return Result.success();
   },
   {
@@ -47,19 +46,18 @@ app.post(
 // 重命名
 app.put(
   "rename",
-  async ({ body }) => {
-    const { id, name } = body;
+  async ({body}) => {
+    const {id, name} = body;
     // 先查询
-    const folder = await selectById("folder_web", id);
+    const folder = await folderWebDao.selectById(id);
     if (!folder) {
       return Result.error("文件夹不存在");
     }
     // 再重命名
-    await updateById<Folder>("folder_web", id, {
+    await folderWebDao.updateById(id, {
       name: name,
       update_time: Date.now(),
-    });
-
+    })
     return Result.success();
   },
   {
@@ -78,12 +76,12 @@ app.put(
 // 重排序
 app.put(
   "order",
-  async ({ body }) => {
+  async ({body}) => {
     for (const item of body) {
-      await updateById<Folder>("folder_web", item.id, {
+      await folderWebDao.updateById(item.id, {
         order: item.order,
         update_time: Date.now(),
-      });
+      })
     }
     // 再排序
     return Result.success();
@@ -106,19 +104,21 @@ app.put(
 // 删除
 app.delete(
   "delete",
-  async ({ body }) => {
-    const { id } = body;
+  async ({body}) => {
+    const {id} = body;
     try {
       await db.exec("BEGIN");
       // 先查询
-      const folder = await selectById("folder_web", id);
+      const folder = await folderWebDao.selectById(id);
       if (!folder) {
         return Result.error("文件夹不存在");
       }
       // 再删除
-      await deleteById("folder_web", id);
+      await folderWebDao.deleteById(id);
       // 批量更新源
-      await db.sql`update source_web set folder = '' where folder = ${id}`;
+      await sourceWebDao.updateById(id, {
+        folder: ''
+      })
       // 提交事务
       await db.exec("COMMIT");
       return Result.success();

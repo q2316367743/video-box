@@ -1,21 +1,20 @@
-import { Elysia, t } from "elysia";
-import { Result } from "@/views/Result";
-import { selectById, updateById } from "@/utils/SqlUtil";
-import { SourceWeb } from "@/types/SourceWeb";
+import {Elysia, t} from "elysia";
+import {Result} from "@/views/Result";
+import {sourceWebDao} from "@/dao";
 
 const app = new Elysia();
 
 // 更新
 app.put(
   "enable/:id",
-  async ({ params }) => {
-    const { id } = params;
+  async ({params}) => {
+    const {id} = params;
     try {
-      const source = await selectById<SourceWeb>("source_web", id);
+      const source = await sourceWebDao.selectById(id);
       if (!source) {
         return Result.error("资源不存在");
       }
-      updateById<SourceWeb>("source_web", id, {
+      await sourceWebDao.updateById(id, {
         is_enabled: !source.is_enabled ? 1 : 0,
       });
       return Result.success();

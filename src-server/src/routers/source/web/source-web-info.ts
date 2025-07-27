@@ -1,23 +1,20 @@
-import { db } from "@/global/db";
-import { SourceWeb, SourceWebView } from "@/types/SourceWeb";
-import { Result } from "@/views/Result";
-import { Elysia, t } from "elysia";
+import {SourceWebView} from "@/types/SourceWeb";
+import {Result} from "@/views/Result";
+import {Elysia, t} from "elysia";
+import {sourceWebDao} from "@/dao";
 
 const app = new Elysia();
 
 export async function getSourceWebInfo(
   id: string
 ): Promise<SourceWebView | null> {
-  const { rows } = await db.sql`select * from source_web where id = ${id}`;
-  if (rows) {
-    const row = rows[0];
-    if (row) {
-      return {
-        ...(row as any as SourceWeb),
-        props: JSON.parse(row.props as string),
-        is_enabled: row.is_enabled !== 0,
-      };
-    }
+  const row = await sourceWebDao.selectById(id);
+  if (row) {
+    return {
+      ...row,
+      props: JSON.parse(row.props as string),
+      is_enabled: row.is_enabled !== 0,
+    };
   }
   return null;
 }
@@ -25,8 +22,8 @@ export async function getSourceWebInfo(
 // 查询详情
 app.get(
   "/info/:id",
-  async ({ params }) => {
-    const { id } = params;
+  async ({params}) => {
+    const {id} = params;
     const data = await getSourceWebInfo(id);
     if (data) return Result.success(data);
     return Result.error("未查询到详情");

@@ -1,18 +1,18 @@
-import { useHead } from "@/global/http";
-import { SourceWeb } from "@/types/SourceWeb";
-import { updateById } from "@/utils/SqlUtil";
-import { debug } from "@rasla/logify";
-import { AxiosError } from "axios";
+import {useHead} from "@/global/http";
+import {SourceWeb} from "@/types/SourceWeb";
+import {debug} from "@rasla/logify";
+import {AxiosError} from "axios";
+import {sourceWebDao} from "@/dao";
 
 export async function refreshSourceWeb(sourceWeb: SourceWeb) {
-  const { url = "" } = JSON.parse(sourceWeb.props);
+  const {url = ""} = JSON.parse(sourceWeb.props);
   if (!url) return Promise.reject("url不能为空");
   const start = Date.now();
   const onSuccess = async () => {
     const end = Date.now();
     debug(`刷新「${sourceWeb.title}」耗时：${end - start}ms`);
     // 更新
-    await updateById('source_web', sourceWeb.id, {
+    await sourceWebDao.updateById(sourceWeb.id, {
       update_time: end,
       refresh_time: end,
       retry_count: 0,
@@ -21,10 +21,9 @@ export async function refreshSourceWeb(sourceWeb: SourceWeb) {
     })
   }
   const onError = async (error: AxiosError) => {
-    
     const now = Date.now();
     debug(`刷新「${sourceWeb.title}」失败：${error}`);
-    await updateById('source_web', sourceWeb.id, {
+    await sourceWebDao.updateById(sourceWeb.id, {
       update_time: now,
       refresh_time: now,
       retry_count: sourceWeb.retry_count + 1,

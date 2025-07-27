@@ -1,21 +1,19 @@
-import { db } from "@/global/db";
-import { runTask } from "@/modules/task/TaskRunner";
-import { taskStore } from "@/modules/task/TaskStore";
-import { refreshSourceWeb } from "@/modules/web/func/RefreshSourceWeb";
-import { SourceWeb } from "@/types/SourceWeb";
-import { Result } from "@/views/Result";
-import { Elysia, t } from "elysia";
-import { sleep } from "radash";
+import {runTask} from "@/modules/task/TaskRunner";
+import {taskStore} from "@/modules/task/TaskStore";
+import {refreshSourceWeb} from "@/modules/web/func/RefreshSourceWeb";
+import {Result} from "@/views/Result";
+import {Elysia, t} from "elysia";
+import {sleep} from "radash";
+import {sourceWebDao} from "@/dao";
 
 const app = new Elysia();
 
 app.get(
   "refresh/:id",
-  async ({ params }) => {
-    const { id } = params;
-    const { rows } = await db.sql`select * from source_web where id = ${id}`;
-    if (!rows || rows.length === 0) return Result.error("网络资源不存在");
-    const sourceWeb = rows[0] as any as SourceWeb;
+  async ({params}) => {
+    const {id} = params;
+    const sourceWeb = await sourceWebDao.selectById(id);
+    if (!sourceWeb) return Result.error("网络资源不存在");
 
     // 判断是否已存在
     const exist = taskStore.has(`/source/web/delay/${id}`);

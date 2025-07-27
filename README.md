@@ -3,15 +3,50 @@
 ## 项目简介
 这是一个使用Vue 3.5.13和TypeScript 5.7.2构建的现代化Web应用。项目中集成了多种功能，包括但不限于用户认证、多媒体播放、数据存储等。
 
-## 安装依赖
+## 安装使用
+
+推荐使用docker安装,默认端口52411
+
+```yaml
+services:
+  video-box:
+    image: q2316367743/video-box:1.0.0
+    container_name: video-box
+    restart: unless-stopped
+    ports:
+      - '52411:52411'
+    environment:
+      - ADMIN_USERNAME=you_username
+      - ADMIN_PASSWORD=you_password
+    # 如需自定义配置，可挂载文件
+    volumes:
+      - /app/video-box/data:/app/video-box/data
+```
+
+### 环境变量
+
+- `ADMIN_JWT_SECRET`: JWT密钥
+- `ADMIN_USERNAME`: 管理员用户名,默认admin
+- `ADMIN_PASSWORD`: 管理员密码,默认123456
+
+### 目录挂载
+
+- `/app/video-box/data`: 数据库文件目录
+- `/app/video-box/files`: 附件位置,暂时无用
+
+## 参与开发
+
+### 安装依赖
+
 确保你已经安装了[bun](https://bun.sh/)包管理器。然后在项目根目录下运行以下命令来安装所有依赖项：
+
 ```bash
 bun install
 cd src-server
 bun install
 ```
 
-## 项目启动
+### 项目启动
 
 你可以通过下面的命令启动开发服务器：
 
