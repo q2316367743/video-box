@@ -50,6 +50,8 @@ const loading = ref(false);
 const pingColor = computed(() => {
   if (source.value.delay_time < 0) {
     return 'var(--td-error-color-7)';
+  }if (source.value.delay_time === 0) {
+    return 'var(--td-text-color-primary)';
   } else if (source.value.delay_time < 1000) {
     return 'var(--td-success-color)';
   } else if (source.value.delay_time < 5000) {

@@ -1,5 +1,5 @@
 // 任务状态，pending-等待中，running-运行中，failed-失败
-export type TaskStatus = "pending" | "running" | "failed";
+export type TaskStatus = "pending" | "running" | "success" | "failed";
 // 任务日志等级，log-普通日志，warning-警告，error-错误
 type TaskLogLevel = "log" | "warning" | "error";
 

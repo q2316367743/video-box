@@ -11,7 +11,7 @@ interface TableLike extends Record<string, any> {
 
 export class BaseMapper<T extends TableLike> {
 
-  private readonly db: Database;
+  protected readonly db: Database;
   private readonly tableName: string;
 
   constructor(db: Database, tableName: string) {

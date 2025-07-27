@@ -47,6 +47,6 @@ runMigrations()
   .finally(() => {
     app.listen(52411);
     console.log(
-      `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
+      `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}，当前运行环境${process.env.NODE_ENV}`
     );
   });

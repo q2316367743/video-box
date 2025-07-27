@@ -9,7 +9,7 @@ interface Result<T> {
 }
 
 const http = axios.create({
-  timeout: 10000,
+  timeout: 60000,
 });
 
 export interface HttpConfig extends AxiosRequestConfig {

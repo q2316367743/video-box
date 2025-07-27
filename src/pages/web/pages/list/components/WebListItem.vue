@@ -4,6 +4,7 @@
       <t-link  class="title" :title="sourceWeb.title">{{ sourceWeb.title }}</t-link>
       <t-tooltip :content="toDateTimeString(sourceWeb.refresh_time)">
         <t-tag v-if="sourceWeb.delay_time < 0" color="var(--td-gray-color-12)">超时</t-tag>
+        <t-tag v-else-if="sourceWeb.delay_time === 0" theme="primary">未检测</t-tag>
         <t-tag v-else-if="sourceWeb.delay_time < 1000" theme="success">{{ sourceWeb.delay_time }}ms</t-tag>
         <t-tag v-else-if="sourceWeb.delay_time < 5000" theme="warning">{{ sourceWeb.delay_time }}ms</t-tag>
         <t-tag v-else theme="danger">{{ sourceWeb.delay_time }}ms</t-tag>

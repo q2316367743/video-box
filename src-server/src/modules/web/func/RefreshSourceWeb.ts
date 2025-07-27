@@ -36,6 +36,7 @@ export async function refreshSourceWeb(sourceWeb: SourceWeb) {
     })
   }
   try {
+    debug(`开始刷新「${sourceWeb.title}」`)
     await useHead(url);
     await onSuccess()
   } catch (error) {
@@ -43,6 +44,4 @@ export async function refreshSourceWeb(sourceWeb: SourceWeb) {
     if (err.status === 404) await onSuccess();
     else await onError(err);
   }
-
-  return fetch(url);
 }

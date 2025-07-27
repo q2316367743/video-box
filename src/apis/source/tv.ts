@@ -25,7 +25,3 @@ export function sourceTvInfo(id: string) {
 export function sourceTvRefresh(id: string) {
   return usePut(`/api/source/tv/refresh/${id}`);
 }
-
-export function sourceTvTask(ids: Array<string>) {
-  return usePost<Array<Task>>('/api/source/tv/task', ids);
-}

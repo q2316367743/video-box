@@ -13,6 +13,7 @@ export function registerElysiaPlugin(app: Elysia) {
         level: process.env.NODE_ENV === "production" ? "info" : "debug",
         file: process.env.NODE_ENV === "production",
         filePath: "/app/video-box/logs",
+        console: true,
       })
     )
     .use(

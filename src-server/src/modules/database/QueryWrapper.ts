@@ -71,21 +71,20 @@ export class QueryWrapper<T extends Record<string, any>, K extends keyof T = key
   }
 
   async execQuery(tableName: string, db: Database) {
-    let sql = '';
+    let sql = `select * from \`${tableName}\``;
     if (this.params.length > 0) {
-      sql += ('where ' + this.params.join(' and '))
+      sql += (' where ' + this.params.join(' and '))
     }
     if (this.orders.length > 0) {
-      sql += ('order by ' + this.orders.join(', '))
+      sql += (' order by ' + this.orders.join(', '))
     }
     if (this.lastExpress.length > 0) {
       sql += this.lastExpress.join(' ');
     }
 
-    debug("select sql:\t\t" + sql);
-    debug("select values:\t" + this.values);
-    const statement = db.prepare(`select *
-                                  from ${tableName} ${sql}`);
+    debug("select sql\t\t:" + sql);
+    debug("select values\t:" + this.values);
+    const statement = db.prepare(sql);
     const list = await statement.all(...this.values);
     return list as Array<T>;
   }

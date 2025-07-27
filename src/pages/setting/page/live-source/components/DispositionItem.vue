@@ -56,24 +56,23 @@ import {openDispositionInfo} from "@/pages/setting/page/live-source/components/D
 import {DeleteIcon, EditIcon, InfoCircleIcon, LoadingIcon, RefreshIcon, TimeIcon} from "tdesign-icons-vue-next";
 import {SourceTv} from "@/views/SourceTv.js";
 import {sourceTvDel, sourceTvRefresh} from "@/apis/source/tv.js";
-import {LoadingPlugin} from "tdesign-vue-next";
 
 defineProps({
   item: Object as PropType<SourceTv>,
-  loading: Boolean
 });
 const emit = defineEmits(['update']);
 
+const loading = ref(false);
 
 function refresh(id: string) {
-  const {hide} = LoadingPlugin({
-    text: '正在刷新中',
-    fullscreen: true
-  });
+  if (loading.value) return;
+  loading.value = true
   sourceTvRefresh(id).then(() => {
     MessageUtil.success("刷新成功");
     emit("update");
-  }).finally(hide);
+  }).finally(() => {
+    loading.value = false;
+  });
 }
 
 function onRemove(id: string) {

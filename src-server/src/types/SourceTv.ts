@@ -16,6 +16,7 @@ export interface SourceTv {
  */
 export interface SourceTvChannel {
   id: string;
+  source_tv_id: string;
   create_time: number;
   logo: string;
   name: string;
