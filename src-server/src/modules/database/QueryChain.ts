@@ -1,18 +1,28 @@
 import {Database} from "db0";
+import {list} from 'radash';
 import {debug} from "@rasla/logify";
 
-export class QueryWrapper<T extends Record<string, any>, K extends keyof T = keyof T> {
+export class QueryChain<T extends Record<string, any>, K extends keyof T = keyof T> {
+  private readonly db: Database;
+  private readonly tableName: string;
 
   private readonly params = new Array<string>();
   private readonly values = new Array<T[K]>();
   private readonly orders = new Array<string>();
   private readonly lastExpress = new Array<string>();
 
-  public static from<T extends Record<string, any>>(p: Partial<T>): QueryWrapper<T> {
-    const qw = new QueryWrapper<T>()
-    Object.entries(p).forEach(([k, v]) => {
-      qw.simpleWhere(k, v, "=");
-    });
+  constructor(tableName: string, db: Database) {
+    this.tableName = tableName;
+    this.db = db;
+  }
+
+  public static from<T extends Record<string, any>>(tableName: string, db: Database, p?: Partial<T>): QueryChain<T> {
+    const qw = new QueryChain<T>(tableName, db);
+    if (typeof p !== 'undefined') {
+      Object.entries(p).forEach(([k, v]) => {
+        qw.simpleWhere(k, v, "=");
+      });
+    }
     return qw;
   }
 
@@ -63,7 +73,8 @@ export class QueryWrapper<T extends Record<string, any>, K extends keyof T = key
 
   in(k: K, sql: string | Array<T[K]>) {
     if (Array.isArray(sql)) {
-      this.params.push(`\`${String(k)}\` in (${sql.join(",")})`);
+      this.params.push(`\`${String(k)}\` in (${list(0, sql.length - 1, '?').join(",")})`);
+      this.values.push(...sql);
     } else {
       this.params.push(`\`${String(k)}\` in (${sql})`);
     }
@@ -71,7 +82,8 @@ export class QueryWrapper<T extends Record<string, any>, K extends keyof T = key
   }
 
   async execQuery(tableName: string, db: Database) {
-    let sql = `select * from \`${tableName}\``;
+    let sql = `select *
+               from \`${tableName}\``;
     if (this.params.length > 0) {
       sql += (' where ' + this.params.join(' and '))
     }
@@ -87,6 +99,23 @@ export class QueryWrapper<T extends Record<string, any>, K extends keyof T = key
     const statement = db.prepare(sql);
     const list = await statement.all(...this.values);
     return list as Array<T>;
+  }
+
+  list(): Promise<Array<T>> {
+    return this.execQuery(this.tableName, this.db)
+  }
+
+  async first(): Promise<T | null> {
+    this.lastSql("LIMIT 1");
+    const list = await this.execQuery(this.tableName, this.db);
+    return list.length > 0 ? list[0] : null;
+  }
+
+  async one(): Promise<T | null> {
+    this.lastSql("LIMIT 1");
+    const list = await this.execQuery(this.tableName, this.db);
+    if (list.length > 1) return Promise.reject(new Error("存在多个数据"));
+    return list.length > 0 ? list[0] : null;
   }
 
 }

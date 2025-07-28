@@ -1,8 +1,6 @@
 import {Elysia, t} from "elysia";
 import {db} from "@/global/db.js";
 import {Result} from "@/views/Result.js";
-import {Folder} from "@/types/Folder";
-import {QueryWrapper} from "@/modules/database/QueryWrapper";
 import {folderWebDao, sourceWebDao} from "@/dao";
 
 const app = new Elysia({prefix: "/api/folder/web"});
@@ -11,7 +9,7 @@ const app = new Elysia({prefix: "/api/folder/web"});
 app.get(
   "list",
   async () => {
-    const rows = await folderWebDao.selectList(new QueryWrapper<Folder>().orderByAsc("order"))
+    const rows = await folderWebDao.query().orderByAsc("order").list();
     return Result.success(rows || []);
   },
   {

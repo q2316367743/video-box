@@ -3,7 +3,7 @@ import {debug} from "@rasla/logify";
 import {selectList} from "@/utils/SqlUtil";
 import {list} from "radash";
 import {useSnowflake} from "@/utils/Snowflake";
-import {QueryWrapper} from "@/modules/database/QueryWrapper";
+import {QueryChain} from "@/modules/database/QueryChain";
 
 interface TableLike extends Record<string, any> {
   id: string;
@@ -19,18 +19,13 @@ export class BaseMapper<T extends TableLike> {
     this.tableName = tableName;
   }
 
-  async selectList(params?: Partial<T> | QueryWrapper<T>): Promise<Array<T>> {
-    let qw: QueryWrapper<T>;
-    if (params instanceof QueryWrapper) {
-      qw = params;
-    } else {
-      if (params) {
-        qw = QueryWrapper.from<T>(params);
-      } else {
-        qw = new QueryWrapper<T>();
-      }
-    }
+  async selectList(params?: Partial<T>): Promise<Array<T>> {
+    let qw = QueryChain.from<T>(this.tableName, this.db, params);
     return qw.execQuery(this.tableName, this.db);
+  }
+
+  query(): QueryChain<T> {
+    return new QueryChain<T>(this.tableName, this.db);
   }
 
   async getOne(params: Partial<T> = {}): Promise<T | null> {
@@ -42,9 +37,7 @@ export class BaseMapper<T extends TableLike> {
   }
 
   async selectById(id: string): Promise<T | null> {
-    const sql = `select *
-                 from ${this.tableName}
-                 where id = ?`
+    const sql = `select * from ${this.tableName} where id = ?`
     const statement = this.db.prepare(sql);
     const target = (await statement.get(id)) as T;
     return target || null;
@@ -63,9 +56,7 @@ export class BaseMapper<T extends TableLike> {
       // 没有更新的
       return;
     }
-    const sql = `update ${this.tableName}
-                 set ${query.join(", ")}
-                 where id = ?`;
+    const sql = `update ${this.tableName} set ${query.join(", ")} where id = ?`;
     debug("update sql:\t\t" + sql);
     debug("update values:\t" + values);
     const statement = this.db.prepare(sql);
@@ -90,8 +81,7 @@ export class BaseMapper<T extends TableLike> {
     }
     const sql = `insert into ${this.tableName} (id, ${query.join(
             ", "
-    )})
-                 values (${list(0, query.length, "?").join(", ")})`;
+    )}) values (${list(0, query.length, "?").join(", ")})`;
     debug("insert sql:\t\t" + sql);
     debug("insert values:\t" + values);
     const statement = this.db.prepare(sql);

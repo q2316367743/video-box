@@ -5,7 +5,6 @@ import {db} from "@/global/db";
 import {refreshSourceWeb} from "@/modules/web/func/RefreshSourceWeb";
 import {SourceWeb} from "@/types/SourceWeb";
 import {sourceWebDao} from "@/dao";
-import {QueryWrapper} from "@/modules/database/QueryWrapper";
 
 export function registerJob(app: Elysia) {
   app.use(
@@ -14,8 +13,7 @@ export function registerJob(app: Elysia) {
       // 每30分钟执行一次
       pattern: "*/30 * * * *",
       async run() {
-        const rows = await sourceWebDao.selectList(new QueryWrapper<SourceWeb>()
-          .lt("refresh_time", 3));
+        const rows = await sourceWebDao.query().lt("refresh_time", 3).list();
         debug(`开始刷新网络资源，共${rows?.length}个`);
         if (rows.length === 0) {
           debug("没有要刷新的网络资源");

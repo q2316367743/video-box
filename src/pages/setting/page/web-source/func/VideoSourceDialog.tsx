@@ -42,9 +42,6 @@ export function openVideoSourceDialog(update: () => void, old?: string) {
           <Radio value={3} label={'自定义'}/>
         </RadioGroup>
       </FormItem>
-      {iconType.value === 3 && <FormItem label="图标地址" name={'type'} required-mark>
-        <Input v-model={data.value.favicon}/>
-      </FormItem>}
       {data.value.type === SourceWebTypeEnum.CMS_JSON ?
         <VideoFormForCmsJson v-model={data.value.props}/> :
         data.value.type === SourceWebTypeEnum.CMS_XML ?

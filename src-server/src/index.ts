@@ -1,5 +1,4 @@
-import { Elysia } from "elysia";
-import { runMigrations } from "./plugins/migrate";
+import {Elysia} from "elysia";
 // 路由
 import folderWebRoutes from "@/routers/folder/web";
 import sourceWebRoutes from "@/routers/source/web";
@@ -9,9 +8,11 @@ import myVideoItemRoutes from "@/routers/my/video-item";
 import proxyRoutes from "@/routers/proxy";
 import authRoutes from "@/routers/auth";
 import adminRouters from "@/routers/admin";
-import { registerJob } from "./modules/job";
-import { registerElysiaPlugin } from "./plugins/elysia_plugin";
-import { registerElysiaHook } from "./plugins/elysia_hook";
+import adminSetting from "@/routers/admin/setting";
+import {registerJob} from "./modules/job";
+import {registerElysiaPlugin} from "./plugins/elysia_plugin";
+import {registerElysiaHook} from "./plugins/elysia_hook";
+import {elysiaInit} from "@/plugins/elysia_init";
 
 const app = new Elysia({
   serve: {
@@ -29,6 +30,7 @@ registerElysiaHook(app);
 // 注册路由
 app
   .use(adminRouters)
+  .use(adminSetting)
   .use(folderWebRoutes)
   .use(sourceWebRoutes)
   .use(sourceTvRoutes)
@@ -37,13 +39,7 @@ app
   .use(proxyRoutes)
   .use(authRoutes);
 
-runMigrations()
-  .then(() => {
-    console.log("✅ migrations applied");
-  })
-  .catch((e) => {
-    console.error("❌ migrations failed", e);
-  })
+elysiaInit()
   .finally(() => {
     app.listen(52411);
     console.log(
