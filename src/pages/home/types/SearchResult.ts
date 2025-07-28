@@ -1,5 +1,5 @@
-import {VideoListItem} from "@/modules/video/VideoPlugin.js";
-import {SourceWeb} from "@/views/SourceWeb.js";
+import {VideoListItem} from "@/modules/video/VideoPlugin";
+import {SourceWeb} from "@/views/SourceWeb";
 
 export interface SearchResultItem {
   source: SourceWeb;

@@ -1,6 +1,6 @@
 import {defineStore} from "pinia";
-import {authLogin} from "@/apis/auth.js";
-import {router} from "@/plugin/router.js";
+import {authLogin} from "@/apis/auth";
+import {router} from "@/plugin/router";
 
 export const useUserStore = defineStore("user", () => {
   const token = useLocalStorage('token', "");

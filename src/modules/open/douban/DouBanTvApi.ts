@@ -1,4 +1,4 @@
-import {proxyHttp} from "@/apis/proxy.js";
+import {proxyHttp} from "@/apis/proxy";
 
 export interface DouBanRecentHotResult {
   category: string;

@@ -2,7 +2,7 @@
   <t-select v-model="folderSelect" :options="options" :size/>
 </template>
 <script lang="ts" setup>
-import {folderWebList} from "@/apis/folder-web/index.js";
+import {folderWebList} from "@/apis/folder-web/index";
 import {SelectOption} from "tdesign-vue-next";
 
 const folderSelect = defineModel({

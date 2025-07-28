@@ -32,11 +32,11 @@
 <script lang="ts" setup>
 import {uid} from "radash";
 import {SearchIcon} from "tdesign-icons-vue-next";
-import MessageUtil from "@/utils/modal/MessageUtil.js";
-import {SearchResult, SearchResultItem} from "@/pages/home/types/SearchResult.js";
-import {sourceWebList} from "@/apis/source/web.js";
-import {pluginWebSearch} from "@/apis/plugin-web/index.js";
-import {LocalNameEnum} from "@/global/LocalNameEnum.js";
+import MessageUtil from "@/utils/modal/MessageUtil";
+import {SearchResult, SearchResultItem} from "@/pages/home/types/SearchResult";
+import {sourceWebList} from "@/apis/source/web";
+import {pluginWebSearch} from "@/apis/plugin-web/index";
+import {LocalNameEnum} from "@/global/LocalNameEnum";
 import SearchItem from "@/pages/home/components/SearchItem.vue";
 import HomeRecommend from "@/pages/home/components/HomeRecommend.vue";
 

@@ -1,6 +1,6 @@
-import {useDelete, useGet, usePost, usePut} from "@/apis/common.js";
-import {SourceWeb, SourceWebForm} from "@/views/SourceWeb.js";
-import {download} from "@/utils/lang/BrowserUtil.js";
+import {useDelete, useGet, usePost, usePut} from "@/apis/common";
+import {SourceWeb, SourceWebForm} from "@/views/SourceWeb";
+import {download} from "@/utils/lang/BrowserUtil";
 
 
 export function adminSourceWebList(folder: string): Promise<Array<SourceWeb>> {
@@ -17,7 +17,7 @@ export async function adminSourceWebExport() {
   const text = await usePost('/api/admin/source/web/export', null, {
     responseType: 'text'
   });
-  download(text, '数据导出.json', 'application/json');
+  download(text, '数据导出on', 'application/json');
 }
 
 

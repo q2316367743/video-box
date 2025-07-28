@@ -54,8 +54,8 @@ import {prettyDate} from "@/utils/lang/FormatUtil";
 import {openUpdateDispositionDialog} from "@/pages/setting/page/live-source/edit";
 import {openDispositionInfo} from "@/pages/setting/page/live-source/components/DispositionInfo";
 import {DeleteIcon, EditIcon, InfoCircleIcon, LoadingIcon, RefreshIcon, TimeIcon} from "tdesign-icons-vue-next";
-import {SourceTv} from "@/views/SourceTv.js";
-import {sourceTvDel, sourceTvRefresh} from "@/apis/source/tv.js";
+import {SourceTv} from "@/views/SourceTv";
+import {sourceTvDel, sourceTvRefresh} from "@/apis/source/tv";
 
 defineProps({
   item: Object as PropType<SourceTv>,

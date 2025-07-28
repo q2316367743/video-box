@@ -1,5 +1,5 @@
-import {useGet, usePost, usePut} from "@/apis/common.js";
-import {SourceWeb} from "@/views/SourceWeb.js";
+import {useGet, usePost, usePut} from "@/apis/common";
+import {SourceWeb} from "@/views/SourceWeb";
 
 
 export function sourceWebList(folder: string): Promise<Array<SourceWeb>> {

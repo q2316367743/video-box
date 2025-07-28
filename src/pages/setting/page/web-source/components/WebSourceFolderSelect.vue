@@ -2,7 +2,7 @@
   <t-select v-model="modelValue" :options @change="$emit('change')" :disabled="loading" auto-width style="width: fit-content;"/>
 </template>
 <script lang="ts" setup>
-import {Folder} from "@/views/Folder.js";
+import {Folder} from "@/views/Folder";
 
 const modelValue = defineModel({
   type: String,

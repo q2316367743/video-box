@@ -1,5 +1,5 @@
-import MessageUtil from "@/utils/modal/MessageUtil.js";
-import {adminSourceWebExport} from "@/apis/admin/source/web.js";
+import MessageUtil from "@/utils/modal/MessageUtil";
+import {adminSourceWebExport} from "@/apis/admin/source/web";
 
 export function webSourceExport() {
   adminSourceWebExport().then(() => MessageUtil.success("导出成功"))

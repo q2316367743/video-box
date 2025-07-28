@@ -36,7 +36,7 @@
 </template>
 <script lang="ts" setup>
 import {useBaseSettingStore} from "@/store/db/BaseSettingStore";
-import {colorMode} from "@/store/index.js";
+import {colorMode} from "@/store/index";
 </script>
 <style scoped lang="less">
 

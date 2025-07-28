@@ -1,5 +1,5 @@
-import {VideoCategoryResult, VideoDetail, VideoHome, VideoSearchResult} from "@/modules/video/VideoPlugin.js";
-import {useGet} from "@/apis/common.js";
+import {VideoCategoryResult, VideoDetail, VideoHome, VideoSearchResult} from "@/modules/video/VideoPlugin";
+import {useGet} from "@/apis/common";
 
 export function pluginWebHome(id: string, page: number) {
   return useGet<VideoHome>(`/api/plugin/web/home/${id}`, {page});

@@ -1,6 +1,6 @@
-import {SourceTv, SourceTvForm, SourceTvInfo} from "@/views/SourceTv.js";
-import {useDelete, useGet, usePost, usePut} from "@/apis/common.js";
-import {Task} from "@/views/Task.js";
+import {SourceTv, SourceTvForm, SourceTvInfo} from "@/views/SourceTv";
+import {useDelete, useGet, usePost, usePut} from "@/apis/common";
+import {Task} from "@/views/Task";
 
 export function sourceTvAdd(data: SourceTvForm) {
   return usePost('/api/source/tv/add', data);

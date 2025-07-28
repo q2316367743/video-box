@@ -20,9 +20,9 @@
   </t-layout>
 </template>
 <script lang="ts" setup>
-import {Folder} from "@/views/Folder.js";
-import {folderWebList} from "@/apis/folder-web/index.js";
-import {LocalNameEnum} from "@/global/LocalNameEnum.js";
+import {Folder} from "@/views/Folder";
+import {folderWebList} from "@/apis/folder-web/index";
+import {LocalNameEnum} from "@/global/LocalNameEnum";
 import WebItemContent from "@/pages/web/pages/list/components/WebItemContent.vue";
 
 const ws = useWindowSize();

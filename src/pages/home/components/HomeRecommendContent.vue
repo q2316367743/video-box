@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts" setup>
-import {DouBanRecommendItem} from "@/modules/open/douban/DouBanTvApi.js";
+import {DouBanRecommendItem} from "@/modules/open/douban/DouBanTvApi";
 import HomeRecommendItem from "@/pages/home/components/HomeRecommendItem.vue";
 
 defineProps({

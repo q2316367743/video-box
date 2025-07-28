@@ -17,9 +17,9 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {SourceWeb} from "@/views/SourceWeb.js";
-import {toDateTimeString} from "@/utils/lang/FormatUtil.js";
-import {sourceWebInfo, sourceWebRefresh} from "@/apis/source/web.js";
+import {SourceWeb} from "@/views/SourceWeb";
+import {toDateTimeString} from "@/utils/lang/FormatUtil";
+import {sourceWebInfo, sourceWebRefresh} from "@/apis/source/web";
 
 const props = defineProps({
   view: {

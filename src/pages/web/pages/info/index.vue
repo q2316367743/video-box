@@ -25,10 +25,10 @@ import MessageUtil from "@/utils/modal/MessageUtil";
 import WebInfoHeader from "@/pages/web/pages/info/WebInfoHeader.vue";
 import WebItem from "@/pages/web/pages/components/WebItem.vue";
 import {uid} from "radash";
-import {pluginWebHome, pluginWebList} from "@/apis/plugin-web/index.js";
-import {SourceWeb} from "@/views/SourceWeb.js";
-import {sourceWebInfo} from "@/apis/source/web.js";
-import {emitScrollToTop, onScrollToBottom} from "@/store/index.js";
+import {pluginWebHome, pluginWebList} from "@/apis/plugin-web/index";
+import {SourceWeb} from "@/views/SourceWeb";
+import {sourceWebInfo} from "@/apis/source/web";
+import {emitScrollToTop, onScrollToBottom} from "@/store/index";
 
 const route = useRoute();
 

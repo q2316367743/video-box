@@ -26,11 +26,11 @@
 </template>
 <script lang="ts" setup>
 import {LoadingIcon, VideoCamera1Icon} from "tdesign-icons-vue-next";
-import {SourceTvChannelView} from "@/views/SourceTv.js";
-import {openTvWindow} from "@/plugin/player.js";
-import {proxyHttp} from "@/apis/proxy.js";
-import {myVideoItemPost} from "@/apis/my/video-item.js";
-import {MyVideoItemFromEnum, MyVideoItemTypeEnum} from "@/views/MyVideoItemView.js";
+import {SourceTvChannelView} from "@/views/SourceTv";
+import {openTvWindow} from "@/plugin/player";
+import {proxyHttp} from "@/apis/proxy";
+import {myVideoItemPost} from "@/apis/my/video-item";
+import {MyVideoItemFromEnum, MyVideoItemTypeEnum} from "@/views/MyVideoItemView";
 
 // -1:加载中、-2:超时
 const timeout = ref(0);

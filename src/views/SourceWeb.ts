@@ -1,4 +1,4 @@
-import {SourceWebTypeEnum} from "@/enum/SourceWebTypeEnum.js";
+import {SourceWebTypeEnum} from "@/enum/SourceWebTypeEnum";
 
 export interface SourceWebForm {
   title: string;

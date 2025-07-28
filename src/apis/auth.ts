@@ -1,4 +1,4 @@
-import {usePost} from "@/apis/common.js";
+import {usePost} from "@/apis/common";
 
 interface AUthLoginData {
   success: boolean;

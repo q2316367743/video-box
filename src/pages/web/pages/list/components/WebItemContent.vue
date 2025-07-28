@@ -8,9 +8,9 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {sourceWebList} from "@/apis/source/web.js";
+import {sourceWebList} from "@/apis/source/web";
 import WebListItem from "@/pages/web/pages/list/components/WebListItem.vue";
-import {SourceWeb} from "@/views/SourceWeb.js";
+import {SourceWeb} from "@/views/SourceWeb";
 
 const props = defineProps({
   folder: {

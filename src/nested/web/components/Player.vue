@@ -113,8 +113,8 @@ import {LocalNameEnum} from "@/global/LocalNameEnum";
 import MessageUtil from "@/utils/modal/MessageUtil";
 import {useCacheRecordStorage} from "@/hooks/CacheRecordStorage";
 import {isEmptyArray} from "@/utils/lang/FieldUtil";
-import {SearchResultItem} from "@/pages/home/types/SearchResult.js";
-import {SourceWeb} from "@/views/SourceWeb.js";
+import {SearchResultItem} from "@/pages/home/types/SearchResult";
+import {SourceWeb} from "@/views/SourceWeb";
 import VideoContainer from "@/nested/web/components/VideoContainer.vue";
 import SearchItem from "@/nested/web/components/SearchItem.vue";
 

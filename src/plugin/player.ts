@@ -1,5 +1,5 @@
-import MessageUtil from "@/utils/modal/MessageUtil.js";
-import {SearchResultItem} from "@/pages/home/types/SearchResult.js";
+import MessageUtil from "@/utils/modal/MessageUtil";
+import {SearchResultItem} from "@/pages/home/types/SearchResult";
 
 export function openWebPlayer(sourceId: string, videoId: string, items?: Array<SearchResultItem>): Window | null {
   const url = `/web.html?source=${sourceId}&video=${videoId}`;

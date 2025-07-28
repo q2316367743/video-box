@@ -26,8 +26,8 @@ import {SelectOption} from "tdesign-vue-next";
 import {SearchIcon} from "tdesign-icons-vue-next";
 import {LocalNameEnum} from "@/global/LocalNameEnum";
 import LiveList from "@/pages/live/components/LiveList.vue";
-import {sourceTvInfo, sourceTvList} from "@/apis/source/tv.js";
-import {SourceTvChannelView} from "@/views/SourceTv.js";
+import {sourceTvInfo, sourceTvList} from "@/apis/source/tv";
+import {SourceTvChannelView} from "@/views/SourceTv";
 
 
 const active = useLocalStorage(LocalNameEnum.KEY_SOURCE_ACTIVE_LIVE, '');

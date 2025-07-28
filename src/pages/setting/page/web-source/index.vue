@@ -44,19 +44,19 @@
 </template>
 <script lang="ts" setup>
 import {UploadProps} from "tdesign-vue-next";
-import MessageUtil from "@/utils/modal/MessageUtil.js";
+import MessageUtil from "@/utils/modal/MessageUtil";
 import {ChevronDownIcon, FileAddIcon, FileExportIcon, FileImportIcon, FolderAddIcon} from "tdesign-icons-vue-next";
-import {openVideoSourceDialog} from "@/pages/setting/page/web-source/func/VideoSourceDialog.js";
-import {webSourceExport} from "@/pages/setting/page/web-source/func/WebSourceContext.js";
-import {adminSourceWebImport, adminSourceWebList} from "@/apis/admin/source/web.js";
-import {Folder} from "@/views/Folder.js";
-import {SourceWeb} from "@/views/SourceWeb.js";
-import {map, set} from "@/utils/lang/ArrayUtil.js";
-import {folderWebList} from "@/apis/folder-web/index.js";
+import {openVideoSourceDialog} from "@/pages/setting/page/web-source/func/VideoSourceDialog";
+import {webSourceExport} from "@/pages/setting/page/web-source/func/WebSourceContext";
+import {adminSourceWebImport, adminSourceWebList} from "@/apis/admin/source/web";
+import {Folder} from "@/views/Folder";
+import {SourceWeb} from "@/views/SourceWeb";
+import {map, set} from "@/utils/lang/ArrayUtil";
+import {folderWebList} from "@/apis/folder-web/index";
 import WebSourceItem from "@/pages/setting/page/web-source/components/WebSourceItem.vue";
 import WebSourceFolderSelect from "@/pages/setting/page/web-source/components/WebSourceFolderSelect.vue";
 import {useSortable} from "@vueuse/integrations/useSortable";
-import {sourceWebSort} from "@/apis/source/web.js";
+import {sourceWebSort} from "@/apis/source/web";
 
 
 const folder = ref('all');

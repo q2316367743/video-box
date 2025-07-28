@@ -1,6 +1,6 @@
-import {SourceWeb} from "@/views/SourceWeb.js";
-import {Folder} from "@/views/Folder.js";
-import {group} from "@/utils/lang/ArrayUtil.js";
+import {SourceWeb} from "@/views/SourceWeb";
+import {Folder} from "@/views/Folder";
+import {group} from "@/utils/lang/ArrayUtil";
 
 export interface WebSourceFileView {
   // ID

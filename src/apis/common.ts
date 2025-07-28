@@ -1,6 +1,6 @@
 import axios, {AxiosRequestConfig} from "axios";
-import MessageUtil from "@/utils/modal/MessageUtil.js";
-import {useUserStore} from "@/store/UserStore.js";
+import MessageUtil from "@/utils/modal/MessageUtil";
+import {useUserStore} from "@/store/UserStore";
 
 interface Result<T> {
   code: number;

@@ -1,5 +1,5 @@
-export * from './AppStore.ts';
-export * from './db/BaseSettingStore.js';
+export * from './AppStore';
+export * from './db/BaseSettingStore';
 
 
 export const onScrollToBottom = createEventHook()

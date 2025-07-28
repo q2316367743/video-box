@@ -40,7 +40,7 @@
   </footer>
 </template>
 <script lang="ts">
-import Constant from "@/global/Constant.js";
+import Constant from "@/global/Constant";
 
 export default defineComponent({
   name: 'AppFooter',

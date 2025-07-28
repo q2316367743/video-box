@@ -1,5 +1,5 @@
-import {useDelete, useGet, usePost, usePut} from "@/apis/common.js";
-import {MyVideoItemView, MyVideoItemCore, MyVideoItemForm} from "@/views/MyVideoItemView.js";
+import {useDelete, useGet, usePost, usePut} from "@/apis/common";
+import {MyVideoItemView, MyVideoItemCore, MyVideoItemForm} from "@/views/MyVideoItemView";
 
 export function myVideoItemDelete(id: string) {
   return useDelete(`/api/my/video-item/delete/${id}`);

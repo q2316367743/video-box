@@ -16,7 +16,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {SearchResultItem} from "@/pages/home/types/SearchResult.js";
+import {SearchResultItem} from "@/pages/home/types/SearchResult";
 
 defineProps({
   sourceId: String,

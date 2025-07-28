@@ -66,9 +66,9 @@
   </header>
 </template>
 <script lang="ts" setup>
-import {colorMode} from "@/store/index.js";
-import {useUserStore} from "@/store/UserStore.js";
-import MessageUtil from "@/utils/modal/MessageUtil.js";
+import {colorMode} from "@/store/index";
+import {useUserStore} from "@/store/UserStore";
+import MessageUtil from "@/utils/modal/MessageUtil";
 import {LogoutIcon, SettingIcon, UserIcon, ViewListIcon} from "tdesign-icons-vue-next";
 
 const route = useRoute();

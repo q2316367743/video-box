@@ -8,7 +8,7 @@ import {
   TvIcon,
   User1Icon
 } from 'tdesign-icons-vue-next';
-import {emitScrollToTop} from "@/store/index.js";
+import {emitScrollToTop} from "@/store/index";
 
 export const routes: Array<RouteRecordRaw> = [{
   name: '主页',

@@ -21,9 +21,9 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {douBanRecentHotMovie, douBanRecentHotTv} from "@/modules/open/douban/DouBanTvApi.js";
-import {useDailyStorage} from "@/hooks/DailyStorage.js";
-import {LocalNameEnum} from "@/global/LocalNameEnum.js";
+import {douBanRecentHotMovie, douBanRecentHotTv} from "@/modules/open/douban/DouBanTvApi";
+import {useDailyStorage} from "@/hooks/DailyStorage";
+import {LocalNameEnum} from "@/global/LocalNameEnum";
 import HomeRecommendContent from "@/pages/home/components/HomeRecommendContent.vue";
 
 defineEmits(['search']);

@@ -16,9 +16,9 @@
 import {VideoListItem} from "@/modules/video/VideoPlugin";
 import {openVideoInfoDrawer} from "@/pages/web/pages/components/VideoInfoDialog";
 import Macy from "macy";
-import {openWebPlayer} from "@/plugin/player.js";
-import {myVideoItemPost} from "@/apis/my/video-item.js";
-import {MyVideoItemFromEnum, MyVideoItemTypeEnum} from "@/views/MyVideoItemView.js";
+import {openWebPlayer} from "@/plugin/player";
+import {myVideoItemPost} from "@/apis/my/video-item";
+import {MyVideoItemFromEnum, MyVideoItemTypeEnum} from "@/views/MyVideoItemView";
 
 const route = useRoute();
 const controlState = useKeyModifier('Control')

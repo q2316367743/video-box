@@ -1,7 +1,7 @@
 import {createApp} from 'vue'
 import {createPinia} from 'pinia';
 import App from './App.vue'
-import {router} from './plugin/router.js';
+import {router} from './plugin/router';
 
 import 'virtual:uno.css'
 import 'tdesign-vue-next/es/style/index.css';

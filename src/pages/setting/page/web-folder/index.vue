@@ -20,10 +20,10 @@
   </page-layout>
 </template>
 <script lang="ts" setup>
-import {Folder} from "@/views/Folder.js";
-import {folderWebList, folderWebSort} from "@/apis/folder-web/index.js";
+import {Folder} from "@/views/Folder";
+import {folderWebList, folderWebSort} from "@/apis/folder-web/index";
 import {useSortable} from "@vueuse/integrations/useSortable";
-import {updateFolderWeb, addFolderWeb, removeFolderWeb} from "@/pages/setting/page/web-folder/components/WebFolderContext.js";
+import {updateFolderWeb, addFolderWeb, removeFolderWeb} from "@/pages/setting/page/web-folder/components/WebFolderContext";
 
 const folders = ref(new Array<Folder>());
 const contentRef = useTemplateRef<HTMLDivElement>('web-folder-content');

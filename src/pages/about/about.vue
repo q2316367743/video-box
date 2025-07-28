@@ -38,10 +38,10 @@
   </div>
 </template>
 <script lang="ts" setup>
-import Constant from "@/global/Constant.js";
+import Constant from "@/global/Constant";
 import MyVideoItem from "@/pages/about/components/MyVideoItem.vue";
-import {MyVideoItemView} from "@/views/MyVideoItemView.js";
-import {myVideoItemList} from "@/apis/my/video-item.js";
+import {MyVideoItemView} from "@/views/MyVideoItemView";
+import {myVideoItemList} from "@/apis/my/video-item";
 
 const activeKey = ref('watched');
 

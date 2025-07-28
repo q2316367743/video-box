@@ -20,10 +20,10 @@
 </template>
 <script lang="ts" setup>
 import {useFuse} from "@vueuse/integrations/useFuse";
-import {channelsToGroup} from "@/views/SourceTv.js";
+import {channelsToGroup} from "@/views/SourceTv";
 import LiveListItem from "@/pages/live/components/LiveListItem.vue";
-import {SourceTvChannelView} from "@/views/SourceTv.js";
-import {onScrollToBottom} from "@/store/index.js";
+import {SourceTvChannelView} from "@/views/SourceTv";
+import {onScrollToBottom} from "@/store/index";
 
 type FuseResult<T> = {
   item: T

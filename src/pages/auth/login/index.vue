@@ -54,8 +54,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import MessageUtil from "@/utils/modal/MessageUtil.js";
-import {useUserStore} from "@/store/UserStore.js";
+import MessageUtil from "@/utils/modal/MessageUtil";
+import {useUserStore} from "@/store/UserStore";
 import {LockOnIcon, UserIcon} from "tdesign-icons-vue-next";
 
 const route = useRoute();

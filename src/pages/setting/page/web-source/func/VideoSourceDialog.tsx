@@ -1,9 +1,9 @@
 import {DialogPlugin, Form, FormItem, Input, LoadingPlugin, Radio, RadioGroup, Select} from "tdesign-vue-next";
-import MessageUtil from "@/utils/modal/MessageUtil.ts";
-import {SourceWebForm} from "@/views/SourceWeb.js";
-import {sourceWebInfo} from "@/apis/source/web.js";
-import {adminSourceWebAdd, adminSourceWebUpdate} from "@/apis/admin/source/web.js";
-import {SourceWebTypeEnum, sourceWebTypeOptions} from "@/enum/SourceWebTypeEnum.js";
+import MessageUtil from "@/utils/modal/MessageUtil";
+import {SourceWebForm} from "@/views/SourceWeb";
+import {sourceWebInfo} from "@/apis/source/web";
+import {adminSourceWebAdd, adminSourceWebUpdate} from "@/apis/admin/source/web";
+import {SourceWebTypeEnum, sourceWebTypeOptions} from "@/enum/SourceWebTypeEnum";
 import VideoFormForCmsJson from "@/modules/video/impl/cms-json/VideoFormForCmsJson.vue";
 import VideoFormForEmby from "@/modules/video/impl/emby/VideoFormForEmby.vue";
 import VideoFormForCmsXml from "@/modules/video/impl/cms-xml/VideoFormForCmsXml.vue";

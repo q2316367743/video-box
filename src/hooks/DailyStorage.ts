@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import MessageUtil from "@/utils/modal/MessageUtil.js";
+import MessageUtil from "@/utils/modal/MessageUtil";
 
 interface DailyStorageValue<T> {
   date: string;

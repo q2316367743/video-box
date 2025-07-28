@@ -1,5 +1,5 @@
 import {DrawerPlugin, List, ListItem, ListItemMeta, Space, Tag} from "tdesign-vue-next";
-import {sourceTvInfo} from "@/apis/source/tv.js";
+import {sourceTvInfo} from "@/apis/source/tv";
 
 export async function openDispositionInfo(id: string) {
   const info = await sourceTvInfo(id);

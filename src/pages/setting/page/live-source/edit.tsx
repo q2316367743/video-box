@@ -1,7 +1,7 @@
 import {Form, FormItem, Input, DialogPlugin, Switch} from "tdesign-vue-next";
-import MessageUtil from "@/utils/modal/MessageUtil.js";
-import {SourceTv, SourceTvForm} from "@/views/SourceTv.js";
-import {sourceTvAdd, sourceTvUpdate} from "@/apis/source/tv.js";
+import MessageUtil from "@/utils/modal/MessageUtil";
+import {SourceTv, SourceTvForm} from "@/views/SourceTv";
+import {sourceTvAdd, sourceTvUpdate} from "@/apis/source/tv";
 
 function buildForm(data: Ref<SourceTvForm>) {
   return <Form data={data.value}>

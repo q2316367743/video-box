@@ -23,9 +23,9 @@
 import {openAddDispositionDialog} from "@/pages/setting/page/live-source/edit";
 import DispositionItem from "@/pages/setting/page/live-source/components/DispositionItem.vue";
 import {PlusIcon, QuestionnaireIcon} from "tdesign-icons-vue-next";
-import {sourceTvList} from "@/apis/source/tv.js";
-import {SourceTv} from "@/views/SourceTv.js";
-import Constant from "@/global/Constant.js";
+import {sourceTvList} from "@/apis/source/tv";
+import {SourceTv} from "@/views/SourceTv";
+import Constant from "@/global/Constant";
 
 const liveSources = ref(new Array<SourceTv>());
 

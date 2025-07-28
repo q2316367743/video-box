@@ -1,4 +1,4 @@
-import {DiskDriver, DiskSource} from "@/entities/disk/DiskSource.ts";
+import {DiskDriver, DiskSource} from "@/entities/disk/DiskSource";
 
 /**
  * 网络硬盘节目章节，一个章节就是一个视频文件

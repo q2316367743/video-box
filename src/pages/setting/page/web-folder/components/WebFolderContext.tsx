@@ -1,7 +1,7 @@
-import MessageBoxUtil from "@/utils/modal/MessageBoxUtil.js";
-import {folderWebDelete, folderWebPost, folderWebRename} from "@/apis/folder-web/index.js";
-import MessageUtil from "@/utils/modal/MessageUtil.js";
-import {Folder} from "@/views/Folder.js";
+import MessageBoxUtil from "@/utils/modal/MessageBoxUtil";
+import {folderWebDelete, folderWebPost, folderWebRename} from "@/apis/folder-web/index";
+import MessageUtil from "@/utils/modal/MessageUtil";
+import {Folder} from "@/views/Folder";
 
 export function addFolderWeb(update: () => void) {
   MessageBoxUtil.prompt('请输入文件夹名称', '新增', {

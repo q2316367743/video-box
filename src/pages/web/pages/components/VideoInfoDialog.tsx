@@ -16,12 +16,12 @@ import {
   TimeIcon,
   UsergroupIcon
 } from "tdesign-icons-vue-next";
-import {isNotEmptyString} from "@/utils/lang/FieldUtil.ts";
-import MessageUtil from "@/utils/modal/MessageUtil.js";
-import {pluginWebDetail} from "@/apis/plugin-web/index.js";
-import {copyWebShare, openWebPlayer} from "@/plugin/player.js";
-import {myVideoItemExist, myVideoItemPost, myVideoItemToggle} from "@/apis/my/video-item.js";
-import {MyVideoItemForm, MyVideoItemFromEnum, MyVideoItemTypeEnum} from "@/views/MyVideoItemView.js";
+import {isNotEmptyString} from "@/utils/lang/FieldUtil";
+import MessageUtil from "@/utils/modal/MessageUtil";
+import {pluginWebDetail} from "@/apis/plugin-web/index";
+import {copyWebShare, openWebPlayer} from "@/plugin/player";
+import {myVideoItemExist, myVideoItemPost, myVideoItemToggle} from "@/apis/my/video-item";
+import {MyVideoItemForm, MyVideoItemFromEnum, MyVideoItemTypeEnum} from "@/views/MyVideoItemView";
 
 
 export async function openVideoInfoDrawer(sourceId: string, videoId: string) {

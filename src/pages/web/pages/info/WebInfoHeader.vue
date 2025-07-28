@@ -26,7 +26,7 @@
 <script lang="ts" setup>
 import {VideoCategory} from "@/modules/video/VideoPlugin";
 import {ChevronLeftIcon} from "tdesign-icons-vue-next";
-import {SourceWeb} from "@/views/SourceWeb.js";
+import {SourceWeb} from "@/views/SourceWeb";
 
 const router = useRouter();
 const route = useRoute();

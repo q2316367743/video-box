@@ -1,4 +1,4 @@
-import {Folder} from "@/views/Folder.js";
+import {Folder} from "@/views/Folder";
 
 
 export interface WebSourceInjectKeyType {

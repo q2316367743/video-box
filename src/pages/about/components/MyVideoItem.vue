@@ -11,14 +11,14 @@
 </template>
 <script lang="ts" setup>
 import CtxMenu from "@imengyu/vue3-context-menu";
-import {isDark} from "@/store/index.js";
+import {isDark} from "@/store/index";
 import {DeleteIcon, InfoCircleIcon} from "tdesign-icons-vue-next";
-import MessageBoxUtil from "@/utils/modal/MessageBoxUtil.js";
-import MessageUtil from "@/utils/modal/MessageUtil.js";
-import {openVideoInfoDrawer} from "@/pages/web/pages/components/VideoInfoDialog.js";
-import {openWebPlayer} from "@/plugin/player.js";
-import {MyVideoItemFromEnum, MyVideoItemTypeEnum, MyVideoItemView} from "@/views/MyVideoItemView.js";
-import {myVideoItemDelete, myVideoItemPost} from "@/apis/my/video-item.js";
+import MessageBoxUtil from "@/utils/modal/MessageBoxUtil";
+import MessageUtil from "@/utils/modal/MessageUtil";
+import {openVideoInfoDrawer} from "@/pages/web/pages/components/VideoInfoDialog";
+import {openWebPlayer} from "@/plugin/player";
+import {MyVideoItemFromEnum, MyVideoItemTypeEnum, MyVideoItemView} from "@/views/MyVideoItemView";
+import {myVideoItemDelete, myVideoItemPost} from "@/apis/my/video-item";
 
 defineProps({
   item: {

@@ -24,14 +24,14 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {SourceWeb} from '@/views/SourceWeb.js';
-import {adminSourceWebDelete, adminSourceWebEnable} from "@/apis/admin/source/web.js";
-import {sourceWebInfo, sourceWebMove, sourceWebRefresh} from "@/apis/source/web.js";
-import {openVideoSourceDialog} from "@/pages/setting/page/web-source/func/VideoSourceDialog.js";
-import MessageUtil from "@/utils/modal/MessageUtil.js";
-import {Folder} from "@/views/Folder.js";
+import {Folder} from "@/views/Folder";
+import {SourceWeb} from '@/views/SourceWeb';
+import {adminSourceWebDelete, adminSourceWebEnable} from "@/apis/admin/source/web";
+import {sourceWebInfo, sourceWebMove, sourceWebRefresh} from "@/apis/source/web";
+import {openVideoSourceDialog} from "@/pages/setting/page/web-source/func/VideoSourceDialog";
+import MessageUtil from "@/utils/modal/MessageUtil";
+import {toDateTimeString} from "@/utils/lang/FormatUtil";
 import WebSourceFolderSelect from "@/pages/setting/page/web-source/components/WebSourceFolderSelect.vue";
-import {toDateTimeString} from "@/utils/lang/FormatUtil.js";
 
 const props = defineProps({
   view: {

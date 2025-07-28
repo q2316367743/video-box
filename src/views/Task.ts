@@ -1,4 +1,4 @@
-// src/taskStore.ts
+// src/taskStore
 export type TaskStatus = "pending" | "running" | "success" | "failed";
 type TaskLogLevel = "log" | "warning" | "error";
 export interface TaskLog {

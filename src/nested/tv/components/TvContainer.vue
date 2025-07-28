@@ -38,8 +38,8 @@
 </template>
 <script lang="ts" setup>
 import TvPlayer from "@/nested/tv/components/TvPlayer.vue";
-import {SourceTvChannel, SourceTvInfo} from "@/views/SourceTv.js";
-import {map} from "@/utils/lang/ArrayUtil.js";
+import {SourceTvChannel, SourceTvInfo} from "@/views/SourceTv";
+import {map} from "@/utils/lang/ArrayUtil";
 
 const props = defineProps({
   sourceId: {

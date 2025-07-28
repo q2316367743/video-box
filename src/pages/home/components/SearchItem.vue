@@ -28,11 +28,11 @@
 </template>
 <script lang="ts" setup>
 import {SelectOption, Space, Tag} from "tdesign-vue-next";
-import {SearchResult, SearchResultDisplay} from "@/pages/home/types/SearchResult.js";
-import {openVideoInfoDrawer} from "@/pages/web/pages/components/VideoInfoDialog.js";
-import {openWebPlayer} from "@/plugin/player.js";
-import {myVideoItemPost} from "@/apis/my/video-item.js";
-import {MyVideoItemFromEnum, MyVideoItemTypeEnum} from "@/views/MyVideoItemView.js";
+import {SearchResult, SearchResultDisplay} from "@/pages/home/types/SearchResult";
+import {openVideoInfoDrawer} from "@/pages/web/pages/components/VideoInfoDialog";
+import {openWebPlayer} from "@/plugin/player";
+import {myVideoItemPost} from "@/apis/my/video-item";
+import {MyVideoItemFromEnum, MyVideoItemTypeEnum} from "@/views/MyVideoItemView";
 
 const props = defineProps({
   item: {

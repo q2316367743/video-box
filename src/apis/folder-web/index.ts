@@ -1,5 +1,5 @@
-import {Folder} from "@/views/Folder.js";
-import {useDelete, useGet, usePost, usePut} from "@/apis/common.js";
+import {Folder} from "@/views/Folder";
+import {useDelete, useGet, usePost, usePut} from "@/apis/common";
 
 export function folderWebList(): Promise<Array<Folder>> {
   return useGet<Array<Folder>>('/api/folder/web/list');

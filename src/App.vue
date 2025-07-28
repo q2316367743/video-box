@@ -11,7 +11,7 @@
 <script lang="ts" setup>
 import AppHeader from "@/layout/AppHeader.vue";
 import AppFooter from "@/layout/AppFooter.vue";
-import {emitScrollToTop, onScrollToBottom} from "@/store/index.js";
+import {emitScrollToTop, onScrollToBottom} from "@/store/index";
 
 const mainRef = ref();
 const showShadow = ref(false);

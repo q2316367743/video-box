@@ -6,8 +6,8 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {sourceTvInfo} from "@/apis/source/tv.js";
-import {SourceTvInfo} from "@/views/SourceTv.js";
+import {sourceTvInfo} from "@/apis/source/tv";
+import {SourceTvInfo} from "@/views/SourceTv";
 import TvContainer from "@/nested/tv/components/TvContainer.vue";
 
 const p = new URLSearchParams(location.search);

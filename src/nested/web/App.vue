@@ -5,13 +5,13 @@
   <loading-result v-else title="正在获取资源详情"/>
 </template>
 <script lang="ts" setup>
-import MessageUtil from "@/utils/modal/MessageUtil.js";
-import {pluginWebDetail} from "@/apis/plugin-web/index.js";
-import {VideoDetail} from "@/modules/video/VideoPlugin.js";
+import MessageUtil from "@/utils/modal/MessageUtil";
+import {pluginWebDetail} from "@/apis/plugin-web/index";
+import {VideoDetail} from "@/modules/video/VideoPlugin";
 import Player from "@/nested/web/components/Player.vue";
-import {SearchResultItem} from "@/pages/home/types/SearchResult.js";
-import {sourceWebInfo} from "@/apis/source/web.js";
-import {SourceWeb} from "@/views/SourceWeb.js";
+import {SearchResultItem} from "@/pages/home/types/SearchResult";
+import {sourceWebInfo} from "@/apis/source/web";
+import {SourceWeb} from "@/views/SourceWeb";
 
 const p = new URLSearchParams(location.search);
 const sourceId = ref(p.get('source') || '');
