@@ -1,43 +1,15 @@
-export interface DiskFromAList {
-  url: string;
-  authorization: string;
-}
-export interface DiskFromWebDAV {
-  url: string;
-  username: string;
-  password: string;
-  type: 'auto' | 'digest' | 'none' | 'password' | 'token';
-}
+export type DiskDriver = 'A_LIST_V3' | 'WEB_DAV';
 
-
-export interface DiskMap {
-  A_LIST: DiskFromAList;
-  WEB_DAV: DiskFromWebDAV;
-}
-
-export type DiskDriver = keyof DiskMap;
-
-
-// 类型，movie-电影、tvshow-剧集
-export type DiskType = 'movie' | 'tvshow';
-
-
-export interface DiskSourceForm<K extends DiskDriver> {
-  // 媒体类型，设置后无法修改
-  type: DiskType;
+export interface DiskSourceForm {
   title: string;
   // 驱动
-  driver: K;
-  data: DiskMap[K];
+  driver: DiskDriver;
+  data: any;
   // 要扫描的路径路径
   path: string;
 }
 
-export interface DiskSource<K extends DiskDriver> extends DiskSourceForm<K> {
+export interface DiskSourceEntry extends DiskSourceForm {
   id: string;
   createTime: number;
-  // 刷新时间
-  refreshTime: number;
-  // 剧集数量
-  programCount: number;
 }

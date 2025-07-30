@@ -1,4 +1,4 @@
-import {DiskDriver, DiskSource} from "@/types/SourceDisk";
+import {DiskSourceEntry} from "@/types/SourceDisk";
 import {useSnowflake} from "@/utils/Snowflake";
 
 /**
@@ -156,6 +156,6 @@ export interface DiskEntry {
   programs: Array<DiskProgram>;
 }
 
-export interface DiskInfo extends DiskEntry, DiskSource<DiskDriver> {
+export interface DiskInfo extends DiskEntry, DiskSourceEntry {
 
 }

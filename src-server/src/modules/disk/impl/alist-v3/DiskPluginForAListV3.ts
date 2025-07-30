@@ -1,9 +1,15 @@
 import {AxiosRequestConfig} from "axios";
 import {AbsDiskPluginStore} from "@/modules/disk/abs/AbsDiskPluginStore";
-import {FileState} from "@/modules/disk/DiskPlugin";
-import { DiskFromAList, DiskSource } from "@/types/SourceDisk";
-import { useRequest } from "@/global/http";
-import { extname } from "@/utils/WebPath";
+import {DirItem} from "@/modules/disk/DiskPlugin";
+import {DiskSourceEntry} from "@/types/SourceDisk";
+import {useRequest} from "@/global/http";
+import {extname} from "@/utils/WebPath";
+
+interface DiskFromAList {
+  url: string;
+  authorization: string;
+}
+
 
 /**
  * 通用响应内容
@@ -59,14 +65,14 @@ interface FileInfo {
   related?: any;
 }
 
-export class DiskPluginForAList extends AbsDiskPluginStore {
+export class DiskPluginForAListV3 extends AbsDiskPluginStore {
 
   private readonly props: DiskFromAList;
   private readonly path: string;
 
-  constructor(source: DiskSource<"A_LIST">) {
+  constructor(source: DiskSourceEntry) {
     super(source.id);
-    this.props = source.data;
+    this.props = source.data as DiskFromAList;
     this.path = source.path;
   }
 
@@ -86,7 +92,8 @@ export class DiskPluginForAList extends AbsDiskPluginStore {
     return data.data;
   }
 
-  async cp(path: string, destinationFolder: string): Promise<void> {
+  async cp(item: DirItem, destinationFolder: string): Promise<void> {
+    const {path} = item;
     let nameIndex = path.lastIndexOf("/");
     let src_dir = path.substring(0, nameIndex);
     let name = path.substring(nameIndex + 1);
@@ -104,7 +111,8 @@ export class DiskPluginForAList extends AbsDiskPluginStore {
     return Promise.resolve(true);
   }
 
-  mkdir(path: string): Promise<void> {
+  mkdir(item: DirItem): Promise<void> {
+    const {path} = item;
     return this.request<void>('/api/fs/mkdir', {
       method: 'POST',
       data: {
@@ -113,7 +121,8 @@ export class DiskPluginForAList extends AbsDiskPluginStore {
     })
   }
 
-  async mv(path: string, destinationPath: string): Promise<void> {
+  async mv(item: DirItem, destinationPath: string): Promise<void> {
+    const {path} = item;
     let nameIndex = path.lastIndexOf("/");
     let src_dir = path.substring(0, nameIndex);
     let name = path.substring(nameIndex + 1);
@@ -129,7 +138,7 @@ export class DiskPluginForAList extends AbsDiskPluginStore {
     })
   }
 
-  async readDir(path: string): Promise<Array<FileState>> {
+  async readDir(path: string): Promise<Array<DirItem>> {
     const result = await this.request<FileData>('/api/fs/list', {
       method: 'POST',
       data: {
@@ -143,7 +152,7 @@ export class DiskPluginForAList extends AbsDiskPluginStore {
     if (path === '/') {
       path = this.path;
     }
-    let items = new Array<FileState>();
+    let items = new Array<DirItem>();
     let {content} = result;
     if (content) {
       for (let temp of content) {
@@ -151,8 +160,8 @@ export class DiskPluginForAList extends AbsDiskPluginStore {
           name: temp.name,
           size: temp.size,
           extname: temp.is_dir ? '' : extname(temp.name),
-          isDirectory: temp.is_dir,
-          isFile: !temp.is_dir,
+          folder: path,
+          type: temp.is_dir ? 'folder' : 'file',
           lastModified: temp.modified,
           path: path + '/' + temp.name,
           cover: temp.thumb,
@@ -165,7 +174,8 @@ export class DiskPluginForAList extends AbsDiskPluginStore {
     return items;
   }
 
-  async getFileDownloadLink(path: string): Promise<string> {
+  async getFileDownloadLink(item: DirItem): Promise<string> {
+    const {path} = item;
     const result = await this.request<FileInfo>('/api/fs/get', {
       method: 'POST',
       data: {
@@ -181,15 +191,16 @@ export class DiskPluginForAList extends AbsDiskPluginStore {
     return url;
   }
 
-  async readFileAsString(path: string): Promise<string> {
-    let url = await this.getFileDownloadLink(path);
+  async readFileAsString(item: DirItem): Promise<string> {
+    let url = await this.getFileDownloadLink(item);
     return this.request<string>(url, {
       method: 'GET',
       responseType: 'text',
     })
   }
 
-  async rm(path: string): Promise<void> {
+  async rm(item: DirItem): Promise<void> {
+    const {path} = item;
     const nameIndex = path.lastIndexOf("/");
     const dir = path.substring(0, nameIndex);
     const name = path.substring(nameIndex + 1);
@@ -202,7 +213,8 @@ export class DiskPluginForAList extends AbsDiskPluginStore {
     })
   }
 
-  rename(path: string, newName: string): Promise<void> {
+  rename(item: DirItem, newName: string): Promise<void> {
+    const {path} = item;
     return this.request<void>('/api/fs/rename', {
       method: 'POST',
       data: {
@@ -212,7 +224,8 @@ export class DiskPluginForAList extends AbsDiskPluginStore {
     })
   }
 
-  writeFileFromBlob(path: string, content: Blob): Promise<void> {
+  writeFileFromBlob(file: DirItem, content: Blob): Promise<void> {
+    const {path} = file;
     const formData = new FormData();
     formData.append('file', content);
     return this.request('/api/fs/form', {
@@ -224,7 +237,8 @@ export class DiskPluginForAList extends AbsDiskPluginStore {
     })
   }
 
-  writeFileFromString(path: string, content: string): Promise<void> {
+  writeFileFromString(file: DirItem, content: string): Promise<void> {
+    const {path} = file;
     return this.request<void>('/api/fs/put', {
       method: 'PUT',
       data: content,
@@ -235,12 +249,5 @@ export class DiskPluginForAList extends AbsDiskPluginStore {
     })
   }
 
-  async getFileDownloadLinks(items: string[]): Promise<string[]> {
-    const links = new Array<string>();
-    for (let item of items) {
-      links.push(await this.getFileDownloadLink(item));
-    }
-    return links;
-  }
 
 }

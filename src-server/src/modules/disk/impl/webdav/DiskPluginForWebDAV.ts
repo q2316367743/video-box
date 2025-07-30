@@ -1,17 +1,25 @@
-import { FileState } from "@/modules/disk/DiskPlugin";
-import { AbsDiskPluginStore } from "@/modules/disk/abs/AbsDiskPluginStore";
-import { DiskFromWebDAV, DiskSource } from "@/types/SourceDisk";
-import { createClient, WebDAVClient, AuthType } from "webdav";
-import { basename, extname } from "@/utils/WebPath";
+import {AbsDiskPluginStore} from "@/modules/disk/abs/AbsDiskPluginStore";
+import {DiskSourceEntry} from "@/types/SourceDisk";
+import {createClient, WebDAVClient, AuthType} from "webdav";
+import {basename, extname} from "@/utils/WebPath";
+import {DirItem} from "@/modules/disk/DiskPlugin";
+
+interface DiskFromWebDAV {
+  url: string;
+  username: string;
+  password: string;
+  type: 'auto' | 'digest' | 'none' | 'password' | 'token';
+}
+
 
 export class DiskPluginForWebDAV extends AbsDiskPluginStore {
   private readonly props: DiskFromWebDAV;
   private readonly path: string;
   private readonly client: WebDAVClient;
 
-  constructor(source: DiskSource<"WEB_DAV">) {
+  constructor(source: DiskSourceEntry) {
     super(source.id);
-    this.props = source.data;
+    this.props = source.data as DiskFromWebDAV;
     this.path = source.path;
     this.client = createClient(this.props.url, {
       username: this.props.username,
@@ -20,7 +28,8 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
     });
   }
 
-  cp(path: string, destinationFolder: string): Promise<void> {
+  cp(item: DirItem, destinationFolder: string): Promise<void> {
+    const {path} = item;
     return this.client.copyFile(path, destinationFolder);
   }
 
@@ -28,15 +37,17 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
     return this.client.exists(path);
   }
 
-  mkdir(path: string): Promise<void> {
+  mkdir(item: DirItem): Promise<void> {
+    const {path} = item;
     return this.client.createDirectory(path);
   }
 
-  mv(oldPath: string, newPath: string): Promise<void> {
-    return this.client.moveFile(oldPath, newPath);
+  mv(item: DirItem, newPath: string): Promise<void> {
+    const {path} = item;
+    return this.client.moveFile(path, newPath);
   }
 
-  async readDir(path: string): Promise<Array<FileState>> {
+  async readDir(path: string): Promise<Array<DirItem>> {
     if (path === "/") path = this.path;
     const files = await this.client.getDirectoryContents(path, {
       details: false,
@@ -46,8 +57,8 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
         name: basename(file.basename),
         size: file.size,
         extname: extname(file.basename),
-        isDirectory: file.type === "directory",
-        isFile: file.type === "file",
+        folder: path,
+        type: file.type === "directory" ? 'folder' : file.type === "file" ? 'file' : 'unknow',
         lastModified: file.lastmod,
         path: path + "/" + file.basename,
         expands: {
@@ -58,29 +69,32 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
     });
   }
 
-  async readFileAsString(path: string): Promise<string> {
-    const content = await this.client.getFileContents(path, {
+  async readFileAsString(file: DirItem): Promise<string> {
+    const content = await this.client.getFileContents(file.path, {
       format: "text",
       details: false,
     });
     return content as string;
   }
 
-  rename(path: string, newName: string): Promise<void> {
-    const folder = path.split("/").pop();
+  rename(item: DirItem, newName: string): Promise<void> {
+    const {path, folder} = item;
     return this.client.moveFile(path, folder + "/" + newName);
   }
 
-  rm(path: string): Promise<void> {
+  rm(item: DirItem): Promise<void> {
+    const {path} = item;
     return this.client.deleteFile(path);
   }
 
-  async writeFileFromBlob(path: string, content: Blob): Promise<void> {
+  async writeFileFromBlob(file: DirItem, content: Blob): Promise<void> {
+    const {path} = file;
     const data = await content.arrayBuffer();
     await this.client.putFileContents(path, data);
   }
 
-  async writeFileFromString(path: string, content: string): Promise<void> {
+  async writeFileFromString(file: DirItem, content: string): Promise<void> {
+    const {path} = file;
     await this.client.putFileContents(path, content);
   }
 
@@ -89,11 +103,8 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
     return `/api/proxy/${encodeURIComponent(link)}`;
   }
 
-  async getFileDownloadLinks(items: string[]): Promise<string[]> {
-    return items.map(this.getDownloadLinkSync);
-  }
-
-  async getFileDownloadLink(item: string): Promise<string> {
-    return this.getDownloadLinkSync(item);
+  async getFileDownloadLink(item: DirItem): Promise<string> {
+    const {path} = item;
+    return this.getDownloadLinkSync(path);
   }
 }

@@ -17,7 +17,8 @@
     "elysia": "latest",
     "fast-xml-parser": "^5.2.5",
     "radash": "^12.1.1",
-    "unstorage": "^1.16.1"
+    "unstorage": "^1.16.1",
+    "webdav": "^5.8.0"
   },
   "devDependencies": {
     "bun-types": "latest"

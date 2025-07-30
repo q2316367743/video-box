@@ -1,4 +1,4 @@
-import { DiskPlugin, FileState } from "@/modules/disk/DiskPlugin";
+import {DirItem, DiskPlugin} from "@/modules/disk/DiskPlugin";
 import { LocalNameEnum } from "@/global/LocalNameEnum";
 import { storage } from "@/global/db";
 
@@ -24,27 +24,26 @@ export abstract class AbsDiskPluginStore implements DiskPlugin {
   protected async removeItem(key: string) {
     await storage.removeItem(this.prefix + key);
   }
-  abstract cp(path: string, destinationFolder: string): Promise<void>;
+
+  abstract cp(item: DirItem, destinationFolder: string): Promise<void>;
 
   abstract exists(path: string): Promise<boolean>;
 
-  abstract mkdir(path: string): Promise<void>;
+  abstract getFileDownloadLink(file: DirItem): Promise<string>;
 
-  abstract mv(oldPath: string, newPath: string): Promise<void>;
+  abstract mkdir(folder: DirItem, name: string): Promise<void>;
 
-  abstract readDir(path: string): Promise<Array<FileState>>;
+  abstract mv(item: DirItem, newPath: string): Promise<void>;
 
-  abstract readFileAsString(path: string): Promise<string>;
+  abstract readDir(path: string): Promise<Array<DirItem>>;
 
-  abstract rm(path: string): Promise<void>;
+  abstract readFileAsString(file: DirItem): Promise<string>;
 
-  abstract rename(path: string, newName: string): Promise<void>;
+  abstract rename(item: DirItem, newName: string): Promise<void>;
 
-  abstract writeFileFromBlob(path: string, content: Blob): Promise<void>;
+  abstract rm(item: DirItem): Promise<void>;
 
-  abstract writeFileFromString(path: string, content: string): Promise<void>;
+  abstract writeFileFromBlob(file: DirItem, content: Blob): Promise<void>;
 
-  abstract getFileDownloadLinks(items: string[]): Promise<string[]>;
-
-  abstract getFileDownloadLink(item: string): Promise<string>;
+  abstract writeFileFromString(file: DirItem, content: string): Promise<void>;
 }
