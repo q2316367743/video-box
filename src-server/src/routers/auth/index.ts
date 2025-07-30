@@ -16,10 +16,11 @@ app.post(
         message: "用户名或密码错误",
       });
     }
+    let token = await jwt.sign({id: useSnowflake().nextId()});
     return Result.success({
       success: true,
       message: "登录成功",
-      token: jwt.sign({id: useSnowflake().nextId()}),
+      token: token,
     });
   },
   {

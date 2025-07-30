@@ -69,7 +69,7 @@ export interface DiskPlugin {
    * 获取文件的下载链接
    * @param file 文件
    */
-  getFileDownloadLink: (file: DirItem) => Promise<string>;
+  getFileDownloadLink: (path: string) => Promise<string>;
 
   /**
    * 读取一个文件的内容

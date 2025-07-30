@@ -1,7 +1,7 @@
 import {AbsDiskPluginStore} from "@/modules/disk/abs/AbsDiskPluginStore";
-import {DiskSourceEntry} from "@/types/SourceDisk";
+import {DiskSourceView} from "@/types/SourceDisk";
 import {createClient, WebDAVClient, AuthType} from "webdav";
-import {basename, extname} from "@/utils/WebPath";
+import {extname} from "@/utils/WebPath";
 import {DirItem} from "@/modules/disk/DiskPlugin";
 
 interface DiskFromWebDAV {
@@ -14,17 +14,15 @@ interface DiskFromWebDAV {
 
 export class DiskPluginForWebDAV extends AbsDiskPluginStore {
   private readonly props: DiskFromWebDAV;
-  private readonly path: string;
   private readonly client: WebDAVClient;
 
-  constructor(source: DiskSourceEntry) {
+  constructor(source: DiskSourceView) {
     super(source.id);
     this.props = source.data as DiskFromWebDAV;
-    this.path = source.path;
     this.client = createClient(this.props.url, {
       username: this.props.username,
       password: this.props.password,
-      authType: this.props.type as AuthType,
+      // authType: this.props.type as AuthType,
     });
   }
 
@@ -48,19 +46,19 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
   }
 
   async readDir(path: string): Promise<Array<DirItem>> {
-    if (path === "/") path = this.path;
     const files = await this.client.getDirectoryContents(path, {
       details: false,
     });
+    const prefix = path === '/' ? '' : path;
     return (Array.isArray(files) ? files : files.data).map((file) => {
       return {
-        name: basename(file.basename),
+        name: file.basename,
         size: file.size,
         extname: extname(file.basename),
         folder: path,
         type: file.type === "directory" ? 'folder' : file.type === "file" ? 'file' : 'unknow',
         lastModified: file.lastmod,
-        path: path + "/" + file.basename,
+        path: prefix + "/" + file.basename,
         expands: {
           sign: file.etag,
           mime: file.mime,
@@ -100,11 +98,10 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
 
   private getDownloadLinkSync(item: string): string {
     const link = this.client.getFileDownloadLink(item);
-    return `/api/proxy/${encodeURIComponent(link)}`;
+    return `/api/proxy/url/${encodeURIComponent(link)}`;
   }
 
-  async getFileDownloadLink(item: DirItem): Promise<string> {
-    const {path} = item;
+  async getFileDownloadLink(path: string): Promise<string> {
     return this.getDownloadLinkSync(path);
   }
 }

@@ -6,7 +6,7 @@
 </template>
 <script lang="ts" setup>
 import MessageUtil from "@/utils/modal/MessageUtil";
-import {pluginWebDetail} from "@/apis/plugin-web/index";
+import {pluginWebDetail} from "@/apis/plugin/web.ts";
 import {VideoDetail} from "@/modules/video/VideoPlugin";
 import Player from "@/nested/web/components/Player.vue";
 import {SearchResultItem} from "@/pages/home/types/SearchResult";

@@ -1,4 +1,4 @@
-import {DiskDriver, DiskSourceEntry} from "@/types/SourceDisk";
+import {DiskDriver, DiskSourceEntry, DiskSourceView} from "@/types/SourceDisk";
 import {DiskPlugin} from "@/modules/disk/DiskPlugin.js";
 import {DiskPluginForAListV3} from "@/modules/disk/impl/alist-v3/DiskPluginForAListV3";
 import {DiskPluginForWebDAV} from "@/modules/disk/impl/webdav/DiskPluginForWebDAV";
@@ -6,7 +6,7 @@ import {DiskPropsForAListV3} from "@/modules/disk/impl/alist-v3/DiskPropsForALis
 import {CustomForm} from "@/types/CustomForm";
 import {DiskPropsForWebDAV} from "@/modules/disk/impl/webdav/DiskPropsForWebDAV";
 
-export function buildDiskPlugin(source: DiskSourceEntry): DiskPlugin {
+export function buildDiskPlugin(source: DiskSourceView): DiskPlugin {
   switch (source.driver) {
     case "A_LIST_V3":
       return new DiskPluginForAListV3(source);

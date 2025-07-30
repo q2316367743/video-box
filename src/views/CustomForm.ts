@@ -9,7 +9,7 @@ interface CustomFormCommon {
   rules?: Array<{
     required: boolean;
     message: string;
-    trigger: string;
+    trigger: 'blur' | 'change' | 'submit' | 'all';
   }>;
   help?: string;
   defaultValue?: any;
@@ -51,20 +51,19 @@ interface CustomFormCheckout extends CustomFormCommon {
   }>;
 }
 
-interface CustomFormNumber {
+interface CustomFormNumber extends CustomFormCommon {
   type: 'number';
   min?: number;
   max?: number;
 }
 
-interface CustomFormTag {
+interface CustomFormTag extends CustomFormCommon {
   type: 'tag';
 }
 
-interface CustomFormSwitch {
+interface CustomFormSwitch extends CustomFormCommon {
   type: 'switch';
 }
-
 
 // 自定义表单
 export type CustomForm =

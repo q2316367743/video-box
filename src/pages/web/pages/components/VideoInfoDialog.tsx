@@ -18,7 +18,7 @@ import {
 } from "tdesign-icons-vue-next";
 import {isNotEmptyString} from "@/utils/lang/FieldUtil";
 import MessageUtil from "@/utils/modal/MessageUtil";
-import {pluginWebDetail} from "@/apis/plugin-web/index";
+import {pluginWebDetail} from "@/apis/plugin/web.ts";
 import {copyWebShare, openWebPlayer} from "@/plugin/player";
 import {myVideoItemExist, myVideoItemPost, myVideoItemToggle} from "@/apis/my/video-item";
 import {MyVideoItemForm, MyVideoItemFromEnum, MyVideoItemTypeEnum} from "@/views/MyVideoItemView";

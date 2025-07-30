@@ -20,7 +20,7 @@ import {uid} from 'radash'
 import {SearchIcon} from "tdesign-icons-vue-next";
 import {VideoListItem} from "@/modules/video/VideoPlugin";
 import MessageUtil from "@/utils/modal/MessageUtil";
-import {pluginWebSearch} from "@/apis/plugin-web/index";
+import {pluginWebSearch} from "@/apis/plugin/web.ts";
 import WebItem from "@/pages/web/pages/components/WebItem.vue";
 
 const route = useRoute();

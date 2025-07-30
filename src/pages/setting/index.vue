@@ -23,6 +23,9 @@ export default defineComponent({
     }, {
       value: '/setting/live',
       label: '直播设置'
+    }, {
+      value: '/setting/disk',
+      label: '网盘'
     }]
   }),
 })

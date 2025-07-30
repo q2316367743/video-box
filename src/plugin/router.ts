@@ -84,6 +84,20 @@ export const routes: Array<RouteRecordRaw> = [{
       icon: TvIcon,
     }
   }, {
+    name: '网盘',
+    path: '/disk',
+    component: () => import('@/pages/disk/disk.vue'),
+    redirect: '/disk/list',
+    children: [{
+      name: '网盘列表',
+      path: 'list',
+      component: () => import('@/pages/disk/list/index.vue'),
+    },{
+      name: '网盘详情',
+      path: 'info/:id',
+      component: () => import('@/pages/disk/info/index.vue'),
+    }]
+  }, {
     name: '设置',
     path: '/setting',
     component: () => import('@/pages/setting/index.vue'),
@@ -106,6 +120,10 @@ export const routes: Array<RouteRecordRaw> = [{
       name: '文件夹设置',
       path: 'folder',
       component: () => import('@/pages/setting/page/web-folder/index.vue'),
+    }, {
+      name: '网盘设置',
+      path: 'disk',
+      component: () => import('@/pages/setting/page/disk-source/DiskSource.vue'),
     }]
   }, {
     name: '关于',

@@ -1,15 +1,24 @@
 export type DiskDriver = 'A_LIST_V3' | 'WEB_DAV';
 
+export interface DiskSourceEntry {
+  title: string;
+  // 驱动
+  driver: string;
+  data: string;
+  id: string;
+  create_time: number;
+  update_time: number;
+}
+
 export interface DiskSourceForm {
   title: string;
   // 驱动
-  driver: DiskDriver;
-  data: any;
-  // 要扫描的路径路径
-  path: string;
+  driver: string;
+  data: Record<string, any>;
 }
 
-export interface DiskSourceEntry extends DiskSourceForm {
+export interface DiskSourceView extends DiskSourceForm {
   id: string;
-  createTime: number;
+  create_time: number;
+  update_time: number;
 }

@@ -35,7 +35,7 @@ import {SearchIcon} from "tdesign-icons-vue-next";
 import MessageUtil from "@/utils/modal/MessageUtil";
 import {SearchResult, SearchResultItem} from "@/pages/home/types/SearchResult";
 import {sourceWebList} from "@/apis/source/web";
-import {pluginWebSearch} from "@/apis/plugin-web/index";
+import {pluginWebSearch} from "@/apis/plugin/web.ts";
 import {LocalNameEnum} from "@/global/LocalNameEnum";
 import SearchItem from "@/pages/home/components/SearchItem.vue";
 import HomeRecommend from "@/pages/home/components/HomeRecommend.vue";

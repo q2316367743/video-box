@@ -1,7 +1,7 @@
 import {AxiosRequestConfig} from "axios";
 import {AbsDiskPluginStore} from "@/modules/disk/abs/AbsDiskPluginStore";
 import {DirItem} from "@/modules/disk/DiskPlugin";
-import {DiskSourceEntry} from "@/types/SourceDisk";
+import {DiskSourceEntry, DiskSourceView} from "@/types/SourceDisk";
 import {useRequest} from "@/global/http";
 import {extname} from "@/utils/WebPath";
 
@@ -68,12 +68,10 @@ interface FileInfo {
 export class DiskPluginForAListV3 extends AbsDiskPluginStore {
 
   private readonly props: DiskFromAList;
-  private readonly path: string;
 
-  constructor(source: DiskSourceEntry) {
+  constructor(source: DiskSourceView) {
     super(source.id);
     this.props = source.data as DiskFromAList;
-    this.path = source.path;
   }
 
   private async request<T>(url: string, config: AxiosRequestConfig): Promise<T> {
@@ -149,9 +147,6 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
         refresh: false
       },
     });
-    if (path === '/') {
-      path = this.path;
-    }
     let items = new Array<DirItem>();
     let {content} = result;
     if (content) {
@@ -174,8 +169,7 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     return items;
   }
 
-  async getFileDownloadLink(item: DirItem): Promise<string> {
-    const {path} = item;
+  async getFileDownloadLink(path: string): Promise<string> {
     const result = await this.request<FileInfo>('/api/fs/get', {
       method: 'POST',
       data: {
@@ -192,7 +186,7 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
   }
 
   async readFileAsString(item: DirItem): Promise<string> {
-    let url = await this.getFileDownloadLink(item);
+    let url = await this.getFileDownloadLink(item.path);
     return this.request<string>(url, {
       method: 'GET',
       responseType: 'text',

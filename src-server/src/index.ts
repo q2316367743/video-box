@@ -3,7 +3,9 @@ import {Elysia} from "elysia";
 import folderWebRoutes from "@/routers/folder/web";
 import sourceWebRoutes from "@/routers/source/web";
 import sourceTvRoutes from "@/routers/source/tv";
+import sourceDiskRouters from '@/routers/source/disk';
 import pluginWebRoutes from "@/routers/plugin/web";
+import pluginDiskRouters from '@/routers/plugin/disk';
 import myVideoItemRoutes from "@/routers/my/video-item";
 import proxyRoutes from "@/routers/proxy";
 import authRoutes from "@/routers/auth";
@@ -35,7 +37,9 @@ app
   .use(folderWebRoutes)
   .use(sourceWebRoutes)
   .use(sourceTvRoutes)
+  .use(sourceDiskRouters)
   .use(pluginWebRoutes)
+  .use(pluginDiskRouters)
   .use(myVideoItemRoutes)
   .use(proxyRoutes)
   .use(authRoutes);

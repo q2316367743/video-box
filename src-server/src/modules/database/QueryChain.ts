@@ -6,6 +6,7 @@ export class QueryChain<T extends Record<string, any>, K extends keyof T = keyof
   private readonly db: Database;
   private readonly tableName: string;
 
+  private readonly fields = new Array<K>();
   private readonly params = new Array<string>();
   private readonly values = new Array<T[K]>();
   private readonly orders = new Array<string>();
@@ -81,9 +82,20 @@ export class QueryChain<T extends Record<string, any>, K extends keyof T = keyof
     return this;
   }
 
+  select(...fields: Array<K>) {
+    this.fields.push(...fields);
+    return this;
+  }
+
   async execQuery(tableName: string, db: Database) {
-    let sql = `select *
-               from \`${tableName}\``;
+    let sql = 'select';
+    if (this.fields.length > 0) {
+      sql += (' ' + this.fields.map(field => `\`${String(field)}\``).join(', '))
+    } else {
+      sql += (' *');
+    }
+
+    sql += (` from \`${tableName}\``)
     if (this.params.length > 0) {
       sql += (' where ' + this.params.join(' and '))
     }

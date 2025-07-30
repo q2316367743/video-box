@@ -29,7 +29,7 @@ export abstract class AbsDiskPluginStore implements DiskPlugin {
 
   abstract exists(path: string): Promise<boolean>;
 
-  abstract getFileDownloadLink(file: DirItem): Promise<string>;
+  abstract getFileDownloadLink(path: string): Promise<string>;
 
   abstract mkdir(folder: DirItem, name: string): Promise<void>;
 

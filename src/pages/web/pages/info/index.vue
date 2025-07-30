@@ -25,7 +25,7 @@ import MessageUtil from "@/utils/modal/MessageUtil";
 import WebInfoHeader from "@/pages/web/pages/info/WebInfoHeader.vue";
 import WebItem from "@/pages/web/pages/components/WebItem.vue";
 import {uid} from "radash";
-import {pluginWebHome, pluginWebList} from "@/apis/plugin-web/index";
+import {pluginWebHome, pluginWebList} from "@/apis/plugin/web.ts";
 import {SourceWeb} from "@/views/SourceWeb";
 import {sourceWebInfo} from "@/apis/source/web";
 import {emitScrollToTop, onScrollToBottom} from "@/store/index";

@@ -93,6 +93,9 @@ const menus = [{
 }, {
   label: "直播",
   value: "/live"
+}, {
+  label: "网盘",
+  value: "/disk/list"
 }]
 
 const show = computed(() => !route.path.startsWith("/auth/"));
