@@ -51,17 +51,17 @@ interface CustomFormCheckout extends CustomFormCommon {
   }>;
 }
 
-interface CustomFormNumber {
+interface CustomFormNumber extends CustomFormCommon {
   type: 'number';
   min?: number;
   max?: number;
 }
 
-interface CustomFormTag {
+interface CustomFormTag extends CustomFormCommon {
   type: 'tag';
 }
 
-interface CustomFormSwitch {
+interface CustomFormSwitch extends CustomFormCommon {
   type: 'switch';
 }
 

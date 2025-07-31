@@ -1,7 +1,7 @@
-import {AxiosRequestConfig} from "axios";
+import axios, {AxiosRequestConfig} from "axios";
 import {AbsDiskPluginStore} from "@/modules/disk/abs/AbsDiskPluginStore";
-import {DirItem} from "@/modules/disk/DiskPlugin";
-import {DiskSourceEntry, DiskSourceView} from "@/types/SourceDisk";
+import {DirCoreItem, DirItem, DiskFileLink} from "@/modules/disk/DiskPlugin";
+import {DiskSourceView} from "@/types/SourceDisk";
 import {useRequest} from "@/global/http";
 import {extname} from "@/utils/WebPath";
 
@@ -90,7 +90,7 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     return data.data;
   }
 
-  async cp(item: DirItem, destinationFolder: string): Promise<void> {
+  async cp(item: DirCoreItem, destinationFolder: string): Promise<void> {
     const {path} = item;
     let nameIndex = path.lastIndexOf("/");
     let src_dir = path.substring(0, nameIndex);
@@ -109,7 +109,7 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     return Promise.resolve(true);
   }
 
-  mkdir(item: DirItem): Promise<void> {
+  mkdir(item: DirCoreItem): Promise<void> {
     const {path} = item;
     return this.request<void>('/api/fs/mkdir', {
       method: 'POST',
@@ -119,7 +119,7 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     })
   }
 
-  async mv(item: DirItem, destinationPath: string): Promise<void> {
+  async mv(item: DirCoreItem, destinationPath: string): Promise<void> {
     const {path} = item;
     let nameIndex = path.lastIndexOf("/");
     let src_dir = path.substring(0, nameIndex);
@@ -136,7 +136,8 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     })
   }
 
-  async readDir(path: string): Promise<Array<DirItem>> {
+  async readDir(item: DirItem): Promise<Array<DirItem>> {
+    const {path} = item;
     const result = await this.request<FileData>('/api/fs/list', {
       method: 'POST',
       data: {
@@ -169,7 +170,8 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     return items;
   }
 
-  async getFileDownloadLink(path: string): Promise<string> {
+  async getFileDownloadLink(file: DirItem): Promise<DiskFileLink> {
+    const {path} = file;
     const result = await this.request<FileInfo>('/api/fs/get', {
       method: 'POST',
       data: {
@@ -182,18 +184,18 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
       // 如果站点是https，但是链接不是
       url = url.replace('http', 'https');
     }
-    return url;
+    return {url};
   }
 
   async readFileAsString(item: DirItem): Promise<string> {
-    let url = await this.getFileDownloadLink(item.path);
+    let {url} = await this.getFileDownloadLink(item);
     return this.request<string>(url, {
       method: 'GET',
       responseType: 'text',
     })
   }
 
-  async rm(item: DirItem): Promise<void> {
+  async rm(item: DirCoreItem): Promise<void> {
     const {path} = item;
     const nameIndex = path.lastIndexOf("/");
     const dir = path.substring(0, nameIndex);
@@ -207,7 +209,7 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     })
   }
 
-  rename(item: DirItem, newName: string): Promise<void> {
+  rename(item: DirCoreItem, newName: string): Promise<void> {
     const {path} = item;
     return this.request<void>('/api/fs/rename', {
       method: 'POST',
@@ -218,7 +220,7 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     })
   }
 
-  writeFileFromBlob(file: DirItem, content: Blob): Promise<void> {
+  writeFileFromBlob(file: DirCoreItem, content: Blob): Promise<void> {
     const {path} = file;
     const formData = new FormData();
     formData.append('file', content);
@@ -231,7 +233,7 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     })
   }
 
-  writeFileFromString(file: DirItem, content: string): Promise<void> {
+  writeFileFromString(file: DirCoreItem, content: string): Promise<void> {
     const {path} = file;
     return this.request<void>('/api/fs/put', {
       method: 'PUT',
@@ -240,6 +242,25 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
         "File-Path": encodeURIComponent(path),
         "Content-Type": "text/plain"
       },
+    })
+  }
+
+  async readFile(file: DirItem): Promise<WritableStream> {
+    let {url, headers = {}} = await this.getFileDownloadLink(file);
+    const response = await fetch(url, {headers});
+    const ws = new WritableStream();
+    response.body?.pipeTo(ws);
+    return ws;
+  }
+
+  writeFile(file: DirItem, content: ReadableStream): Promise<void> {
+    const {path} = file;
+    return this.request('/api/fs/stream', {
+      method: 'PUT',
+      headers: {
+        "File-Path": encodeURIComponent(path)
+      },
+      data: content,
     })
   }
 

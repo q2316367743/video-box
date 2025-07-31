@@ -6,3 +6,6 @@ export const APP_MIGRATION_DIR = `${APP_DIR}/migrations`;
 export const APP_DATA_PATH = `${APP_DIR}/data/database.sqlite`;
 export const APP_FILE_DIR = `${APP_DIR}/files`;
 export const APP_TEMP_DIR = `${APP_DIR}/temp`;
+
+
+export const HTTP_USER_AGENT = ''

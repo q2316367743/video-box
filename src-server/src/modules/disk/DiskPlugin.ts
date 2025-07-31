@@ -1,23 +1,37 @@
-export type DirItem = {
-  // 名字,不带拓展名
-  name: string;
-  // 拓展名
-  extname: string;
+export interface DirCoreItem {
   // 路径,唯一标识
   path: string;
+  // 名字
+  name: string;
   // 所在目录
   folder: string;
+}
+
+export interface DirItem<T extends Record<string, any> = Record<string, any>> extends DirCoreItem {
   // 类型
   type: 'file' | 'folder' | 'unknow'
+  // 拓展名
+  extname?: string;
   // 文件大小
-  size: number;
+  size?: number;
   // 最后修改时间
-  lastModified: number | string;
+  lastModified?: number | string;
   // 拓展信息
-  expands?: Record<string, any>;
+  expands?: T;
   // 可能存在的封面,忽略
   cover?: string;
-};
+}
+
+export interface DiskFileLink {
+  url: string;
+  headers?: Record<string, any>;
+  concurrency?: number;
+  part_size?: number;
+  // 对于本地文件系统，这是非常有用的
+  file?: File;
+  // 转码视频、缩略图。暂时作用未知
+  contentLength?: number;
+}
 
 /**
  * 磁盘插件，主要对磁盘的操作
@@ -25,9 +39,9 @@ export type DirItem = {
 export interface DiskPlugin {
   /**
    * 读取一个目录下的所有文件和文件夹
-   * @param path 目录路径
+   * @param item 目录
    */
-  readDir: (path: string) => Promise<Array<DirItem>>;
+  readDir: (item: DirItem) => Promise<Array<DirItem>>;
 
   /**
    * 重命名一个文件或文件夹
@@ -57,11 +71,6 @@ export interface DiskPlugin {
    * @param folder 目录所在文件夹
    */
   mkdir: (folder: DirItem, name: string) => Promise<void>;
-  /**
-   * 判断一个路径是否存在
-   * @param path
-   */
-  exists: (path: string) => Promise<boolean>;
 
   // ------------------------------------ 文件操作 ------------------------------------
 
@@ -69,25 +78,21 @@ export interface DiskPlugin {
    * 获取文件的下载链接
    * @param file 文件
    */
-  getFileDownloadLink: (path: string) => Promise<string>;
+  getFileDownloadLink: (file: DirItem) => Promise<DiskFileLink>;
+
+  // ------------------------------------ 高级操作 ------------------------------------
 
   /**
    * 读取一个文件的内容
    * @param file 文件
    */
-  readFileAsString: (file: DirItem) => Promise<string>;
-  /**
-   * 从字符串写入一个文件
-   * @param file 文件
-   * @param content 文件内容
-   */
-  writeFileFromString: (file: DirItem, content: string) => Promise<void>;
+  readFile: (file: DirItem) => Promise<WritableStream>;
   /**
    * 将 二进制 写入一个文件
    * @param file 文件
    * @param content 文件内容
    */
-  writeFileFromBlob: (file: DirItem, content: Blob) => Promise<void>;
+  writeFile: (file: DirItem, content: ReadableStream) => Promise<void>;
 
 
 }

@@ -1,0 +1,69 @@
+import {CustomForm} from "@/types/CustomForm";
+
+export const DiskPropsForQuarkOpen: Array<CustomForm> = [{
+  type: 'select',
+  label: '排序',
+  field: 'OrderBy',
+  defaultValue: 'none',
+  options: [{
+    label: '不排序',
+    value: 'none',
+  }, {
+    label: '文件类型',
+    value: 'file_type',
+  }, {
+    label: '文件名字',
+    value: 'file_name',
+  }, {
+    label: '修改时间',
+    value: 'updated_at',
+  }, {
+    label: '创建时间',
+    value: 'created_at',
+  }],
+}, {
+  type: 'select',
+  label: '排序方式',
+  field: 'OrderDirection',
+  defaultValue: 'asc',
+  options: [{
+    label: '升序',
+    value: 'asc',
+  }, {
+    label: '降序',
+    value: 'desc',
+  }]
+}, {
+  type: 'input',
+  field: 'UseOnlineAPI',
+  label: '使用在线接口',
+  defaultValue: '',
+  placeholder: '请输入接口地址',
+  required: true
+}, {
+  type: 'input',
+  field: 'APIAddress',
+  label: 'api地址',
+  placeholder: '请输入Token',
+  defaultValue: 'https://api.oplist.org/quarkyun/renewapi',
+  help: 'https://api.oplist.org/quarkyun/renewapi'
+}, {
+  type: 'input',
+  field: 'AccessToken',
+  label: '访问Token',
+}, {
+  type: 'input',
+  field: 'RefreshToken',
+  label: '刷新Token',
+  required: true
+}, {
+  type: 'input',
+  field: 'AppID',
+  label: 'AppID',
+  help: '如果没有的话就保持为空。'
+}, {
+  type: 'input',
+  field: 'SignKey',
+  label: 'SignKey',
+  help: '如果没有的话就保持为空。'
+}];

@@ -1,8 +1,9 @@
 import {AbsDiskPluginStore} from "@/modules/disk/abs/AbsDiskPluginStore";
 import {DiskSourceView} from "@/types/SourceDisk";
-import {createClient, WebDAVClient, AuthType} from "webdav";
 import {extname} from "@/utils/WebPath";
-import {DirItem} from "@/modules/disk/DiskPlugin";
+import {DirItem, DiskFileLink} from "@/modules/disk/DiskPlugin";
+import {createClient, WebDAVClient} from "webdav";
+import {Readable, Writable} from 'node:stream';
 
 interface DiskFromWebDAV {
   url: string;
@@ -26,26 +27,26 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
     });
   }
 
-  cp(item: DirItem, destinationFolder: string): Promise<void> {
-    const {path} = item;
-    return this.client.copyFile(path, destinationFolder);
+  async cp(item: DirItem, destinationFolder: string): Promise<void> {
+    await this.client.copyFile(item.path, destinationFolder);
   }
 
-  exists(path: string): Promise<boolean> {
-    return this.client.exists(path);
+  async getFileDownloadLink(file: DirItem): Promise<DiskFileLink> {
+    const link = this.client.getFileDownloadLink(file.path);
+    return {url: link}
   }
 
-  mkdir(item: DirItem): Promise<void> {
-    const {path} = item;
-    return this.client.createDirectory(path);
+  async mkdir(folder: DirItem, name: string): Promise<void> {
+    await this.client.createDirectory(`${folder.path}/${name}`)
   }
 
-  mv(item: DirItem, newPath: string): Promise<void> {
+  async mv(item: DirItem, newPath: string): Promise<void> {
     const {path} = item;
     return this.client.moveFile(path, newPath);
   }
 
-  async readDir(path: string): Promise<Array<DirItem>> {
+  async readDir(item: DirItem): Promise<Array<DirItem>> {
+    const {path} = item;
     const files = await this.client.getDirectoryContents(path, {
       details: false,
     });
@@ -67,41 +68,35 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
     });
   }
 
-  async readFileAsString(file: DirItem): Promise<string> {
-    const content = await this.client.getFileContents(file.path, {
-      format: "text",
-      details: false,
+  async readFile(file: DirItem): Promise<WritableStream> {
+    const readable = this.client.createReadStream(file.path);
+    const ws = new WritableStream({
+      write(chunk) { /* 需要真正写的地方写这里 */
+      },
+      close() {
+      },
+      abort() {
+      },
     });
-    return content as string;
+    await Readable.toWeb(readable).pipeTo(ws);
+    return ws;
   }
 
-  rename(item: DirItem, newName: string): Promise<void> {
+  async rename(item: DirItem, newName: string): Promise<void> {
     const {path, folder} = item;
-    return this.client.moveFile(path, folder + "/" + newName);
+    const destinationFilename = (folder === '/' ? '' : folder) + "/" + newName;
+    return this.client.moveFile(path, destinationFilename);
   }
 
-  rm(item: DirItem): Promise<void> {
+  async rm(item: DirItem): Promise<void> {
     const {path} = item;
     return this.client.deleteFile(path);
   }
 
-  async writeFileFromBlob(file: DirItem, content: Blob): Promise<void> {
-    const {path} = file;
-    const data = await content.arrayBuffer();
-    await this.client.putFileContents(path, data);
+  async writeFile(file: DirItem, content: ReadableStream): Promise<void> {
+    const writable = this.client.createWriteStream(file.path, {overwrite: true});
+    // @ts-ignore Node 与 DOM 的 WritableStream 签名差异
+    await content.pipeTo(Writable.toWeb(writable));
   }
 
-  async writeFileFromString(file: DirItem, content: string): Promise<void> {
-    const {path} = file;
-    await this.client.putFileContents(path, content);
-  }
-
-  private getDownloadLinkSync(item: string): string {
-    const link = this.client.getFileDownloadLink(item);
-    return `/api/proxy/url/${encodeURIComponent(link)}`;
-  }
-
-  async getFileDownloadLink(path: string): Promise<string> {
-    return this.getDownloadLinkSync(path);
-  }
 }

@@ -1,6 +1,6 @@
-import {BaseMapper} from "@/modules/database/BaseMapper";
-import {DiskSourceEntry, DiskSourceForm, DiskSourceView} from "@/types/SourceDisk";
 import {Database} from "db0";
+import {BaseMapper} from "@/modules/database/BaseMapper";
+import {DiskDriver, DiskSourceEntry, DiskSourceForm, DiskSourceView} from "@/types/SourceDisk";
 import {DiskPlugin} from "@/modules/disk/DiskPlugin";
 import {buildDiskPlugin} from "@/modules/disk";
 
@@ -16,6 +16,7 @@ export class SourceDiskDao extends BaseMapper<DiskSourceEntry> {
     const list = await this.query().list();
     return list.map(e => ({
       ...e,
+      driver: e.driver as DiskDriver,
       data: JSON.parse(e.data)
     }))
   }
@@ -27,10 +28,10 @@ export class SourceDiskDao extends BaseMapper<DiskSourceEntry> {
     });
   }
 
-  async update(id: string, params: DiskSourceForm): Promise<void> {
+  async update(id: string, params: Partial<DiskSourceForm>): Promise<void> {
     await this.updateById(id, {
       ...params,
-      data: JSON.stringify(params.data)
+      data: params.data ? JSON.stringify(params.data) : undefined
     });
     this.cache.delete(id);
   }
@@ -38,6 +39,7 @@ export class SourceDiskDao extends BaseMapper<DiskSourceEntry> {
   async delete(id: string): Promise<void> {
     await this.deleteById(id);
     this.cache.delete(id);
+    // TODO: 此处还需要删除驱动存储的数据
   }
 
   async getPlugin(id: string): Promise<DiskPlugin | null> {
@@ -50,6 +52,7 @@ export class SourceDiskDao extends BaseMapper<DiskSourceEntry> {
     }
     const plugin = buildDiskPlugin({
       ...entry,
+      driver: entry.driver as DiskDriver,
       data: JSON.parse(entry.data)
     });
     this.cache.set(id, plugin);

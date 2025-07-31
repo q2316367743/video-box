@@ -1,4 +1,4 @@
-export type DiskDriver = 'A_LIST_V3' | 'WEB_DAV';
+export type DiskDriver = 'A_LIST_V3' | 'WEB_DAV' | 'QUARK_OPEN' | 'QUARK' | 'UC';
 
 export interface DiskSourceEntry {
   title: string;
@@ -13,7 +13,7 @@ export interface DiskSourceEntry {
 export interface DiskSourceForm {
   title: string;
   // 驱动
-  driver: string;
+  driver: DiskDriver;
   data: Record<string, any>;
 }
 

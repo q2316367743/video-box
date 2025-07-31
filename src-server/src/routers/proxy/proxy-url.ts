@@ -1,8 +1,9 @@
 import {Elysia, t} from "elysia";
-import {debug} from "@rasla/logify";
+import {debug, error} from "@rasla/logify";
 import http from 'http';
 import https from 'https';
 import {URL} from 'url';
+import {Result} from "@/views/Result";
 
 const shake = (
   obj: Record<string, any>,
@@ -26,76 +27,72 @@ const shake = (
 const app = new Elysia();
 
 app.get(
-  "url/:url",
-  async ({params, set, headers, request}) => {
-    const {url} = params;
+  "url/:filename",
+  async ({query, headers, request}) => {
+    const {url} = query;
 
 
     // 解析协议、主机、端口、路径
     const link = new URL(url);
+    if (link.protocol !== 'http:' && link.protocol !== 'https:') {
+      return new Response(JSON.stringify(Result.error("不支持的协议")), {
+        status: 400,
+        statusText: '不支持的协议'
+      })
+    }
     const isHttps = link.protocol === 'https:';
 
     const {signal} = request;
 
     // 返回一个真正的 ReadableStream
-    return new Response(
-      new ReadableStream({
-        start(controller) {
-          debug('开始请求，协议: ' + link.protocol)
-          const client = (isHttps ? https : http).request(link, {
-                // 设置请求头
-                headers: shake({
-                  // 接收range头，以便支持断点续传
-                  range: headers.range,
-                  // 接收user-agent头，以便伪装成浏览器
-                  'user-agent': headers['user-agent'],
-                  // 接收referer头，以便伪装成浏览器
-                  referer: headers.referer,
-                  // 接收accept-encoding头，以便支持gzip压缩
-                  'accept-encoding': headers['accept-encoding'],
-                  // 接收accept-language头，以便支持多语言
-                  'accept-language': headers['accept-language'],
-                  // 接收pragma头，以便支持缓存
-                  pragma: headers.pragma,
-                  // 接收accept头，以便支持多种类型
-                  accept: headers.accept,
-                })
-              }, (res) => {
-                // 把下游响应头透传
-                debug("把下游响应头透传")
-                const downstreamHeaders: Record<string, string> = {};
-                for (const [k, v] of Object.entries(res.headers)) {
-                  if (v !== undefined) downstreamHeaders[k] = Array.isArray(v) ? v.join(', ') : v;
-                }
-                // 这里如果想把状态码也透传，需要 Elysia 的 set.status，但 Response 构造器里不能改
-                // 所以干脆让 Elysia 按 200 返，或者你可以用 res.statusCode 设置 set.status
-                res.on('data', (chunk) => controller.enqueue(chunk));
-                res.on('end', () => controller.close());
-                res.on('error', (e) => controller.error(e));
-              }
-            )
-          ;
+    return new Promise<Response>((resolve, reject) => {
 
-          client.on('error', (e) => controller.error(e));
-          client.end(); // 发送请求
+      const client = isHttps ? https : http;
+      const upstream = client.request(link, {
+        headers: shake(headers)
+      }, (res) => {
+        debug("请求成功");
+        // 1. 收集远端响应头
+        const headers = new Headers();
+        for (const [key, value] of Object.entries(res.headers)) {
+          if (Array.isArray(value)) {
+            value.forEach(v => headers.append(key, v));
+          } else if (value) {
+            headers.set(key, value);
+          }
+        }
 
-          // 浏览器或前端断开时会触发 cancel
-          signal.addEventListener('abort', () => {
-            debug("浏览器或前端断开时")
-            client.destroy(); // 立即断开与目标服务器的连接
-          });
-        },
-      }),
-      {
-        // 可选：把下游 Content-Type 等头塞进来
-        headers: {},
-      }
-    );
+        // 2. 构造 ReadableStream 并返回 Response
+        const stream = new ReadableStream<Uint8Array>({
+          start(controller) {
+            res.on('data', (chunk: Buffer) => controller.enqueue(new Uint8Array(chunk)));
+            res.on('end', () => controller.close());
+            res.on('error', (err) => {
+              controller.error(err);
+              // 请求失败
+              reject(err);
+            });
+
+            // 前端断开 → 销毁远端 socket
+            signal.addEventListener('abort', () => {
+              error("前端断开连接，销毁请求");
+              upstream.destroy();
+            });
+          },
+        });
+
+        resolve(new Response(stream, {status: res.statusCode, headers}));
+      })
+
+    });
 
   },
   {
     params: t.Object({
-      url: t.String(),
+      filename: t.String(),
+    }),
+    query: t.Object({
+      url: t.String()
     }),
     detail: {
       tags: ["proxy"],
