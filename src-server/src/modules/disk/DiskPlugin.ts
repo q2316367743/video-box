@@ -83,16 +83,15 @@ export interface DiskPlugin {
   // ------------------------------------ 高级操作 ------------------------------------
 
   /**
-   * 读取一个文件的内容
+   * 读取一个文件
    * @param file 文件
    */
-  readFile: (file: DirItem) => Promise<WritableStream>;
+  readFile: (file: DirItem) => Promise<ReadableStream>;
   /**
-   * 将 二进制 写入一个文件
+   * 写入一个文件
    * @param file 文件
-   * @param content 文件内容
    */
-  writeFile: (file: DirItem, content: ReadableStream) => Promise<void>;
+  writeFile: (file: DirItem) => Promise<WritableStream>;
 
 
 }

@@ -45,12 +45,12 @@ export abstract class AbsDiskPluginStore implements DiskPlugin {
 
   abstract readDir(item: DirItem): Promise<Array<DirItem>>;
 
-  abstract readFile(file: DirItem): Promise<WritableStream>;
+  abstract readFile(file: DirItem): Promise<ReadableStream>;
 
   abstract rename(item: DirItem, newName: string): Promise<void>;
 
   abstract rm(item: DirItem): Promise<void>;
 
-  abstract writeFile(file: DirItem, content: ReadableStream): Promise<void>;
+  abstract writeFile(file: DirItem): Promise<WritableStream>;
 
 }

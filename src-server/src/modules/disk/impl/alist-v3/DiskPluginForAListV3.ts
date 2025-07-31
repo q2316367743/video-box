@@ -1,4 +1,4 @@
-import axios, {AxiosRequestConfig} from "axios";
+import {AxiosRequestConfig} from "axios";
 import {AbsDiskPluginStore} from "@/modules/disk/abs/AbsDiskPluginStore";
 import {DirCoreItem, DirItem, DiskFileLink} from "@/modules/disk/DiskPlugin";
 import {DiskSourceView} from "@/types/SourceDisk";
@@ -105,10 +105,6 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     });
   }
 
-  exists(path: string): Promise<boolean> {
-    return Promise.resolve(true);
-  }
-
   mkdir(item: DirCoreItem): Promise<void> {
     const {path} = item;
     return this.request<void>('/api/fs/mkdir', {
@@ -187,14 +183,6 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     return {url};
   }
 
-  async readFileAsString(item: DirItem): Promise<string> {
-    let {url} = await this.getFileDownloadLink(item);
-    return this.request<string>(url, {
-      method: 'GET',
-      responseType: 'text',
-    })
-  }
-
   async rm(item: DirCoreItem): Promise<void> {
     const {path} = item;
     const nameIndex = path.lastIndexOf("/");
@@ -220,48 +208,25 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     })
   }
 
-  writeFileFromBlob(file: DirCoreItem, content: Blob): Promise<void> {
-    const {path} = file;
-    const formData = new FormData();
-    formData.append('file', content);
-    return this.request('/api/fs/form', {
-      method: 'PUT',
-      headers: {
-        "File-Path": encodeURIComponent(path)
-      },
-      data: formData,
-    })
-  }
-
-  writeFileFromString(file: DirCoreItem, content: string): Promise<void> {
-    const {path} = file;
-    return this.request<void>('/api/fs/put', {
-      method: 'PUT',
-      data: content,
-      headers: {
-        "File-Path": encodeURIComponent(path),
-        "Content-Type": "text/plain"
-      },
-    })
-  }
-
-  async readFile(file: DirItem): Promise<WritableStream> {
+  async readFile(file: DirItem): Promise<ReadableStream> {
     let {url, headers = {}} = await this.getFileDownloadLink(file);
     const response = await fetch(url, {headers});
-    const ws = new WritableStream();
-    response.body?.pipeTo(ws);
-    return ws;
+    return response.body!;
   }
 
-  writeFile(file: DirItem, content: ReadableStream): Promise<void> {
+  async writeFile(file: DirItem): Promise<WritableStream> {
+    let {authorization} = this.props;
     const {path} = file;
-    return this.request('/api/fs/stream', {
+    const {readable, writable} = new TransformStream<Uint8Array, Uint8Array>();
+    await fetch(new URL('/api/fs/stream', this.props.url), {
       method: 'PUT',
       headers: {
+        Authorization: authorization,
         "File-Path": encodeURIComponent(path)
       },
-      data: content,
+      body: readable
     })
+    return writable;
   }
 
 

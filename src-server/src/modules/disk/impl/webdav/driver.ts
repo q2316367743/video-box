@@ -3,7 +3,6 @@ import {DiskSourceView} from "@/types/SourceDisk";
 import {extname} from "@/utils/WebPath";
 import {DirItem, DiskFileLink} from "@/modules/disk/DiskPlugin";
 import {createClient, WebDAVClient} from "webdav";
-import {Readable, Writable} from 'node:stream';
 
 interface DiskFromWebDAV {
   url: string;
@@ -68,18 +67,18 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
     });
   }
 
-  async readFile(file: DirItem): Promise<WritableStream> {
+  async readFile(file: DirItem): Promise<ReadableStream> {
     const readable = this.client.createReadStream(file.path);
-    const ws = new WritableStream({
-      write(chunk) { /* 需要真正写的地方写这里 */
+    return new ReadableStream({
+      start(controller) {
+        readable.on('data', chunk => {
+          controller.enqueue(chunk)
+        })
       },
-      close() {
+      cancel(reason) {
+        readable.destroy(reason);
       },
-      abort() {
-      },
-    });
-    await Readable.toWeb(readable).pipeTo(ws);
-    return ws;
+    })
   }
 
   async rename(item: DirItem, newName: string): Promise<void> {
@@ -93,10 +92,19 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
     return this.client.deleteFile(path);
   }
 
-  async writeFile(file: DirItem, content: ReadableStream): Promise<void> {
+  async writeFile(file: DirItem): Promise<WritableStream> {
     const writable = this.client.createWriteStream(file.path, {overwrite: true});
-    // @ts-ignore Node 与 DOM 的 WritableStream 签名差异
-    await content.pipeTo(Writable.toWeb(writable));
+    return new WritableStream({
+      write: (chunk) => {
+        writable.write(chunk);
+      },
+      abort: (reason) => {
+        writable.destroy(reason)
+      },
+      close: () => {
+        writable.end();
+      }
+    })
   }
 
 }
