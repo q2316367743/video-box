@@ -1,7 +1,7 @@
 <template>
   <div class="plugin-disk-info">
     <div class="path">
-      <t-breadcrumb :options="options"/>
+      <t-breadcrumb :options="options" :max-items="5" :items-before-collapse="3" :items-after-collapse="3"/>
     </div>
     <t-list split>
       <t-list-item v-for="item in items" :key="item.path">
@@ -19,27 +19,32 @@
 <script lang="ts" setup>
 import {TdBreadcrumbItemProps} from 'tdesign-vue-next';
 import {DirItem, pluginDiskReadDir} from "@/apis/plugin/disk/readDir.ts";
-import {FileIcon, FolderIcon} from "tdesign-icons-vue-next";
+import {FileIcon, FolderIcon, HomeIcon} from "tdesign-icons-vue-next";
 import {openDiskFile} from "@/pages/disk/info/preview";
 import MessageUtil from "@/utils/modal/MessageUtil.ts";
+import {sourceDiskInfo} from "@/apis/source/disk.ts";
+import {DiskSourceEntry} from "@/types/SourceDisk.ts";
 
 const route = useRoute();
 const router = useRouter();
 
 const sourceId = route.params.id as string;
 const path = ref<string>(route.query.path as string || '/');
+const source = ref<DiskSourceEntry>();
 const options = computed<Array<TdBreadcrumbItemProps>>(() => {
   const o: Array<TdBreadcrumbItemProps> = [
     {
-      content: '根目录',
+      icon: () => h(HomeIcon),
+      content: source.value?.title || '根目录',
       onClick: () => {
         path.value = '/';
       }
     }];
   const a = path.value.split('/').filter(it => it.length > 0);
   a.forEach((p, i) => {
+    const [fid, name] = p.split(':');
     o.push({
-      content: p,
+      content: decodeURIComponent(name || fid),
       onClick: () => {
         path.value = '/' + a.slice(0, i + 1).join('/');
       }
@@ -54,9 +59,9 @@ const loading = ref(false);
 const handleClick = (item: DirItem) => {
   if (item.type === 'folder') {
     path.value = item.path;
-  }else if (item.type === 'file') {
+  } else if (item.type === 'file') {
     openDiskFile(sourceId, item);
-  }else {
+  } else {
     MessageUtil.error("文件未知")
   }
 };
@@ -72,7 +77,8 @@ watch(path, val => {
   pluginDiskReadDir(sourceId, val).then(res => {
     items.value = res;
   }).finally(() => loading.value = false)
-}, {immediate: true})
+}, {immediate: true});
+onMounted(() => sourceDiskInfo(sourceId).then(res => source.value = res));
 </script>
 <style scoped lang="less">
 .plugin-disk-info {
@@ -82,6 +88,7 @@ watch(path, val => {
     padding: 8px;
     border: 1px solid var(--td-border-level-2-color);
     border-radius: var(--td-radius-default);
+    margin: 0 8px;
   }
 }
 </style>

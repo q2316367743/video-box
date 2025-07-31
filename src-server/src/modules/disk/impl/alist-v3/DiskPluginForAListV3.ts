@@ -1,6 +1,6 @@
 import {AxiosRequestConfig} from "axios";
 import {AbsDiskPluginStore} from "@/modules/disk/abs/AbsDiskPluginStore";
-import {DirCoreItem, DirItem, DiskFileLink} from "@/modules/disk/DiskPlugin";
+import {DirItem, DiskFileLink} from "@/modules/disk/DiskPlugin";
 import {DiskSourceView} from "@/types/SourceDisk";
 import {useRequest} from "@/global/http";
 import {extname} from "@/utils/WebPath";
@@ -90,7 +90,7 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     return data.data;
   }
 
-  async cp(item: DirCoreItem, destinationFolder: string): Promise<void> {
+  async cp(item: DirItem, destinationFolder: string): Promise<void> {
     const {path} = item;
     let nameIndex = path.lastIndexOf("/");
     let src_dir = path.substring(0, nameIndex);
@@ -105,7 +105,7 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     });
   }
 
-  mkdir(item: DirCoreItem): Promise<void> {
+  mkdir(item: DirItem): Promise<void> {
     const {path} = item;
     return this.request<void>('/api/fs/mkdir', {
       method: 'POST',
@@ -115,7 +115,7 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     })
   }
 
-  async mv(item: DirCoreItem, destinationPath: string): Promise<void> {
+  async mv(item: DirItem, destinationPath: string): Promise<void> {
     const {path} = item;
     let nameIndex = path.lastIndexOf("/");
     let src_dir = path.substring(0, nameIndex);
@@ -132,8 +132,7 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     })
   }
 
-  async readDir(item: DirItem): Promise<Array<DirItem>> {
-    const {path} = item;
+  async readDir(path: string): Promise<Array<DirItem>> {
     const result = await this.request<FileData>('/api/fs/list', {
       method: 'POST',
       data: {
@@ -157,9 +156,7 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
           lastModified: temp.modified,
           path: path + '/' + temp.name,
           cover: temp.thumb,
-          expands: {
-            sign: temp.sign
-          }
+          sign: temp.sign
         });
       }
     }
@@ -183,7 +180,7 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     return {url};
   }
 
-  async rm(item: DirCoreItem): Promise<void> {
+  async rm(item: DirItem): Promise<void> {
     const {path} = item;
     const nameIndex = path.lastIndexOf("/");
     const dir = path.substring(0, nameIndex);
@@ -197,7 +194,7 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     })
   }
 
-  rename(item: DirCoreItem, newName: string): Promise<void> {
+  rename(item: DirItem, newName: string): Promise<void> {
     const {path} = item;
     return this.request<void>('/api/fs/rename', {
       method: 'POST',

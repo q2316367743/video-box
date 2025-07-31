@@ -111,11 +111,11 @@ export function listToDirItems(list: QuarkOrPcListItem[], parent: string): Array
     name: item.file_name,
     cover: item.big_thumbnail,
     size: item.size,
-    path: (parent === '/' ? '' : parent) + item.file_name,
+    path: (parent === '/' ? '' : parent) + `/${item.fid}:${encodeURIComponent(item.file_name)}`,
     folder: parent,
     lastModified: item.updated_at,
-    expands: item,
-    extname: extname(item.file_name)
+    extname: extname(item.file_name),
+    sign: item.fid
   }))
 }
 

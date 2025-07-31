@@ -1,9 +1,10 @@
 import {DirItem} from "@/apis/plugin/disk/readDir.ts";
 import {pluginDiskLink} from "@/apis/plugin/disk/link.ts";
 import {DialogPlugin} from "tdesign-vue-next";
+import {proxyDiskP} from "@/apis/proxy.ts";
 
 export async function openDiskVideoDialog(sourceId: string, item: DirItem) {
-  const link = await pluginDiskLink(sourceId, item.path);
+  const link = proxyDiskP(sourceId, item.path, item.sign);
   DialogPlugin({
     header: item.name,
     placement: "center",

@@ -44,8 +44,7 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
     return this.client.moveFile(path, newPath);
   }
 
-  async readDir(item: DirItem): Promise<Array<DirItem>> {
-    const {path} = item;
+  async readDir(path: string): Promise<Array<DirItem>> {
     const files = await this.client.getDirectoryContents(path, {
       details: false,
     });
@@ -63,6 +62,7 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
           sign: file.etag,
           mime: file.mime,
         },
+        sign: '',
       };
     });
   }

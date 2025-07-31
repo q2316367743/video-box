@@ -1,6 +1,6 @@
 import {AbsDiskPluginStore} from "@/modules/disk/abs/AbsDiskPluginStore";
 import {DiskSourceView} from "@/types/SourceDisk";
-import {DirCoreItem, DirItem} from "@/modules/disk/DiskPlugin";
+import {DirCoreItem, DirItem, DiskFileLink} from "@/modules/disk/DiskPlugin";
 import {DiskFromQuarkOpen} from "@/modules/disk/impl/quark-open/types";
 
 export class DiskPluginForQuarkOpen extends AbsDiskPluginStore {
@@ -13,7 +13,7 @@ export class DiskPluginForQuarkOpen extends AbsDiskPluginStore {
     this.props = source.data as DiskFromQuarkOpen;
   }
 
-  cp(item: DirCoreItem, destinationFolder: string): Promise<void> {
+  cp(item: DirItem, destinationFolder: string): Promise<void> {
     return Promise.resolve(undefined);
   }
 
@@ -21,40 +21,50 @@ export class DiskPluginForQuarkOpen extends AbsDiskPluginStore {
     return Promise.resolve(false);
   }
 
-  getFileDownloadLink(file: DirCoreItem): Promise<string> {
+
+  mkdir(folder: DirItem, name: string): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+
+  mv(item: DirItem, newPath: string): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+
+
+  readFileAsString(file: DirItem): Promise<string> {
     return Promise.resolve("");
   }
 
-  mkdir(folder: DirCoreItem, name: string): Promise<void> {
+  rename(item: DirItem, newName: string): Promise<void> {
     return Promise.resolve(undefined);
   }
 
-  mv(item: DirCoreItem, newPath: string): Promise<void> {
+  rm(item: DirItem): Promise<void> {
     return Promise.resolve(undefined);
+  }
+
+  writeFileFromBlob(file: DirItem, content: Blob): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+
+  writeFileFromString(file: DirItem, content: string): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+
+  async readFile(file: DirCoreItem, headers: Record<string, string>): Promise<Response> {
+    return new Response('');
+  }
+
+  writeFile(file: DirCoreItem): Promise<WritableStream> {
+    return Promise.resolve(new WritableStream());
+  }
+
+  getFileDownloadLink(file: DirCoreItem): Promise<DiskFileLink> {
+    return Promise.resolve({url: ''});
   }
 
   readDir(path: string): Promise<Array<DirItem>> {
     return Promise.resolve([]);
-  }
-
-  readFileAsString(file: DirCoreItem): Promise<string> {
-    return Promise.resolve("");
-  }
-
-  rename(item: DirCoreItem, newName: string): Promise<void> {
-    return Promise.resolve(undefined);
-  }
-
-  rm(item: DirCoreItem): Promise<void> {
-    return Promise.resolve(undefined);
-  }
-
-  writeFileFromBlob(file: DirCoreItem, content: Blob): Promise<void> {
-    return Promise.resolve(undefined);
-  }
-
-  writeFileFromString(file: DirCoreItem, content: string): Promise<void> {
-    return Promise.resolve(undefined);
   }
 
 }

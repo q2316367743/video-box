@@ -1,15 +1,17 @@
 export interface DirCoreItem {
-  // 路径,唯一标识
+  // 路径，当前目录项的路径
   path: string;
-  // 名字
-  name: string;
-  // 所在目录
-  folder: string;
+  // 签名
+  sign: string;
 }
 
 export interface DirItem<T extends Record<string, any> = Record<string, any>> extends DirCoreItem {
+  // 名字，
+  name: string;
   // 类型
-  type: 'file' | 'folder' | 'unknow'
+  type: 'file' | 'folder' | 'unknow';
+  // 所在目录
+  folder: string;
   // 拓展名
   extname?: string;
   // 文件大小
@@ -41,7 +43,7 @@ export interface DiskPlugin {
    * 读取一个目录下的所有文件和文件夹
    * @param item 目录
    */
-  readDir: (item: DirItem) => Promise<Array<DirItem>>;
+  readDir: (path: string) => Promise<Array<DirItem>>;
 
   /**
    * 重命名一个文件或文件夹
@@ -78,20 +80,21 @@ export interface DiskPlugin {
    * 获取文件的下载链接
    * @param file 文件
    */
-  getFileDownloadLink: (file: DirItem) => Promise<DiskFileLink>;
+  getFileDownloadLink: (file: DirCoreItem) => Promise<DiskFileLink>;
 
   // ------------------------------------ 高级操作 ------------------------------------
 
   /**
    * 读取一个文件
    * @param file 文件
+   * @param headers 请求头
    */
-  readFile: (file: DirItem) => Promise<ReadableStream>;
+  readFile: (file: DirCoreItem, headers: Record<string, string>) => Promise<Response>;
   /**
    * 写入一个文件
    * @param file 文件
    */
-  writeFile: (file: DirItem) => Promise<WritableStream>;
+  writeFile: (file: DirCoreItem) => Promise<WritableStream>;
 
 
 }

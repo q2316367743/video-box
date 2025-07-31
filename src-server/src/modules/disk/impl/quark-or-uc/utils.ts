@@ -1,7 +1,7 @@
 import axios, {AxiosRequestConfig} from "axios";
 import {DiskDriverForQuarkOrUc} from "@/modules/disk/impl/quark-or-uc/driver";
 import {getCookie, setCookie, updateFromResponse} from "@/utils/http/CookieUtil";
-import {DirItem} from "@/modules/disk/DiskPlugin";
+import {DirCoreItem, DirItem} from "@/modules/disk/DiskPlugin";
 import {
   listToDirItems,
   QuarkOrPcListItem,
@@ -9,6 +9,7 @@ import {
   SortRespData,
   SortRespMetadata
 } from "@/modules/disk/impl/quark-or-uc/types";
+import {basename} from "@/utils/WebPath";
 
 export async function quarkOrUcRequest<T, M extends Record<string, any> = {}>(pathname: string, method: string, requestConfig: AxiosRequestConfig, driver: DiskDriverForQuarkOrUc) {
   const {config} = driver;
@@ -18,11 +19,13 @@ export async function quarkOrUcRequest<T, M extends Record<string, any> = {}>(pa
     url: pathname,
     method,
     headers: {
+      ...requestConfig.headers,
       "Cookie": driver.props.Cookie,
       "Accept": "application/json, text/plain, */*",
       "Referer": config.referer
     },
     params: {
+      ...requestConfig.params,
       pr: config.pr,
       fr: "pc"
     }
@@ -50,10 +53,11 @@ export async function quarkOrUcRequest<T, M extends Record<string, any> = {}>(pa
 
 export async function quarkOrUcGetFiles(parent: string, driver: DiskDriverForQuarkOrUc) {
   const {props} = driver;
+  const [fid, name] = basename(parent).split(":");
   let page = 1;
   const size = 100;
   const params: Record<string, any> = {
-    pdir_fid: parent,
+    pdir_fid: fid || '0',
     _size: size,
     _fetch_total: 1
   }
@@ -70,26 +74,29 @@ export async function quarkOrUcGetFiles(parent: string, driver: DiskDriverForQua
 
     if (props.OnlyListVideoFile) {
       files.push(...listToDirItems(list.filter(file => (file.category === 1 || !file.file)), parent));
-    }else {
+    } else {
       files.push(...listToDirItems(list, parent));
     }
 
     if (page * size >= _total) break;
     page += 1;
   }
+  return files;
 }
 
-export async function quarkOrUcDownloadLink(file: DirItem<QuarkOrPcListItem>, driver: DiskDriverForQuarkOrUc) {
+export async function quarkOrUcDownloadLink(file: DirCoreItem, driver: DiskDriverForQuarkOrUc) {
   const {config} = driver;
-  const {expands} = file;
-  quarkOrUcRequest('/file/download', 'POST', {
+  const {sign} = file;
+  const rsp = await quarkOrUcRequest<any>('/file/download', 'POST', {
     headers: {
       'User-Agent': config.ua
     },
     data: {
-      fids: [expands?.fid]
+      fids: [sign]
     }
   }, driver);
+
+  return rsp.data[0]?.download_url as string;
 }
 
 
