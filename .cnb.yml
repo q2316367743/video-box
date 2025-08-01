@@ -1,0 +1,14 @@
+main:
+  tag_push:
+    - name: build_docker
+      docker:
+        image: oven/bun:1.2.15
+        volumes:
+          - ~/.bun/install/cache:cow
+      stages:
+        - name: 安装依赖
+          script: bun install
+        - name: 构建前端项目
+          script: bun run build
+        - name: 构建镜像
+          script: docker build -t ${CNB_REPO_SLUG_LOWERCASE}:${CNB_COMMIT} .
