@@ -11,4 +11,6 @@ main:
         - name: 构建前端项目
           script: bun run build
         - name: 构建镜像
-          script: docker build -t ${CNB_REPO_SLUG_LOWERCASE}:${CNB_COMMIT} .
+          script: docker build -t ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:latest .
+        - name: 推送到制品库
+          script: docker push ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:latest
