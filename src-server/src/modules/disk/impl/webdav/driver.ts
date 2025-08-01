@@ -1,8 +1,10 @@
+import * as crypto from 'node:crypto';
 import {AbsDiskPluginStore} from "@/modules/disk/abs/AbsDiskPluginStore";
 import {DiskSourceView} from "@/types/SourceDisk";
 import {extname} from "@/utils/WebPath";
 import {DirItem, DiskFileLink} from "@/modules/disk/DiskPlugin";
 import {createClient, WebDAVClient} from "webdav";
+import {SourceDiskDir} from "@/types/SourceDiskDIr";
 
 interface DiskFromWebDAV {
   url: string;
@@ -30,10 +32,6 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
     await this.client.copyFile(item.path, destinationFolder);
   }
 
-  async getFileDownloadLink(file: DirItem): Promise<DiskFileLink> {
-    const link = this.client.getFileDownloadLink(file.path);
-    return {url: link}
-  }
 
   async mkdir(folder: DirItem, name: string): Promise<void> {
     await this.client.createDirectory(`${folder.path}/${name}`)
@@ -44,32 +42,36 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
     return this.client.moveFile(path, newPath);
   }
 
-  async readDir(path: string): Promise<Array<DirItem>> {
+  async readDir(parent: SourceDiskDir): Promise<Array<DirItem>> {
+    const {path} = parent;
     const files = await this.client.getDirectoryContents(path, {
       details: false,
     });
     const prefix = path === '/' ? '' : path;
     return (Array.isArray(files) ? files : files.data).map((file) => {
+      const p = prefix + "/" + file.basename;
       return {
         name: file.basename,
         size: file.size,
-        extname: extname(file.basename),
+        extname: file.type === "file" ? extname(file.basename) : '',
         folder: path,
         type: file.type === "directory" ? 'folder' : file.type === "file" ? 'file' : 'unknow',
         lastModified: file.lastmod,
-        path: prefix + "/" + file.basename,
+        path: p,
         expands: {
           sign: file.etag,
           mime: file.mime,
         },
-        sign: '',
+        sign: crypto.createHash('md5').update(p).digest('hex'),
       };
     });
   }
 
-  async readFile(file: DirItem): Promise<ReadableStream> {
-    const readable = this.client.createReadStream(file.path);
-    return new ReadableStream({
+  async readFile(file: SourceDiskDir, headers: Record<string, string>): Promise<Response> {
+    const readable = this.client.createReadStream(file.path, {
+      headers: headers
+    });
+    return new Response(new ReadableStream({
       start(controller) {
         readable.on('data', chunk => {
           controller.enqueue(chunk)
@@ -77,8 +79,8 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
       },
       cancel(reason) {
         readable.destroy(reason);
-      },
-    })
+      }
+    }), {status: 200, statusText: 'OK'})
   }
 
   async rename(item: DirItem, newName: string): Promise<void> {
@@ -92,7 +94,7 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
     return this.client.deleteFile(path);
   }
 
-  async writeFile(file: DirItem): Promise<WritableStream> {
+  async writeFile(file: SourceDiskDir): Promise<WritableStream> {
     const writable = this.client.createWriteStream(file.path, {overwrite: true});
     return new WritableStream({
       write: (chunk) => {
@@ -105,6 +107,12 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
         writable.end();
       }
     })
+  }
+
+  async getFileDownloadLink(file: SourceDiskDir): Promise<DiskFileLink> {
+    const {path} = file;
+    const url = this.client.getFileDownloadLink(path);
+    return {url};
   }
 
 }

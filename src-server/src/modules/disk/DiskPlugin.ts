@@ -43,9 +43,9 @@ export interface DiskFileLink {
 export interface DiskPlugin {
   /**
    * 读取一个目录下的所有文件和文件夹
-   * @param item 目录
+   * @param parent 目录
    */
-  readDir: (path: SourceDiskDir) => Promise<Array<DirItem>>;
+  readDir: (parent: SourceDiskDir) => Promise<Array<DirItem>>;
 
   /**
    * 重命名一个文件或文件夹

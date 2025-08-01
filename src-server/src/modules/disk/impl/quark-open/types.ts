@@ -1,7 +1,7 @@
 import * as crypto from "node:crypto";
 import axios from "axios";
 import {HTTP_USER_AGENT} from "@/global/constant";
-import {DiskPluginForQuarkOpen} from "@/modules/disk/impl/quark-open/DiskPluginForQuarkOpen";
+import {DiskPluginForQuarkOpen} from "@/modules/disk/impl/quark-open/driver";
 
 const baseURL = 'https://open-api-drive.quark.cn';
 

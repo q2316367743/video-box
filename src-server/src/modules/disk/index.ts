@@ -1,13 +1,13 @@
 import {DiskDriver, DiskSourceView} from "@/types/SourceDisk";
 import {DiskPlugin} from "@/modules/disk/DiskPlugin.js";
 import {CustomForm} from "@/types/CustomForm";
-import {DiskPluginForAListV3} from "@/modules/disk/impl/alist-v3/DiskPluginForAListV3";
+import {DiskPluginForAListV3} from "@/modules/disk/impl/alist-v3/driver";
 import {DiskPluginForWebDAV} from "@/modules/disk/impl/webdav/driver";
-import {DiskPluginForQuarkOpen} from "@/modules/disk/impl/quark-open/DiskPluginForQuarkOpen";
+import {DiskPluginForQuarkOpen} from "@/modules/disk/impl/quark-open/driver";
 import {DiskDriverForQuarkOrUc} from "@/modules/disk/impl/quark-or-uc/driver";
-import {DiskPropsForAListV3} from "@/modules/disk/impl/alist-v3/DiskPropsForAListV3";
+import {DiskPropsForAListV3} from "@/modules/disk/impl/alist-v3/props";
 import {DiskPropsForWebDAV} from "@/modules/disk/impl/webdav/props";
-import {DiskPropsForQuarkOpen} from "@/modules/disk/impl/quark-open/DiskPropsForQuarkOpen";
+import {DiskPropsForQuarkOpen} from "@/modules/disk/impl/quark-open/props";
 import {DiskPropsForQuarkOrUc} from "@/modules/disk/impl/quark-or-uc/props";
 
 export function buildDiskPlugin(source: DiskSourceView): DiskPlugin {

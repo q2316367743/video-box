@@ -1,22 +1,22 @@
-import {DiskPlugin, FileState} from "@/modules/disk/DiskPlugin";
+import {DirItem, DiskPlugin} from "@/modules/disk/DiskPlugin";
 import {findCover} from "@/modules/disk/parser/CommonParser";
-import { defaultDiskProgram, DiskProgram } from "@/types/SourceDiskEntry";
-import { group, map } from "@/utils/ArrayUtil";
-import { parseNfo } from "@/utils/file/NfoUtil";
+import {defaultDiskProgram, DiskProgram} from "@/types/SourceDiskEntry";
+import {group, map} from "@/utils/ArrayUtil";
+import {parseNfo} from "@/utils/file/NfoUtil";
 
-async function parseMovieLoop(res: Array<FileState>, plugin: DiskPlugin, progress: Map<string, number>, programs: Array<DiskProgram>) {
-  const folders = new Array<FileState>()
-  const files = new Array<FileState>();
+async function parseMovieLoop(res: Array<DirItem>, plugin: DiskPlugin, progress: Map<string, number>, programs: Array<DiskProgram>) {
+  const folders = new Array<DirItem>()
+  const files = new Array<DirItem>();
   res.forEach(f => {
-    if (f.isDirectory) {
+    if (f.type === 'folder') {
       folders.push(f);
-    } else if (f.isFile) {
+    } else if (f.type === 'file') {
       files.push(f);
     }
   });
   // 解析目录
   for (const f of folders) {
-    const files = await plugin.readDir(f.path);
+    const files = await plugin.readDir(f as any);
     await parseMovieLoop(files, plugin, progress, programs);
   }
   // 解析文件
@@ -31,8 +31,8 @@ async function parseMovieLoop(res: Array<FileState>, plugin: DiskPlugin, progres
       const nfo = extMap.get('nfo');
       let p: DiskProgram;
       if (nfo) {
-        // 存在nfo
-        const nfoContent = await plugin.readFileAsString(nfo.path);
+        // TODO: 存在nfo
+        const nfoContent = await plugin.readFile(nfo as any, {}).then(res => res.text());
         p = parseNfo(nfoContent, 'movie');
       } else {
         // 构造默认
@@ -59,7 +59,7 @@ async function parseMovieLoop(res: Array<FileState>, plugin: DiskPlugin, progres
 }
 
 export async function parseMovie(plugin: DiskPlugin, progress: Map<string, number>): Promise<Array<DiskProgram>> {
-  const files = await plugin.readDir("/");
+  const files = await plugin.readDir({} as any);
   const programs = new Array<DiskProgram>();
   await parseMovieLoop(files, plugin, progress, programs);
   return programs

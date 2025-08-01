@@ -116,7 +116,7 @@ export function listToDirItems(list: QuarkOrPcListItem[], parent: SourceDiskDir)
     path: `${path === '/' ? '' : path}/${item.file_name}`,
     folder: path,
     lastModified: item.updated_at,
-    extname: extname(item.file_name),
+    extname: item.file ? extname(item.file_name) : '',
     sign: item.fid
   }))
 }

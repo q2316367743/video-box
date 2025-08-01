@@ -4,6 +4,7 @@ import {DirItem, DiskFileLink} from "@/modules/disk/DiskPlugin";
 import {DiskSourceView} from "@/types/SourceDisk";
 import {useRequest} from "@/global/http";
 import {extname} from "@/utils/WebPath";
+import {SourceDiskDir} from "@/types/SourceDiskDIr";
 
 interface DiskFromAList {
   url: string;
@@ -132,7 +133,8 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     })
   }
 
-  async readDir(path: string): Promise<Array<DirItem>> {
+  async readDir(parent: SourceDiskDir): Promise<Array<DirItem>> {
+    const {path} = parent;
     const result = await this.request<FileData>('/api/fs/list', {
       method: 'POST',
       data: {
@@ -163,7 +165,7 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     return items;
   }
 
-  async getFileDownloadLink(file: DirItem): Promise<DiskFileLink> {
+  async getFileDownloadLink(file: SourceDiskDir): Promise<DiskFileLink> {
     const {path} = file;
     const result = await this.request<FileInfo>('/api/fs/get', {
       method: 'POST',
@@ -205,13 +207,13 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     })
   }
 
-  async readFile(file: DirItem): Promise<ReadableStream> {
+  async readFile(file: SourceDiskDir): Promise<Response> {
     let {url, headers = {}} = await this.getFileDownloadLink(file);
     const response = await fetch(url, {headers});
-    return response.body!;
+    return new Response(response.body, {status: response.status, statusText: response.statusText});
   }
 
-  async writeFile(file: DirItem): Promise<WritableStream> {
+  async writeFile(file: SourceDiskDir): Promise<WritableStream> {
     let {authorization} = this.props;
     const {path} = file;
     const {readable, writable} = new TransformStream<Uint8Array, Uint8Array>();

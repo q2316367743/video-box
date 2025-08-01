@@ -4,25 +4,7 @@ import http from 'http';
 import https from 'https';
 import {URL} from 'url';
 import {Result} from "@/views/Result";
-
-const shake = (
-  obj: Record<string, any>,
-  filter?: (value: any) => boolean
-): Record<string, string> => {
-  if (!filter) {
-    filter = e => e === undefined
-  }
-  if (!obj) return {}
-  const keys = Object.keys(obj)
-  return keys.reduce((acc, key) => {
-    if (filter(obj[key])) {
-      return acc
-    } else {
-      acc[key] = obj[key]
-      return acc
-    }
-  }, {} as Record<string, any>)
-}
+import {shake} from "@/utils/lang/RecordUtil";
 
 const app = new Elysia();
 
