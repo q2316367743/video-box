@@ -46,7 +46,7 @@ export abstract class AbsDiskPluginStore implements DiskPlugin {
 
   abstract readDir(parent: SourceDiskDir): Promise<Array<DirItem>>;
 
-  abstract readFile(file: SourceDiskDir, headers: Record<string, string>): Promise<Response>;
+  abstract readFile(file: SourceDiskDir, headers: Record<string, string>, signal: AbortSignal): Promise<Response>;
 
   abstract rename(item: DirItem, newName: string): Promise<void>;
 

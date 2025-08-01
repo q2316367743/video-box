@@ -90,8 +90,9 @@ export interface DiskPlugin {
    * 读取一个文件
    * @param file 文件
    * @param headers 请求头
+   * @param signal 终止信号
    */
-  readFile: (file: SourceDiskDir, headers: Record<string, string>) => Promise<Response>;
+  readFile: (file: SourceDiskDir, headers: Record<string, string>, signal: AbortSignal) => Promise<Response>;
   /**
    * 写入一个文件
    * @param file 文件

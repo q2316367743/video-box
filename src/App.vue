@@ -1,7 +1,7 @@
 <template>
   <div class="main" ref="mainRef" @scroll="handleScroll">
     <app-header :show-shadow="showShadow"/>
-    <div class="pt-80px max-w-1200px mx-auto" style="min-height: calc(100vh - 237px);overflow-x: hidden">
+    <div class="pt-80px max-w-1200px mx-auto" style="min-height: calc(100vh - 237px);">
       <router-view/>
     </div>
     <app-footer/>
@@ -11,7 +11,7 @@
 <script lang="ts" setup>
 import AppHeader from "@/layout/AppHeader.vue";
 import AppFooter from "@/layout/AppFooter.vue";
-import {emitScrollToTop, onScrollToBottom} from "@/store/index";
+import {emitScrollToTop, onScrollToBottom} from "@/store";
 
 const mainRef = ref();
 const showShadow = ref(false);

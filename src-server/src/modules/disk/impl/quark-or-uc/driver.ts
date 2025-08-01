@@ -62,16 +62,19 @@ export class DiskDriverForQuarkOrUc extends AbsDiskPluginStore {
     return quarkOrUcGetFiles(parent, this);
   }
 
-  async readFile(file: SourceDiskDir, headers: Record<string, string>): Promise<Response> {
+  async readFile(file: SourceDiskDir, headers: Record<string, string>, signal: AbortSignal): Promise<Response> {
     const link = await this.getFileDownloadLink(file);
     const rsp = await fetch(link.url, {
       headers: {
         ...headers,
         ...link.headers
-      }
+      },
+      signal
     });
     return new Response(rsp.body, {
       headers: rsp.headers,
+      status: rsp.status,
+      statusText: rsp.statusText
     });
   }
 

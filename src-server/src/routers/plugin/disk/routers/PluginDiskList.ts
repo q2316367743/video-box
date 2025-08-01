@@ -7,7 +7,7 @@ import {diskBuildCache, diskRefreshCache} from "@/service/plugin/disk";
 
 export default new Elysia()
   .post(
-    '/read-dir/:id',
+    '/list/:id',
     async ({params, body}) => {
       const {id} = params;
       const {path, refresh} = body;
@@ -16,7 +16,7 @@ export default new Elysia()
 
       // 获取缓存
       debug('获取缓存')
-      const parent = await sourceDiskDirDao.query().eq('path', path).one()
+      const parent = await sourceDiskDirDao.getFromPath(path, id);
 
       if (parent) {
         if (parent.cache) {
@@ -46,18 +46,7 @@ export default new Elysia()
       } else {
         // 没有目录
         debug('没有目录')
-        if (path === '/') {
-          // 插入根目录
-          const parent = await sourceDiskDirDao.insert(sourceDiskDirDao.root(id));
-          const items = await plugin.readDir(sourceDiskDirDao.root(id));
-          await sourceDiskDirDao.updateById(parent.id, {cache: 1, update_time: Date.now()});
-          await sourceDiskDirDao.saveCache(items, id);
-          return Result.success(items);
-        } else {
-          // 构建缓存树
-          debug("构建缓存树")
-          return Result.success(await diskBuildCache(path, plugin, id));
-        }
+        return Result.success(await diskBuildCache(path, plugin, id));
       }
 
     },

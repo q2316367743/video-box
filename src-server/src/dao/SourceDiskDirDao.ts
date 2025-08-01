@@ -30,7 +30,7 @@ export class SourceDiskDirDao extends BaseMapper<SourceDiskDir> {
   }
 
   async readDir(parent: SourceDiskDir): Promise<Array<DirItem>> {
-    const items = await this.query().eq('folder', parent.path).list();
+    const items = await this.query().eq('folder', parent.path).eq('source_disk_id', parent.source_disk_id).list();
     return items.map(item => {
       let expands = {};
       if (item.expands) {
@@ -89,6 +89,14 @@ export class SourceDiskDirDao extends BaseMapper<SourceDiskDir> {
       await this.db.exec("ROLLBACK");
       throw e;
     }
+  }
+
+  async getFromPath(path: string, sourceDiskId: string): Promise<SourceDiskDir | null> {
+    return await this.query().eq('path', path).eq('source_disk_id', sourceDiskId).one();
+  }
+
+  async listFromFolder(folder: string, sourceDiskId: string): Promise<Array<SourceDiskDir>> {
+    return await this.query().eq('folder', folder).eq('source_disk_id', sourceDiskId).list();
   }
 
 }

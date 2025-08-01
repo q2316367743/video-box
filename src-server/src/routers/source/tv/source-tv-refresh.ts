@@ -3,10 +3,9 @@ import {debug} from "@rasla/logify";
 import {db} from "@/global/db";
 import {getM3u8Channel} from "@/utils/file/M3u8Util";
 import {Result} from "@/views/Result";
-import {runAsyncTask, runTask} from "@/modules/task/TaskRunner";
+import {runAsyncTask} from "@/modules/task/TempTaskRunner";
 import {sourceTvChannelDao, sourceTvDao} from "@/dao";
 import {SourceTv} from "@/types/SourceTv";
-import {taskStore} from "@/modules/task/TaskStore";
 
 const app = new Elysia();
 

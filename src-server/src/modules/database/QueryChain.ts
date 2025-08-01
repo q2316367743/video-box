@@ -60,12 +60,14 @@ export class QueryChain<T extends Record<string, any>, K extends keyof T = keyof
     this.values.push(v);
     return this;
   }
+
   likeLeft(k: K, v: T[K]) {
     if (typeof v === 'undefined' || v === null) return this;
     this.params.push(`\`${String(k)}\` like CONCAT('%', ?)`);
     this.values.push(v);
     return this;
   }
+
   likeRight(k: K, v: T[K]) {
     if (typeof v === 'undefined' || v === null) return this;
     this.params.push(`\`${String(k)}\` like CONCAT(?, '%')`);
@@ -133,6 +135,7 @@ export class QueryChain<T extends Record<string, any>, K extends keyof T = keyof
     debug("select values\t:" + this.values);
     const statement = db.prepare(sql);
     const list = await statement.all(...this.values);
+    debug("select result\t:" + list.length);
     return list as Array<T>;
   }
 

@@ -207,10 +207,20 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     })
   }
 
-  async readFile(file: SourceDiskDir): Promise<Response> {
-    let {url, headers = {}} = await this.getFileDownloadLink(file);
-    const response = await fetch(url, {headers});
-    return new Response(response.body, {status: response.status, statusText: response.statusText});
+  async readFile(file: SourceDiskDir, headers: Record<string, string>, signal: AbortSignal): Promise<Response> {
+    let link = await this.getFileDownloadLink(file);
+    const rsp = await fetch(link.url, {
+      headers: {
+        ...headers,
+        ...link.headers
+      },
+      signal
+    });
+    return new Response(rsp.body, {
+      headers: rsp.headers,
+      status: rsp.status,
+      statusText: rsp.statusText
+    });
   }
 
   async writeFile(file: SourceDiskDir): Promise<WritableStream> {

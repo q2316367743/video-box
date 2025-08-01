@@ -1,10 +1,9 @@
 <template>
   <div class="mt-16px">
     <t-row :gutter="[16,16]">
-      <t-col v-for="item in items" :key="item.id" flex="150px">
-        <t-card hover-shadow>
-          <t-link @click="handleJust(item)">{{ item.title }}</t-link>
-          <div>{{ item.driver }}</div>
+      <t-col v-for="item in items" :key="item.id" flex="300px">
+        <t-card hover-shadow @click="handleJust(item)">
+          <t-list-item-meta :title="item.title" :description="item.driver" />
         </t-card>
       </t-col>
     </t-row>

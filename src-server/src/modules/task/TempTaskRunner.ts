@@ -1,12 +1,31 @@
-// src/taskRunner.ts
+// 临时任务运行期
 import {debug, error} from '@rasla/logify';
-import {taskStore, type Task} from "./TaskStore";
-import {Result} from "@/views/Result";
+// 任务状态，pending-等待中，running-运行中，failed-失败
+export type TaskStatus = "pending" | "running" | "success" | "failed";
+// 任务日志等级，log-普通日志，warning-警告，error-错误
+type TaskLogLevel = "log" | "warning" | "error";
 
-// 模拟一个耗时 5~10 秒的 CPU 任务
-function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+export interface TaskLog {
+  text: string;
+  level: TaskLogLevel;
 }
+
+export interface Task {
+  // 任务ID，唯一
+  id: string;
+  name: string; // 任务名称
+  status: TaskStatus;
+  progress?: number; // 0~100，可选
+  result?: any; // 成功后的返回值
+  error?: string; // 失败原因
+  // 任务日志
+  logs: Array<TaskLog>;
+  createdAt: number;
+  updatedAt: number;
+}
+
+// 用 Map 存，重启进程就消失
+export const taskStore = new Map<string, Task>();
 
 // 根据任务名执行不同逻辑
 async function doRealWork(task: Task, runner: (task: Task) => Promise<void>) {
@@ -15,48 +34,6 @@ async function doRealWork(task: Task, runner: (task: Task) => Promise<void>) {
   task.updatedAt = Date.now();
   await runner(task);
 }
-
-/**
- * 启动任务并立刻返回
- * @param name 任务名称
- * @param id 任务ID
- * @param runner 任务执行函数
- * @returns 任务对象
- */
-export function runTask(
-  name: string,
-  id: string,
-  runner: (task: Task) => Promise<void>,
-) {
-  if (taskStore.has(id)) {
-    throw new Error(`task ${id} already exists`);
-  }
-  const task: Task = {
-    id,
-    name,
-    status: "pending",
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-    logs: [],
-  };
-  taskStore.set(id, task);
-
-  // 异步执行，不阻塞
-  (async () => {
-    try {
-      await doRealWork(task, runner);
-      taskStore.delete(task.id);
-    } catch (e: any) {
-      task.status = "failed";
-      task.error = e.message ?? String(e);
-      task.updatedAt = Date.now();
-      error(`任务「${name}」执行失败`)
-    }
-  })();
-
-  return task;
-}
-
 
 /**
  * 启动任务并阻塞

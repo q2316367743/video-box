@@ -1,5 +1,7 @@
 import {Elysia} from "elysia";
-import pluginDiskReadDir from "@/routers/plugin/disk/routers/PluginDiskReadDir";
+import pluginDiskList from "@/routers/plugin/disk/routers/PluginDiskList";
+import pluginDiskGet from "@/routers/plugin/disk/routers/PluginDiskGet";
 
 export default new Elysia({prefix: '/api/plugin/disk'})
-  .use(pluginDiskReadDir)
+  .use(pluginDiskList)
+  .use(pluginDiskGet)

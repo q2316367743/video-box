@@ -1,11 +1,12 @@
 import {Elysia, t} from "elysia";
+import {debug, error} from "@rasla/logify";
 import {sourceDiskDao, sourceDiskDirDao} from "@/dao";
 import {Result} from "@/views/Result";
 import {shake} from "@/utils/lang/RecordUtil";
 import {DiskPlugin} from "@/modules/disk/DiskPlugin";
-import {debug, error} from "@rasla/logify";
 import {SourceDiskDir} from "@/types/SourceDiskDIr";
-import {diskBuildCache, diskRefreshCache} from "@/service/plugin/disk";
+import {diskRefreshCache} from "@/service/plugin/disk";
+import {pluginDiskGet} from "@/service/plugin/disk/PluginDiskGetService";
 
 interface Param {
   sourceId: string;
@@ -22,42 +23,21 @@ interface Param {
  */
 async function refreshCache(item: SourceDiskDir, plugin: DiskPlugin): Promise<void> {
   // 获取所在目录
-  const folder = await sourceDiskDirDao.query().eq('path', item.folder).one();
+  const folder = await sourceDiskDirDao.getFromPath(item.folder, item.source_disk_id);
   if (!folder) return;
   await diskRefreshCache(folder, plugin);
 }
 
-/**
- * 寻找缓存记录
- * @param path 目录
- * @param plugin 插件
- * @param id 来源ID
- */
-async function getFromCache(path: string, plugin: DiskPlugin, id: string): Promise<SourceDiskDir | null> {
+async function getResponse(param: Param): Promise<Response> {
   // 获取缓存
-  const cache = await sourceDiskDirDao.query().eq('path', path).one();
-  if (cache) return cache;
-  const items = await diskBuildCache(path, plugin, id);
-  for (let item of items) {
-    if (item.path === path) {
-      // 确实存在
-      const cache = await sourceDiskDirDao.query().eq('path', path).one();
-      if (cache) return cache;
-    }
-  }
-  return null;
-}
-
-async function request(param: Param): Promise<Response> {
-  // 获取缓存
-  const {sourceId, path, plugin, headers} = param;
+  const {sourceId, path, plugin, headers,} = param;
   // 找到缓存记录
-  const sourceDiskDir = await getFromCache(path, plugin, sourceId);
+  const sourceDiskDir = await pluginDiskGet(path, plugin, sourceId);
   if (!sourceDiskDir) {
     // 返回404
     return new Response('404 Not Found', {
       status: 404,
-      statusText: 'NET_FOUND'
+      statusText: 'NOT_FOUND'
     });
   }
   if (sourceDiskDir.type !== 'file') {
@@ -67,7 +47,8 @@ async function request(param: Param): Promise<Response> {
     });
   }
   const rsp = await plugin.readFile(sourceDiskDir, shake({
-    range: headers['Range'] || undefined
+    connection: headers['connection'],
+    range: headers['range'],
   }));
   if (rsp.status === 404) {
     // 虽然存在记录，但是文件实际不存在，所以要刷新缓存
@@ -86,7 +67,7 @@ async function request(param: Param): Promise<Response> {
 export default new Elysia()
   .get(
     '/disk/:id/p/*',
-    async ({params, query, set, headers}) => {
+    async ({params, query, set, headers, request}) => {
       const {sign} = query;
       const {id} = params;
       const path = '/' + params['*'];
@@ -96,7 +77,9 @@ export default new Elysia()
         set.status = 500;
         return Result.error("磁盘插件未找到");
       }
-      return request({sourceId: id, path, sign, plugin, headers});
+
+      const {signal} = request;
+      return getResponse({sourceId: id, path: decodeURIComponent(path), sign, plugin, headers});
     },
     {
       params: t.Object({
@@ -104,6 +87,8 @@ export default new Elysia()
         '*': t.String()
       }),
       query: t.Object({
-        sign: t.String()
+        sign: t.String({
+          default: ''
+        })
       })
     })

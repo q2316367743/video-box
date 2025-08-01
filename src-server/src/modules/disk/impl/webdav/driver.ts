@@ -67,20 +67,46 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
     });
   }
 
-  async readFile(file: SourceDiskDir, headers: Record<string, string>): Promise<Response> {
-    const readable = this.client.createReadStream(file.path, {
-      headers: headers
-    });
-    return new Response(new ReadableStream({
-      start(controller) {
-        readable.on('data', chunk => {
-          controller.enqueue(chunk)
-        })
+  private parseBasicAuthUrl(input: string) {
+    const url = new URL(input);
+
+    // 提取 username 和 password
+    const username = url.username;
+    const password = url.password;
+
+    if (!username || !password) {
+      throw new Error('URL 中未包含 Basic Auth 信息');
+    }
+
+    // 生成 Authorization 头
+    const authHeader = 'Basic ' + btoa(`${username}:${password}`);
+
+    // 清理 URL（移除 username:password）
+    url.username = '';
+    url.password = '';
+
+    return {
+      url: url.toString(),
+      Authorization: authHeader,
+    };
+  }
+
+  async readFile(file: SourceDiskDir, headers: Record<string, string>, signal: AbortSignal): Promise<Response> {
+    const link = await this.getFileDownloadLink(file);
+    const {url, Authorization} = this.parseBasicAuthUrl(link.url);
+    const rsp = await fetch(url, {
+      headers: {
+        ...headers,
+        ...link.headers,
+        Authorization
       },
-      cancel(reason) {
-        readable.destroy(reason);
-      }
-    }), {status: 200, statusText: 'OK'})
+      signal
+    });
+    return new Response(rsp.body, {
+      headers: rsp.headers,
+      status: rsp.status,
+      statusText: rsp.statusText
+    });
   }
 
   async rename(item: DirItem, newName: string): Promise<void> {

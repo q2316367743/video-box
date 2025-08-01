@@ -1,11 +1,11 @@
 import {Elysia} from "elysia";
 import {debug, error} from "@rasla/logify";
 import {cron} from "@elysiajs/cron";
-import {db} from "@/global/db";
 import {refreshSourceWeb} from "@/modules/web/func/RefreshSourceWeb";
 import {SourceWeb} from "@/types/SourceWeb";
 import {sourceWebDao} from "@/dao";
 
+// 定时获取网络资源延迟
 export function registerJob(app: Elysia) {
   app.use(
     cron({

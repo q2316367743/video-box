@@ -15,7 +15,7 @@ export async function diskRefreshCache(parent: SourceDiskDir, plugin: DiskPlugin
   const items = await plugin.readDir(parent);
   debug(`重新获取: ${items.length}`)
   // 2. 获取当前缓存
-  const cache = await sourceDiskDirDao.query().eq('folder', parent.path).list();
+  const cache = await sourceDiskDirDao.listFromFolder(parent.path, parent.source_disk_id);
   debug(`获取当前缓存: ${cache.length}`)
   // 3. 比较数据
   const oldNameMap = map(cache, 'name', (_a, b) => b);
@@ -47,7 +47,9 @@ export async function diskRefreshCache(parent: SourceDiskDir, plugin: DiskPlugin
       });
       // 及全部子目录
       debug('及全部子目录')
-      await sourceDiskDirDao.query().likeRight('folder', oldSign.path)
+      await sourceDiskDirDao.query()
+        .likeRight('folder', oldSign.path)
+        .eq('source_disk_id', oldSign.source_disk_id)
         .batchList(100, async (list) => {
           for (let e of list) {
             await sourceDiskDirDao.updateById(oldSign.id, {
@@ -70,7 +72,9 @@ export async function diskRefreshCache(parent: SourceDiskDir, plugin: DiskPlugin
     for (let value of oldNameMap.values()) {
       await sourceDiskDirDao.deleteById(value.id);
       // 子目录也删除
-      await sourceDiskDirDao.query().likeRight('folder', value.path)
+      await sourceDiskDirDao.query()
+        .likeRight('folder', value.path)
+        .eq('source_disk_id', value.source_disk_id)
         .batchList(100, async (list) => {
           for (let e of list) {
             await sourceDiskDirDao.deleteById(e.id);
@@ -97,6 +101,15 @@ interface PathItem {
  * @param id 来源ID
  */
 export async function diskBuildCache(path: string, plugin: DiskPlugin, id: string): Promise<Array<DirItem>> {
+  if (path === '/') {
+    debug("构建根目录缓存")
+    const parent = await sourceDiskDirDao.insert(sourceDiskDirDao.root(id));
+    const items = await plugin.readDir(sourceDiskDirDao.root(id));
+    await sourceDiskDirDao.updateById(parent.id, {cache: 1, update_time: Date.now()});
+    await sourceDiskDirDao.saveCache(items, id);
+    return items;
+  }
+
   debug("构建目录树")
   const items = new Array<PathItem>();
   // 根目录
@@ -120,8 +133,7 @@ export async function diskBuildCache(path: string, plugin: DiskPlugin, id: strin
       target = sourceDiskDirDao.root(id);
       break;
     }
-    const cache = await sourceDiskDirDao.query()
-      .eq('path', pathItem.path).one();
+    const cache = await sourceDiskDirDao.getFromPath(pathItem.path, id);
     if (cache) {
       target = cache;
       break;

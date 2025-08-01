@@ -48,7 +48,7 @@ export class DiskPluginForQuarkOpen extends AbsDiskPluginStore {
     return Promise.resolve([]);
   }
 
-  readFile(file: SourceDiskDir, headers: Record<string, string>): Promise<Response> {
+  readFile(file: SourceDiskDir, headers: Record<string, string>, signal: AbortSignal): Promise<Response> {
     return Promise.resolve(new Response('', {headers}));
   }
 
