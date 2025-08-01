@@ -1,8 +1,9 @@
 import {AbsDiskPluginStore} from "@/modules/disk/abs/AbsDiskPluginStore";
 import {DiskConfigQuarkUc, DiskFormQuarkUc} from "@/modules/disk/impl/quark-or-uc/types";
 import {DiskSourceView} from "@/types/SourceDisk";
-import {DirCoreItem, DirItem, DiskFileLink} from "@/modules/disk/DiskPlugin";
+import {DirItem, DiskFileLink} from "@/modules/disk/DiskPlugin";
 import {quarkOrUcDownloadLink, quarkOrUcGetFiles} from "@/modules/disk/impl/quark-or-uc/utils";
+import {SourceDiskDir} from "@/types/SourceDiskDIr";
 
 export class DiskDriverForQuarkOrUc extends AbsDiskPluginStore {
   public readonly props: DiskFormQuarkUc;
@@ -43,7 +44,7 @@ export class DiskDriverForQuarkOrUc extends AbsDiskPluginStore {
     return Promise.resolve(undefined);
   }
 
-  async getFileDownloadLink(file: DirCoreItem): Promise<DiskFileLink> {
+  async getFileDownloadLink(file: SourceDiskDir): Promise<DiskFileLink> {
     const url = await quarkOrUcDownloadLink(file, this);
     return {
       url,
@@ -57,11 +58,11 @@ export class DiskDriverForQuarkOrUc extends AbsDiskPluginStore {
     }
   }
 
-  readDir(path: string): Promise<Array<DirItem>> {
-    return quarkOrUcGetFiles(path, this);
+  readDir(parent: SourceDiskDir): Promise<Array<DirItem>> {
+    return quarkOrUcGetFiles(parent, this);
   }
 
-  async readFile(file: DirCoreItem, headers: Record<string, string>): Promise<Response> {
+  async readFile(file: SourceDiskDir, headers: Record<string, string>): Promise<Response> {
     const link = await this.getFileDownloadLink(file);
     const rsp = await fetch(link.url, {
       headers: {
@@ -74,7 +75,7 @@ export class DiskDriverForQuarkOrUc extends AbsDiskPluginStore {
     });
   }
 
-  writeFile(file: DirCoreItem): Promise<WritableStream> {
+  writeFile(file: SourceDiskDir): Promise<WritableStream> {
     return Promise.resolve(new WritableStream());
   }
 

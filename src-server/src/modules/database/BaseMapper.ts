@@ -21,7 +21,7 @@ export class BaseMapper<T extends TableLike> {
 
   async selectList(params?: Partial<T>): Promise<Array<T>> {
     let qw = QueryChain.from<T>(this.tableName, this.db, params);
-    return qw.execQuery(this.tableName, this.db);
+    return qw.execQuery(this.db);
   }
 
   query(): QueryChain<T> {
@@ -37,7 +37,9 @@ export class BaseMapper<T extends TableLike> {
   }
 
   async selectById(id: string): Promise<T | null> {
-    const sql = `select * from ${this.tableName} where id = ?`
+    const sql = `select *
+                 from ${this.tableName}
+                 where id = ?`
     const statement = this.db.prepare(sql);
     const target = (await statement.get(id)) as T;
     return target || null;
@@ -56,7 +58,9 @@ export class BaseMapper<T extends TableLike> {
       // 没有更新的
       return;
     }
-    const sql = `update ${this.tableName} set ${query.join(", ")} where id = ?`;
+    const sql = `update ${this.tableName}
+                 set ${query.join(", ")}
+                 where id = ?`;
     debug("update sql:\t\t" + sql);
     debug("update values:\t" + values);
     const statement = this.db.prepare(sql);
@@ -81,12 +85,18 @@ export class BaseMapper<T extends TableLike> {
     }
     const sql = `insert into ${this.tableName} (id, ${query.join(
             ", "
-    )}) values (${list(0, query.length, "?").join(", ")})`;
+    )})
+                 values (${list(0, query.length, "?").join(", ")})`;
     debug("insert sql:\t\t" + sql);
     debug("insert values:\t" + values);
     const statement = this.db.prepare(sql);
-    const r = await statement.run(useSnowflake().nextId(), ...values);
+    const id = useSnowflake().nextId();
+    const r = await statement.run(id, ...values);
     debug("insert result:\t" + r.success);
+    return {
+      ...params,
+      id
+    } as T
   }
 
 }

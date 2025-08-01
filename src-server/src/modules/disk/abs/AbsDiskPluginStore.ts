@@ -1,7 +1,8 @@
-import {DirCoreItem, DirItem, DiskFileLink, DiskPlugin} from "@/modules/disk/DiskPlugin";
+import {DirItem, DiskFileLink, DiskPlugin} from "@/modules/disk/DiskPlugin";
 import {LocalNameEnum} from "@/global/LocalNameEnum";
 import {storage} from "@/global/db";
 import {sourceDiskDao} from "@/dao";
+import {SourceDiskDir} from "@/types/SourceDiskDIr";
 
 export abstract class AbsDiskPluginStore implements DiskPlugin {
   private readonly id: string;
@@ -37,20 +38,20 @@ export abstract class AbsDiskPluginStore implements DiskPlugin {
 
   abstract cp(item: DirItem, destinationFolder: string): Promise<void>;
 
-  abstract getFileDownloadLink(file: DirCoreItem): Promise<DiskFileLink>;
+  abstract getFileDownloadLink(file: SourceDiskDir): Promise<DiskFileLink>;
 
   abstract mkdir(folder: DirItem, name: string): Promise<void>;
 
   abstract mv(item: DirItem, newPath: string): Promise<void>;
 
-  abstract readDir(path: string): Promise<Array<DirItem>>;
+  abstract readDir(parent: SourceDiskDir): Promise<Array<DirItem>>;
 
-  abstract readFile(file: DirCoreItem, headers: Record<string, string>): Promise<Response>;
+  abstract readFile(file: SourceDiskDir, headers: Record<string, string>): Promise<Response>;
 
   abstract rename(item: DirItem, newName: string): Promise<void>;
 
   abstract rm(item: DirItem): Promise<void>;
 
-  abstract writeFile(file: DirCoreItem): Promise<WritableStream>;
+  abstract writeFile(file: SourceDiskDir): Promise<WritableStream>;
 
 }

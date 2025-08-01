@@ -1,3 +1,5 @@
+import {SourceDiskDir} from "@/types/SourceDiskDIr";
+
 export interface DirCoreItem {
   // 路径，当前目录项的路径
   path: string;
@@ -43,7 +45,7 @@ export interface DiskPlugin {
    * 读取一个目录下的所有文件和文件夹
    * @param item 目录
    */
-  readDir: (path: string) => Promise<Array<DirItem>>;
+  readDir: (path: SourceDiskDir) => Promise<Array<DirItem>>;
 
   /**
    * 重命名一个文件或文件夹
@@ -80,7 +82,7 @@ export interface DiskPlugin {
    * 获取文件的下载链接
    * @param file 文件
    */
-  getFileDownloadLink: (file: DirCoreItem) => Promise<DiskFileLink>;
+  getFileDownloadLink: (file: SourceDiskDir) => Promise<DiskFileLink>;
 
   // ------------------------------------ 高级操作 ------------------------------------
 
@@ -89,12 +91,12 @@ export interface DiskPlugin {
    * @param file 文件
    * @param headers 请求头
    */
-  readFile: (file: DirCoreItem, headers: Record<string, string>) => Promise<Response>;
+  readFile: (file: SourceDiskDir, headers: Record<string, string>) => Promise<Response>;
   /**
    * 写入一个文件
    * @param file 文件
    */
-  writeFile: (file: DirCoreItem) => Promise<WritableStream>;
+  writeFile: (file: SourceDiskDir) => Promise<WritableStream>;
 
 
 }

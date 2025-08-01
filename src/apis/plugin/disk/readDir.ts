@@ -1,4 +1,4 @@
-import {useGet} from "@/apis/common.ts";
+import {useGet, usePost} from "@/apis/common.ts";
 
 export interface DirCoreItem {
   // 路径，当前目录项的路径
@@ -25,7 +25,13 @@ export interface DirItem<T extends Record<string, any> = Record<string, any>> ex
   // 可能存在的封面,忽略
   cover?: string;
 }
+export interface PluginDiskReadDirData {
+  // 签名
+  path: string;
+  // 是否刷新缓存
+  refresh: boolean;
+}
 
-export function pluginDiskReadDir(sourceId: string, path: string) {
-  return useGet<Array<DirItem>>(`/api/plugin/disk/read-dir/${sourceId}`, {path});
+export function pluginDiskReadDir(sourceId: string, data: PluginDiskReadDirData) {
+  return usePost<Array<DirItem>>(`/api/plugin/disk/read-dir/${sourceId}`, data);
 }

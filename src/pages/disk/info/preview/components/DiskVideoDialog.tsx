@@ -1,5 +1,4 @@
 import {DirItem} from "@/apis/plugin/disk/readDir.ts";
-import {pluginDiskLink} from "@/apis/plugin/disk/link.ts";
 import {DialogPlugin} from "tdesign-vue-next";
 import {proxyDiskP} from "@/apis/proxy.ts";
 

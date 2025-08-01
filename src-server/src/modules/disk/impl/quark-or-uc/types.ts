@@ -1,5 +1,6 @@
 import {DirItem} from "@/modules/disk/DiskPlugin";
 import {extname} from "@/utils/WebPath";
+import {SourceDiskDir} from "@/types/SourceDiskDIr";
 
 export interface DiskFormQuarkUc {
   Cookie: string;
@@ -105,14 +106,15 @@ export interface QuarkOrPcListItem {
   apk_info?: Apkinfo;
 }
 
-export function listToDirItems(list: QuarkOrPcListItem[], parent: string): Array<DirItem> {
+export function listToDirItems(list: QuarkOrPcListItem[], parent: SourceDiskDir): Array<DirItem> {
+  const {path} = parent;
   return list.map(item => ({
     type: item.file ? 'file' : 'folder',
     name: item.file_name,
     cover: item.big_thumbnail,
     size: item.size,
-    path: (parent === '/' ? '' : parent) + `/${item.fid}:${encodeURIComponent(item.file_name)}`,
-    folder: parent,
+    path: `${path === '/' ? '' : path}/${item.file_name}`,
+    folder: path,
     lastModified: item.updated_at,
     extname: extname(item.file_name),
     sign: item.fid

@@ -10,6 +10,7 @@ import {
   SortRespMetadata
 } from "@/modules/disk/impl/quark-or-uc/types";
 import {basename} from "@/utils/WebPath";
+import {SourceDiskDir} from "@/types/SourceDiskDIr";
 
 export async function quarkOrUcRequest<T, M extends Record<string, any> = {}>(pathname: string, method: string, requestConfig: AxiosRequestConfig, driver: DiskDriverForQuarkOrUc) {
   const {config} = driver;
@@ -51,13 +52,12 @@ export async function quarkOrUcRequest<T, M extends Record<string, any> = {}>(pa
   return data;
 }
 
-export async function quarkOrUcGetFiles(parent: string, driver: DiskDriverForQuarkOrUc) {
+export async function quarkOrUcGetFiles(parent: SourceDiskDir, driver: DiskDriverForQuarkOrUc) {
   const {props} = driver;
-  const [fid, name] = basename(parent).split(":");
   let page = 1;
   const size = 100;
   const params: Record<string, any> = {
-    pdir_fid: fid || '0',
+    pdir_fid: parent.sign || '0',
     _size: size,
     _fetch_total: 1
   }

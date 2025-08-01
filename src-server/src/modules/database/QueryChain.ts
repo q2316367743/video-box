@@ -54,6 +54,25 @@ export class QueryChain<T extends Record<string, any>, K extends keyof T = keyof
     return this.simpleWhere(k, v, "<");
   }
 
+  like(k: K, v: T[K]) {
+    if (typeof v === 'undefined' || v === null) return this;
+    this.params.push(`\`${String(k)}\` like CONCAT('%', ?, '%')`);
+    this.values.push(v);
+    return this;
+  }
+  likeLeft(k: K, v: T[K]) {
+    if (typeof v === 'undefined' || v === null) return this;
+    this.params.push(`\`${String(k)}\` like CONCAT('%', ?)`);
+    this.values.push(v);
+    return this;
+  }
+  likeRight(k: K, v: T[K]) {
+    if (typeof v === 'undefined' || v === null) return this;
+    this.params.push(`\`${String(k)}\` like CONCAT(?, '%')`);
+    this.values.push(v);
+    return this;
+  }
+
   order(k: K, order: "ASC" | "DESC") {
     this.orders.push(`\`${String(k)}\` ${order}`)
     return this;
@@ -87,7 +106,7 @@ export class QueryChain<T extends Record<string, any>, K extends keyof T = keyof
     return this;
   }
 
-  async execQuery(tableName: string, db: Database) {
+  private getSql() {
     let sql = 'select';
     if (this.fields.length > 0) {
       sql += (' ' + this.fields.map(field => `\`${String(field)}\``).join(', '))
@@ -95,7 +114,7 @@ export class QueryChain<T extends Record<string, any>, K extends keyof T = keyof
       sql += (' *');
     }
 
-    sql += (` from \`${tableName}\``)
+    sql += (` from \`${this.tableName}\``)
     if (this.params.length > 0) {
       sql += (' where ' + this.params.join(' and '))
     }
@@ -103,9 +122,13 @@ export class QueryChain<T extends Record<string, any>, K extends keyof T = keyof
       sql += (' order by ' + this.orders.join(', '))
     }
     if (this.lastExpress.length > 0) {
-      sql += this.lastExpress.join(' ');
+      sql += (' ' + this.lastExpress.join(' '));
     }
+    return sql;
+  }
 
+  async execQuery(db: Database) {
+    const sql = this.getSql();
     debug("select sql\t\t:" + sql);
     debug("select values\t:" + this.values);
     const statement = db.prepare(sql);
@@ -114,20 +137,38 @@ export class QueryChain<T extends Record<string, any>, K extends keyof T = keyof
   }
 
   list(): Promise<Array<T>> {
-    return this.execQuery(this.tableName, this.db)
+    return this.execQuery(this.db);
   }
 
   async first(): Promise<T | null> {
     this.lastSql("LIMIT 1");
-    const list = await this.execQuery(this.tableName, this.db);
+    const list = await this.execQuery(this.db);
     return list.length > 0 ? list[0] : null;
   }
 
   async one(): Promise<T | null> {
     this.lastSql("LIMIT 1");
-    const list = await this.execQuery(this.tableName, this.db);
+    const list = await this.execQuery(this.db);
     if (list.length > 1) return Promise.reject(new Error("存在多个数据"));
     return list.length > 0 ? list[0] : null;
+  }
+
+  async count(): Promise<number> {
+    const row = await this.db.prepare(`select count(1) as \`total\`
+                                       from (${this.getSql()}) t`).get() as any;
+    return row?.total || 0;
+  }
+
+  async batchList(batchSize: number, each: (list: Array<T>) => Promise<void>): Promise<void> {
+    let page = 1;
+    const total = await this.count();
+    while ((page - 1) * batchSize < total) {
+      const list = await this.lastSql(`LIMIT ${page - 1}, ${batchSize}`).list();
+      // 把刚刚加入的 LIMIT 语句弹出
+      this.lastExpress.pop();
+      await each(list);
+      page += 1;
+    }
   }
 
 }
