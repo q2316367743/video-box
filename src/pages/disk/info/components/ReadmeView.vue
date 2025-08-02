@@ -1,5 +1,5 @@
 <template>
-  <t-card class="mt-16px" size="small">
+  <t-card class="mt-8px" size="small">
     <markdown-preview :url/>
   </t-card>
 </template>

@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    DiskFolderSelect: typeof import('./src/components/DiskFolderSelect.vue')['default']
     EmptyResult: typeof import('./src/components/Result/EmptyResult.vue')['default']
     FolderSelect: typeof import('./src/components/FolderSelect/FolderSelect.vue')['default']
     InfoResult: typeof import('./src/components/Result/InfoResult.vue')['default']
@@ -56,6 +57,7 @@ declare module 'vue' {
     TParagraph: typeof import('tdesign-vue-next')['Paragraph']
     TPopconfirm: typeof import('tdesign-vue-next')['Popconfirm']
     TRadio: typeof import('tdesign-vue-next')['Radio']
+    TRadioButton: typeof import('tdesign-vue-next')['RadioButton']
     TRadioGroup: typeof import('tdesign-vue-next')['RadioGroup']
     TRow: typeof import('tdesign-vue-next')['Row']
     TSelect: typeof import('tdesign-vue-next')['Select']

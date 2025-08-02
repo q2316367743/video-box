@@ -42,13 +42,13 @@ export abstract class AbsDiskPluginStore implements DiskPlugin {
 
   abstract mkdir(folder: DirItem, name: string): Promise<void>;
 
-  abstract mv(item: DirItem, newPath: string): Promise<void>;
+  abstract mv(file: DirItem, folder: DirItem): Promise<void>;
 
   abstract readDir(parent: SourceDiskDir): Promise<Array<DirItem>>;
 
   abstract readFile(file: SourceDiskDir, headers: Record<string, string>, signal: AbortSignal): Promise<Response>;
 
-  abstract rename(item: DirItem, newName: string): Promise<void>;
+  abstract rename(item: SourceDiskDir, newName: string): Promise<void>;
 
   abstract rm(item: DirItem): Promise<void>;
 

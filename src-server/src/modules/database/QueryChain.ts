@@ -157,8 +157,12 @@ export class QueryChain<T extends Record<string, any>, K extends keyof T = keyof
   }
 
   async count(): Promise<number> {
-    const row = await this.db.prepare(`select count(1) as \`total\`
-                                       from (${this.getSql()}) t`).get() as any;
+    const sql = `select count(1) as \`total\`
+                 from (${this.getSql()}) t`;
+    debug("select sql\t\t:" + sql);
+    debug("select values\t:" + this.values);
+    const row = await this.db.prepare(sql).get(...this.values) as any;
+    debug('select result\t:' + JSON.stringify(row))
     return row?.total || 0;
   }
 

@@ -1,20 +1,25 @@
 <template>
-  <div class="main" ref="mainRef" @scroll="handleScroll">
-    <app-header :show-shadow="showShadow"/>
-    <div class="pt-80px max-w-1200px mx-auto" style="min-height: calc(100vh - 237px);">
-      <router-view/>
+  <div class="main">
+    <div class="main-aside" :style="{width: collapsed ? '64px' : '232px'}">
+      <app-side v-model="collapsed"/>
     </div>
-    <app-footer/>
-    <t-back-top container=".main"/>
+    <div class="main-content" ref="mainRef" @scroll="handleScroll">
+      <app-header :show-shadow="showShadow"/>
+      <div class="max-w-1200px mx-auto" style="min-height: calc(100vh - 237px);">
+        <router-view/>
+      </div>
+    </div>
+    <t-back-top container=".main-content"/>
   </div>
 </template>
 <script lang="ts" setup>
 import AppHeader from "@/layout/AppHeader.vue";
-import AppFooter from "@/layout/AppFooter.vue";
+import AppSide from "@/layout/AppSide.vue";
 import {emitScrollToTop, onScrollToBottom} from "@/store";
 
 const mainRef = ref();
 const showShadow = ref(false);
+const collapsed = ref(true);
 
 useInfiniteScroll(mainRef, () => {
   onScrollToBottom.trigger();
@@ -40,5 +45,28 @@ const handleScroll = (e: Event) => {
   color: var(--td-text-color-primary);
   background-color: var(--td-bg-color-container);
   overflow: auto;
+  flex-direction: row;
+  display: flex;
+  background: var(--td-bg-color-page);
+  flex: auto;
+  font: var(--td-font-body-medium);
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  .main-aside {
+    border-right: 1px solid var(--td-border-level-2-color);
+    position: relative;
+    transition: all 0.2s;
+    background: var(--td-bg-color-container);
+  }
+
+  .main-content {
+    height: 100vh;
+    overflow-y: auto;
+    position: relative;
+    flex: auto;
+  }
 }
 </style>

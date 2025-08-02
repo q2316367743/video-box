@@ -1,22 +1,23 @@
 <template>
   <div class="plugin-disk-info">
-    <div class="path">
-      <t-breadcrumb :options="options" :max-items="5" :items-before-collapse="3" :items-after-collapse="3"/>
-      <t-button theme="primary" variant="text" shape="square" size="small" @click="handleRefresh()"
-                :disabled="!current">
-        <template #icon>
-          <refresh-icon/>
-        </template>
-      </t-button>
-    </div>
-    <t-card class="mt-16px mb-32px" size="small">
-      <t-loading :loading="loading">
-        <folder-view v-if="current && current.type === 'folder'" :items="items" @update="handleClick"/>
-        <file-view v-else-if="current && current.type === 'file'" :item="current" :source-id="sourceId"/>
-        <loading-result v-else-if="current" title="文件类型未知"/>
-        <loading-result v-else title="没有文件"/>
-      </t-loading>
+    <t-card size="small" class="pos-sticky top-0 z-10001">
+      <div class="path">
+        <t-breadcrumb :options="options" :max-items="5" :items-before-collapse="3" :items-after-collapse="3"/>
+        <t-button theme="primary" variant="text" shape="square" size="small" @click="handleRefresh(true)"
+                  :disabled="!current">
+          <template #icon>
+            <refresh-icon/>
+          </template>
+        </t-button>
+      </div>
     </t-card>
+    <t-loading :loading="loading" :style="{marginBottom: readme? '8px' : '16px'}">
+      <folder-view v-if="current && current.type === 'folder'" :items="items" :source-id="sourceId"
+                   @update="handleClick" @refresh="handleRefresh(false)"/>
+      <file-view v-else-if="current && current.type === 'file'" :item="current" :source-id="sourceId"/>
+      <loading-result v-else-if="current" title="文件类型未知"/>
+      <loading-result v-else title="没有文件"/>
+    </t-loading>
     <!-- 可能存在的README.md -->
     <readme-view v-if="readme" :source-id="sourceId" :item="readme"/>
   </div>
@@ -24,7 +25,10 @@
 <script lang="ts" setup>
 import {TdBreadcrumbItemProps} from 'tdesign-vue-next';
 import {DirItem, pluginDiskGet, pluginDiskList} from "@/apis/plugin/disk/list.ts";
-import {HomeIcon, RefreshIcon} from "tdesign-icons-vue-next";
+import {
+  HomeIcon,
+  RefreshIcon,
+} from "tdesign-icons-vue-next";
 import {sourceDiskInfo} from "@/apis/source/disk.ts";
 import {DiskSourceEntry} from "@/types/SourceDisk.ts";
 import FolderView from "@/pages/disk/info/components/FolderView.vue";
@@ -86,11 +90,11 @@ const handleClick = async (item: DirItem) => {
 const handlePath = (path: string) => {
   pluginDiskGet(sourceId, {path: path, password: ''}).then(handleClick);
 }
-const handleRefresh = () => {
+const handleRefresh = (refresh: boolean) => {
   if (!current.value) return;
   if (loading.value) return;
   loading.value = true;
-  pluginDiskList(sourceId, {path: current.value.path, refresh: true}).then(res => {
+  pluginDiskList(sourceId, {path: current.value.path, refresh}).then(res => {
     items.value = res;
   }).finally(() => loading.value = false)
 }
@@ -104,12 +108,10 @@ onMounted(() => {
 </script>
 <style scoped lang="less">
 .plugin-disk-info {
-  margin-top: 16px;
+  margin-top: 8px;
 
   .path {
-    padding: 8px;
-    border: 1px solid var(--td-border-level-2-color);
-    border-radius: var(--td-radius-medium);
+    width: 100%;
     display: flex;
     justify-content: space-between;
   }

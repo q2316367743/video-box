@@ -10,7 +10,7 @@ import {diskBuildCache} from "@/service/plugin/disk/index";
  * @param id
  */
 export async function pluginDiskGet(path: string, plugin: DiskPlugin, id: string): Promise<SourceDiskDir | null> {
-// 获取缓存
+  // 获取缓存
   const cache = await sourceDiskDirDao.getFromPath(path, id);
   if (cache) return cache;
   const items = await diskBuildCache(path, plugin, id);

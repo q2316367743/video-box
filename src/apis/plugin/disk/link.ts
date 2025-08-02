@@ -1,4 +1,4 @@
-import {useGet} from "@/apis/common.ts";
+import {useGet, usePut} from "@/apis/common.ts";
 import {useUserStore} from "@/store/UserStore.ts";
 
 export async function pluginDiskLink(sourceId: string, path: string) {
@@ -10,4 +10,8 @@ export async function pluginDiskLink(sourceId: string, path: string) {
     return url.toString();
   }
   return link;
+}
+
+export async function pluginDiskRename(sourceId: string, path: string, name: string) {
+  return usePut(`/api/plugin/disk/rename/${sourceId}`, {path, name});
 }

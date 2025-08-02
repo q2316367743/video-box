@@ -5,8 +5,7 @@ import {Result} from "@/views/Result";
 import {shake} from "@/utils/lang/RecordUtil";
 import {DiskPlugin} from "@/modules/disk/DiskPlugin";
 import {SourceDiskDir} from "@/types/SourceDiskDIr";
-import {diskRefreshCache} from "@/service/plugin/disk";
-import {pluginDiskGet} from "@/service/plugin/disk/PluginDiskGetService";
+import {diskRefreshCache, pluginDiskGet} from "@/service/plugin/disk";
 
 interface Param {
   sourceId: string;
@@ -14,6 +13,7 @@ interface Param {
   sign: string;
   plugin: DiskPlugin;
   headers: Record<string, string | undefined>;
+  signal: AbortSignal;
 }
 
 /**
@@ -30,7 +30,7 @@ async function refreshCache(item: SourceDiskDir, plugin: DiskPlugin): Promise<vo
 
 async function getResponse(param: Param): Promise<Response> {
   // 获取缓存
-  const {sourceId, path, plugin, headers,} = param;
+  const {sourceId, path, plugin, headers, signal} = param;
   // 找到缓存记录
   const sourceDiskDir = await pluginDiskGet(path, plugin, sourceId);
   if (!sourceDiskDir) {
@@ -49,7 +49,7 @@ async function getResponse(param: Param): Promise<Response> {
   const rsp = await plugin.readFile(sourceDiskDir, shake({
     connection: headers['connection'],
     range: headers['range'],
-  }));
+  }), signal);
   if (rsp.status === 404) {
     // 虽然存在记录，但是文件实际不存在，所以要刷新缓存
     // 但是此处是异步的，不能阻塞当前进程
@@ -79,7 +79,7 @@ export default new Elysia()
       }
 
       const {signal} = request;
-      return getResponse({sourceId: id, path: decodeURIComponent(path), sign, plugin, headers});
+      return getResponse({sourceId: id, path: decodeURIComponent(path), sign, plugin, headers, signal});
     },
     {
       params: t.Object({

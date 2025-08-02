@@ -1,7 +1,7 @@
 import {Elysia, t} from "elysia";
 import {sourceDiskDao} from "@/dao";
 import {Result} from "@/views/Result";
-import {pluginDiskGet} from "@/service/plugin/disk/PluginDiskGetService";
+import {pluginDiskGet} from "@/service/plugin/disk";
 
 export default new Elysia()
   .post(

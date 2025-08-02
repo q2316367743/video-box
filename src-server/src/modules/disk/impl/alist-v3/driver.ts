@@ -116,13 +116,12 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     })
   }
 
-  async mv(item: DirItem, destinationPath: string): Promise<void> {
-    const {path} = item;
-    let nameIndex = path.lastIndexOf("/");
-    let src_dir = path.substring(0, nameIndex);
-    let name = path.substring(nameIndex + 1);
-    let dstDirIndex = destinationPath.lastIndexOf("/");
-    let dst_dir = destinationPath.substring(0, dstDirIndex);
+  async mv(file: DirItem, folder: DirItem): Promise<void> {
+    let nameIndex = file.path.lastIndexOf("/");
+    let src_dir = file.path.substring(0, nameIndex);
+    let name = file.path.substring(nameIndex + 1);
+    let dstDirIndex = folder.path.lastIndexOf("/");
+    let dst_dir = folder.path.substring(0, dstDirIndex);
     await this.request('/api/fs/move', {
       method: 'POST',
       data: {
@@ -196,7 +195,7 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     })
   }
 
-  rename(item: DirItem, newName: string): Promise<void> {
+  rename(item: SourceDiskDir, newName: string): Promise<void> {
     const {path} = item;
     return this.request<void>('/api/fs/rename', {
       method: 'POST',

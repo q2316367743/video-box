@@ -1,10 +1,8 @@
 <template>
   <div class="web-content">
-    <t-affix :offset-top="80" container=".main">
-      <div class="web-category">
-        <web-info-header v-model="categoryValue" :menus="categoryOptions" :source-web="sourceWeb"/>
-      </div>
-    </t-affix>
+    <div class="web-category">
+      <web-info-header v-model="categoryValue" :menus="categoryOptions" :source-web="sourceWeb"/>
+    </div>
     <div class="web-list">
       <div class="web-list-container">
         <t-empty style="margin: 15vh 0" v-if="list.length === 0 && !loading"/>
@@ -158,6 +156,8 @@ onBeforeMount(() => {
   overflow-y: hidden;
   background-color: var(--td-bg-color-container);
   z-index: 49;
+  position: sticky;
+  top: 0;
 
   :deep(.t-submenu) {
     margin: 0;

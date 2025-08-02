@@ -1,6 +1,6 @@
 <template>
   <!-- 导航栏 -->
-  <header class="app-header" :class="{shadow: showShadow}">
+  <header v-if="visible" class="app-header" :class="{shadow: showShadow}">
     <div class="app-header-container">
       <!-- Logo -->
       <div class="flex items-center gap-2">
@@ -66,7 +66,7 @@
   </header>
 </template>
 <script lang="ts" setup>
-import {colorMode} from "@/store/index";
+import {colorMode} from "@/store";
 import {useUserStore} from "@/store/UserStore";
 import MessageUtil from "@/utils/modal/MessageUtil";
 import {LogoutIcon, SettingIcon, UserIcon, ViewListIcon} from "tdesign-icons-vue-next";
@@ -97,6 +97,7 @@ const menus = [{
   label: "网盘",
   value: "/disk/list"
 }]
+const visible = computed(() => menus.findIndex(e => e.value === path.value) > -1);
 
 const show = computed(() => !route.path.startsWith("/auth/"));
 const mini = computed(() => ws.width.value < 800);
@@ -123,7 +124,7 @@ export default defineComponent({
 </script>
 <style scoped lang="less">
 .app-header {
-  position: fixed;
+  position: sticky;
   top: 0;
   left: 0;
   right: 0;

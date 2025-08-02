@@ -23,6 +23,6 @@ const text = computedAsync(async () => {
 </script>
 <style scoped lang="less">
 :deep(h1) {
-  margin-top: 16px;
+  margin-top: 8px;
 }
 </style>

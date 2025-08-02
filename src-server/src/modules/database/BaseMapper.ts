@@ -69,10 +69,12 @@ export class BaseMapper<T extends TableLike> {
   }
 
   async deleteById(id: string) {
-    const statement = this.db.prepare(`delete
-                                       from ${this.tableName}
-                                       where id = ?`);
-    return statement.run(id);
+    const sql = `delete from ${this.tableName} where id = ?`;
+    const statement = this.db.prepare(sql);
+    debug("delete sql:\t\t" + sql);
+    debug("delete values:\t" + id);
+    const r=  await statement.run(id);
+    debug("delete result:\t" + r.success);
   }
 
   async insert(params: Partial<Omit<T, "id">>) {

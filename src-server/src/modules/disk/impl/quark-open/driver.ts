@@ -23,11 +23,11 @@ export class DiskPluginForQuarkOpen extends AbsDiskPluginStore {
     return Promise.resolve(undefined);
   }
 
-  mv(item: DirItem, newPath: string): Promise<void> {
+  mv(file: DirItem, folder: DirItem): Promise<void> {
     return Promise.resolve(undefined);
   }
 
-  rename(item: DirItem, newName: string): Promise<void> {
+  rename(item: SourceDiskDir, newName: string): Promise<void> {
     return Promise.resolve(undefined);
   }
 

@@ -37,9 +37,8 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
     await this.client.createDirectory(`${folder.path}/${name}`)
   }
 
-  async mv(item: DirItem, newPath: string): Promise<void> {
-    const {path} = item;
-    return this.client.moveFile(path, newPath);
+  async mv(file: DirItem, folder: DirItem): Promise<void> {
+    return this.client.moveFile(file.path, folder.path);
   }
 
   async readDir(parent: SourceDiskDir): Promise<Array<DirItem>> {
@@ -109,7 +108,7 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
     });
   }
 
-  async rename(item: DirItem, newName: string): Promise<void> {
+  async rename(item: SourceDiskDir, newName: string): Promise<void> {
     const {path, folder} = item;
     const destinationFilename = (folder === '/' ? '' : folder) + "/" + newName;
     return this.client.moveFile(path, destinationFilename);

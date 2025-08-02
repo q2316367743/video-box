@@ -2,7 +2,7 @@ import {AbsDiskPluginStore} from "@/modules/disk/abs/AbsDiskPluginStore";
 import {DiskConfigQuarkUc, DiskFormQuarkUc} from "@/modules/disk/impl/quark-or-uc/types";
 import {DiskSourceView} from "@/types/SourceDisk";
 import {DirItem, DiskFileLink} from "@/modules/disk/DiskPlugin";
-import {quarkOrUcDownloadLink, quarkOrUcGetFiles} from "@/modules/disk/impl/quark-or-uc/utils";
+import {quarkOrUcDownloadLink, quarkOrUcGetFiles, quarkOrUcRequest} from "@/modules/disk/impl/quark-or-uc/utils";
 import {SourceDiskDir} from "@/types/SourceDiskDIr";
 
 export class DiskDriverForQuarkOrUc extends AbsDiskPluginStore {
@@ -24,24 +24,49 @@ export class DiskDriverForQuarkOrUc extends AbsDiskPluginStore {
   }
 
   cp(item: DirItem, destinationFolder: string): Promise<void> {
-    return Promise.resolve(undefined);
+    return Promise.reject(new Error("夸克网盘不支持复制操作"))
   }
 
-
-  mkdir(folder: DirItem, name: string): Promise<void> {
-    return Promise.resolve(undefined);
+  async mkdir(folder: DirItem, name: string): Promise<void> {
+    await quarkOrUcRequest('/file', 'POST', {
+      data: {
+        dir_init_lock: false,
+        dir_path: '',
+        file_name: name,
+        pdir_fid: folder.sign
+      }
+    }, this);
+    await Bun.sleep(1000);
   }
 
-  mv(item: DirItem, newPath: string): Promise<void> {
-    return Promise.resolve(undefined);
+  async mv(file: DirItem, folder: DirItem): Promise<void> {
+    await quarkOrUcRequest('/file/move', 'POST', {
+      data: {
+        "action_type": 1,
+        "exclude_fids": [],
+        "filelist": [file.sign],
+        "to_pdir_fid": folder.sign,
+      }
+    }, this);
   }
 
-  rename(item: DirItem, newName: string): Promise<void> {
-    return Promise.resolve(undefined);
+  async rename(item: SourceDiskDir, newName: string): Promise<void> {
+    await quarkOrUcRequest('/file/rename', 'POST', {
+      data: {
+        fid: item.sign,
+        file_name: newName
+      }
+    }, this);
   }
 
-  rm(item: DirItem): Promise<void> {
-    return Promise.resolve(undefined);
+  async rm(item: DirItem): Promise<void> {
+    await quarkOrUcRequest("/file/delete", 'POST', {
+      data: {
+        "action_type": 1,
+        "exclude_fids": [],
+        "filelist": [item.sign],
+      }
+    }, this);
   }
 
   async getFileDownloadLink(file: SourceDiskDir): Promise<DiskFileLink> {

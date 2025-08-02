@@ -52,13 +52,13 @@ export interface DiskPlugin {
    * @param item 目录项
    * @param newName 新文件名
    */
-  rename: (item: DirItem, newName: string) => Promise<void>;
+  rename: (item: SourceDiskDir, newName: string) => Promise<void>;
   /**
    * 移动一个或文件夹
    * @param item 目录项
    * @param newPath 新路径
    */
-  mv: (item: DirItem, newPath: string) => Promise<void>;
+  mv: (file: DirItem, folder: DirItem) => Promise<void>;
   /**
    * 复制一个文件或文件夹
    * @param item 目录项
