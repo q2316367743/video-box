@@ -3,7 +3,7 @@
   <header v-if="visible" class="app-header" :class="{shadow: showShadow}">
     <div class="app-header-container">
       <!-- Logo -->
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2 ml-8px">
         <div class="w-10 h-10 rounded-lg bg-day-primary dark:bg-night-primary flex items-center justify-center"
              @click="toHome">
           <img src="/logo.png" alt="影视盒子" style="width: 40px;height: 40px"/>

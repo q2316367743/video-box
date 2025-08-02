@@ -54,8 +54,10 @@ export default defineComponent({
 </script>
 <style scoped lang="less">
 .app-page {
+  height: 100vh;
   .app-page-container {
     background-color: var(--td-bg-color-container);
+    overflow-y: auto;
 
     &.max {
       border-left: 1px solid var(--td-border-level-2-color)

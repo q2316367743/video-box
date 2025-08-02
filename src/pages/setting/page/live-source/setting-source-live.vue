@@ -14,7 +14,7 @@
         </t-button>
       </t-space>
     </template>
-    <t-list>
+    <t-list split>
       <disposition-item v-for="item in liveSources" :key="item.id" :item="item" @update="init"/>
     </t-list>
   </page-layout>

@@ -1,6 +1,6 @@
 <template>
   <aside class="h-100vh">
-    <t-menu :collapsed v-model="path">
+    <t-menu collapsed v-model="path">
       <t-menu-item value="/home/list">
         <template #icon>
           <home-icon/>
@@ -25,31 +25,18 @@
         </template>
         网盘
       </t-menu-item>
-      <template #operations>
-        <t-button theme="primary" shape="square" @click="collapsed = !collapsed">
-          <template #icon>
-            <menu-fold-icon/>
-          </template>
-        </t-button>
-      </template>
     </t-menu>
   </aside>
 </template>
 <script lang="ts" setup>
 import {
   HardDiskStorageIcon, HomeIcon,
-  MenuFoldIcon,
   TvIcon,
   VideoIcon,
 } from "tdesign-icons-vue-next";
 
 const route = useRoute();
 const router = useRouter();
-
-const collapsed = defineModel({
-    type: Boolean,
-    default: false
-});
 
 const path = ref('/home/list');
 

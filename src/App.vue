@@ -1,7 +1,7 @@
 <template>
   <div class="main">
-    <div class="main-aside" :style="{width: collapsed ? '64px' : '232px'}">
-      <app-side v-model="collapsed"/>
+    <div class="main-aside">
+      <app-side />
     </div>
     <div class="main-content" ref="mainRef" @scroll="handleScroll">
       <app-header :show-shadow="showShadow"/>
@@ -17,7 +17,6 @@ import {emitScrollToTop, onScrollToBottom} from "@/store";
 
 const mainRef = ref();
 const showShadow = ref(false);
-const collapsed = ref(true);
 
 useInfiniteScroll(mainRef, () => {
   onScrollToBottom.trigger();
@@ -56,8 +55,8 @@ const handleScroll = (e: Event) => {
   .main-aside {
     border-right: 1px solid var(--td-border-level-2-color);
     position: relative;
-    transition: all 0.2s;
     background: var(--td-bg-color-container);
+    width: 64px;
   }
 
   .main-content {

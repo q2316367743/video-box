@@ -1,7 +1,7 @@
 <template>
   <div class="web-list-content">
     <t-row :gutter="[16,16]" class="w-full">
-      <t-col v-for="view in views" :key="view.id" :span="4" :xs="6" :sm="4">
+      <t-col v-for="view in views" :key="view.id" :span="4" :xs="6" :sm="4" :xl="2" :xxl="1">
         <web-list-item :view="view"/>
       </t-col>
     </t-row>
