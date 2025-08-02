@@ -1,9 +1,9 @@
 <template>
-  <div class="mt-16px">
-    <t-row :gutter="[16,16]">
+  <div class="m-8px">
+    <t-row :gutter="[8,8]">
       <t-col v-for="item in items" :key="item.id" flex="300px">
-        <t-card hover-shadow @click="handleJust(item)">
-          <t-list-item-meta :title="item.title" :description="item.driver" />
+        <t-card hover-shadow @click="handleJust(item)" class="cursor-pointer">
+          <t-list-item-meta :title="item.title" :description="item.driver"/>
         </t-card>
       </t-col>
     </t-row>

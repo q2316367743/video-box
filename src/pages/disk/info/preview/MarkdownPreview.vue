@@ -1,11 +1,12 @@
 <template>
   <t-loading :loading style="min-height: 200px" text="正在加载中">
-    <md-preview :modelValue="text"/>
+    <md-preview :modelValue="text" :theme="isDark ? 'dark' : 'light'"/>
   </t-loading>
 </template>
 <script lang="ts" setup>
 import {MdPreview} from 'md-editor-v3';
 import 'md-editor-v3/lib/preview.css';
+import {isDark} from "@/store";
 
 const props = defineProps({
   url: {
@@ -24,5 +25,8 @@ const text = computedAsync(async () => {
 <style scoped lang="less">
 :deep(h1) {
   margin-top: 8px;
+}
+:deep(.md-editor) {
+  background-color: transparent;
 }
 </style>

@@ -77,10 +77,9 @@ const handleClick = async (item: DirItem) => {
   loading.value = true;
   try {
     if (item.type === 'folder') {
+      items.value = [];
       // 目录
       items.value = await pluginDiskList(sourceId, {path: item.path, refresh: false})
-    } else {
-      items.value = [];
     }
   } finally {
     loading.value = false
@@ -108,7 +107,7 @@ onMounted(() => {
 </script>
 <style scoped lang="less">
 .plugin-disk-info {
-  margin-top: 8px;
+  margin: 8px;
 
   .path {
     width: 100%;

@@ -21,13 +21,6 @@
         </t-dropdown>
       </div>
 
-      <!-- 导航链接 - 桌面版 -->
-      <nav class="hidden md:flex items-center gap-6" v-if="show && !mini">
-        <t-head-menu v-model="path">
-          <t-menu-item v-for="menu in menus" :value="menu.value">{{ menu.label }}</t-menu-item>
-        </t-head-menu>
-      </nav>
-
       <!-- 用户区域和主题切换 -->
       <div class="flex items-center gap-4">
         <!-- 主题切换按钮 -->
@@ -133,7 +126,6 @@ export default defineComponent({
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--td-border-level-2-color);
   background-color: var(--td-bg-color-container);
-  height: 80px;
 
 
   &.shadow {
@@ -142,11 +134,10 @@ export default defineComponent({
 
   .app-header-container {
     margin: 0 auto;
-    padding: 12px 16px;
+    padding: 8px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 56px;
   }
 }
 </style>

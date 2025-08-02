@@ -5,9 +5,7 @@
     </div>
     <div class="main-content" ref="mainRef" @scroll="handleScroll">
       <app-header :show-shadow="showShadow"/>
-      <div class="max-w-1200px mx-auto" style="min-height: calc(100vh - 237px);">
-        <router-view/>
-      </div>
+      <router-view/>
     </div>
     <t-back-top container=".main-content"/>
   </div>
