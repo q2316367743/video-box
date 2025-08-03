@@ -36,13 +36,13 @@ export abstract class AbsDiskPluginStore implements DiskPlugin {
     });
   }
 
-  abstract cp(item: DirItem, destinationFolder: string): Promise<void>;
+  abstract cp(file: SourceDiskDir, folder: SourceDiskDir): Promise<void>;
 
   abstract getFileDownloadLink(file: SourceDiskDir): Promise<DiskFileLink>;
 
-  abstract mkdir(folder: DirItem, name: string): Promise<void>;
+  abstract mkdir(folder: SourceDiskDir, name: string): Promise<void>;
 
-  abstract mv(file: DirItem, folder: DirItem): Promise<void>;
+  abstract mv(file: SourceDiskDir, folder: SourceDiskDir): Promise<void>;
 
   abstract readDir(parent: SourceDiskDir): Promise<Array<DirItem>>;
 
@@ -50,7 +50,7 @@ export abstract class AbsDiskPluginStore implements DiskPlugin {
 
   abstract rename(item: SourceDiskDir, newName: string): Promise<void>;
 
-  abstract rm(item: DirItem): Promise<void>;
+  abstract rm(item: SourceDiskDir): Promise<void>;
 
   abstract writeFile(file: SourceDiskDir): Promise<WritableStream>;
 

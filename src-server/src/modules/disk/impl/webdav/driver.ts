@@ -28,16 +28,16 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
     });
   }
 
-  async cp(item: DirItem, destinationFolder: string): Promise<void> {
-    await this.client.copyFile(item.path, destinationFolder);
+  async cp(file: SourceDiskDir, folder: SourceDiskDir): Promise<void> {
+    await this.client.copyFile(file.path, folder.path);
   }
 
 
-  async mkdir(folder: DirItem, name: string): Promise<void> {
+  async mkdir(folder: SourceDiskDir, name: string): Promise<void> {
     await this.client.createDirectory(`${folder.path}/${name}`)
   }
 
-  async mv(file: DirItem, folder: DirItem): Promise<void> {
+  async mv(file: SourceDiskDir, folder: SourceDiskDir): Promise<void> {
     return this.client.moveFile(file.path, folder.path);
   }
 
@@ -114,7 +114,7 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
     return this.client.moveFile(path, destinationFilename);
   }
 
-  async rm(item: DirItem): Promise<void> {
+  async rm(item: SourceDiskDir): Promise<void> {
     const {path} = item;
     return this.client.deleteFile(path);
   }

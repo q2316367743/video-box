@@ -7,6 +7,7 @@ import UnoCSS from 'unocss/vite';
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite';
 import {TDesignResolver} from 'unplugin-vue-components/resolvers';
+import svgLoader from 'vite-svg-loader'
 
 function _resolve(dir: string) {
   return path.resolve(__dirname, dir);
@@ -38,7 +39,7 @@ export default defineConfig({
           library: 'vue-next'
         })
       ]
-    }), UnoCSS()
+    }), UnoCSS(), svgLoader()
   ],
   base: "./",
   build: {

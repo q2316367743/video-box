@@ -15,3 +15,11 @@ export async function pluginDiskLink(sourceId: string, path: string) {
 export async function pluginDiskRename(sourceId: string, path: string, name: string) {
   return usePut(`/api/plugin/disk/rename/${sourceId}`, {path, name});
 }
+
+export async function pluginDiskCopy(sourceId: string, from: string, to: string) {
+  return usePut(`/api/plugin/disk/copy/${sourceId}`, {from, to});
+}
+
+export async function pluginDiskMove(sourceId: string, from: string, to: string) {
+  return usePut(`/api/plugin/disk/move/${sourceId}`, {from, to});
+}

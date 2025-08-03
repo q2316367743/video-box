@@ -91,8 +91,8 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     return data.data;
   }
 
-  async cp(item: DirItem, destinationFolder: string): Promise<void> {
-    const {path} = item;
+  async cp(file: SourceDiskDir, folder: SourceDiskDir): Promise<void> {
+    const {path} = file;
     let nameIndex = path.lastIndexOf("/");
     let src_dir = path.substring(0, nameIndex);
     let name = path.substring(nameIndex + 1);
@@ -100,13 +100,13 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
       method: 'POST',
       data: {
         src_dir,
-        dst_dir: destinationFolder,
+        dst_dir: folder.path,
         names: [name]
       }
     });
   }
 
-  mkdir(item: DirItem): Promise<void> {
+  mkdir(item: SourceDiskDir): Promise<void> {
     const {path} = item;
     return this.request<void>('/api/fs/mkdir', {
       method: 'POST',
@@ -116,7 +116,7 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     })
   }
 
-  async mv(file: DirItem, folder: DirItem): Promise<void> {
+  async mv(file: SourceDiskDir, folder: SourceDiskDir): Promise<void> {
     let nameIndex = file.path.lastIndexOf("/");
     let src_dir = file.path.substring(0, nameIndex);
     let name = file.path.substring(nameIndex + 1);
@@ -181,7 +181,7 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     return {url};
   }
 
-  async rm(item: DirItem): Promise<void> {
+  async rm(item: SourceDiskDir): Promise<void> {
     const {path} = item;
     const nameIndex = path.lastIndexOf("/");
     const dir = path.substring(0, nameIndex);

@@ -49,11 +49,8 @@ watchEffect(() => {
 </script>
 <style scoped lang="less">
 .code-preview {
-  border: 1px solid var(--td-border-level-2-color);
-  border-radius: var(--td-radius-default);
   padding: var(--td-pop-padding-xl);
   font-family: Consolas, serif;
-  margin: 0 8px;
 
   .code-preview-content {
     white-space: pre-wrap;

@@ -14,16 +14,16 @@ export class DiskPluginForQuarkOpen extends AbsDiskPluginStore {
     this.props = source.data as DiskFromQuarkOpen;
   }
 
-  cp(item: DirItem, destinationFolder: string): Promise<void> {
+  cp(file: SourceDiskDir, folder: SourceDiskDir): Promise<void> {
     return Promise.resolve(undefined);
   }
 
 
-  mkdir(folder: DirItem, name: string): Promise<void> {
+  mkdir(folder: SourceDiskDir, name: string): Promise<void> {
     return Promise.resolve(undefined);
   }
 
-  mv(file: DirItem, folder: DirItem): Promise<void> {
+  mv(file: SourceDiskDir, folder: SourceDiskDir): Promise<void> {
     return Promise.resolve(undefined);
   }
 
@@ -31,7 +31,7 @@ export class DiskPluginForQuarkOpen extends AbsDiskPluginStore {
     return Promise.resolve(undefined);
   }
 
-  rm(item: DirItem): Promise<void> {
+  rm(item: SourceDiskDir): Promise<void> {
     return Promise.resolve(undefined);
   }
 

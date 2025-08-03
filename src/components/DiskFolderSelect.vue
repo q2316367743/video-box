@@ -2,11 +2,11 @@
   <t-tree v-model:actived="folder" activable :data="data" :load="load"></t-tree>
 </template>
 <script lang="ts" setup>
-import {TdTreeProps, TreeOptionData} from "tdesign-vue-next";
+import {TdTreeProps, TreeNodeValue} from "tdesign-vue-next";
 import {pluginDiskList} from "@/apis/plugin/disk/list.ts";
 
 const folder = defineModel({
-  type: Object as PropType<Array<String>>,
+  type: Object as PropType<Array<TreeNodeValue>>,
   default: ['/']
 })
 const props = defineProps({
@@ -17,15 +17,17 @@ const props = defineProps({
 });
 const data = ref<TdTreeProps["data"]>([{
   value: '/',
-  label: '根目录'
+  label: '根目录',
+  children: true
 }]);
 
 const load: TdTreeProps["load"] = async (node) => {
   const items = await pluginDiskList(props.sourceId, {path: `${node.value}`, refresh: false});
-  return items.map(item => {
+  return items.filter(item => item.type === 'folder').map(item => {
     return {
       value: item.path,
-      label: item.name
+      label: item.name,
+      children: true
     }
   })
 }

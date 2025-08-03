@@ -1,10 +1,10 @@
 <template>
   <t-tabs default-value="preview">
     <t-tab-panel value="preview" label="预览" :destroy-on-hide="false">
-      <div class="h-720px object-cover flex mt-8px">
+      <div class="w-300px object-cover flex mt-8px">
         <t-image-viewer :images="[url]">
           <template #trigger="{ open }">
-        <t-image :src="url" style="height: 100%;margin: 0 auto" />
+            <t-image :src="url" style="height: 100%;margin: 0 auto" @click="open()"/>
           </template>
         </t-image-viewer>
       </div>

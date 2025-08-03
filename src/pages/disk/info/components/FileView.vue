@@ -1,12 +1,12 @@
 <template>
-  <t-card class="mt-8px" size="small">
+  <div class="w-full h-full overflow-y-auto">
     <video-preview v-if="videoTypes.includes(item.extname || '')" :url :item/>
     <image-preview v-else-if="imageTypes.includes(item.extname || '')" :url :item/>
     <music-preview v-else-if="AUDIO_EXTENSIONS.includes(item.extname || '')" :url :item/>
     <markdown-preview v-else-if="item.extname === 'md'" :url/>
     <code-view v-else-if="CODE_EXTENSIONS.includes(item.extname || '')" :url :item :extname="item.extname"/>
     <unknow-file-view v-else :url="url" :item="item"/>
-  </t-card>
+  </div>
 </template>
 <script lang="ts" setup>
 import {DirItem} from "@/apis/plugin/disk/list.ts";

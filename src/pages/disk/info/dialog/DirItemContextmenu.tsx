@@ -14,6 +14,7 @@ import {pluginDiskRename} from "@/apis/plugin/disk/link.ts";
 import MessageUtil from "@/utils/modal/MessageUtil.ts";
 import {useUserStore} from "@/store/UserStore.ts";
 import {downloadByUrl} from "@/utils/lang/BrowserUtil.ts";
+import {openDirItemTransfer} from "@/pages/disk/info/dialog/DirItemTransfer.tsx";
 
 export function handleDirItemContextmenu(sourceId: string, item: DirItem, e: MouseEvent, onUpdate: () => void) {
   e.preventDefault();
@@ -39,13 +40,11 @@ export function handleDirItemContextmenu(sourceId: string, item: DirItem, e: Mou
   }, {
     label: '移动',
     icon: () => <FileTransmitIcon/>,
-    onClick: () => {
-    }
+    onClick: () => openDirItemTransfer(true, sourceId, item, onUpdate)
   }, {
     label: '复制',
     icon: () => <FilePasteIcon/>,
-    onClick: () => {
-    }
+    onClick: () => openDirItemTransfer(false, sourceId, item, onUpdate)
   }, {
     label: () => <span class={'label'} style={{color: 'var(--td-error-color)'}}>删除</span>,
     icon: () => <DeleteIcon style={{color: 'var(--td-error-color)'}}/>,
@@ -76,7 +75,7 @@ export function handleDirItemContextmenu(sourceId: string, item: DirItem, e: Mou
   Ctx.showContextMenu({
     x: e.x,
     y: e.y,
-    theme: isDark.value ? 'default dark' : 'default',
+    theme: isDark.value ? 'mac dark' : 'default',
     items
   })
 }

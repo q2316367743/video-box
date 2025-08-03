@@ -58,23 +58,23 @@ export interface DiskPlugin {
    * @param item 目录项
    * @param newPath 新路径
    */
-  mv: (file: DirItem, folder: DirItem) => Promise<void>;
+  mv: (file: SourceDiskDir, folder: SourceDiskDir) => Promise<void>;
   /**
    * 复制一个文件或文件夹
    * @param item 目录项
    * @param destinationFolder 新目录
    */
-  cp: (item: DirItem, destinationFolder: string) => Promise<void>;
+  cp: (file: SourceDiskDir, folder: SourceDiskDir) => Promise<void>;
   /**
    * 删除一个文件或文件夹
    * @param item 目录项
    */
-  rm: (item: DirItem) => Promise<void>;
+  rm: (item: SourceDiskDir) => Promise<void>;
   /**
    * 创建一个目录
    * @param folder 目录所在文件夹
    */
-  mkdir: (folder: DirItem, name: string) => Promise<void>;
+  mkdir: (folder: SourceDiskDir, name: string) => Promise<void>;
 
   // ------------------------------------ 文件操作 ------------------------------------
 

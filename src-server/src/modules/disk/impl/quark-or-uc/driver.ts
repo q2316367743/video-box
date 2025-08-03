@@ -23,11 +23,11 @@ export class DiskDriverForQuarkOrUc extends AbsDiskPluginStore {
     this.props['Cookie'] = cookie;
   }
 
-  cp(item: DirItem, destinationFolder: string): Promise<void> {
+  cp(file: SourceDiskDir, folder: SourceDiskDir): Promise<void> {
     return Promise.reject(new Error("夸克网盘不支持复制操作"))
   }
 
-  async mkdir(folder: DirItem, name: string): Promise<void> {
+  async mkdir(folder: SourceDiskDir, name: string): Promise<void> {
     await quarkOrUcRequest('/file', 'POST', {
       data: {
         dir_init_lock: false,
@@ -39,7 +39,7 @@ export class DiskDriverForQuarkOrUc extends AbsDiskPluginStore {
     await Bun.sleep(1000);
   }
 
-  async mv(file: DirItem, folder: DirItem): Promise<void> {
+  async mv(file: SourceDiskDir, folder: SourceDiskDir): Promise<void> {
     await quarkOrUcRequest('/file/move', 'POST', {
       data: {
         "action_type": 1,
@@ -59,7 +59,7 @@ export class DiskDriverForQuarkOrUc extends AbsDiskPluginStore {
     }, this);
   }
 
-  async rm(item: DirItem): Promise<void> {
+  async rm(item: SourceDiskDir): Promise<void> {
     await quarkOrUcRequest("/file/delete", 'POST', {
       data: {
         "action_type": 1,
