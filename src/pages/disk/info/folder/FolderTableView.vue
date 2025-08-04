@@ -10,6 +10,7 @@ import {prettyDataUnit, toDateTimeString} from "@/utils/lang/FormatUtil.ts";
 import {DiskInfoInstance, diskInfoKey} from "@/pages/disk/info/constants.ts";
 import {handleDirItemContextmenu} from "@/pages/disk/info/dialog/DirItemContextmenu.tsx";
 import {handleDirContextmenu} from "@/pages/disk/info/dialog/DirContextmenu.tsx";
+import FileIconView from "@/pages/disk/info/components/FileIconView.vue";
 
 const props = defineProps({
   current: {
@@ -29,14 +30,23 @@ const columns: Array<BaseTableCol> = [{
   title: '名称',
   colKey: 'name',
   width: '70%',
-  cell: (h, p) => h(Link, {
-    onClick: () => {
-      diskInfo?.setPath(p.row as any)
-    },
-    onContextmenu: (e: MouseEvent) => {
-      handleDirItemContextmenu(props.sourceId, p.row as any, e, () => onRefresh(true))
-    }
-  }, p.row.name)
+  cell: (h, p) => h('div', {
+    class: 'flex items-center'
+  }, [
+    h(FileIconView, {
+      type: p.row.type,
+      extname: p.row.extname
+    }),
+    h(Link, {
+      onClick: () => {
+        diskInfo?.setPath(p.row as any)
+      },
+      onContextmenu: (e: MouseEvent) => {
+        handleDirItemContextmenu(props.sourceId, p.row as any, e, () => onRefresh(true))
+      },
+      class: 'ml-8px'
+    }, p.row.name)
+  ])
 }, {
   title: '文件大小',
   colKey: 'size',
