@@ -153,3 +153,40 @@ interface Filestruct {
   upload_mi?: string;
   upload_dm?: string;
 }
+
+export interface UpPreRespData {
+  task_id: string;
+  finish: boolean;
+  upload_id: string;
+  obj_key: string;
+  upload_url: string;
+  fid: string;
+  bucket: string;
+  callback: {
+    callbackUrl: string;
+    callbackBody: string;
+  }
+  format_type: string;
+  size: number;
+  auth_info: string;
+}
+
+export interface UpPreRespMeta {
+  part_thread: number;
+  acc2: string;
+  acc1: string;
+  part_size: string;
+}
+
+export interface UpHashRespData {
+  finish: boolean;
+  fid: string;
+  thumbnail: string;
+  format_type: string;
+}
+
+export interface UpAuthRespData {
+  auth_key: string;
+  speed: number;
+  headers: Array<string>
+}

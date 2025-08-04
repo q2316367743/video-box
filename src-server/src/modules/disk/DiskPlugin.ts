@@ -37,6 +37,21 @@ export interface DiskFileLink {
   contentLength?: number;
 }
 
+export interface DiskUploadOption {
+  // 文件名
+  filename: string;
+  // 是否覆盖写入
+  overwrite: boolean;
+  // 文件大小
+  contentLength:  number;
+  // 文件类型
+  contentType: string;
+  // 密钥信息
+  md5?: string;
+  sha1?: string;
+  sha256?: string;
+}
+
 /**
  * 磁盘插件，主要对磁盘的操作
  */
@@ -45,7 +60,7 @@ export interface DiskPlugin {
    * 读取一个目录下的所有文件和文件夹
    * @param parent 目录
    */
-  readDir: (parent: SourceDiskDir) => Promise<Array<DirItem>>;
+  list: (parent: SourceDiskDir) => Promise<Array<DirItem>>;
 
   /**
    * 重命名一个文件或文件夹
@@ -93,11 +108,13 @@ export interface DiskPlugin {
    * @param signal 终止信号
    */
   readFile: (file: SourceDiskDir, headers: Record<string, string>, signal: AbortSignal) => Promise<Response>;
+
   /**
    * 写入一个文件
-   * @param file 文件
+   * @param folder 要写入的目录
+   * @param filename 文件名
    */
-  writeFile: (file: SourceDiskDir) => Promise<WritableStream>;
+  writeFile: (folder: SourceDiskDir, option: DiskUploadOption) => Promise<WritableStream>;
 
 
 }

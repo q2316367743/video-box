@@ -18,7 +18,7 @@ export async function diskBuildCache(path: string, plugin: DiskPlugin, id: strin
   if (path === '/') {
     debug("构建根目录缓存")
     const parent = await sourceDiskDirDao.insert(sourceDiskDirDao.root(id));
-    const items = await plugin.readDir(sourceDiskDirDao.root(id));
+    const items = await plugin.list(sourceDiskDirDao.root(id));
     await sourceDiskDirDao.updateById(parent.id, {cache: 1, update_time: Date.now()});
     await sourceDiskDirDao.saveCache(items, id);
     return items;
@@ -59,7 +59,7 @@ export async function diskBuildCache(path: string, plugin: DiskPlugin, id: strin
   debug("前进，找到缓存")
   while (index < items.length) {
     const pathItem = items[index];
-    const dirItems = await plugin.readDir(target);
+    const dirItems = await plugin.list(target);
     debug(`查询目录「${pathItem.name}」，路径「${pathItem.path}」，共「${dirItems.length}」个子路径`);
     // 保存缓存
     const sourceDiskDirs = await sourceDiskDirDao.saveCache(dirItems, id);

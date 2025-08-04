@@ -1,6 +1,6 @@
 import {AbsDiskPluginStore} from "@/modules/disk/abs/AbsDiskPluginStore";
 import {DiskSourceView} from "@/types/SourceDisk";
-import {DirCoreItem, DirItem, DiskFileLink} from "@/modules/disk/DiskPlugin";
+import {DirCoreItem, DirItem, DiskFileLink, DiskUploadOption} from "@/modules/disk/DiskPlugin";
 import {DiskFromQuarkOpen} from "@/modules/disk/impl/quark-open/types";
 import {SourceDiskDir} from "@/types/SourceDiskDIr";
 
@@ -36,7 +36,7 @@ export class DiskPluginForQuarkOpen extends AbsDiskPluginStore {
   }
 
 
-  writeFile(file: DirCoreItem): Promise<WritableStream> {
+  writeFile(folder: SourceDiskDir, option: DiskUploadOption): Promise<WritableStream> {
     return Promise.resolve(new WritableStream());
   }
 
@@ -44,7 +44,7 @@ export class DiskPluginForQuarkOpen extends AbsDiskPluginStore {
     return Promise.resolve({url: ''});
   }
 
-  readDir(parent: SourceDiskDir): Promise<Array<DirItem>> {
+  list(parent: SourceDiskDir): Promise<Array<DirItem>> {
     return Promise.resolve([]);
   }
 

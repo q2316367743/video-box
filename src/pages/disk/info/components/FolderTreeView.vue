@@ -122,6 +122,7 @@ watch(() => props.current, () => onRefresh(false), {immediate: true})
     border-left: 1px solid transparent;
     border-right: 1px solid var(--td-border-level-2-color);
     border-bottom: 1px solid transparent;
+    transition: border-color 0.3s ease-in-out;
 
     &.over {
       border: 1px solid var(--td-brand-color);

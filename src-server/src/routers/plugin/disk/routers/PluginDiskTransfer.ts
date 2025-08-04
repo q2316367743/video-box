@@ -9,7 +9,6 @@ async function getDir(id: string, plugin: DiskPlugin, from: string, to: string):
   file: SourceDiskDir,
   folder: SourceDiskDir
 }> {
-  if (!plugin) return Promise.reject(new Error("插件不存在"));
   const file = await pluginDiskGet(from, plugin, id);
   if (!file) return Promise.reject(new Error("文件项不存在"));
   const folder = await pluginDiskGet(to, plugin, id);

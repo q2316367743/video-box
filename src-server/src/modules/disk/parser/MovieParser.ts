@@ -16,7 +16,7 @@ async function parseMovieLoop(res: Array<DirItem>, plugin: DiskPlugin, progress:
   });
   // 解析目录
   for (const f of folders) {
-    const files = await plugin.readDir(f as any);
+    const files = await plugin.list(f as any);
     await parseMovieLoop(files, plugin, progress, programs);
   }
   // 解析文件
@@ -32,7 +32,7 @@ async function parseMovieLoop(res: Array<DirItem>, plugin: DiskPlugin, progress:
       let p: DiskProgram;
       if (nfo) {
         // TODO: 存在nfo
-        const nfoContent = await plugin.readFile(nfo as any, {}).then(res => res.text());
+        const nfoContent = await plugin.readFile(nfo as any, {}, new AbortController().signal).then(res => res.text());
         p = parseNfo(nfoContent, 'movie');
       } else {
         // 构造默认
@@ -59,7 +59,7 @@ async function parseMovieLoop(res: Array<DirItem>, plugin: DiskPlugin, progress:
 }
 
 export async function parseMovie(plugin: DiskPlugin, progress: Map<string, number>): Promise<Array<DiskProgram>> {
-  const files = await plugin.readDir({} as any);
+  const files = await plugin.list({} as any);
   const programs = new Array<DiskProgram>();
   await parseMovieLoop(files, plugin, progress, programs);
   return programs

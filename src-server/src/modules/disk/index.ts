@@ -45,7 +45,7 @@ export function buildDiskPlugin(source: DiskSourceView): DiskPlugin {
   }
 }
 
-export const DiskPluginOptions: Array<{ label: string, value: DiskDriver }> = [{
+export const DiskPluginOptions: Array<{ label: string, value: DiskDriver, disabled?: boolean }> = [{
   label: 'AList V3',
   value: 'A_LIST_V3'
 }, {
@@ -53,7 +53,8 @@ export const DiskPluginOptions: Array<{ label: string, value: DiskDriver }> = [{
   value: 'WEB_DAV'
 }, {
   label: '夸克网盘-开放',
-  value: 'QUARK_OPEN'
+  value: 'QUARK_OPEN',
+  disabled: true
 }, {
   label: '夸克网盘',
   value: 'QUARK'

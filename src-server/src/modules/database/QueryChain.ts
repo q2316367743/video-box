@@ -108,6 +108,7 @@ export class QueryChain<T extends Record<string, any>, K extends keyof T = keyof
     return this;
   }
 
+
   private getSql() {
     let sql = 'select';
     if (this.fields.length > 0) {
@@ -115,7 +116,6 @@ export class QueryChain<T extends Record<string, any>, K extends keyof T = keyof
     } else {
       sql += (' *');
     }
-
     sql += (` from \`${this.tableName}\``)
     if (this.params.length > 0) {
       sql += (' where ' + this.params.join(' and '))
@@ -176,6 +176,21 @@ export class QueryChain<T extends Record<string, any>, K extends keyof T = keyof
       await each(list);
       page += 1;
     }
+  }
+
+  async delete(): Promise<void> {
+    let sql = 'delete';
+    sql += (` from \`${this.tableName}\``)
+    if (this.params.length > 0) {
+      sql += (' where ' + this.params.join(' and '))
+    }
+    if (this.lastExpress.length > 0) {
+      sql += (' ' + this.lastExpress.join(' '));
+    }
+    debug("delete sql\t\t:" + sql);
+    debug("delete values\t:" + this.values);
+    const statement = this.db.prepare(sql);
+    await statement.run(...this.values);
   }
 
 }

@@ -35,7 +35,7 @@ export async function renameSub(sourceDiskId: string, oldPath: string, newPath: 
  */
 export async function diskRefreshCache(parent: SourceDiskDir, plugin: DiskPlugin): Promise<Array<DirItem>> {
   // 1. 重新获取
-  const items = await plugin.readDir(parent);
+  const items = await plugin.list(parent);
   debug(`重新获取: ${items.length}`)
   // 2. 获取当前缓存
   const cache = await sourceDiskDirDao.listFromFolder(parent.path, parent.source_disk_id);
@@ -85,11 +85,7 @@ export async function diskRefreshCache(parent: SourceDiskDir, plugin: DiskPlugin
     await sourceDiskDirDao.query()
       .likeRight('folder', value.path)
       .eq('source_disk_id', value.source_disk_id)
-      .batchList(100, async (list) => {
-        for (let e of list) {
-          await sourceDiskDirDao.deleteById(e.id);
-        }
-      });
+      .delete();
   }
 
 

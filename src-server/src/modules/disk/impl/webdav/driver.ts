@@ -1,8 +1,8 @@
 import * as crypto from 'node:crypto';
 import {AbsDiskPluginStore} from "@/modules/disk/abs/AbsDiskPluginStore";
 import {DiskSourceView} from "@/types/SourceDisk";
-import {extname} from "@/utils/WebPath";
-import {DirItem, DiskFileLink} from "@/modules/disk/DiskPlugin";
+import {extname, joinPath} from "@/utils/WebPath";
+import {DirItem, DiskFileLink, DiskUploadOption} from "@/modules/disk/DiskPlugin";
 import {createClient, WebDAVClient} from "webdav";
 import {SourceDiskDir} from "@/types/SourceDiskDIr";
 
@@ -41,7 +41,7 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
     return this.client.moveFile(file.path, folder.path);
   }
 
-  async readDir(parent: SourceDiskDir): Promise<Array<DirItem>> {
+  async list(parent: SourceDiskDir): Promise<Array<DirItem>> {
     const {path} = parent;
     const files = await this.client.getDirectoryContents(path, {
       details: false,
@@ -119,8 +119,9 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
     return this.client.deleteFile(path);
   }
 
-  async writeFile(file: SourceDiskDir): Promise<WritableStream> {
-    const writable = this.client.createWriteStream(file.path, {overwrite: true});
+  async writeFile(folder: SourceDiskDir, option: DiskUploadOption): Promise<WritableStream> {
+    const {filename, overwrite} = option
+    const writable = this.client.createWriteStream(joinPath(folder.path, filename), {overwrite});
     return new WritableStream({
       write: (chunk) => {
         writable.write(chunk);

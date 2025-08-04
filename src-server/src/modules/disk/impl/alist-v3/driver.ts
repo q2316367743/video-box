@@ -1,10 +1,11 @@
 import {AxiosRequestConfig} from "axios";
 import {AbsDiskPluginStore} from "@/modules/disk/abs/AbsDiskPluginStore";
-import {DirItem, DiskFileLink} from "@/modules/disk/DiskPlugin";
+import {DirItem, DiskFileLink, DiskUploadOption} from "@/modules/disk/DiskPlugin";
 import {DiskSourceView} from "@/types/SourceDisk";
 import {useRequest} from "@/global/http";
-import {extname} from "@/utils/WebPath";
+import {extname, joinPath} from "@/utils/WebPath";
 import {SourceDiskDir} from "@/types/SourceDiskDIr";
+import {shake} from "@/utils/lang/RecordUtil";
 
 interface DiskFromAList {
   url: string;
@@ -132,7 +133,7 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     })
   }
 
-  async readDir(parent: SourceDiskDir): Promise<Array<DirItem>> {
+  async list(parent: SourceDiskDir): Promise<Array<DirItem>> {
     const {path} = parent;
     const result = await this.request<FileData>('/api/fs/list', {
       method: 'POST',
@@ -182,14 +183,11 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
   }
 
   async rm(item: SourceDiskDir): Promise<void> {
-    const {path} = item;
-    const nameIndex = path.lastIndexOf("/");
-    const dir = path.substring(0, nameIndex);
-    const name = path.substring(nameIndex + 1);
+    const {folder, name} = item;
     await this.request('/api/fs/remove', {
       method: 'POST',
       data: {
-        dir,
+        dir: folder,
         names: [name]
       }
     })
@@ -222,16 +220,23 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     });
   }
 
-  async writeFile(file: SourceDiskDir): Promise<WritableStream> {
+  async writeFile(folder: SourceDiskDir, option: DiskUploadOption): Promise<WritableStream> {
+    const {filename, overwrite, contentType, contentLength, md5, sha256, sha1} = option;
     let {authorization} = this.props;
-    const {path} = file;
     const {readable, writable} = new TransformStream<Uint8Array, Uint8Array>();
     await fetch(new URL('/api/fs/stream', this.props.url), {
       method: 'PUT',
-      headers: {
+      headers: shake({
         Authorization: authorization,
-        "File-Path": encodeURIComponent(path)
-      },
+        "File-Path": encodeURIComponent(joinPath(folder.path, filename)),
+        'As-Task': 'false',
+        'Overwrite': overwrite?'true':'false',
+        'X-File-Md5': md5,
+        'X-File-Sha1': sha1,
+        'X-File-Sha256': sha256,
+        'Content-Type': contentType,
+        'Content-Length': contentLength
+      }),
       body: readable
     })
     return writable;

@@ -34,7 +34,7 @@ export default new Elysia()
         } else {
           // 没有缓存
           debug('没有缓存')
-          const items = await plugin.readDir(parent);
+          const items = await plugin.list(parent);
           // 保存缓存
           debug('保存缓存')
           await sourceDiskDirDao.saveCache(items, id);

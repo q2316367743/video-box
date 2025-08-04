@@ -1,7 +1,7 @@
 import {AbsDiskPluginStore} from "@/modules/disk/abs/AbsDiskPluginStore";
 import {DiskConfigQuarkUc, DiskFormQuarkUc} from "@/modules/disk/impl/quark-or-uc/types";
 import {DiskSourceView} from "@/types/SourceDisk";
-import {DirItem, DiskFileLink} from "@/modules/disk/DiskPlugin";
+import {DirItem, DiskFileLink, DiskUploadOption} from "@/modules/disk/DiskPlugin";
 import {quarkOrUcDownloadLink, quarkOrUcGetFiles, quarkOrUcRequest} from "@/modules/disk/impl/quark-or-uc/utils";
 import {SourceDiskDir} from "@/types/SourceDiskDIr";
 
@@ -23,7 +23,7 @@ export class DiskDriverForQuarkOrUc extends AbsDiskPluginStore {
     this.props['Cookie'] = cookie;
   }
 
-  cp(file: SourceDiskDir, folder: SourceDiskDir): Promise<void> {
+  cp(_file: SourceDiskDir, _folder: SourceDiskDir): Promise<void> {
     return Promise.reject(new Error("夸克网盘不支持复制操作"))
   }
 
@@ -83,7 +83,7 @@ export class DiskDriverForQuarkOrUc extends AbsDiskPluginStore {
     }
   }
 
-  readDir(parent: SourceDiskDir): Promise<Array<DirItem>> {
+  list(parent: SourceDiskDir): Promise<Array<DirItem>> {
     return quarkOrUcGetFiles(parent, this);
   }
 
@@ -103,8 +103,14 @@ export class DiskDriverForQuarkOrUc extends AbsDiskPluginStore {
     });
   }
 
-  writeFile(file: SourceDiskDir): Promise<WritableStream> {
-    return Promise.resolve(new WritableStream());
+  async writeFile(folder: SourceDiskDir, option: DiskUploadOption): Promise<WritableStream> {
+    new WritableStream({
+      write: (chunk) => {
+        console.log(chunk);
+      }
+    })
+    const {readable, writable} = new TransformStream<Uint8Array, Uint8Array>();
+    return writable;
   }
 
 }
