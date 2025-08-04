@@ -161,7 +161,7 @@ x-oss-user-agent:aliyun-sdk-js/6.6.1 Chrome 98.0.4758.80 on Windows 10 64-bit
   if (rsp.status !== 200) {
     return Promise.reject(new Error(`up status: ${rsp.status}, error: ${await rsp.text()}`))
   }
-  return rsp.headers.get("Etag");
+  return rsp.headers.get("Etag") || '';
 }
 
 export async function quarkOrUcUpCommit(pre: UpPreRespData, md5: Array<string>, driver: DiskDriverForQuarkOrUc) {

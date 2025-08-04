@@ -1,6 +1,6 @@
 import {Elysia, t} from "elysia";
 import {sourceDiskDao} from "@/dao";
-import {pluginDiskGet} from "@/service/plugin/disk";
+import {diskRefreshCache, pluginDiskGet} from "@/service/plugin/disk";
 import {Result} from "@/views/Result";
 
 export default new Elysia()
@@ -12,6 +12,7 @@ export default new Elysia()
     const folder = await pluginDiskGet(path, plugin, id);
     if (!folder) return Promise.reject(new Error("文件夹不存在"));
     await plugin.mkdir(folder, name);
+    await diskRefreshCache(folder,  plugin);
     return Result.success();
   }, {
     params: t.Object({

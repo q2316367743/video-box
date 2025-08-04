@@ -2,7 +2,16 @@ import {AbsDiskPluginStore} from "@/modules/disk/abs/AbsDiskPluginStore";
 import {DiskConfigQuarkUc, DiskFormQuarkUc} from "@/modules/disk/impl/quark-or-uc/types";
 import {DiskSourceView} from "@/types/SourceDisk";
 import {DirItem, DiskFileLink, DiskUploadOption} from "@/modules/disk/DiskPlugin";
-import {quarkOrUcDownloadLink, quarkOrUcGetFiles, quarkOrUcRequest} from "@/modules/disk/impl/quark-or-uc/utils";
+import {
+  quarkOrUcDownloadLink,
+  quarkOrUcGetFiles,
+  quarkOrUcRequest,
+  quarkOrUcUpCommit,
+  quarkOrUcUpFinish,
+  quarkOrUcUpHash,
+  quarkOrUcUpPart,
+  quarkOrUcUpPre
+} from "@/modules/disk/impl/quark-or-uc/utils";
 import {SourceDiskDir} from "@/types/SourceDiskDIr";
 
 export class DiskDriverForQuarkOrUc extends AbsDiskPluginStore {
@@ -104,13 +113,51 @@ export class DiskDriverForQuarkOrUc extends AbsDiskPluginStore {
   }
 
   async writeFile(folder: SourceDiskDir, option: DiskUploadOption): Promise<WritableStream> {
-    new WritableStream({
-      write: (chunk) => {
-        console.log(chunk);
+    // 1. 调“前一个接口”拿元数据
+    const pre = await quarkOrUcUpPre(folder, option, this);
+    const finish = await quarkOrUcUpHash(pre.data.task_id, option, this);
+    if (finish) return Promise.resolve(new WritableStream());
+
+    const total = option.contentLength;
+    let left = total;
+    const partSize = pre.metadata.part_size;
+    let partNumber = 1;
+    const md5 = new Array<string>();
+    // 2. 内部缓冲
+    let buffer = new Uint8Array(0);
+    // 3. 创建一个 WritableStream
+    return new WritableStream({
+      write: async (chunk) => {
+        const newBuf = new Uint8Array(buffer.length + chunk.length);
+        newBuf.set(buffer);
+        newBuf.set(chunk, buffer.length);
+        buffer = newBuf;
+
+        // 只要 buffer 里能凑够一个 part_size 就发
+        while (buffer.length >= partSize) {
+          const part = buffer.slice(0, partSize);
+          buffer = buffer.slice(partSize);
+
+          const res = await quarkOrUcUpPart(pre.data, option.contentType, partNumber, part, this);
+          if (res === 'finish') return;
+          md5.push(res);
+
+          partNumber += 1;
+          option.onProgress?.(Number((100 * (total - left) / total).toFixed(2)));
+        }
+      },
+      abort: (reason) => {
+        console.error(reason);
+      },
+      close: async () => {
+        if (buffer.length) {
+          const res = await quarkOrUcUpPart(pre.data, option.contentType, partNumber, buffer, this);
+          md5.push(res);
+        }
+        await quarkOrUcUpCommit(pre.data, md5, this);
+        await quarkOrUcUpFinish(pre.data, this)
       }
-    })
-    const {readable, writable} = new TransformStream<Uint8Array, Uint8Array>();
-    return writable;
+    });
   }
 
 }

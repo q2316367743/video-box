@@ -1,50 +1,29 @@
 <template>
-  <t-card class="mt-8px" size="small">
-    <div class="flex justify-between">
-      <t-space size="small">
-        <t-button theme="primary" :disabled="current.path === '/'">
-          <template #icon>
-            <upload-icon/>
-          </template>
-          上传文件
-        </t-button>
-        <t-button theme="primary" variant="outline">
-          <template #icon>
-            <folder-add-icon/>
-          </template>
-          新建文件夹
-        </t-button>
-      </t-space>
-      <t-space>
-        <t-button theme="primary" variant="text" shape="square">
-          <template #icon>
-            <filter-sort-icon/>
-          </template>
-        </t-button>
-      </t-space>
-    </div>
-  </t-card>
   <div class="folder-view-content">
-    <folder-tree-view :current :source-id="sourceId"/>
+    <folder-tree-view v-if="view === 'tree'" :current="root" :source-id="sourceId"/>
+    <folder-table-view v-else-if="view === 'table'" :current="current || root" :source-id="sourceId"/>
   </div>
 </template>
 <script lang="ts" setup>
-import {
-  FilterSortIcon,
-  FolderAddIcon,
-  UploadIcon,
-} from "tdesign-icons-vue-next";
 import {DirItem} from "@/apis/plugin/disk/list.ts";
-import FolderTreeView from "@/pages/disk/info/components/FolderTreeView.vue";
+import FolderTreeView from "@/pages/disk/info/folder/FolderTreeView.vue";
+import FolderTableView from "@/pages/disk/info/folder/FolderTableView.vue";
 
 defineProps({
-  current: {
+  root: {
     type: Object as PropType<DirItem>,
     required: true
+  },
+  current: {
+    type: Object as PropType<DirItem>,
   },
   sourceId: {
     type: String,
     default: ''
+  },
+  view: {
+    type: String,
+    default: 'tree'
   }
 });
 
@@ -56,7 +35,7 @@ defineProps({
   border-radius: var(--td-radius-medium);
   border: 1px solid var(--td-border-level-2-color);
   overflow-x: auto;
-  height: calc(100vh - 122px);
+  height: calc(100vh - 76px);
 }
 
 .folder-item {

@@ -1,16 +1,44 @@
 <template>
   <div class="plugin-disk-info">
     <t-card size="small" class="pos-sticky top-0 z-10001">
-      <t-breadcrumb :options="options" :max-items="5" :items-before-collapse="3" :items-after-collapse="3"/>
+      <div class="flex justify-between items-center">
+        <t-breadcrumb :options="options" :max-items="5" :items-before-collapse="3" :items-after-collapse="3"/>
+        <t-space size="small">
+          <t-radio-group v-model="view" variant="primary-filled">
+            <t-tooltip content="树">
+              <t-radio-button value="tree">
+                <tree-square-dot-vertical-icon/>
+              </t-radio-button>
+            </t-tooltip>
+            <t-tooltip content="表格">
+              <t-radio-button value="table">
+                <table-icon/>
+              </t-radio-button>
+            </t-tooltip>
+            <t-tooltip content="网格">
+              <t-radio-button value="grid">
+                <app-icon/>
+              </t-radio-button>
+            </t-tooltip>
+          </t-radio-group>
+          <t-button theme="primary" variant="text" shape="square">
+            <template #icon>
+              <filter-sort-icon/>
+            </template>
+          </t-button>
+        </t-space>
+      </div>
     </t-card>
-    <folder-view v-if="root" :source-id="sourceId" :current="root"/>
+    <folder-view v-if="root" :source-id="sourceId" :current :root :view/>
   </div>
 </template>
 <script lang="ts" setup>
 import {TdBreadcrumbItemProps} from 'tdesign-vue-next';
 import {DirItem, pluginDiskGet} from "@/apis/plugin/disk/list.ts";
 import {
-  HomeIcon,
+  AppIcon,
+  FilterSortIcon,
+  HomeIcon, TableIcon, TreeSquareDotVerticalIcon,
 } from "tdesign-icons-vue-next";
 import {sourceDiskInfo} from "@/apis/source/disk.ts";
 import {DiskSourceEntry} from "@/types/SourceDisk.ts";
@@ -24,6 +52,7 @@ const sourceId = route.params.id as string;
 const source = ref<DiskSourceEntry>();
 const current = ref<DirItem>();
 const root = ref<DirItem>();
+const view = useLocalStorage('/disk/view', 'tree');
 
 // route.query.path as string || '/'
 const options = computed<Array<TdBreadcrumbItemProps>>(() => {
@@ -70,11 +99,6 @@ const handleClick = async (item: DirItem) => {
 const handlePath = (path: string) => {
   pluginDiskGet(sourceId, {path: path, password: ''}).then(handleClick);
 }
-const handleRefresh = (refresh: boolean) => {
-  if (!current.value) return;
-  // 刷新
-}
-
 
 let dragPath: string | undefined = undefined;
 provide<DiskInfoInstance>(diskInfoKey, {
@@ -94,7 +118,15 @@ onMounted(() => {
   // 获取数据
   pluginDiskGet(sourceId, {path: '/', password: ''}).then(r => {
     root.value = r;
-  });
+  }).finally(() => {
+    if (route.query.path !== '/') {
+      pluginDiskGet(sourceId, {path: route.query.path as string, password: ''}).then(r => {
+        current.value = r;
+      });
+    } else {
+      current.value = root.value
+    }
+  })
 });
 </script>
 <style scoped lang="less">

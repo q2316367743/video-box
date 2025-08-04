@@ -9,38 +9,29 @@ export default new Elysia()
     if (!request.body) return Promise.reject(new Error("没有上传文件"));
 
     const {id} = params;
-    const folderPath = decodeURIComponent(headers['Folder-Path']);
+    const folderPath = decodeURIComponent(headers['folder-path']);
     const plugin = await sourceDiskDao.getPlugin(id);
     if (!plugin) return Promise.reject(new Error("插件不存在"));
     const folder = await pluginDiskGet(folderPath, plugin, id);
     if (!folder) return Promise.reject(new Error("文件夹项不存在"));
 
-    const asTask = typeof headers['As-Task'] !== 'undefined' && headers['As-Task'] !== 'false';
+    const asTask = typeof headers['as-task'] !== 'undefined' && headers['as-task'] !== 'false';
 
     const ws = await plugin.writeFile(folder, {
-      filename: decodeURIComponent(headers['File-Name']),
-      contentType: headers['Content-Type'],
-      contentLength: Number(headers['Content-Length']),
-      overwrite: headers['Overwrite'] !== 'false',
-      md5: headers['X-File-Md5'],
-      sha1: headers['X-File-Sha1'],
-      sha256: headers['X-File-Sha256']
+      filename: decodeURIComponent(headers['file-name']),
+      contentType: headers['content-type'],
+      contentLength: Number(headers['content-length']),
+      overwrite: headers['overwrite'] !== 'false',
+      md5: headers['x-file-md5'],
+      sha1: headers['x-file-sha1'],
+      sha256: headers['x-file-sha256']
     });
     await request.body.pipeTo(ws);
+    await Bun.sleep(1000);
     return Result.success();
   }, {
     params: t.Object({
       id: t.String(),
     }),
-    headers: t.Object({
-      'Folder-Path': t.String(),
-      'File-Name': t.String(),
-      'Overwrite': t.String(),
-      'Content-Type': t.String(),
-      'Content-Length': t.String(),
-      'As-Task': t.Optional(t.String()),
-      'X-File-Md5': t.Optional(t.String()),
-      'X-File-Sha1': t.Optional(t.String()),
-      'X-File-Sha256': t.Optional(t.String())
-    })
+    headers: t.Record(t.String(), t.Any())
   })

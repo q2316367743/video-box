@@ -10,7 +10,7 @@ import {
   LinkIcon
 } from "tdesign-icons-vue-next";
 import MessageBoxUtil from "@/utils/modal/MessageBoxUtil.tsx";
-import {pluginDiskRename} from "@/apis/plugin/disk/link.ts";
+import {pluginDiskRename, pluginDiskRm} from "@/apis/plugin/disk/link.ts";
 import MessageUtil from "@/utils/modal/MessageUtil.ts";
 import {useUserStore} from "@/store/UserStore.ts";
 import {downloadByUrl} from "@/utils/lang/BrowserUtil.ts";
@@ -19,38 +19,51 @@ import {openDirItemTransfer} from "@/pages/disk/info/dialog/DirItemTransfer.tsx"
 export function handleDirItemContextmenu(sourceId: string, item: DirItem, e: MouseEvent, onUpdate: () => void) {
   e.preventDefault();
   e.stopPropagation();
-  const items: Array<MenuItem> = [{
-    label: '重命名',
-    icon: () => <Edit2Icon/>,
-    onClick: () => {
-      MessageBoxUtil.prompt("请输入新的名字", "重命名", {
-        inputValue: item.name,
-        inputPlaceholder: '请输入新的名字',
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-      }).then(name => {
-        //重命名
-        pluginDiskRename(sourceId, item.path, name)
-          .then(() => {
-            MessageUtil.success('重命名成功');
-            onUpdate();
-          })
-      })
+  const items: Array<MenuItem> = [
+    {
+      label: '重命名',
+      icon: () => <Edit2Icon/>,
+      onClick: () => {
+        MessageBoxUtil.prompt("请输入新的名字", "重命名", {
+          inputValue: item.name,
+          inputPlaceholder: '请输入新的名字',
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+        }).then(name => {
+          //重命名
+          pluginDiskRename(sourceId, item.path, name)
+            .then(() => {
+              MessageUtil.success('重命名成功');
+              onUpdate();
+            })
+        })
+      }
+    }, {
+      label: '移动',
+      icon: () => <FileTransmitIcon/>,
+      onClick: () => openDirItemTransfer(true, sourceId, item, onUpdate)
+    }, {
+      label: '复制',
+      icon: () => <FilePasteIcon/>,
+      onClick: () => openDirItemTransfer(false, sourceId, item, onUpdate)
+    }, {
+      label: () => <span class={'label'} style={{color: 'var(--td-error-color)'}}>删除</span>,
+      icon: () => <DeleteIcon style={{color: 'var(--td-error-color)'}}/>,
+      onClick: () => {
+        MessageBoxUtil.alert(`确定要「${item.name}」删除吗？`, "删除", {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+        }).then(() => {
+          //删除
+          pluginDiskRm(sourceId, item.path)
+            .then(() => {
+              MessageUtil.success('删除成功');
+              onUpdate();
+            })
+        })
+      }
     }
-  }, {
-    label: '移动',
-    icon: () => <FileTransmitIcon/>,
-    onClick: () => openDirItemTransfer(true, sourceId, item, onUpdate)
-  }, {
-    label: '复制',
-    icon: () => <FilePasteIcon/>,
-    onClick: () => openDirItemTransfer(false, sourceId, item, onUpdate)
-  }, {
-    label: () => <span class={'label'} style={{color: 'var(--td-error-color)'}}>删除</span>,
-    icon: () => <DeleteIcon style={{color: 'var(--td-error-color)'}}/>,
-    onClick: () => {
-    }
-  }];
+  ];
   if (item.type === 'file') {
     items.push({
       label: '复制链接',

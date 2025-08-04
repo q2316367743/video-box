@@ -7,7 +7,8 @@
         <div v-for="item in items" :key="item.path" class="dir-item flex gap-8px items-center"
              :class="{active: item.path === child?.path, choose: diskInfo?.current?.value?.path === item.path}"
              draggable="true" :data-path="item.path" :title="item.name"
-             @click="handleClick(item)" @contextmenu.stop="handleDirItemContextmenu(sourceId, item, $event, () => onRefresh(true))"
+             @click="handleClick(item)"
+             @contextmenu.stop="handleDirItemContextmenu(sourceId, item, $event, () => onRefresh(true))"
              @dragstart="handleDrag(item)"
         >
           <file-icon-view :type="item.type" :extname="item.extname"/>
@@ -96,7 +97,10 @@ const onRefresh = async (refresh: boolean) => {
   try {
     if (props.current.type === 'folder') {
       items.value = await pluginDiskList(props.sourceId, {path: props.current.path, refresh})
-      child.value = undefined;
+      if (!child.value) return;
+      if (items.value.every(e => e.path !== child.value?.path)) {
+        child.value = undefined;
+      }
     }
   } finally {
     loading.value = false

@@ -175,7 +175,7 @@ export interface UpPreRespMeta {
   part_thread: number;
   acc2: string;
   acc1: string;
-  part_size: string;
+  part_size: number;
 }
 
 export interface UpHashRespData {
