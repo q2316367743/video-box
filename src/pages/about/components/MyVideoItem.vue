@@ -11,7 +11,7 @@
 </template>
 <script lang="ts" setup>
 import CtxMenu from "@imengyu/vue3-context-menu";
-import {isDark} from "@/store/index";
+import {isDark} from "@/store";
 import {DeleteIcon, InfoCircleIcon} from "tdesign-icons-vue-next";
 import MessageBoxUtil from "@/utils/modal/MessageBoxUtil";
 import MessageUtil from "@/utils/modal/MessageUtil";
@@ -51,10 +51,10 @@ const handleContextmenu = (e: MouseEvent, item: MyVideoItemView) => {
   CtxMenu.showContextMenu({
     x: e.x,
     y: e.y,
-    theme: isDark.value ? 'dark' : 'light',
+    theme: isDark.value ? 'mac dark' : 'light',
     items: [{
       label: '查看详情',
-      icon: () => h(InfoCircleIcon, {style: {color: 'var(--td-error-color)'}}),
+      icon: () => h(InfoCircleIcon, {}),
       onClick() {
         const [sourceId, videoId] = item.payload.split('/');
         openVideoInfoDrawer(sourceId, videoId);

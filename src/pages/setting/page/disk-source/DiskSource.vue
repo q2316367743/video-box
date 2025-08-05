@@ -3,7 +3,7 @@
     <template #extra>
       <t-button theme="primary" @click="addDiskSourceDialog(init)">新增</t-button>
     </template>
-    <t-list>
+    <t-list split>
       <t-list-item v-for="item in items" :key="item.id">
         <t-list-item-meta :title="item.title" :description="item.driver"/>
         <template #action>

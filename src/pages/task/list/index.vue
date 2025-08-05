@@ -20,9 +20,9 @@ import TaskRunningTable from "@/pages/task/list/components/TaskRunningTable.vue"
 
 <style scoped>
 .task-list-page {
-  padding: 24px;
+  padding: 16px;
   background-color: var(--td-bg-color-page);
-  min-height: 100vh;
+  min-height: calc(100vh - 32px);
 }
 
 .page-header {

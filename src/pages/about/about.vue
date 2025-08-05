@@ -60,10 +60,10 @@ onMounted(init)
 </script>
 <style scoped lang="less">
 .about {
-  width: 100%;
-  height: 100%;
+  width: calc(100% - 32px);
+  height: calc(100% - 32px);
   position: relative;
-  margin-top: 16px;
+  padding: 16px;
 
   .about-container {
     .about-content {

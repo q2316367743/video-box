@@ -31,6 +31,12 @@
         </template>
         任务
       </t-menu-item>
+      <t-menu-item value="/setting/base">
+        <template #icon>
+          <setting-icon />
+        </template>
+        设置
+      </t-menu-item>
       <t-menu-item value="/about">
         <template #icon>
           <user-icon/>
@@ -42,7 +48,7 @@
 </template>
 <script lang="ts" setup>
 import {
-  HardDiskStorageIcon, HomeIcon, TaskIcon,
+  HardDiskStorageIcon, HomeIcon, SettingIcon, TaskIcon,
   TvIcon, UserIcon,
   VideoIcon,
 } from "tdesign-icons-vue-next";
