@@ -14,6 +14,7 @@ export function openDiskUploadDialog(sourceId: string, path: string, onUpdate: (
     return {status: 'success', response: {url}};
   }
 
+  // TODO 文件上传使用新的组件
   DialogPlugin({
     header: '文件上传',
     placement: "center",

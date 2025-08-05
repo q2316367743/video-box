@@ -6,8 +6,7 @@ import {
   InfoCircleIcon,
   RefreshIcon, UploadIcon
 } from "tdesign-icons-vue-next";
-import { openDirItemTransfer } from "@/pages/disk/info/dialog/DirItemTransfer.tsx";
-import { openDiskUploadDialog } from "@/pages/disk/info/dialog/DiskUpload.tsx";
+import { openDiskUploadDialog } from "@/pages/disk/info/dialog/DiskUploadDialog.tsx";
 import MessageBoxUtil from "@/utils/modal/MessageBoxUtil.tsx";
 import { pluginDiskMkdir } from "@/apis/plugin/disk/link.ts";
 import MessageUtil from "@/utils/modal/MessageUtil.ts";

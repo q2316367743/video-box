@@ -4,7 +4,7 @@
       <file-icon-view :type="item.type" :extname="item.extname" size="72px"/>
     </div>
     <div class="ufv__content">
-      <div class="font-size-18px font-bold mt-32px">{{ item.name }}</div>
+      <div class="font-size-18px font-bold mt-32px ellipsis" :title="item.name">{{ item.name }}</div>
       <div class="tag-item mt-16px">
         <div class="tag-label">磁盘文件大小</div>
         <div class="tag-value items-center flex gap-8px">
@@ -71,6 +71,7 @@ const handleDownload = () => {
     justify-content: center;
     transition: background-color 0.3s ease-in-out;
     background-color: var(--td-bg-color-container);
+    cursor: pointer;
 
     &:hover {
       background-color: var(--td-bg-color-container-hover);

@@ -1,8 +1,8 @@
 import {DirItem} from "@/apis/plugin/disk/list.ts";
 import {DialogPlugin} from "tdesign-vue-next";
-import DiskFolderSelect from "@/components/DiskFolderSelect.vue";
 import {pluginDiskCopy, pluginDiskMove} from "@/apis/plugin/disk/link.ts";
 import MessageUtil from "@/utils/modal/MessageUtil.ts";
+import DiskFolderSelect from "@/components/DiskFolderSelect.vue";
 
 export function openDirItemTransfer(mv: boolean, sourceId: string, item: DirItem, onUpdate: () => void) {
   const folder = ref(['/']);
@@ -20,6 +20,6 @@ export function openDirItemTransfer(mv: boolean, sourceId: string, item: DirItem
         dp.setConfirmLoading(false);
       })
     },
-    default: () => <DiskFolderSelect v-model={folder.value} sourceId={sourceId}/>
+    default: () => <DiskFolderSelect v-model={folder.value} sourceId={sourceId} path={item.path}/>
   })
 }

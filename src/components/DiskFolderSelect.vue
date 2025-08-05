@@ -14,6 +14,10 @@ const props = defineProps({
     type: String,
     required: true
   },
+  path: {
+    type: String,
+    default: ''
+  }
 });
 const data = ref<TdTreeProps["data"]>([{
   value: '/',
@@ -27,7 +31,8 @@ const load: TdTreeProps["load"] = async (node) => {
     return {
       value: item.path,
       label: item.name,
-      children: true
+      children: true,
+      disabled: props.path === '' ? false : item.path.startsWith(props.path)
     }
   })
 }
