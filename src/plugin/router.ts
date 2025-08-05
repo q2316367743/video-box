@@ -1,14 +1,12 @@
 import {createRouter, createWebHashHistory, RouteRecordRaw} from 'vue-router';
 import {
-  HardDiskStorageIcon,
   HomeIcon,
-  InfoCircleIcon,
   InternetIcon,
   SettingIcon,
   TvIcon,
   User1Icon
 } from 'tdesign-icons-vue-next';
-import {emitScrollToTop} from "@/store/index";
+import {emitScrollToTop} from "@/store";
 
 export const routes: Array<RouteRecordRaw> = [{
   name: '主页',
@@ -136,6 +134,10 @@ export const routes: Array<RouteRecordRaw> = [{
     name: '认证-登录',
     path: '/auth/login',
     component: () => import('@/pages/auth/login/index.vue'),
+  }, {
+    name: '任务',
+    path: '/task',
+    component: () => import('@/pages/task/list/index.vue'),
   }];
 
 export const router = createRouter({

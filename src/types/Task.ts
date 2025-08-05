@@ -7,7 +7,8 @@ export interface TaskDefinition {
   name: string;
   type: TaskType;
   schedule: string;
-  script: string;   // preset 任务必填
+  // preset 任务必填
+  script: string;
   // 最后执行时间
   last_run_at: number;
 }
@@ -21,6 +22,6 @@ export interface TaskExecution {
   created_at: number;
   finished_at: number;
   progress: number;
-  result: any;
-  error: string;
+  result?: any;
+  error?: string;
 }

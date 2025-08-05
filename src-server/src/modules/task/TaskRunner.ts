@@ -27,7 +27,9 @@ export class TaskRunner {
       definition_id: definitionId,
       identifier,
       trigger,
-      status: 'running'
+      status: 'running',
+      finished_at: 0,
+      created_at: Date.now()
     })
 
     running.set(identifier, exec);
@@ -62,10 +64,10 @@ export class TaskRunner {
         return Promise.reject(new Error('Neither script nor adhocFn provided'))
       }
 
-      this._finish(exec.id, 'done', result);
+      await this._finish(exec, 'done', result);
     } catch (err: any) {
       const status = signal.aborted ? 'cancelled' : 'failed';
-      this._finish(exec.id, status, undefined, signal.aborted ? '用户终止' : err.message);
+      await this._finish(exec, status, undefined, signal.aborted ? '用户终止' : err.message);
     } finally {
       running.delete(exec.identifier);
       abortCtl.delete(exec.identifier);
@@ -76,8 +78,9 @@ export class TaskRunner {
     taskExecutionDao.updateById(execId, {progress: p})
   }
 
-  private _finish(execId: string, status: TaskStatus, result?: any, error?: string) {
-    taskExecutionDao.updateById(execId, {status, finished_at: Date.now(), result, error})
+  private async _finish(exec: TaskExecution, status: TaskStatus, result?: any, error?: string) {
+    await taskExecutionDao.updateById(exec.id, {status, finished_at: Date.now(), result, error});
+    await taskDefinitionDao.updateById(exec.definition_id, {last_run_at: Date.now()});
   }
 
   cancel(identifier: string): boolean {

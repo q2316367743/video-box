@@ -27,6 +27,7 @@ export function prettyDataUnit(value: number) {
 }
 
 export function prettyDate(date?: number | string | Date) {
+  if (date === 0) return '很久很久以前';
   const now = new Date().getTime()
   const old = date ? new Date(date).getTime() : new Date().getTime()
   const diffValue = now - old;
@@ -70,6 +71,7 @@ export function prettyDateTime(date: number, showZero = false) {
 export function toDateString(date: number | string | Date) {
   return dayjs(date).format('YYYY-MM-DD');
 }
+
 export function toDateTimeString(date: number | string | Date) {
   return dayjs(date).format('YYYY-MM-DD HH:mm:ss');
 

@@ -8,6 +8,13 @@ interface Result<T> {
   data: T;
 }
 
+export interface PageResponse<T> {
+  pageNum: number;
+  pageSize: number;
+  total: number;
+  records: Array<T>;
+}
+
 const http = axios.create({
   timeout: 60000,
 });

@@ -25,11 +25,14 @@ async function taskUpload(folder: SourceDiskDir, option: DiskUploadOption, body:
     async (ctx) => {
       // 上传文件到本地磁盘
       await diskFileUpload(tempFileName, folder, plugin, option);
+      ctx.update(33);
       // 获取读取流
       const ws = await plugin.writeFile(folder, option);
       // 写入
       const tempFile = Bun.file(join(APP_TEMP_DIR, tempFileName));
+      ctx.update(66);
       await tempFile.stream().pipeTo(ws);
+      ctx.update(99);
     })
 }
 

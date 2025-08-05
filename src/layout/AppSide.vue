@@ -25,13 +25,25 @@
         </template>
         网盘
       </t-menu-item>
+      <t-menu-item value="/task">
+        <template #icon>
+          <task-icon/>
+        </template>
+        任务
+      </t-menu-item>
+      <t-menu-item value="/about">
+        <template #icon>
+          <user-icon/>
+        </template>
+        我的
+      </t-menu-item>
     </t-menu>
   </aside>
 </template>
 <script lang="ts" setup>
 import {
-  HardDiskStorageIcon, HomeIcon,
-  TvIcon,
+  HardDiskStorageIcon, HomeIcon, TaskIcon,
+  TvIcon, UserIcon,
   VideoIcon,
 } from "tdesign-icons-vue-next";
 

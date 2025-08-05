@@ -54,12 +54,13 @@ create unique index uq_index_sfn
 -- 任务定义表
 CREATE TABLE task_definition
 (
-    id         TEXT PRIMARY KEY,
-    name       TEXT,
-    `type`     TEXT CHECK (type IN ('preset', 'adhoc')),
-    schedule   TEXT, -- 仅预设任务有效
-    script     TEXT, -- 仅预设任务有效：impl 下的文件名
-    created_at INTEGER DEFAULT CURRENT_TIMESTAMP
+    id          TEXT PRIMARY KEY,
+    name        TEXT    NOT NULL DEFAULT '',
+    `type`      TEXT CHECK (type IN ('preset', 'adhoc')),
+    schedule    TEXT    NOT NULL DEFAULT '', -- 仅预设任务有效
+    script      TEXT    NOT NULL DEFAULT '', -- 仅预设任务有效：impl 下的文件名
+    created_at  INTEGER          DEFAULT CURRENT_TIMESTAMP,
+    last_run_at INTEGER NOT NULL DEFAULT 0
 );
 
 -- 文件上传
@@ -76,9 +77,9 @@ CREATE TABLE task_execution
     identifier    TEXT    NOT NULL,
     `trigger`     TEXT CHECK (`trigger` IN ('cron', 'manual', 'internal')),
     status        TEXT CHECK (status IN ('running', 'done', 'failed', 'cancelled')),
-    created_at    INTEGER          DEFAULT CURRENT_TIMESTAMP,
+    created_at    INTEGER NOT NULL DEFAULT CURRENT_TIMESTAMP,
     finished_at   INTEGER NOT NULL DEFAULT 0,
-    progress      INTEGER          DEFAULT 0,
+    progress      INTEGER NOT NULL DEFAULT 0,
     result        TEXT    NOT NULL DEFAULT '',
     error         TEXT    NOT NULL DEFAULT ''
 );
