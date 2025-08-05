@@ -47,9 +47,9 @@ export default {
 
       const res = DialogPlugin({
         default: () => <Paragraph>{content}</Paragraph>,
-        top: 'auto',
         header: title,
         draggable: true,
+        placement: "center",
         confirmBtn: {
           default: confirmButtonText,
         },

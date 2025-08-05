@@ -8,9 +8,8 @@ import {SourceDiskDir} from "@/types/SourceDiskDIr";
 import {diskRefreshCache, pluginDiskGet} from "@/service/plugin/disk";
 
 interface Param {
-  sourceId: string;
-  path: string;
   sign: string;
+  sourceDiskDir: SourceDiskDir;
   plugin: DiskPlugin;
   headers: Record<string, string | undefined>;
   signal: AbortSignal;
@@ -30,22 +29,8 @@ async function refreshCache(item: SourceDiskDir, plugin: DiskPlugin): Promise<vo
 
 async function getResponse(param: Param): Promise<Response> {
   // 获取缓存
-  const {sourceId, path, plugin, headers, signal} = param;
+  const {sourceDiskDir, plugin, headers, signal} = param;
   // 找到缓存记录
-  const sourceDiskDir = await pluginDiskGet(path, plugin, sourceId);
-  if (!sourceDiskDir) {
-    // 返回404
-    return new Response('404 Not Found', {
-      status: 404,
-      statusText: 'NOT_FOUND'
-    });
-  }
-  if (sourceDiskDir.type !== 'file') {
-    return new Response('请求路径不是文件', {
-      status: 404,
-      statusText: 'REQUEST_NOT_FILE'
-    });
-  }
   const rsp = await plugin.readFile(sourceDiskDir, shake({
     connection: headers['connection'],
     range: headers['range'],
@@ -70,16 +55,35 @@ export default new Elysia()
     async ({params, query, set, headers, request}) => {
       const {sign} = query;
       const {id} = params;
-      const path = '/' + params['*'];
+      const path = decodeURIComponent('/' + params['*']);
       // 这里 path 就是 /proxy/disk/p/ 后面的任意路径
       const plugin = await sourceDiskDao.getPlugin(id);
       if (!plugin) {
         set.status = 500;
         return Result.error("磁盘插件未找到");
       }
+      // 找到缓存记录
+      const sourceDiskDir = await pluginDiskGet(path, plugin, id);
+      if (!sourceDiskDir) {
+        // 返回404
+        return new Response('404 Not Found', {
+          status: 404,
+          statusText: 'NOT_FOUND'
+        });
+      }
+      if (sourceDiskDir.type !== 'file') {
+        return new Response('请求路径不是文件', {
+          status: 404,
+          statusText: 'REQUEST_NOT_FILE'
+        });
+      }
+
+      // 由于可能是下载，所以要加入请求头
+      // set.headers['']
+      set.headers['Content-Disposition'] = `attachment; filename*=UTF-8''${encodeURIComponent(sourceDiskDir.name)}`;
 
       const {signal} = request;
-      return getResponse({sourceId: id, path: decodeURIComponent(path), sign, plugin, headers, signal});
+      return getResponse({sign, plugin, headers, signal, sourceDiskDir});
     },
     {
       params: t.Object({
