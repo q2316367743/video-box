@@ -17,18 +17,35 @@ export default new Elysia({prefix: '/api/task'})
     runner.cancel(params.identifier);
     return Result.success();
   })
-  .get('/definitions', async () => {
-    const list = await taskDefinitionDao.query().list()
+  .get('/definitions', async ({query}) => {
+    const list = await taskDefinitionDao.query().page(query.pageNum, query.pageSize)
     return Result.success(list);
+  }, {
+    query: t.Object({
+      pageNum: t.Number({
+        default: 1
+      }),
+      pageSize: t.Number({
+        default: 20
+      }),
+    })
   })
-  .get('/executions/:id', async ({params}) => {
+  .get('/executions/:id', async ({params, query}) => {
     const list = await taskExecutionDao.query()
       .eq('definition_id', params.id)
       .orderByDesc('created_at')
-      .list();
+      .page(query.pageNum, query.pageSize);
     return Result.success(list);
   }, {
     params: t.Object({
       id: t.String(),
+    }),
+    query: t.Object({
+      pageNum: t.Number({
+        default: 1
+      }),
+      pageSize: t.Number({
+        default: 20
+      }),
     })
   });

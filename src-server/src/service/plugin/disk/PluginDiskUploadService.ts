@@ -6,7 +6,7 @@ import {useSnowflake} from "@/utils/Snowflake";
 import {DiskPlugin, DiskUploadOption} from "@/modules/disk/DiskPlugin";
 import {runner} from "@/modules/task/TaskRunner";
 import {SourceDiskDir} from "@/types/SourceDiskDIr";
-import {diskFileUpload} from "@/modules/task/impl/DiskFileUpload";
+import {diskFileUpload} from "@/modules/task/adhoc/DiskFileUpload";
 
 async function saveTempFile(filename: string, body: ReadableStream<Uint8Array>) {
   const tempFileName = useSnowflake().nextId() + extname(filename);

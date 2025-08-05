@@ -1,9 +1,11 @@
-import { Elysia } from "elysia";
+import {Elysia} from "elysia";
 // 插件
-import { logger } from "@rasla/logify";
-import { staticPlugin } from "@elysiajs/static";
-import { swagger } from "@elysiajs/swagger";
+import {logger} from "@rasla/logify";
+import {staticPlugin} from "@elysiajs/static";
+import {swagger} from "@elysiajs/swagger";
 import jwt from "@elysiajs/jwt";
+import {APP_LOG_DIR} from "@/global/constant";
+
 // 拓展
 
 export function registerElysiaPlugin(app: Elysia) {
@@ -12,7 +14,7 @@ export function registerElysiaPlugin(app: Elysia) {
       logger({
         level: process.env.NODE_ENV === "production" ? "info" : "debug",
         file: process.env.NODE_ENV === "production",
-        filePath: "/app/video-box/logs",
+        filePath: APP_LOG_DIR,
         console: true,
       })
     )
@@ -31,13 +33,13 @@ export function registerElysiaPlugin(app: Elysia) {
             description: "Video Box API documentation",
           },
           tags: [
-            { name: "folder/web", description: "文件夹-网络资源" },
-            { name: "source/web", description: "源-网络资源" },
-            { name: "source/tv", description: "源-电视资源" },
-            { name: "plugin/web", description: "插件-网络资源" },
-            { name: "my/video-item", description: "我的-视频资源" },
-            { name: "proxy", description: "代理" },
-            { name: "auth", description: "认证" },
+            {name: "folder/web", description: "文件夹-网络资源"},
+            {name: "source/web", description: "源-网络资源"},
+            {name: "source/tv", description: "源-电视资源"},
+            {name: "plugin/web", description: "插件-网络资源"},
+            {name: "my/video-item", description: "我的-视频资源"},
+            {name: "proxy", description: "代理"},
+            {name: "auth", description: "认证"},
           ],
         },
       })

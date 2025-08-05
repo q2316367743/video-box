@@ -2,6 +2,11 @@ import {running, abortCtl} from './registry';
 import {TaskExecution, TaskStatus, TaskTrigger} from "@/types/Task";
 import {taskDefinitionDao, taskExecutionDao} from "@/dao";
 
+export interface TaskRunnerContext {
+  signal: AbortSignal;
+  update: (p: number) => void
+}
+
 export class TaskRunner {
   /**
    * 启动一次执行
@@ -14,7 +19,7 @@ export class TaskRunner {
     identifier: string,
     trigger: TaskTrigger,
     definitionId?: string,
-    adhocFn?: (ctx: { signal: AbortSignal; update: (p: number) => void }) => Promise<any>
+    adhocFn?: (ctx: TaskRunnerContext) => Promise<any>
   ): Promise<TaskExecution> {
     if (running.has(identifier)) throw new Error(`${identifier} already running`);
 
@@ -48,7 +53,7 @@ export class TaskRunner {
         const row = await taskDefinitionDao.selectById(exec.definition_id);
         if (!row) return Promise.reject(new Error(`TaskDefinition ${exec.definition_id} not found`));
 
-        const {default: fn} = await import(`./impl/${row.script}`);
+        const {default: fn} = await import(`./preset/${row.script}`);
         result = await fn({signal, update: (p: number) => this._update(exec.id, p)});
       } else if (adhocFn) {
         // 临时任务

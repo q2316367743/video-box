@@ -2,6 +2,13 @@ import {Database} from "db0";
 import {list} from 'radash';
 import {debug} from "@rasla/logify";
 
+export interface PageResponse<T> {
+  pageNum: number;
+  pageSize: number;
+  total: number;
+  records: Array<T>;
+}
+
 export class QueryChain<T extends Record<string, any>, K extends keyof T = keyof T> {
   private readonly db: Database;
   private readonly tableName: string;
@@ -170,7 +177,7 @@ export class QueryChain<T extends Record<string, any>, K extends keyof T = keyof
     let page = 1;
     const total = await this.count();
     while ((page - 1) * batchSize < total) {
-      const list = await this.lastSql(`LIMIT ${page - 1}, ${batchSize}`).list();
+      const list = await this.lastSql(`LIMIT ${batchSize} OFFSET ${(page - 1) * batchSize}`).list();
       // 把刚刚加入的 LIMIT 语句弹出
       this.lastExpress.pop();
       await each(list);
@@ -191,6 +198,17 @@ export class QueryChain<T extends Record<string, any>, K extends keyof T = keyof
     debug("delete values\t:" + this.values);
     const statement = this.db.prepare(sql);
     await statement.run(...this.values);
+  }
+
+  async page(pageNum: number, pageSize: number): Promise<PageResponse<T>> {
+    const total = await this.count();
+    const records = await this.lastSql(`LIMIT ${pageSize} OFFSET ${(pageNum - 1) * pageSize}`).list();
+    return {
+      total,
+      records,
+      pageNum,
+      pageSize,
+    }
   }
 
 }

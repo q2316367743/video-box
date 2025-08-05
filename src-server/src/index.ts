@@ -12,7 +12,6 @@ import authRoutes from "@/routers/auth";
 import adminRouters from "@/routers/admin";
 import adminSetting from "@/routers/admin/setting";
 
-import {registerJob} from "./modules/job";
 import {registerElysiaPlugin} from "./plugins/elysia_plugin";
 import {registerElysiaHook} from "./plugins/elysia_hook";
 import {elysiaInit} from "@/plugins/elysia_init";
@@ -25,8 +24,6 @@ const app = new Elysia({
 
 // 注册插件
 registerElysiaPlugin(app);
-// 注册定时任务
-registerJob(app);
 // 全局钩子
 registerElysiaHook(app);
 

@@ -64,7 +64,9 @@ CREATE TABLE task_definition
 
 -- 文件上传
 insert into task_definition (id, name, type, schedule, script)
-values ('disk:file-upload', '网盘-文件上传', 'adhoc', '', '');
+values ('disk:file-upload', '网盘:文件上传', 'adhoc', '', '');
+insert into task_definition (id, name, type, schedule, script)
+values ('web:refresh-website', '网络资源:刷新网站延迟', 'preset', '*/30 * * * *', 'refreshSourceWeb.ts');
 
 -- 任务执行记录表
 CREATE TABLE task_execution
