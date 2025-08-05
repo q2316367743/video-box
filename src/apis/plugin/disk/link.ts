@@ -40,6 +40,7 @@ export async function pluginDiskUpload(sourceId: string, path: string, file: Fil
       authorization: useUserStore().token,
       'Folder-Path': encodeURIComponent(path),
       'File-Name': encodeURIComponent(file.name),
+      'File-Type': file.type,
       'Content-Type': 'application/octet-stream',
       'Overwrite': `${overwrite}`,
       'Content-Length': `${file.size}`,

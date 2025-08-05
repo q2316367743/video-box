@@ -10,7 +10,7 @@ export interface TaskLog {
   level: TaskLogLevel;
 }
 
-export interface Task {
+interface TempTask {
   // 任务ID，唯一
   id: string;
   name: string; // 任务名称
@@ -25,10 +25,10 @@ export interface Task {
 }
 
 // 用 Map 存，重启进程就消失
-export const taskStore = new Map<string, Task>();
+export const taskStore = new Map<string, TempTask>();
 
 // 根据任务名执行不同逻辑
-async function doRealWork(task: Task, runner: (task: Task) => Promise<void>) {
+async function doRealWork(task: TempTask, runner: (task: TempTask) => Promise<void>) {
   task.status = "running";
   task.progress = 0;
   task.updatedAt = Date.now();
@@ -45,7 +45,7 @@ async function doRealWork(task: Task, runner: (task: Task) => Promise<void>) {
 export async function runAsyncTask(
   name: string,
   id: string,
-  runner: (task: Task) => Promise<void>,
+  runner: (task: TempTask) => Promise<void>,
 ) {
   const old = taskStore.get(id);
   if (old) {
@@ -56,7 +56,7 @@ export async function runAsyncTask(
     debug("返回历史任务")
     return old;
   }
-  const task: Task = {
+  const task: TempTask = {
     id,
     name,
     status: "pending",

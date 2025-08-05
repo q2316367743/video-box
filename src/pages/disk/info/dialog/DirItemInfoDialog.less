@@ -1,0 +1,67 @@
+.dir-item-info-dialog {
+  .file-header {
+    display: flex;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--td-border-level-1-color);
+    margin-bottom: 16px;
+
+    .file-icon-large {
+      margin-right: 16px;
+      flex-shrink: 0;
+    }
+
+    .file-name-info {
+      flex: 1;
+      min-width: 0;
+
+      .file-name {
+        font-size: 18px;
+        font-weight: 500;
+        color: var(--td-text-color-primary);
+        margin-bottom: 8px;
+        word-break: break-all;
+        line-height: 1.4;
+      }
+
+      .file-type {
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+
+  .file-details {
+    .file-path,
+    .file-folder {
+      font-family: monospace;
+      font-size: 12px;
+      color: var(--td-text-color-secondary);
+      word-break: break-all;
+      max-width: 300px;
+    }
+
+    .file-size {
+      .size-bytes {
+        color: var(--td-text-color-placeholder);
+        font-size: 12px;
+        margin-left: 8px;
+      }
+    }
+
+    .expand-info {
+      margin-top: 16px;
+    }
+  }
+
+  :deep(.t-descriptions) {
+    .t-descriptions__item-label {
+      width: 80px;
+      font-weight: 500;
+    }
+
+    .t-descriptions__item-content {
+      word-break: break-all;
+    }
+  }
+}

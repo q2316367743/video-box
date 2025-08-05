@@ -1,20 +1,20 @@
 <template>
   <t-base-table :data="items" :loading="loading" :columns="columns" @refresh="onRefresh" row-key="path"
-                height="calc(100vh - 76px)"
-                @contextmenu="handleDirContextmenu({sourceId, item:current!, e:$event, onRefresh})"/>
+    height="calc(100vh - 76px)" @contextmenu="handleDirContextmenu({ sourceId, item: current, e: $event, onRefresh })" />
 </template>
 <script lang="ts" setup>
-import {BaseTableCol, Link} from "tdesign-vue-next";
-import {DirItem, pluginDiskList} from "@/apis/plugin/disk/list.ts";
-import {prettyDataUnit, toDateTimeString} from "@/utils/lang/FormatUtil.ts";
-import {DiskInfoInstance, diskInfoKey} from "@/pages/disk/info/constants.ts";
-import {handleDirItemContextmenu} from "@/pages/disk/info/dialog/DirItemContextmenu.tsx";
-import {handleDirContextmenu} from "@/pages/disk/info/dialog/DirContextmenu.tsx";
+import { BaseTableCol, Link } from "tdesign-vue-next";
+import { DirItem, pluginDiskList } from "@/apis/plugin/disk/list.ts";
+import { prettyDataUnit, toDateTimeString } from "@/utils/lang/FormatUtil.ts";
+import { DiskInfoInstance, diskInfoKey } from "@/pages/disk/info/constants.ts";
+import { handleDirItemContextmenu } from "@/pages/disk/info/dialog/DirItemContextmenu.tsx";
+import { handleDirContextmenu } from "@/pages/disk/info/dialog/DirContextmenu.tsx";
 import FileIconView from "@/pages/disk/info/components/FileIconView.vue";
 
 const props = defineProps({
   current: {
     type: Object as PropType<DirItem>,
+    required: true
   },
   sourceId: {
     type: String,
@@ -68,15 +68,13 @@ const onRefresh = async (refresh: boolean) => {
     console.log(props.current)
     if (props.current?.type === 'folder') {
       items.value = [];
-      items.value = await pluginDiskList(props.sourceId, {path: props.current.path, refresh})
+      items.value = await pluginDiskList(props.sourceId, { path: props.current.path, refresh })
     }
   } finally {
     loading.value = false
   }
 };
 
-watch(() => props.current, () => onRefresh(false), {immediate: true})
+watch(() => props.current, () => onRefresh(false), { immediate: true })
 </script>
-<style scoped lang="less">
-
-</style>
+<style scoped lang="less"></style>

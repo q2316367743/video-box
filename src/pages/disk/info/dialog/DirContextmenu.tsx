@@ -1,16 +1,17 @@
 import Ctx from "@imengyu/vue3-context-menu";
-import {DirItem} from "@/apis/plugin/disk/list.ts";
-import {isDark} from "@/store";
+import { DirItem } from "@/apis/plugin/disk/list.ts";
+import { isDark } from "@/store";
 import {
   FileAddIcon,
   InfoCircleIcon,
   RefreshIcon, UploadIcon
 } from "tdesign-icons-vue-next";
-import {openDirItemTransfer} from "@/pages/disk/info/dialog/DirItemTransfer.tsx";
-import {openDiskUploadDialog} from "@/pages/disk/info/dialog/DiskUpload.tsx";
+import { openDirItemTransfer } from "@/pages/disk/info/dialog/DirItemTransfer.tsx";
+import { openDiskUploadDialog } from "@/pages/disk/info/dialog/DiskUpload.tsx";
 import MessageBoxUtil from "@/utils/modal/MessageBoxUtil.tsx";
-import {pluginDiskMkdir} from "@/apis/plugin/disk/link.ts";
+import { pluginDiskMkdir } from "@/apis/plugin/disk/link.ts";
 import MessageUtil from "@/utils/modal/MessageUtil.ts";
+import { openDirItemInfoDialog } from "./DirItemInfoDialog";
 
 interface DirContextmenuProps {
   sourceId: string;
@@ -20,7 +21,7 @@ interface DirContextmenuProps {
 }
 
 export function handleDirContextmenu(props: DirContextmenuProps) {
-  const {sourceId, item, e, onRefresh} = props;
+  const { sourceId, item, e, onRefresh } = props;
   e.preventDefault();
   e.stopPropagation();
   Ctx.showContextMenu({
@@ -29,11 +30,11 @@ export function handleDirContextmenu(props: DirContextmenuProps) {
     theme: isDark.value ? 'mac dark' : 'default',
     items: [{
       label: '上传文件',
-      icon: () => <UploadIcon/>,
+      icon: () => <UploadIcon />,
       onClick: () => openDiskUploadDialog(sourceId, item.path, () => onRefresh(true))
     }, {
       label: '新增文件夹',
-      icon: () => <FileAddIcon/>,
+      icon: () => <FileAddIcon />,
       onClick: () =>
         MessageBoxUtil.prompt("请输入文件夹名称", "新建文件夹", {
           inputPlaceholder: '请输入新的名字',
@@ -49,16 +50,16 @@ export function handleDirContextmenu(props: DirContextmenuProps) {
         })
     }, {
       label: '刷新',
-      icon: () => <RefreshIcon/>,
+      icon: () => <RefreshIcon />,
       onClick: () => onRefresh(false)
     }, {
       label: '强制刷新',
-      icon: () => <RefreshIcon/>,
+      icon: () => <RefreshIcon />,
       onClick: () => onRefresh(true)
     }, {
       label: '属性',
-      icon: () => <InfoCircleIcon/>,
-      onClick: () => openDirItemTransfer(false, sourceId, item, () => onRefresh(false))
+      icon: () => <InfoCircleIcon />,
+      onClick: () => openDirItemInfoDialog(item)
     }]
   })
 }

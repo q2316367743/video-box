@@ -51,3 +51,34 @@ create unique index source_disk_id_path_uq_index
 create unique index uq_index_sfn
     on source_disk_dir (source_disk_id, folder, name);
 
+-- 任务定义表
+CREATE TABLE task_definition
+(
+    id         TEXT PRIMARY KEY,
+    name       TEXT,
+    `type`     TEXT CHECK (type IN ('preset', 'adhoc')),
+    schedule   TEXT, -- 仅预设任务有效
+    script     TEXT, -- 仅预设任务有效：impl 下的文件名
+    created_at INTEGER DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 文件上传
+insert into task_definition (id, name, type, schedule, script)
+values ('disk:file-upload', '网盘-文件上传', 'adhoc', '', '');
+
+-- 任务执行记录表
+CREATE TABLE task_execution
+(
+    id            TEXT PRIMARY KEY,
+    definition_id TEXT    NOT NULL,
+    identifier    TEXT    NOT NULL,
+    `trigger`     TEXT CHECK (`trigger` IN ('cron', 'manual', 'internal')),
+    status        TEXT CHECK (status IN ('running', 'done', 'failed', 'cancelled')),
+    created_at    INTEGER          DEFAULT CURRENT_TIMESTAMP,
+    finished_at   INTEGER NOT NULL DEFAULT 0,
+    progress      INTEGER          DEFAULT 0,
+    result        TEXT    NOT NULL DEFAULT '',
+    error         TEXT    NOT NULL DEFAULT ''
+);
+CREATE UNIQUE INDEX ux_running
+    ON task_execution (identifier) WHERE status = 'running';

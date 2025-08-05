@@ -2,12 +2,14 @@
   <div class="folder-view-content">
     <folder-tree-view v-if="view === 'tree'" :current="root" :source-id="sourceId"/>
     <folder-table-view v-else-if="view === 'table'" :current="current || root" :source-id="sourceId"/>
+    <folder-grid-view v-else-if="view === 'grid'" :current="current || root" :source-id="sourceId"/>
   </div>
 </template>
 <script lang="ts" setup>
 import {DirItem} from "@/apis/plugin/disk/list.ts";
 import FolderTreeView from "@/pages/disk/info/folder/FolderTreeView.vue";
 import FolderTableView from "@/pages/disk/info/folder/FolderTableView.vue";
+import FolderGridView from "@/pages/disk/info/folder/FolderGirdView.vue";
 
 defineProps({
   root: {
