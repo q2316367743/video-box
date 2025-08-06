@@ -80,10 +80,17 @@ export default new Elysia()
 
       // 由于可能是下载，所以要加入请求头
       // set.headers['']
-      set.headers['Content-Disposition'] = `attachment; filename*=UTF-8''${encodeURIComponent(sourceDiskDir.name)}`;
+      // set.headers['Content-Disposition'] = `attachment; filename*=UTF-8''${encodeURIComponent(sourceDiskDir.name)}`;
 
       const {signal} = request;
-      return getResponse({sign, plugin, headers, signal, sourceDiskDir});
+      const response = await getResponse({sign, plugin, headers, signal, sourceDiskDir});
+      return new Response(response.body, {
+        ...response,
+        headers: {
+          ...response.headers,
+          'Content-Disposition': `attachment; filename*=UTF-8''${encodeURIComponent(sourceDiskDir.name)}`
+        }
+      })
     },
     {
       params: t.Object({

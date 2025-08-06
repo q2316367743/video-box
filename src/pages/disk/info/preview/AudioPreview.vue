@@ -1,16 +1,16 @@
 <template>
   <div class="enhanced-image-viewer-example">
     <div class="example-container">
-      <ImageViewer v-if="initialIndex > -1" :image-urls="urls" :initial-index="initialIndex" />
+      <audio-viewer v-if="initialIndex > -1" :items="urls" :initial-index="initialIndex" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { DirItem } from '@/apis/plugin/disk/list';
-import ImageViewer from '../viewer/ImageViewer.vue'
+import AudioViewer from '../viewer/AudioViewer.vue'
 import { useUserStore } from '@/store/UserStore';
-import { IMAGE_EXTENSIONS } from '@/global/FileTypeConstant';
+import { AUDIO_EXTENSIONS } from '@/global/FileTypeConstant';
 
 const props = defineProps({
   sourceId: {
@@ -27,14 +27,20 @@ const props = defineProps({
   }
 });
 
+interface DirItemWrapper extends DirItem {
+  url: string
+}
+
 const initialIndex = ref(-1);
-const urls = ref(new Array<string>());
+const urls = ref(new Array<DirItemWrapper>());
 
 onMounted(() => {
   const { token } = useUserStore();
-  const t = props.items.filter(e => IMAGE_EXTENSIONS.includes(e.extname));
-  const u = t.map(item => `/api/proxy/disk/${props.sourceId}/p${item.path}?authorization=${token}`)
-  initialIndex.value = t.findIndex(item => item.path === props.current.path);
+  const u = props.items.filter(e => AUDIO_EXTENSIONS.includes(e.extname)).map(item => ({
+    ...item,
+    url: `/api/proxy/disk/${props.sourceId}/p${item.path}?authorization=${token}`
+  }))
+  initialIndex.value = u.findIndex(item => item.path === props.current.path);
   urls.value = u;
 })
 

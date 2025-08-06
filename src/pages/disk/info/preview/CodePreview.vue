@@ -9,23 +9,26 @@
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css'
 import {isDark} from "@/store";
+import { DirItem } from '@/apis/plugin/disk/list';
+import { useUserStore } from '@/store/UserStore';
 
 const props = defineProps({
-  url: {
-    type: String,
+  current: {
+    type: Object as PropType<DirItem>,
     required: true
   },
-  extname: {
+  sourceId: {
     type: String,
-    default: ''
+    required: true
   }
 });
 const loading = ref(false);
 const text = computedAsync(async () => {
+  const url = useUserStore().getDiskUrl(props.sourceId, props.current.path)
   loading.value = true;
-  return fetch(props.url).then(res => res.text())
+  return fetch(url).then(res => res.text())
     .then(text => {
-      const ext = props.extname || '';
+      const ext = props.current.extname || '';
       const language: string = ext === 'ts' ? 'typescript' :
         ext === 'js' ? 'javascript' :
           ext === 'py' ? 'python' :

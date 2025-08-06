@@ -1,34 +1,35 @@
 <template>
-  <div class="folder-grid-view"
-       @contextmenu="handleDirContextmenu({ sourceId: sourceId, item: current, e: $event, onRefresh })"
-       @dragover.prevent @drop="handleDrop">
+  <div class="folder-grid-view" v-if="current.type === 'folder'"
+    @contextmenu="handleDirContextmenu({ sourceId: sourceId, item: current, e: $event, onRefresh })" @dragover.prevent
+    @drop="handleDrop">
     <div v-if="loading" class="loading-container">
-      <t-loading size="medium"/>
+      <t-loading size="medium" />
     </div>
     <div v-else-if="items.length === 0" class="empty-container">
-      <t-empty description="暂无文件"/>
+      <t-empty description="暂无文件" />
     </div>
     <div v-else class="grid-container">
       <div v-for="item in items" :key="item.path" class="grid-item"
-           :class="{ 'drag-over': dragOverItem === item.path, 'dragging': draggingItem === item.path }"
-           :title="item.name"
-           :draggable="true" @click="handleClick(item)"
-           @contextmenu.stop="handleDirItemContextmenu(sourceId, item, $event, () => onRefresh(true))"
-           @dragstart="handleDragStart(item, $event)" @dragend="handleDragEnd"
-           @dragover.prevent="handleDragOver(item, $event)" @dragleave="handleDragLeave(item, $event)"
-           @drop.prevent="handleItemDrop(item, $event)">
-        <FileIconView :item="item" class="file-icon" :type="item.type" :extname="item.extname"/>
+        :class="{ 'drag-over': dragOverItem === item.path, 'dragging': draggingItem === item.path }" :title="item.name"
+        :draggable="true" @click="handleClick(item)"
+        @contextmenu.stop="handleDirItemContextmenu(sourceId, item, $event, () => onRefresh(true))"
+        @dragstart="handleDragStart(item, $event)" @dragend="handleDragEnd"
+        @dragover.prevent="handleDragOver(item, $event)" @dragleave="handleDragLeave(item, $event)"
+        @drop.prevent="handleItemDrop(item, $event)">
+        <FileIconView :item="item" class="file-icon" :type="item.type" :extname="item.extname" />
         <div class="file-name" :title="item.name">{{ item.name }}</div>
       </div>
     </div>
   </div>
+  <file-view v-else :current="current" :source-id="sourceId" />
 </template>
 <script lang="ts" setup>
-import {DirItem, pluginDiskList} from "@/apis/plugin/disk/list.ts";
-import {DiskInfoInstance, diskInfoKey} from "@/pages/disk/info/constants.ts";
+import { DirItem, pluginDiskList } from "@/apis/plugin/disk/list.ts";
+import { DiskInfoInstance, diskInfoKey } from "@/pages/disk/info/constants.ts";
+import { handleDirItemContextmenu } from '@/pages/disk/info/dialog/DirItemContextmenu';
+import { handleDirContextmenu } from '@/pages/disk/info/dialog/DirContextmenu';
 import FileIconView from "@/pages/disk/info/components/FileIconView.vue";
-import {handleDirItemContextmenu} from '@/pages/disk/info/dialog/DirItemContextmenu';
-import {handleDirContextmenu} from '@/pages/disk/info/dialog/DirContextmenu';
+import FileView from '@/pages/disk/info/components/FileView.vue';
 
 const props = defineProps({
   current: {
@@ -59,10 +60,9 @@ const onRefresh = async (refresh: boolean) => {
   if (loading.value) return;
   loading.value = true;
   try {
-    console.log(props.current)
     if (props.current?.type === 'folder') {
       items.value = [];
-      items.value = await pluginDiskList(props.sourceId, {path: props.current.path, refresh})
+      items.value = await pluginDiskList(props.sourceId, { path: props.current.path, refresh })
     }
   } finally {
     loading.value = false
@@ -70,11 +70,7 @@ const onRefresh = async (refresh: boolean) => {
 };
 
 const handleClick = async (item: DirItem) => {
-  if (item.type === "folder") {
-    diskInfo?.setPath(item);
-  }else if (item.type === 'file') {
-    // 预览
-  }
+  diskInfo?.setPath(item);
 }
 
 // 拖拽开始
@@ -138,7 +134,7 @@ const handleDrop = (event: DragEvent) => {
   handleDragEnd();
 };
 
-watch(() => props.current, () => onRefresh(false), {immediate: true})
+watch(() => props.current, () => onRefresh(false), { immediate: true })
 </script>
 <style scoped lang="less">
 .folder-grid-view {

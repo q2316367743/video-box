@@ -15,15 +15,15 @@ export interface DirItem<T extends Record<string, any> = Record<string, any>> ex
   // 所在目录
   folder: string;
   // 拓展名
-  extname?: string;
+  extname: string;
   // 文件大小
   size?: number;
   // 最后修改时间
-  lastModified?: number | string;
+  lastModified: number | string;
   // 拓展信息
   expands?: T;
   // 可能存在的封面,忽略
-  cover?: string;
+  cover: string;
 }
 
 export interface PluginDiskListData {
@@ -47,4 +47,8 @@ export function pluginDiskList(sourceId: string, data: PluginDiskListData) {
 
 export function pluginDiskGet(sourceId: string, data: PluginDiskGetData) {
   return usePost<DirItem>(`/api/plugin/disk/get/${sourceId}`, data);
+}
+
+export function pluginDiskBrother(sourceId: string, path: string) {
+  return usePost<Array<DirItem>>(`/api/plugin/disk/brother/${sourceId}`, {path});
 }

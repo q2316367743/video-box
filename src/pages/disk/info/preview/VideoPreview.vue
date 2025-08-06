@@ -11,7 +11,7 @@
 <script lang="ts" setup>
 import Artplayer from 'artplayer';
 import {playFlv} from "@/plugin/ArtPlayerPlugin";
-import UnknowFileView from "@/pages/disk/info/preview/UnknowFileView.vue";
+import UnknowFileView from "@/pages/disk/info/preview/UnknownFileView.vue";
 import {DirItem} from "@/apis/plugin/disk/list.ts";
 
 const props = defineProps({

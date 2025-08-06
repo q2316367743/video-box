@@ -32,24 +32,27 @@ import {downloadByUrl} from "@/utils/lang/BrowserUtil.ts";
 import MessageUtil from "@/utils/modal/MessageUtil.ts";
 import FileIconView from "@/pages/disk/info/components/FileIconView.vue";
 import {InfoCircleIcon} from "tdesign-icons-vue-next";
+import { useUserStore } from "@/store/UserStore";
 
 const props = defineProps({
   item: {
     type: Object as PropType<DirItem>,
     required: true
   },
-  url: {
+  sourceId: {
     type: String,
     required: true
   }
 });
+const url = computed(() => useUserStore().getDiskUrl(props.sourceId, props.item.path));
+
 const handleCopy = () => {
-  navigator.clipboard.writeText(props.url)
+  navigator.clipboard.writeText(url.value)
     .then(() => MessageUtil.success('复制成功'))
     .catch(e => MessageUtil.error('复制失败', e));
 };
 const handleDownload = () => {
-  downloadByUrl(props.url)
+  downloadByUrl(url.value)
 }
 </script>
 <style scoped lang="less">

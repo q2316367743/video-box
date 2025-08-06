@@ -51,7 +51,7 @@ const handleContextmenu = (e: MouseEvent, item: MyVideoItemView) => {
   CtxMenu.showContextMenu({
     x: e.x,
     y: e.y,
-    theme: isDark.value ? 'mac dark' : 'light',
+    theme: isDark.value ? 'mac dark' : 'mac',
     items: [{
       label: '查看详情',
       icon: () => h(InfoCircleIcon, {}),

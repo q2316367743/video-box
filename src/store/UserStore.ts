@@ -29,6 +29,10 @@ export const useUserStore = defineStore("user", () => {
     });
   }
 
-  return {token, logout, login}
+  const getDiskUrl = (sourceId: string, path: string) => {
+    return  `/api/proxy/disk/${sourceId}/p${path}?authorization=${token.value}`
+  }
+
+  return {token, logout, login, getDiskUrl}
 
 })

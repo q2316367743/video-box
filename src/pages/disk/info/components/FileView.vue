@@ -1,26 +1,22 @@
 <template>
-  <div class="w-full h-full overflow-y-auto">
-    <video-preview v-if="videoTypes.includes(item.extname || '')" :url :item/>
-    <image-preview v-else-if="imageTypes.includes(item.extname || '')" :url :item/>
-    <music-preview v-else-if="AUDIO_EXTENSIONS.includes(item.extname || '')" :url :item/>
-    <markdown-preview v-else-if="item.extname === 'md'" :url/>
-    <code-view v-else-if="CODE_EXTENSIONS.includes(item.extname || '')" :url :item :extname="item.extname"/>
-    <unknow-file-view v-else :url="url" :item="item"/>
+  <div class="relative w-full h-full overflow-hide">
+    <unknown-file-view v-if="unknown" :item="current" :source-id="sourceId" />
+    <loading-result v-else-if="loading" title="文件加载中" />
+    <image-preview v-else-if="isImage" :current="current" :items="items" :source-id="sourceId" />
+    <audio-preview v-else-if="isAudio" :current="current" :items="items" :source-id="sourceId" />
+    <code-preview v-else-if="isCode" :current="current" :source-id="sourceId" />
   </div>
 </template>
 <script lang="ts" setup>
-import {DirItem} from "@/apis/plugin/disk/list.ts";
-import {useUserStore} from "@/store/UserStore.ts";
-import {AUDIO_EXTENSIONS, CODE_EXTENSIONS, imageTypes, videoTypes} from "@/pages/disk/info/constants.ts";
-import VideoPreview from "@/pages/disk/info/preview/VideoPreview.vue";
-import ImagePreview from "@/pages/disk/info/preview/ImagePreview.vue";
-import CodeView from "@/pages/disk/info/preview/CodeView.vue";
-import MarkdownPreview from "@/pages/disk/info/preview/MarkdownPreview.vue";
-import UnknowFileView from "@/pages/disk/info/preview/UnknowFileView.vue";
-import MusicPreview from "@/pages/disk/info/preview/MusicPreview.vue";
+import { DirItem, pluginDiskBrother } from "@/apis/plugin/disk/list.ts";
+import { AUDIO_EXTENSIONS, CODE_EXTENSIONS, IMAGE_EXTENSIONS, VIDEO_EXTENSIONS } from "@/global/FileTypeConstant";
+import UnknownFileView from "../preview/UnknownFileView.vue";
+import ImagePreview from "../preview/ImagePreview.vue";
+import CodePreview from "../preview/CodePreview.vue";
+import AudioPreview from "../preview/AudioPreview.vue";
 
 const props = defineProps({
-  item: {
+  current: {
     type: Object as PropType<DirItem>,
     required: true
   },
@@ -29,9 +25,28 @@ const props = defineProps({
     required: true
   }
 });
-const token = computed(() => useUserStore().token);
-const url = computed(() => `/api/proxy/disk/${props.sourceId}/p${props.item.path}?authorization=${token.value}`);
-</script>
-<style scoped lang="less">
 
-</style>
+const isVideo = VIDEO_EXTENSIONS.includes(props.current.extname);
+const isImage = IMAGE_EXTENSIONS.includes(props.current.extname);
+const isAudio = AUDIO_EXTENSIONS.includes(props.current.extname);
+const isCode = CODE_EXTENSIONS.includes(props.current.extname);
+const unknown = !isVideo && !isImage && !isAudio && !isCode;
+
+const loading = ref(true);
+
+const items = ref<Array<DirItem>>([]);
+
+onMounted(() => {
+
+  if (isVideo || isImage || isAudio) {
+    pluginDiskBrother(props.sourceId, props.current.path)
+      .then(res => items.value = res)
+      .finally(() => loading.value = false);
+  }else {
+    loading.value = false;
+  }
+
+})
+
+</script>
+<style scoped lang="less"></style>

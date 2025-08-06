@@ -95,7 +95,7 @@ export function handleDirItemContextmenu(sourceId: string, item: DirItem, e: Mou
   Ctx.showContextMenu({
     x: e.x,
     y: e.y,
-    theme: isDark.value ? 'mac dark' : 'default',
+    theme: isDark.value ? 'mac dark' : 'mac',
     items
   })
 }
