@@ -67,13 +67,13 @@
     <!-- 进度控制区域 -->
     <div class="progress-section">
       <span class="time-display">{{ formatTime(currentTime) }}</span>
-      <t-slider
-        v-model="progressValue"
+      <t-progress
+        :percentage="progressValue"
         :min="0"
         :max="100"
-        @change="onProgressChange"
         class="progress-slider"
         :disabled="!currentAudio"
+        :label="false"
       />
       <span class="time-display">{{ formatTime(duration) }}</span>
     </div>
@@ -153,7 +153,11 @@
       @error="onAudioError"
       @loadstart="onLoadStart"
       @canplay="onCanPlay"
-      preload="metadata"
+      @play="isPlaying = true"
+      @pause="isPlaying = false"
+      preload="auto"
+      crossorigin="anonymous"
+      style="display: none;"
     />
   </div>
 </template>
@@ -245,14 +249,26 @@ const loadAudio = async () => {
     isLoading.value = true
     clearError()
     
+    // 确保URL是有效的
+    if (!currentAudio.value.url) {
+      throw new Error('无效的音频URL')
+    }
+    
     audioElement.value.src = currentAudio.value.url
     audioElement.value.load()
+    
+    // 如果之前是播放状态，则自动播放
+    if (isPlaying.value) {
+      try {
+        await audioElement.value.play()
+      } catch (playError) {
+        console.error('自动播放失败:', playError)
+      }
+    }
     
   } catch (error) {
     console.error('加载音频失败:', error)
     showError('音频加载失败，请检查文件路径')
-  } finally {
-    isLoading.value = false
   }
 }
 
@@ -267,8 +283,10 @@ const togglePlay = async () => {
   try {
     if (isPlaying.value) {
       audioElement.value.pause()
+      isPlaying.value = false
     } else {
       await audioElement.value.play()
+      isPlaying.value = true
     }
   } catch (error) {
     console.error('播放音频失败:', error)
@@ -385,12 +403,20 @@ const onCanPlay = () => {
 const onLoadedMetadata = () => {
   if (audioElement.value) {
     duration.value = audioElement.value.duration
+    
+    // 确保音量设置正确
+    audioElement.value.volume = volume.value / 100
   }
 }
 
 const onTimeUpdate = () => {
   if (audioElement.value) {
     currentTime.value = audioElement.value.currentTime
+    
+    // 确保进度条更新
+    if (duration.value > 0) {
+      progressValue.value = (currentTime.value / duration.value) * 100
+    }
   }
 }
 
@@ -418,8 +444,13 @@ const onAudioError = (error: Event) => {
 
 const onProgressChange = (value: SliderValue) => {
   if (typeof value === 'number' && audioElement.value && duration.value > 0) {
-    const newTime = (value / 100) * duration.value
-    audioElement.value.currentTime = newTime
+    // 只有当用户拖动进度条时才更新时间
+    // 避免在timeupdate事件中的进度条更新反过来触发这个函数
+    if (Math.abs(value - (currentTime.value / duration.value * 100)) > 1) {
+      const newTime = (value / 100) * duration.value
+      audioElement.value.currentTime = newTime
+      currentTime.value = newTime // 直接更新当前时间，避免闪烁
+    }
   }
 }
 
@@ -437,6 +468,9 @@ const onVolumeChange = (value: SliderValue) => {
 // 监听器
 watch(currentIndex, () => {
   loadAudio()
+  // 切换音轨时重置时间和进度
+  currentTime.value = 0
+  progressValue.value = 0
 })
 
 watch(() => props.items, (newItems) => {
@@ -452,15 +486,33 @@ watch(() => props.items, (newItems) => {
 
 watch(() => audioElement.value, (newAudio) => {
   if (newAudio) {
+    // 设置音量
+    newAudio.volume = volume.value / 100
+    
+    // 移除可能存在的旧事件监听器，避免重复添加
+    const oldAudio = audioElement.value
+    if (oldAudio) {
+      oldAudio.removeEventListener('play', () => { isPlaying.value = true })
+      oldAudio.removeEventListener('pause', () => { isPlaying.value = false })
+    }
+    
+    // 添加新的事件监听器
     newAudio.addEventListener('play', () => { isPlaying.value = true })
     newAudio.addEventListener('pause', () => { isPlaying.value = false })
-    newAudio.volume = volume.value / 100
   }
 })
 
 // 生命周期
 onMounted(() => {
-  loadAudio()
+  // 确保音频元素已创建
+  nextTick(() => {
+    loadAudio()
+    
+    // 确保音量设置正确
+    if (audioElement.value) {
+      audioElement.value.volume = volume.value / 100
+    }
+  })
 })
 
 onUnmounted(() => {
@@ -728,7 +780,7 @@ onUnmounted(() => {
 
   // 播放列表
   .playlist-container {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     right: 0;
