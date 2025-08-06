@@ -31,9 +31,8 @@ const initialIndex = ref(-1);
 const urls = ref(new Array<string>());
 
 onMounted(() => {
-  const { token } = useUserStore();
   const t = props.items.filter(e => IMAGE_EXTENSIONS.includes(e.extname));
-  const u = t.map(item => `/api/proxy/disk/${props.sourceId}/p${item.path}?authorization=${token}`)
+  const u = t.map(item => useUserStore().getDiskUrl(props.sourceId, item.path))
   initialIndex.value = t.findIndex(item => item.path === props.current.path);
   urls.value = u;
 })

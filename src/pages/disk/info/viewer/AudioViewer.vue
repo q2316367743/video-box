@@ -251,7 +251,7 @@ const loadAudio = async () => {
     
     // 确保URL是有效的
     if (!currentAudio.value.url) {
-      throw new Error('无效的音频URL')
+      return MessageUtil.error('无效的音频URL')
     }
     
     audioElement.value.src = currentAudio.value.url
@@ -764,8 +764,6 @@ onUnmounted(() => {
 
     .mode-btn,
     .playlist-btn {
-      width: 40px;
-      height: 40px;
       border-radius: 50%;
       background: transparent;
       color: var(--td-text-color-primary);

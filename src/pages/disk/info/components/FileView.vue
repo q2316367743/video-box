@@ -1,19 +1,22 @@
 <template>
   <div class="relative w-full h-full overflow-hide">
-    <unknown-file-view v-if="unknown" :item="current" :source-id="sourceId" />
-    <loading-result v-else-if="loading" title="文件加载中" />
-    <image-preview v-else-if="isImage" :current="current" :items="items" :source-id="sourceId" />
-    <audio-preview v-else-if="isAudio" :current="current" :items="items" :source-id="sourceId" />
-    <code-preview v-else-if="isCode" :current="current" :source-id="sourceId" />
+    <unknown-file-view v-if="unknown" :item="current" :source-id="sourceId"/>
+    <loading-result v-else-if="loading" title="文件加载中"/>
+    <image-preview v-else-if="isImage" :current="current" :items="items" :source-id="sourceId"/>
+    <audio-preview v-else-if="isAudio" :current="current" :items="items" :source-id="sourceId"/>
+    <video-preview v-else-if="isVideo" :current="current" :items="items" :source-id="sourceId"/>
+    <code-preview v-else-if="isCode" :current="current" :source-id="sourceId"/>
+    <empty-result v-else title="系统异常"/>
   </div>
 </template>
 <script lang="ts" setup>
-import { DirItem, pluginDiskBrother } from "@/apis/plugin/disk/list.ts";
-import { AUDIO_EXTENSIONS, CODE_EXTENSIONS, IMAGE_EXTENSIONS, VIDEO_EXTENSIONS } from "@/global/FileTypeConstant";
+import {DirItem, pluginDiskBrother} from "@/apis/plugin/disk/list.ts";
+import {AUDIO_EXTENSIONS, CODE_EXTENSIONS, IMAGE_EXTENSIONS, VIDEO_EXTENSIONS} from "@/global/FileTypeConstant";
 import UnknownFileView from "../preview/UnknownFileView.vue";
 import ImagePreview from "../preview/ImagePreview.vue";
 import CodePreview from "../preview/CodePreview.vue";
 import AudioPreview from "../preview/AudioPreview.vue";
+import VideoPreview from "@/pages/disk/info/preview/VideoPreview.vue";
 
 const props = defineProps({
   current: {
@@ -40,9 +43,9 @@ onMounted(() => {
 
   if (isVideo || isImage || isAudio) {
     pluginDiskBrother(props.sourceId, props.current.path)
-      .then(res => items.value = res)
+      .then(res => items.value = res.sort((a, b) => a.name.localeCompare(b.name)))
       .finally(() => loading.value = false);
-  }else {
+  } else {
     loading.value = false;
   }
 
