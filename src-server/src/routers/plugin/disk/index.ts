@@ -6,6 +6,7 @@ import pluginDiskTransfer from "@/routers/plugin/disk/routers/PluginDiskTransfer
 import pluginDiskMkdirRouter from "@/routers/plugin/disk/routers/PluginDiskMkdirRouter";
 import pluginDiskRmRouter from "@/routers/plugin/disk/routers/PluginDiskRmRouter";
 import pluginDiskUploadRouter from "@/routers/plugin/disk/routers/PluginDiskUploadRouter";
+import pluginDiskBrother from "@/routers/plugin/disk/routers/PluginDiskBrother";
 
 export default new Elysia({prefix: '/api/plugin/disk'})
   .use(pluginDiskList)
@@ -15,3 +16,4 @@ export default new Elysia({prefix: '/api/plugin/disk'})
   .use(pluginDiskMkdirRouter)
   .use(pluginDiskRmRouter)
   .use(pluginDiskUploadRouter)
+  .use(pluginDiskBrother)
