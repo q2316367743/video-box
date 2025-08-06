@@ -1,28 +1,29 @@
 import {DirItem} from "@/apis/plugin/disk/list.ts";
-
-export const videoTypes = ['mp4'];
-export const imageTypes = ['jpg', 'jpeg', 'png', 'webp', 'git'];
-// 支持高亮的代码文件扩展名
-export const CODE_EXTENSIONS = [
-  'js', 'jsx', 'ts', 'tsx', 'vue',
-  'html', 'htm', 'css', 'scss', 'sass', 'less',
-  'json', 'xml', 'yaml', 'yml',
-  'py', 'php', 'rb', 'go', 'rs', 'c', 'cpp', 'cc', 'cxx', 'h', 'hpp',
-  'java', 'kt', 'scala', 'swift',
-  'sh', 'bash', 'zsh', 'fish',
-  'sql', 'dockerfile', 'makefile', 'toml',
-  'md', 'markdown',
-  'ini', 'cfg', 'conf', 'env',
-  'r', 'pl', 'lua', 'dart', 'elm', 'clj', 'ex', 'exs', 'erl', 'hs', 'txt'
-];
-// 音频文件扩展名
-export const AUDIO_EXTENSIONS = ['mp3', 'wav', 'ogg', 'm4a', 'flac', 'alac'];
+import {RemovableRef} from "@vueuse/core";
 
 export interface DiskInfoInstance {
-  setPath: (item: DirItem) => void;
   current: Ref<DirItem | undefined>;
+  sortType: RemovableRef<SortType>;
+  orderType: RemovableRef<OrderType>;
+  setPath: (item: DirItem) => void;
   setDragPath: (path: string) => void;
   getDragPath: () => string | undefined;
 }
 
 export const diskInfoKey = Symbol() as InjectionKey<DiskInfoInstance>
+
+export type SortType = 'name' | 'size' | 'type' | 'extname';
+export type OrderType = 'asc' | 'desc';
+
+export function sortFunc(a: DirItem, b: DirItem, sort: SortType, order: OrderType) {
+  if (sort === 'name') {
+    return order === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
+  } else if (sort === 'size') {
+    return order === 'asc' ? a.size - b.size : b.size - a.size;
+  } else if (sort === 'type') {
+    return order === 'asc' ? a.type.localeCompare(b.type) : b.type.localeCompare(a.type);
+  } else if (sort === 'extname') {
+    return order === 'asc' ? a.extname.localeCompare(b.extname) : b.extname.localeCompare(a.extname);
+  }
+  return 0
+}

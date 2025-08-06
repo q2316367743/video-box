@@ -255,7 +255,6 @@ onMounted(() => {
 
 .file-info {
   display: flex;
-  align-items: center;
   gap: 12px;
 }
 

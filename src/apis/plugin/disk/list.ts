@@ -17,7 +17,7 @@ export interface DirItem<T extends Record<string, any> = Record<string, any>> ex
   // 拓展名
   extname: string;
   // 文件大小
-  size?: number;
+  size: number;
   // 最后修改时间
   lastModified: number | string;
   // 拓展信息

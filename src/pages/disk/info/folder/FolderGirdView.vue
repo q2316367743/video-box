@@ -1,35 +1,38 @@
 <template>
   <div class="folder-grid-view" v-if="current.type === 'folder'"
-    @contextmenu="handleDirContextmenu({ sourceId: sourceId, item: current, e: $event, onRefresh })" @dragover.prevent
-    @drop="handleDrop">
+       @contextmenu="handleDirContextmenu({ sourceId: sourceId, item: current, e: $event, onRefresh })"
+       @dragover.prevent
+       @drop="handleDrop">
     <div v-if="loading" class="loading-container">
-      <t-loading size="medium" />
+      <t-loading size="medium"/>
     </div>
     <div v-else-if="items.length === 0" class="empty-container">
-      <t-empty description="暂无文件" />
+      <t-empty description="暂无文件"/>
     </div>
     <div v-else class="grid-container">
-      <div v-for="item in items" :key="item.path" class="grid-item"
-        :class="{ 'drag-over': dragOverItem === item.path, 'dragging': draggingItem === item.path }" :title="item.name"
-        :draggable="true" @click="handleClick(item)"
-        @contextmenu.stop="handleDirItemContextmenu(sourceId, item, $event, () => onRefresh(true))"
-        @dragstart="handleDragStart(item, $event)" @dragend="handleDragEnd"
-        @dragover.prevent="handleDragOver(item, $event)" @dragleave="handleDragLeave(item, $event)"
-        @drop.prevent="handleItemDrop(item, $event)">
-        <FileIconView :item="item" class="file-icon" :type="item.type" :extname="item.extname" />
+      <div v-for="item in data" :key="item.path" class="grid-item"
+           :class="{ 'drag-over': dragOverItem === item.path, 'dragging': draggingItem === item.path }"
+           :title="item.name"
+           :draggable="true" @click="handleClick(item)"
+           @contextmenu.stop="handleDirItemContextmenu(sourceId, item, $event, () => onRefresh(true))"
+           @dragstart="handleDragStart(item, $event)" @dragend="handleDragEnd"
+           @dragover.prevent="handleDragOver(item, $event)" @dragleave="handleDragLeave(item, $event)"
+           @drop.prevent="handleItemDrop(item, $event)">
+        <FileIconView :item="item" class="file-icon" :type="item.type" :extname="item.extname"/>
         <div class="file-name" :title="item.name">{{ item.name }}</div>
       </div>
     </div>
   </div>
-  <file-view v-else :current="current" :source-id="sourceId" />
+  <file-view v-else :current="current" :source-id="sourceId"/>
 </template>
 <script lang="ts" setup>
-import { DirItem, pluginDiskList } from "@/apis/plugin/disk/list.ts";
-import { DiskInfoInstance, diskInfoKey } from "@/pages/disk/info/constants.ts";
-import { handleDirItemContextmenu } from '@/pages/disk/info/dialog/DirItemContextmenu';
-import { handleDirContextmenu } from '@/pages/disk/info/dialog/DirContextmenu';
+import {DirItem, pluginDiskList} from "@/apis/plugin/disk/list.ts";
+import {DiskInfoInstance, diskInfoKey, sortFunc} from "@/pages/disk/info/constants.ts";
+import {handleDirItemContextmenu} from '@/pages/disk/info/dialog/DirItemContextmenu';
+import {handleDirContextmenu} from '@/pages/disk/info/dialog/DirContextmenu';
 import FileIconView from "@/pages/disk/info/components/FileIconView.vue";
 import FileView from '@/pages/disk/info/components/FileView.vue';
+import {pluginDiskMove} from "@/apis/plugin/disk/link.ts";
 
 const props = defineProps({
   current: {
@@ -42,10 +45,6 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits<{
-  dragMove: [{ source: DirItem, target: DirItem, sourceId: string }]
-}>();
-
 const diskInfo = inject<DiskInfoInstance>(diskInfoKey);
 
 const items = ref<Array<DirItem>>([]);
@@ -54,7 +53,8 @@ const loading = ref(false);
 // 拖拽相关状态
 const draggingItem = ref<string>('');
 const dragOverItem = ref<string>('');
-const draggedData = ref<DirItem | null>(null);
+const draggedData = ref<DirItem>();
+const data = computed(() => items.value.sort((a, b) => sortFunc(a, b, diskInfo?.sortType.value || 'name', diskInfo?.orderType.value || 'asc')));
 
 const onRefresh = async (refresh: boolean) => {
   if (loading.value) return;
@@ -62,7 +62,7 @@ const onRefresh = async (refresh: boolean) => {
   try {
     if (props.current?.type === 'folder') {
       items.value = [];
-      items.value = await pluginDiskList(props.sourceId, { path: props.current.path, refresh })
+      items.value = await pluginDiskList(props.sourceId, {path: props.current.path, refresh})
     }
   } finally {
     loading.value = false
@@ -87,7 +87,7 @@ const handleDragStart = (item: DirItem, event: DragEvent) => {
 const handleDragEnd = () => {
   draggingItem.value = '';
   dragOverItem.value = '';
-  draggedData.value = null;
+  draggedData.value = undefined;
 };
 
 // 拖拽悬停在项目上
@@ -118,23 +118,22 @@ const handleItemDrop = (targetItem: DirItem, event: DragEvent) => {
 
   if (targetItem.type === 'folder' && draggedData.value && targetItem.path !== draggedData.value.path) {
     // 触发拖拽移动事件
-    emit('dragMove', {
-      source: draggedData.value,
-      target: targetItem,
-      sourceId: props.sourceId
-    });
+    pluginDiskMove(props.sourceId, draggedData.value.path, targetItem.path)
+      .then(() => {
+        onRefresh(true);
+      });
   }
 
   handleDragEnd();
 };
 
 // 放置到容器上
-const handleDrop = (event: DragEvent) => {
+const handleDrop = () => {
   // 如果放置到空白区域，可以在这里处理
   handleDragEnd();
 };
 
-watch(() => props.current, () => onRefresh(false), { immediate: true })
+watch(() => props.current, () => onRefresh(false), {immediate: true})
 </script>
 <style scoped lang="less">
 .folder-grid-view {

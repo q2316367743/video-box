@@ -4,9 +4,9 @@
     <div class="image-viewer__toolbar">
       <t-space>
         <t-tooltip content="放大">
-          <t-button 
-            variant="outline" 
-            size="small" 
+          <t-button
+            variant="outline"
+            size="small"
             @click="zoomIn"
             :disabled="scale >= maxScale"
           >
@@ -15,11 +15,11 @@
             </template>
           </t-button>
         </t-tooltip>
-        
+
         <t-tooltip content="缩小">
-          <t-button 
-            variant="outline" 
-            size="small" 
+          <t-button
+            variant="outline"
+            size="small"
             @click="zoomOut"
             :disabled="scale <= minScale"
           >
@@ -28,11 +28,11 @@
             </template>
           </t-button>
         </t-tooltip>
-        
+
         <t-tooltip content="垂直镜像">
-          <t-button 
-            variant="outline" 
-            size="small" 
+          <t-button
+            variant="outline"
+            size="small"
             @click="flipVertical"
           >
             <template #icon>
@@ -40,11 +40,11 @@
             </template>
           </t-button>
         </t-tooltip>
-        
+
         <t-tooltip content="水平镜像">
-          <t-button 
-            variant="outline" 
-            size="small" 
+          <t-button
+            variant="outline"
+            size="small"
             @click="flipHorizontal"
           >
             <template #icon>
@@ -52,11 +52,11 @@
             </template>
           </t-button>
         </t-tooltip>
-        
+
         <t-tooltip content="顺时针旋转">
-          <t-button 
-            variant="outline" 
-            size="small" 
+          <t-button
+            variant="outline"
+            size="small"
             @click="rotateClockwise"
           >
             <template #icon>
@@ -64,11 +64,11 @@
             </template>
           </t-button>
         </t-tooltip>
-        
+
         <t-tooltip content="逆时针旋转">
-          <t-button 
-            variant="outline" 
-            size="small" 
+          <t-button
+            variant="outline"
+            size="small"
             @click="rotateCounterClockwise"
           >
             <template #icon>
@@ -76,11 +76,11 @@
             </template>
           </t-button>
         </t-tooltip>
-        
+
         <t-tooltip content="下载">
-          <t-button 
-            variant="outline" 
-            size="small" 
+          <t-button
+            variant="outline"
+            size="small"
             @click="downloadImage"
           >
             <template #icon>
@@ -92,7 +92,7 @@
     </div>
 
     <!-- 图片预览区域 -->
-    <div 
+    <div
       class="image-viewer__preview"
       ref="previewContainer"
       @wheel="handleWheel"
@@ -105,7 +105,7 @@
       @touchend="handleTouchEnd"
       @dblclick="handleDoubleClick"
     >
-      <div 
+      <div
         class="image-viewer__image-container"
         :style="imageContainerStyle"
       >
@@ -351,11 +351,11 @@ const handleWheel = (event: WheelEvent) => {
 // 计算拖拽边界
 const calculateDragBounds = () => {
   if (!previewContainer.value) return
-  
+
   const containerRect = previewContainer.value.getBoundingClientRect()
   const imageWidth = containerRect.width * scale.value
   const imageHeight = containerRect.height * scale.value
-  
+
   dragBounds.value = {
     minX: Math.min(0, (containerRect.width - imageWidth) / 2),
     maxX: Math.max(0, (imageWidth - containerRect.width) / 2),
@@ -376,13 +376,13 @@ const constrainTranslation = (x: number, y: number) => {
 const handleMouseDown = (event: MouseEvent) => {
   event.preventDefault()
   calculateDragBounds()
-  
+
   isDragging.value = true
   dragStartX.value = event.clientX
   dragStartY.value = event.clientY
   dragStartTranslateX.value = translateX.value
   dragStartTranslateY.value = translateY.value
-  
+
   if (previewContainer.value) {
     previewContainer.value.style.cursor = 'grabbing'
   }
@@ -392,10 +392,10 @@ const handleMouseMove = (event: MouseEvent) => {
   if (isDragging.value) {
     const deltaX = event.clientX - dragStartX.value
     const deltaY = event.clientY - dragStartY.value
-    
+
     const newX = dragStartTranslateX.value + deltaX
     const newY = dragStartTranslateY.value + deltaY
-    
+
     if (scale.value > 1) {
       const constrained = constrainTranslation(newX, newY)
       translateX.value = constrained.x
@@ -417,7 +417,7 @@ const handleMouseUp = () => {
 // 触摸事件处理
 const handleTouchStart = (event: TouchEvent) => {
   event.preventDefault()
-  
+
   if (event.touches.length === 1) {
     // 单指拖拽
     calculateDragBounds()
@@ -432,7 +432,7 @@ const handleTouchStart = (event: TouchEvent) => {
     const touch1 = event.touches[0]
     const touch2 = event.touches[1]
     initialDistance.value = Math.sqrt(
-      Math.pow(touch2.clientX - touch1.clientX, 2) + 
+      Math.pow(touch2.clientX - touch1.clientX, 2) +
       Math.pow(touch2.clientY - touch1.clientY, 2)
     )
     initialScale.value = scale.value
@@ -441,15 +441,15 @@ const handleTouchStart = (event: TouchEvent) => {
 
 const handleTouchMove = (event: TouchEvent) => {
   event.preventDefault()
-  
+
   if (event.touches.length === 1 && isTouching.value && !isZooming.value) {
     // 单指拖拽
     const deltaX = event.touches[0].clientX - touchStartX.value
     const deltaY = event.touches[0].clientY - touchStartY.value
-    
+
     const newX = touchStartTranslateX.value + deltaX
     const newY = touchStartTranslateY.value + deltaY
-    
+
     if (scale.value > 1) {
       const constrained = constrainTranslation(newX, newY)
       translateX.value = constrained.x
@@ -463,14 +463,14 @@ const handleTouchMove = (event: TouchEvent) => {
     const touch1 = event.touches[0]
     const touch2 = event.touches[1]
     const currentDistance = Math.sqrt(
-      Math.pow(touch2.clientX - touch1.clientX, 2) + 
+      Math.pow(touch2.clientX - touch1.clientX, 2) +
       Math.pow(touch2.clientY - touch1.clientY, 2)
     )
-    
+
     const scaleRatio = currentDistance / initialDistance.value
     const newScale = Math.max(minScale, Math.min(maxScale, initialScale.value * scaleRatio))
     scale.value = newScale
-    
+
     if (newScale <= 1) {
       translateX.value = 0
       translateY.value = 0
@@ -594,13 +594,13 @@ onUnmounted(() => {
   flex: 1;
   position: relative;
   overflow: hidden;
-  background: 
-    linear-gradient(45deg, var(--td-bg-color-component) 25%, transparent 25%), 
-    linear-gradient(-45deg, var(--td-bg-color-component) 25%, transparent 25%), 
-    linear-gradient(45deg, transparent 75%, var(--td-bg-color-component) 75%), 
+  background:
+    linear-gradient(45deg, var(--td-bg-color-component) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--td-bg-color-component) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--td-bg-color-component) 75%),
     linear-gradient(-45deg, transparent 75%, var(--td-bg-color-component) 75%);
   background-size: 20px 20px;
-  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -637,6 +637,7 @@ onUnmounted(() => {
   border-top: 1px solid var(--td-border-level-2-color);
   padding: 8px;
   overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .image-viewer__thumbnails-container {

@@ -21,11 +21,57 @@
               </t-radio-button>
             </t-tooltip>
           </t-radio-group>
-          <t-button theme="primary" variant="text" shape="square">
-            <template #icon>
-              <filter-sort-icon/>
-            </template>
-          </t-button>
+          <t-dropdown trigger="click" placement="bottom-right">
+            <t-button theme="primary" variant="text" shape="square">
+              <template #icon>
+                <filter-sort-icon/>
+              </template>
+            </t-button>
+            <t-dropdown-menu>
+              <t-dropdown-item @click="sortType = 'name'">
+                <template #prefix-icon>
+                  <check-icon v-if="sortType === 'name'"/>
+                  <div class="w-16px" v-else/>
+                </template>
+                文件名
+              </t-dropdown-item>
+              <t-dropdown-item @click="sortType = 'size'">
+                <template #prefix-icon>
+                  <check-icon v-if="sortType === 'size'"/>
+                  <div class="w-16px" v-else/>
+                </template>
+                文件大小
+              </t-dropdown-item>
+              <t-dropdown-item @click="sortType = 'type'">
+                <template #prefix-icon>
+                  <check-icon v-if="sortType === 'type'"/>
+                  <div class="w-16px" v-else/>
+                </template>
+                文件类型
+              </t-dropdown-item>
+              <t-dropdown-item divider @click="sortType = 'extname'">
+                <template #prefix-icon>
+                  <check-icon v-if="sortType === 'extname'"/>
+                  <div class="w-16px" v-else/>
+                </template>
+                文件拓展名
+              </t-dropdown-item>
+              <t-dropdown-item @click="orderType = 'asc'">
+                <template #prefix-icon>
+                  <check-icon v-if="orderType === 'asc'"/>
+                  <div class="w-16px" v-else/>
+                </template>
+                正序
+              </t-dropdown-item>
+              <t-dropdown-item @click="orderType = 'desc'">
+                <template #prefix-icon>
+                  <check-icon v-if="orderType === 'desc'"/>
+                  <div class="w-16px" v-else/>
+                </template>
+                倒序
+              </t-dropdown-item>
+            </t-dropdown-menu>
+          </t-dropdown>
         </t-space>
       </div>
     </t-card>
@@ -36,14 +82,14 @@
 import {TdBreadcrumbItemProps} from 'tdesign-vue-next';
 import {DirItem, pluginDiskGet} from "@/apis/plugin/disk/list.ts";
 import {
-  AppIcon,
+  AppIcon, CheckIcon,
   FilterSortIcon,
   HomeIcon, TableIcon, TreeSquareDotVerticalIcon,
 } from "tdesign-icons-vue-next";
 import {sourceDiskInfo} from "@/apis/source/disk.ts";
 import {DiskSourceEntry} from "@/types/SourceDisk.ts";
+import {DiskInfoInstance, diskInfoKey, OrderType, SortType} from "@/pages/disk/info/constants.ts";
 import FolderView from "@/pages/disk/info/components/FolderView.vue";
-import {DiskInfoInstance, diskInfoKey} from "@/pages/disk/info/constants.ts";
 
 const route = useRoute();
 const router = useRouter();
@@ -53,6 +99,8 @@ const source = ref<DiskSourceEntry>();
 const current = ref<DirItem>();
 const root = ref<DirItem>();
 const view = useLocalStorage('/disk/view', 'tree');
+const sortType = useLocalStorage<SortType>('/disk/sort', 'name');
+const orderType = useLocalStorage<OrderType>('/disk/order', 'asc');
 
 // route.query.path as string || '/'
 const options = computed<Array<TdBreadcrumbItemProps>>(() => {
@@ -102,8 +150,8 @@ const handlePath = (path: string) => {
 
 let dragPath: string | undefined = undefined;
 provide<DiskInfoInstance>(diskInfoKey, {
+  current, sortType, orderType,
   setPath: handleClick,
-  current,
   setDragPath: (path: string) => {
     dragPath = path;
   },

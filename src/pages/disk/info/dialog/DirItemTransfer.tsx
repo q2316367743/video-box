@@ -18,8 +18,11 @@ export function openDirItemTransfer(mv: boolean, sourceId: string, item: DirItem
           onUpdate()
         }).finally(() => {
         dp.setConfirmLoading(false);
+        dp.destroy();
       })
     },
-    default: () => <DiskFolderSelect v-model={folder.value} sourceId={sourceId} path={item.path}/>
+    default: () => <div class={'m-height-50vh'}>
+      <DiskFolderSelect v-model={folder.value} sourceId={sourceId} path={item.path}/>
+    </div>
   })
 }

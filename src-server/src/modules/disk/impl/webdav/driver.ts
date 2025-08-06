@@ -29,7 +29,7 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
   }
 
   async cp(file: SourceDiskDir, folder: SourceDiskDir): Promise<void> {
-    await this.client.copyFile(file.path, folder.path);
+    await this.client.copyFile(file.path, joinPath(folder.path, folder.path));
   }
 
 
@@ -38,7 +38,7 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
   }
 
   async mv(file: SourceDiskDir, folder: SourceDiskDir): Promise<void> {
-    return this.client.moveFile(file.path, folder.path);
+    return this.client.moveFile(file.path, joinPath(folder.path, file.name));
   }
 
   async list(parent: SourceDiskDir): Promise<Array<DirItem>> {

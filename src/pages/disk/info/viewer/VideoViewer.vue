@@ -36,8 +36,10 @@
       <div class="playlist-content" @click.stop>
         <div class="playlist-header">
           <h3>播放列表 ({{ items.length }}个)</h3>
-          <t-button variant="text" @click="togglePlaylist">
-            <CloseIcon/>
+          <t-button variant="text" shape="square" theme="danger" @click="togglePlaylist">
+            <template #icon>
+              <close-icon />
+            </template>
           </t-button>
         </div>
         <div class="playlist-items">

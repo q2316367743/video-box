@@ -19,7 +19,7 @@
     </div>
     <div class="file-items-content">
       <folder-tree-view v-if="child && child.type === 'folder'" :current="child" :source-id="sourceId"/>
-      <file-view v-else-if="child && child.type === 'file'" :source-id="sourceId" :item="child"/>
+      <file-view v-else-if="child && child.type === 'file'" :source-id="sourceId" :current="child"/>
     </div>
   </div>
 </template>
@@ -27,7 +27,7 @@
 import {DirItem, pluginDiskList} from "@/apis/plugin/disk/list.ts";
 import {
   DiskInfoInstance,
-  diskInfoKey,
+  diskInfoKey, sortFunc,
 } from "@/pages/disk/info/constants.ts";
 import {handleDirItemContextmenu} from "@/pages/disk/info/dialog/DirItemContextmenu.tsx";
 import {handleDirContextmenu} from "@/pages/disk/info/dialog/DirContextmenu.tsx";
@@ -50,6 +50,8 @@ const items = ref<Array<DirItem>>([]);
 const child = ref<DirItem>();
 const loading = ref(false);
 const over = ref(false);
+
+const data = computed(() => items.value.sort((a, b) => sortFunc(a, b, diskInfo?.sortType.value || 'name', diskInfo?.orderType.value || 'asc')));
 
 const diskInfo = inject<DiskInfoInstance>(diskInfoKey);
 
