@@ -11,4 +11,5 @@ export interface DiskSourceEntry extends DiskSourceFormData {
   id: string;
   create_time: number;
   update_time: number;
+  order: number;
 }

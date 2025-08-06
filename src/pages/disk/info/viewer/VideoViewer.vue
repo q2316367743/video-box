@@ -300,7 +300,7 @@ onMounted(() => {
 onUnmounted(() => {
   // 销毁播放器实例
   if (artPlayer.value) {
-    artPlayer.value.destroy()
+    artPlayer.value.destroy(true)
     artPlayer.value = undefined
   }
 })

@@ -3,15 +3,19 @@ import flvjs from 'flv.js';
 import Artplayer from "artplayer";
 
 export function playFlv(video: HTMLVideoElement, url: string, art: Artplayer) {
-  // @ts-ignore
   if (flvjs.isSupported()) {
     if (art.flv) art.flv.destroy();
-    // @ts-ignore
     const flv = flvjs.createPlayer({type: 'flv', url});
     flv.attachMediaElement(video);
     flv.load();
     art.flv = flv;
-    art.on('destroy', () => flv.destroy());
+    art.on('destroy', () => {
+      try {
+        flv.destroy()
+      } catch (e) {
+        console.error('销毁flv失败', e);
+      }
+    });
   } else {
     art.notice.show = 'Unsupported playback format: flv';
   }

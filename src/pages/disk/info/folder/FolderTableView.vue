@@ -50,7 +50,7 @@ const columns: Array<BaseTableCol> = [
           handleDirItemContextmenu(props.sourceId, p.row as any, e, () => onRefresh(true))
         },
         class: 'ml-8px'
-      }, p.row.name)
+      }, () => p.row.name)
     ])
   }, {
     title: '文件大小',

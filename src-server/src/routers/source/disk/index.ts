@@ -4,7 +4,10 @@ import {Result} from "@/views/Result";
 
 export default new Elysia({prefix: '/api/source/disk'})
   .get("/list", async () => {
-    const list = await sourceDiskDao.query().select('title', 'driver', 'id').list();
+    const list = await sourceDiskDao.query()
+      .select('title', 'driver', 'id', 'order')
+      .orderByAsc('order')
+      .list();
     return Result.success(list);
   })
   .get("/info/:id", async ({params}) => {

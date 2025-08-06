@@ -8,6 +8,7 @@ export interface DiskSourceEntry {
   id: string;
   create_time: number;
   update_time: number;
+  order: number;
 }
 
 export interface DiskSourceForm {

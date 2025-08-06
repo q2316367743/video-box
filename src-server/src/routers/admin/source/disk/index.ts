@@ -5,6 +5,7 @@ import adminSourceDiskList from "@/routers/admin/source/disk/routers/AdminSource
 import adminSourceDiskAdd from "@/routers/admin/source/disk/routers/AdminSourceDiskAdd";
 import adminSourceDiskUpdate from "@/routers/admin/source/disk/routers/AdminSourceDiskUpdate";
 import adminSourceDiskDelete from "@/routers/admin/source/disk/routers/AdminSourceDiskDelete";
+import adminSourceDiskOrder from "@/routers/admin/source/disk/routers/AdminSourceDiskOrder";
 
 const app = new Elysia({prefix: '/source/disk'})
 
@@ -12,6 +13,7 @@ app.use(adminSourceDiskProps)
   .use(adminSourceDiskList)
   .use(adminSourceDiskAdd)
   .use(adminSourceDiskUpdate)
-  .use(adminSourceDiskDelete);
+  .use(adminSourceDiskDelete)
+  .use(adminSourceDiskOrder);
 
 export default app;

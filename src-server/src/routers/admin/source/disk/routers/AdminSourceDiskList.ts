@@ -3,5 +3,6 @@ import {sourceDiskDao} from "@/dao";
 import {Result} from "@/views/Result";
 
 export default new Elysia().get('/list', async () => {
-  return Result.success(await sourceDiskDao.list());
+  return Result.success(await sourceDiskDao.query()
+    .orderByAsc('order').list());
 })

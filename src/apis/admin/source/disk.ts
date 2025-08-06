@@ -25,3 +25,7 @@ export function adminSourceDiskUpdate(id: string, data: DiskSourceFormData) {
 export function adminSourceDiskDelete(id: string) {
   return useDelete(`/api/admin/source/disk/delete/${id}`)
 }
+
+export function adminSourceDiskOrder(body: Array<{ id: string, order: number }>) {
+  return usePut<DiskSourceEntry>(`/api/admin/source/disk/order`, body);
+}
