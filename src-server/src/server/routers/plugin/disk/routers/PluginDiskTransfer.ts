@@ -1,9 +1,10 @@
 import {Elysia, t} from "elysia";
-import {sourceDiskDao} from "@/dao";
+import {sourceDiskDao, sourceDiskDirDao} from "@/dao";
 import {pluginDiskGet} from "@/service/plugin/disk";
 import {Result} from "@/views/Result";
 import {SourceDiskDir} from "@/types/SourceDiskDIr";
 import {DiskPlugin} from "@/modules/disk/DiskPlugin";
+import {joinPath} from "@/utils/WebPath";
 
 async function getDir(id: string, plugin: DiskPlugin, from: string, to: string): Promise<{
   file: SourceDiskDir,
@@ -23,8 +24,15 @@ export default new Elysia()
     const plugin = await sourceDiskDao.getPlugin(id);
     if (!plugin) return Promise.reject(new Error("插件不存在"));
     const {file, folder} = await getDir(id, plugin, from, to);
-    await plugin.cp(file, folder);
-    // 刷新目标目录
+    const newDirItem = await plugin.cp(file, folder);
+    // 插入数据库
+    await sourceDiskDirDao.insert({
+      ...file,
+      last_modified:Date.now(),
+      path: joinPath(folder.path, file.name),
+      folder: folder.path,
+      update_time: Date.now()
+    });
     return Result.success();
   }, {
     params: t.Object({
@@ -42,6 +50,17 @@ export default new Elysia()
     if (!plugin) return Promise.reject(new Error("插件不存在"));
     const {file, folder} = await getDir(id, plugin, from, to);
     await plugin.mv(file, folder);
+    // 插入数据库
+    await sourceDiskDirDao.insert({
+      ...file,
+      last_modified:Date.now(),
+      path: joinPath(folder.path, file.name),
+      folder: folder.path,
+      update_time: Date.now()
+    });
+    // 删除旧的数据
+    await sourceDiskDirDao.deleteById(file.id);
+    // 由于是文件，所以没有子
     return Result.success();
   }, {
     params: t.Object({

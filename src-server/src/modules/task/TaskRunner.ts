@@ -23,6 +23,17 @@ export class TaskRunner {
   ): Promise<TaskExecution> {
     if (running.has(identifier)) throw new Error(`${identifier} already running`);
 
+    const old = await taskExecutionDao.query()
+      .eq('identifier', identifier)
+      .eq('status', 'running')
+      .list();
+    if (old.length > 0) {
+      // 存在错误的数据
+      for (let taskExecution of old) {
+        await taskExecutionDao.updateById(taskExecution.id, {status: 'failed', error: '任务已存在，但未运行，强制终止'});
+      }
+    }
+
     const exec = await taskExecutionDao.insert({
       definition_id: definitionId,
       identifier,

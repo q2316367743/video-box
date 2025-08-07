@@ -1,15 +1,15 @@
-import { db } from "@/global/db";
-import { Result } from "@/views/Result";
-import { Elysia, t } from "elysia";
+import {Result} from "@/views/Result";
+import {Elysia, t} from "elysia";
+import {sourceTvDao} from "@/dao";
 
 const app = new Elysia();
 
 app.put(
   "update/:id",
-  async ({ params, body }) => {
-    const { id } = params;
-    const { name, url, timeout } = body;
-    db.sql`update source_tv set name = ${name}, url = ${url}, timeout = ${timeout} where id = ${id};`;
+  async ({params, body}) => {
+    const {id} = params;
+    const {name, url, timeout} = body;
+    await sourceTvDao.updateById(id, {name, url, timeout});
     return Result.success();
   },
   {

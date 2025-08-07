@@ -49,7 +49,6 @@ export default defineConfig({
         main: _resolve('index.html'),
         web: _resolve('web.html'),
         tv: _resolve('tv.html'),
-        disk: _resolve('disk.html'),
       },
     },
   },

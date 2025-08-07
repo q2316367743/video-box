@@ -14,6 +14,10 @@ export async function pluginDiskGet(path: string, plugin: DiskPlugin, id: string
   const cache = await sourceDiskDirDao.getFromPath(path, id);
   if (cache) return cache;
   const items = await diskBuildCache(path, plugin, id);
+  if (path === '/') {
+    const cache = await sourceDiskDirDao.getFromPath(path, id);
+    if (cache) return cache;
+  }
   for (let item of items) {
     if (item.path === path) {
       // 确实存在

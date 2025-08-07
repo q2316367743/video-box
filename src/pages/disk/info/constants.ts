@@ -12,7 +12,7 @@ export interface DiskInfoInstance {
 
 export const diskInfoKey = Symbol() as InjectionKey<DiskInfoInstance>
 
-export type SortType = 'name' | 'size' | 'type' | 'extname';
+export type SortType = 'name' | 'size' | 'type' | 'extname' | 'lastModified';
 export type OrderType = 'asc' | 'desc';
 
 export function sortFunc(a: DirItem, b: DirItem, sort: SortType, order: OrderType) {
@@ -20,7 +20,9 @@ export function sortFunc(a: DirItem, b: DirItem, sort: SortType, order: OrderTyp
     return order === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
   } else if (sort === 'size') {
     return order === 'asc' ? a.size - b.size : b.size - a.size;
-  } else if (sort === 'type') {
+  } else if (sort === 'lastModified') {
+    return order === 'asc' ? a.lastModified - b.lastModified : b.lastModified - a.lastModified;
+  }else if (sort === 'type') {
     return order === 'asc' ? a.type.localeCompare(b.type) : b.type.localeCompare(a.type);
   } else if (sort === 'extname') {
     return order === 'asc' ? a.extname.localeCompare(b.extname) : b.extname.localeCompare(a.extname);

@@ -1,16 +1,16 @@
-import { db } from "@/global/db";
-import { useSnowflake } from "@/utils/Snowflake";
-import { Result } from "@/views/Result";
-import { Elysia, t } from "elysia";
+import {Result} from "@/views/Result";
+import {Elysia, t} from "elysia";
+import {sourceTvDao} from "@/dao";
 
 const app = new Elysia();
 
 app.post(
   "add",
-  async ({ body }) => {
-    const { name, url, timeout } = body;
-    db.sql`insert into source_tv(id, name, url, timeout, refresh_time, refresh_status)
-    values(${useSnowflake().nextId()}, ${name}, ${url}, ${timeout}, 0, 0);`;
+  async ({body}) => {
+    const {name, url, timeout} = body;
+    await sourceTvDao.insert({
+      name, url, timeout, refresh_status:0, refresh_time:0
+    })
     return Result.success();
   },
   {

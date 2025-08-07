@@ -43,7 +43,7 @@ export interface DiskUploadOption {
   // 是否覆盖写入
   overwrite: boolean;
   // 文件大小
-  contentLength:  number;
+  contentLength: number;
   // 文件类型
   contentType: string;
   // 密钥信息
@@ -75,14 +75,17 @@ export interface DiskPlugin {
   rename: (item: SourceDiskDir, newName: string) => Promise<void>;
   /**
    * 移动一个或文件夹
-   * @param item 目录项
-   * @param newPath 新路径
+   * @param file 移动的文件
+   * @param folder 目标文件夹
+   * @return 新的目录项
+   *
    */
   mv: (file: SourceDiskDir, folder: SourceDiskDir) => Promise<void>;
   /**
    * 复制一个文件或文件夹
-   * @param item 目录项
-   * @param destinationFolder 新目录
+   * @param file 移动的文件
+   * @param folder 目标文件夹
+   * @return 新的目录项
    */
   cp: (file: SourceDiskDir, folder: SourceDiskDir) => Promise<void>;
   /**

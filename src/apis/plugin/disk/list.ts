@@ -19,7 +19,7 @@ export interface DirItem<T extends Record<string, any> = Record<string, any>> ex
   // 文件大小
   size: number;
   // 最后修改时间
-  lastModified: number | string;
+  lastModified: number;
   // 拓展信息
   expands?: T;
   // 可能存在的封面,忽略
@@ -32,6 +32,7 @@ export interface PluginDiskListData {
   // 是否刷新缓存
   refresh: boolean;
 }
+
 export interface PluginDiskGetData {
   // 签名
   path: string;

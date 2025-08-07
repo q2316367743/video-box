@@ -1,13 +1,20 @@
-import { db } from "@/global/db";
-import { Result } from "@/views/Result";
-import { Elysia, t } from "elysia";
+import {Result} from "@/views/Result";
+import {Elysia, t} from "elysia";
+import {myVideoItemDao} from "@/dao";
 
 const app = new Elysia();
 
-app.get("/list", async () => {
-  const { rows } = await db.sql`select * from my_video_item`;
-  return Result.success(rows || []);
+app.get("/list", async ({query}) => {
+  const {pageNum, pageSize, type} = query;
+  const page = await myVideoItemDao.query().eq('type', type)
+    .page(pageNum, pageSize);
+  return Result.success(page);
 }, {
+  query: t.Object({
+    pageNum: t.Numeric(),
+    pageSize: t.Numeric(),
+    type: t.String(),
+  }),
   detail: {
     tags: ["my/video-item"],
     summary: "获取我的视频列表",

@@ -13,6 +13,7 @@ import {
 } from "@/modules/disk/impl/baidu-netdisk/utils";
 import {debug} from "@rasla/logify";
 import {joinPath} from "@/utils/WebPath";
+import {commonReadFile} from "@/utils/http/HttpUtil";
 
 export class DiskDriverForBaiduNetDisk extends AbsDiskPluginStore {
   public readonly props: DiskFormBaiduNetDisk;
@@ -44,8 +45,12 @@ export class DiskDriverForBaiduNetDisk extends AbsDiskPluginStore {
     this.vipType = rsp.vip_type;
   }
 
-  cp(file: SourceDiskDir, folder: SourceDiskDir): Promise<void> {
-    return Promise.resolve(undefined);
+  async cp(file: SourceDiskDir, folder: SourceDiskDir): Promise<void> {
+    await baiduNetDiskManage('copy', {
+      path: file.path,
+      dest: folder.path,
+      newname: file.name
+    }, this);
   }
 
   getFileDownloadLink(file: SourceDiskDir): Promise<DiskFileLink> {
@@ -76,16 +81,19 @@ export class DiskDriverForBaiduNetDisk extends AbsDiskPluginStore {
     }, this)
   }
 
-  readFile(request: Request, file: SourceDiskDir): Promise<Response> {
-    return Promise.resolve(new Response());
+  async readFile(request: Request, file: SourceDiskDir): Promise<Response> {
+    return commonReadFile(request, file, f => this.getFileDownloadLink(f));
   }
 
-  rename(item: SourceDiskDir, newName: string): Promise<void> {
-    return Promise.resolve(undefined);
+  async rename(item: SourceDiskDir, newName: string): Promise<void> {
+    await baiduNetDiskManage('rename', {
+      path: item.path,
+      newname: newName
+    }, this);
   }
 
-  rm(item: SourceDiskDir): Promise<void> {
-    return Promise.resolve(undefined);
+  async rm(item: SourceDiskDir): Promise<void> {
+    await baiduNetDiskManage('delete', [item.path], this);
   }
 
   writeFile(request: Request, folder: SourceDiskDir, option: DiskUploadOption): Promise<void> {

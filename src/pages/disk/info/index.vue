@@ -42,6 +42,13 @@
                 </template>
                 文件大小
               </t-dropdown-item>
+              <t-dropdown-item @click="sortType = 'lastModified'">
+                <template #prefix-icon>
+                  <check-icon v-if="sortType === 'lastModified'"/>
+                  <div class="w-16px" v-else/>
+                </template>
+                时间
+              </t-dropdown-item>
               <t-dropdown-item @click="sortType = 'type'">
                 <template #prefix-icon>
                   <check-icon v-if="sortType === 'type'"/>
@@ -54,7 +61,7 @@
                   <check-icon v-if="sortType === 'extname'"/>
                   <div class="w-16px" v-else/>
                 </template>
-                文件拓展名
+                拓展名
               </t-dropdown-item>
               <t-dropdown-item @click="orderType = 'asc'">
                 <template #prefix-icon>

@@ -1,6 +1,6 @@
-import { db } from "@/global/db";
 import { Result } from "@/views/Result";
 import { Elysia, t } from "elysia";
+import {myVideoItemDao} from "@/dao";
 
 const app = new Elysia();
 
@@ -8,7 +8,7 @@ app.delete(
   "delete/:id",
   async ({ params }) => {
     const { id } = params;
-    await db.sql`delete from my_video_item where id = ${id}`;
+    await myVideoItemDao.deleteById(id);
     return Result.success();
   },
   {

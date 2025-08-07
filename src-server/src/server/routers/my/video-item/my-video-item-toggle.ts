@@ -1,22 +1,23 @@
-import { db } from "@/global/db";
-import { Result } from "@/views/Result";
-import { Elysia, t } from "elysia";
-import { useSnowflake } from "@/utils/Snowflake";
+import {Result} from "@/views/Result";
+import {Elysia, t} from "elysia";
+import {myVideoItemDao} from "@/dao";
 
 const app = new Elysia();
 
 app.put(
   "toggle",
-  async ({ body }) => {
-    const { type, from, payload, cover, title, description } = body;
+  async ({body}) => {
+    const {type, from, payload, cover, title, description} = body;
     // 如果存在记录则删除，不存在则新增
-    const { rows } =
-      await db.sql`select * from my_video_item where \`type\` = ${type} and \`from\` = ${from} and payload = ${payload}`;
-    if (rows && rows.length > 0) {
-      await db.sql`delete from my_video_item where \`id\` = ${rows[0].id}`;
+    const one = await myVideoItemDao.query()
+      .eq('type', type)
+      .eq('from', from)
+      .eq('payload', payload)
+      .one();
+    if (one) {
+      await myVideoItemDao.deleteById(one.id);
     } else {
-      await db.sql`insert into my_video_item (id, \`type\`, \`from\`, payload, cover, title, \`description\`) 
-    values (${useSnowflake().nextId()}, ${type}, ${from}, ${payload}, ${cover}, ${title}, ${description})`;
+      await myVideoItemDao.insert({type, from, payload, cover, title, description});
     }
     return Result.success();
   },

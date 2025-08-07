@@ -17,6 +17,7 @@ import {SourceDiskDir} from "@/types/SourceDiskDIr";
 import {saveTempFile} from "@/service/plugin/disk/PluginDiskUploadService";
 import {join} from "node:path";
 import {APP_TEMP_DIR} from "@/global/constant";
+import {commonReadFile} from "@/utils/http/HttpUtil";
 
 export class DiskDriverForQuarkOrUc extends AbsDiskPluginStore {
 
@@ -103,23 +104,7 @@ export class DiskDriverForQuarkOrUc extends AbsDiskPluginStore {
   }
 
   async readFile(request: Request, file: SourceDiskDir): Promise<Response> {
-    const link = await this.getFileDownloadLink(file);
-    if (request.signal.aborted) return Promise.resolve(new Response("已被终止", {
-      status: 500,
-      statusText: 'REQUEST_ABORT'
-    }));
-    const rsp = await fetch(link.url, {
-      headers: {
-        ...request.headers,
-        ...link.headers
-      },
-      signal: request.signal
-    });
-    return new Response(rsp.body, {
-      headers: rsp.headers,
-      status: rsp.status,
-      statusText: rsp.statusText
-    });
+    return commonReadFile(request, file, f => this.getFileDownloadLink(f));
   }
 
   /**
@@ -183,7 +168,7 @@ export class DiskDriverForQuarkOrUc extends AbsDiskPluginStore {
         option.md5 = hash.md5;
         option.sha1 = hash.sha1;
       }
-    }else {
+    } else {
       requestReader = request.body.getReader();
     }
 
