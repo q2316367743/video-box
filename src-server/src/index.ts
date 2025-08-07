@@ -1,16 +1,7 @@
 import {Elysia} from "elysia";
 // 路由
-import folderWebRoutes from "@/routers/folder/web";
-import sourceWebRoutes from "@/routers/source/web";
-import sourceTvRoutes from "@/routers/source/tv";
-import sourceDiskRouters from '@/routers/source/disk';
-import pluginWebRoutes from "@/routers/plugin/web";
-import pluginDiskRouters from '@/routers/plugin/disk';
-import myVideoItemRoutes from "@/routers/my/video-item";
-import proxyRoutes from "@/routers/proxy";
-import authRoutes from "@/routers/auth";
-import adminRouters from "@/routers/admin";
-import adminSetting from "@/routers/admin/setting";
+import apiRouter from "@/server/routers";
+import webDavRouter from '@/server/webdav';
 
 import {registerElysiaPlugin} from "./plugins/elysia_plugin";
 import {registerElysiaHook} from "./plugins/elysia_hook";
@@ -28,18 +19,7 @@ registerElysiaPlugin(app);
 registerElysiaHook(app);
 
 // 注册路由
-app
-  .use(adminRouters)
-  .use(adminSetting)
-  .use(folderWebRoutes)
-  .use(sourceWebRoutes)
-  .use(sourceTvRoutes)
-  .use(sourceDiskRouters)
-  .use(pluginWebRoutes)
-  .use(pluginDiskRouters)
-  .use(myVideoItemRoutes)
-  .use(proxyRoutes)
-  .use(authRoutes);
+app.use(apiRouter).use(webDavRouter);
 
 elysiaInit()
   .finally(() => {
