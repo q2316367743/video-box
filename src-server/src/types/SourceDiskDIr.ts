@@ -17,8 +17,8 @@ export interface SourceDiskDir {
   extname: string;
   // 大小
   size: number;
-  // 最后修改时间
-  last_modified: string;
+  // 最后修改时间，时间戳
+  last_modified: number;
   // 是否已缓存，1-是，0-否
   cache: number;
   // 封面

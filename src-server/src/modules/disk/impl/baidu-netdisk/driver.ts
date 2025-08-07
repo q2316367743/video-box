@@ -4,8 +4,15 @@ import {SourceDiskDir} from "@/types/SourceDiskDIr";
 import {DirItem, DiskFileLink, DiskUploadOption} from "@/modules/disk/DiskPlugin";
 import {DiskFormBaiduNetDisk} from "@/modules/disk/impl/baidu-netdisk/props";
 import {URL} from "url";
-import {baiduNetDiskGet, baiduNetDiskGetFiles} from "@/modules/disk/impl/baidu-netdisk/utils";
+import {
+  baiduNetDiskCreate,
+  baiduNetDiskGet,
+  baiduNetDiskGetFiles,
+  baiduNetDiskLinkCrack,
+  baiduNetDiskLinkCrackVideo, baiduNetDiskLinkOfficial, baiduNetDiskManage
+} from "@/modules/disk/impl/baidu-netdisk/utils";
 import {debug} from "@rasla/logify";
+import {joinPath} from "@/utils/WebPath";
 
 export class DiskDriverForBaiduNetDisk extends AbsDiskPluginStore {
   public readonly props: DiskFormBaiduNetDisk;
@@ -42,7 +49,12 @@ export class DiskDriverForBaiduNetDisk extends AbsDiskPluginStore {
   }
 
   getFileDownloadLink(file: SourceDiskDir): Promise<DiskFileLink> {
-    return Promise.resolve(undefined);
+    if (this.props.DownloadAPI === 'crack') {
+      return baiduNetDiskLinkCrack(file, this);
+    } else if (this.props.DownloadAPI === 'crack_video') {
+      return baiduNetDiskLinkCrackVideo(file, this);
+    }
+    return baiduNetDiskLinkOfficial(file, this);
   }
 
   list(parent: SourceDiskDir): Promise<Array<DirItem>> {
@@ -50,15 +62,22 @@ export class DiskDriverForBaiduNetDisk extends AbsDiskPluginStore {
   }
 
   mkdir(folder: SourceDiskDir, name: string): Promise<void> {
-    return Promise.resolve(undefined);
+    return baiduNetDiskCreate({
+      path: joinPath(folder.path, name),
+      size: 0, isdir: 1, uploadid: "", block_list: "", ctime: 0, mtime: 0
+    }, this);
   }
 
-  mv(file: SourceDiskDir, folder: SourceDiskDir): Promise<void> {
-    return Promise.resolve(undefined);
+  async mv(file: SourceDiskDir, folder: SourceDiskDir): Promise<void> {
+    await baiduNetDiskManage('move', {
+      path: file.path,
+      dest: folder.path,
+      newname: file.name
+    }, this)
   }
 
   readFile(request: Request, file: SourceDiskDir): Promise<Response> {
-    return Promise.resolve(undefined);
+    return Promise.resolve(new Response());
   }
 
   rename(item: SourceDiskDir, newName: string): Promise<void> {

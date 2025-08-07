@@ -24,6 +24,7 @@ export default new Elysia()
     if (!plugin) return Promise.reject(new Error("插件不存在"));
     const {file, folder} = await getDir(id, plugin, from, to);
     await plugin.cp(file, folder);
+    // 刷新目标目录
     return Result.success();
   }, {
     params: t.Object({

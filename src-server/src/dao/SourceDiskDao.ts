@@ -50,7 +50,7 @@ export class SourceDiskDao extends BaseMapper<DiskSourceEntry> {
     if (!entry) {
       return null;
     }
-    const plugin = buildDiskPlugin({
+    const plugin = await buildDiskPlugin({
       ...entry,
       driver: entry.driver as DiskDriver,
       data: JSON.parse(entry.data)

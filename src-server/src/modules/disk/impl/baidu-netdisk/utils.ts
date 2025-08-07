@@ -2,20 +2,22 @@ import axios, {AxiosError, AxiosRequestConfig, Method} from "axios";
 import {DiskDriverForBaiduNetDisk} from "@/modules/disk/impl/baidu-netdisk/driver";
 import {info} from "@rasla/logify";
 import {promiseRetry} from "@/utils/lang/PromiseUtil";
-import {DirItem} from "@/modules/disk/DiskPlugin";
-
-interface RefreshTokenRsp {
-  refresh_token: string;
-  access_token: string;
-  text: string;
-}
+import {DirItem, DiskFileLink} from "@/modules/disk/DiskPlugin";
+import {SourceDiskDir} from "@/types/SourceDiskDIr";
+import {
+  BaiduNetDiskCreateProps,
+  BaiduNetDiskDownloadResp,
+  BaiduNetDiskDownloadResp2,
+  baiduNetDiskFileToDir,
+  BaiduNetDiskListResp, BaiduNetDiskRefreshTokenRsp
+} from "@/modules/disk/impl/baidu-netdisk/types";
 
 async function refreshToken(driver: DiskDriverForBaiduNetDisk) {
   const {props} = driver;
   // 使用在线API刷新Token，无需ClientID和ClientSecret
   if (props.UseOnlineAPI && props.APIAddress.length && props.APIAddress.length > 0) {
     const url = props.APIAddress;
-    const {data} = await axios.request<RefreshTokenRsp>({
+    const {data} = await axios.request<BaiduNetDiskRefreshTokenRsp>({
       headers: {
         'User-Agent': "Mozilla/5.0 (Macintosh; Apple macOS 15_5) AppleWebKit/537.36 (KHTML, like Gecko) Safari/537.36 Chrome/138.0.0.0 Openlist/425.6.30",
       },
@@ -45,7 +47,7 @@ async function refreshToken(driver: DiskDriverForBaiduNetDisk) {
   }
   // 走原有的刷新逻辑
   try {
-    const {data} = await axios.request<RefreshTokenRsp>({
+    const {data} = await axios.request<BaiduNetDiskRefreshTokenRsp>({
       url: "https://openapi.baidu.com/oauth/2.0/token",
       method: 'GET',
       params: {
@@ -106,60 +108,11 @@ export async function baiduNetDiskGet<T extends Record<string, any>>(pathname: s
   return baiduNetDiskRequest<T>("https://pan.baidu.com/rest/2.0" + pathname, 'get', params, driver)
 }
 
-interface FileResp {
-  // tkbind_id: number;
-  // owner_type: number;
-  category: number
-  // real_category: string;
-  fs_id: number;
-  // oper_id: number;
-  thumbs: {
-    // icon: string;
-    // url1: string;
-    // url2: string;
-    url3: string;
-  };
-  // wpfile: number;
-  size: number;
-  // extent_tinyint7: number;
-  path: string;
-  // share: number;
-  // pl: number;
-  server_filename: string;
-  md5: string;
-  // owner_id: number;
-  // unlist: number;
-  isdir: number;
-  server_ctime: number;
-  server_mtime: number;
-  local_mtime: number;
-  local_ctime: number;
-  // server_atime: number;
-  ctime: number;
-  mtime: number;
-}
-
-interface ListResp {
-  errno: number;
-  guid_info: string;
-  request_id: number;
-  guid: number;
-  list: Array<FileResp>
-}
-
-function fileToDir(folder: string, file: FileResp): DirItem {
-  return {
-    name: file.server_filename,
-    type: file.isdir === 1 ? 'folder' : 'file',
-    folder: folder,
-    size: file.size,
-    lastModified: file.server_mtime,
-    extname: file.server_filename.split('.').pop(),
-    expands: file,
-    cover: file.thumbs.url3,
-    path: file.path,
-    sign: String(file.fs_id)
-  }
+export async function baiduNetDiskPostForm(pathname: string, params: Record<string, any>, data: FormData, driver: DiskDriverForBaiduNetDisk) {
+  return baiduNetDiskRequest("https://pan.baidu.com/rest/2.0" + pathname, 'POST', {
+    params,
+    data
+  }, driver)
 }
 
 export async function baiduNetDiskGetFiles(dir: string, driver: DiskDriverForBaiduNetDisk): Promise<Array<DirItem>> {
@@ -182,14 +135,110 @@ export async function baiduNetDiskGetFiles(dir: string, driver: DiskDriverForBai
     params['start'] = start;
     params['limit'] = limit;
     start += limit;
-    const listResp = await baiduNetDiskGet<ListResp>('/xpan/file', params, driver);
+    const listResp = await baiduNetDiskGet<BaiduNetDiskListResp>('/xpan/file', params, driver);
     if (listResp.list.length === 0) break;
     if (props.OnlyListVideoFile) {
-      listResp.list.filter(e => e.isdir === 1 || e.category == 1).forEach(e => files.push(fileToDir(dir, e)));
+      listResp.list.filter(e => e.isdir === 1 || e.category == 1).forEach(e => files.push(baiduNetDiskFileToDir(dir, e)));
     } else {
-      listResp.list.forEach(e => files.push(fileToDir(dir, e)));
+      listResp.list.forEach(e => files.push(baiduNetDiskFileToDir(dir, e)));
     }
   }
 
   return files;
+}
+
+export async function baiduNetDiskLinkCrack(file: SourceDiskDir, driver: DiskDriverForBaiduNetDisk): Promise<DiskFileLink> {
+  const resp = await baiduNetDiskRequest<BaiduNetDiskDownloadResp2>('https://pan.baidu.com/api/filemetas', 'GET', {
+    params: {
+      target: `["${file.path}"]`,
+      "dlink": "1",
+      "web": "5",
+      "origin": "dlna",
+    }
+  }, driver);
+  return {
+    url: resp.info[0].dlink,
+    headers: {
+      'User-Agent': driver.props.CustomCrackUA
+    }
+  }
+}
+
+export async function baiduNetDiskLinkCrackVideo(file: SourceDiskDir, driver: DiskDriverForBaiduNetDisk): Promise<DiskFileLink> {
+  const resp = await baiduNetDiskRequest('https://pan.baidu.com/api/mediainfo', 'GET', {
+    params: {
+      "type": "VideoURL",
+      "path": file.path,
+      "fs_id": file.sign,
+      "devuid": "0%1",
+      "clienttype": "1",
+      "channel": "android_15_25010PN30C_bd-netdisk_1523a",
+      "nom3u8": "1",
+      "dlink": "1",
+      "media": "1",
+      "origin": "dlna",
+    }
+  }, driver);
+  return {
+    url: resp.info.dlink,
+    headers: {
+      'User-Agent': driver.props.CustomCrackUA
+    }
+  }
+}
+
+export async function baiduNetDiskLinkOfficial(file: SourceDiskDir, driver: DiskDriverForBaiduNetDisk) {
+  const resp = await baiduNetDiskGet<BaiduNetDiskDownloadResp>('/xpan/multimedia', {
+    method: 'filemetas',
+    fsids: `[${file.sign}]`,
+    dlink: 1
+  }, driver);
+  const url = `${resp.list[0].dlink}&access_token=${driver.props.AccessToken}`;
+  const res = await axios.head(url, {
+    headers: {
+      'User-Agent': 'pan.baidu.com'
+    }
+  });
+  const u = res.headers['location'];
+  return {
+    url: u,
+    headers: {
+      'User-Agent': 'pan.baidu.com'
+    }
+  }
+}
+
+export async function baiduNetDiskCreate(props: BaiduNetDiskCreateProps, driver: DiskDriverForBaiduNetDisk) {
+  const {path, size, isdir, uploadid, block_list, mtime, ctime} = props;
+  const params: Record<string, any> = {
+    "method": "create",
+  }
+  const form = new FormData();
+  form.set('path', path);
+  form.set('size', size + '');
+  form.set('isdir', isdir + '');
+  form.set('rtype', '3');
+  if (mtime != 0 && ctime != 0) {
+    form.set('local_mtime', mtime + '');
+    form.set('local_ctime', ctime + '');
+  }
+
+  if (uploadid != "") {
+    form.set('uploadid', uploadid);
+  }
+  if (block_list != "") {
+    form.set('block_list', block_list);
+  }
+  await baiduNetDiskPostForm("/xpan/file", params, form, driver);
+}
+
+export async function baiduNetDiskManage(opera: string, filelist: Record<string, any>, driver: DiskDriverForBaiduNetDisk) {
+  const formData = new FormData();
+  formData.set("async", "0")
+  formData.set("filelist", JSON.stringify(filelist))
+  formData.set("ondup", "fail")
+  return baiduNetDiskPostForm("/xpan/file", {
+    "method": "filemanager",
+    "opera": opera,
+  }, formData, driver)
 }

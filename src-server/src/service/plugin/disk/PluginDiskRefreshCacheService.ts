@@ -3,7 +3,6 @@ import {DirItem, DiskPlugin} from "@/modules/disk/DiskPlugin";
 import {debug} from "@rasla/logify";
 import {sourceDiskDirDao} from "@/dao";
 import {map} from "@/utils/ArrayUtil";
-import dayjs from "dayjs";
 
 /**
  * 重命名一个目录项及其子项
@@ -64,7 +63,7 @@ export async function diskRefreshCache(parent: SourceDiskDir, plugin: DiskPlugin
         type: item.type,
         extname: item.extname,
         size: item.size,
-        last_modified: typeof item.lastModified === 'string' ? item.lastModified : dayjs(item.lastModified).format("YYYY-MM-DD HH:mm:ss"),
+        last_modified: item.lastModified,
         cover: item.cover,
         expands: item.expands ? JSON.stringify(item.expands) : undefined
       });

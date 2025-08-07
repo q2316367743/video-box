@@ -6,6 +6,7 @@ import {useRequest} from "@/global/http";
 import {extname, joinPath} from "@/utils/WebPath";
 import {SourceDiskDir} from "@/types/SourceDiskDIr";
 import {shake} from "@/utils/lang/RecordUtil";
+import dayjs from "dayjs";
 
 interface DiskFromAList {
   url: string;
@@ -160,7 +161,7 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
           extname: temp.is_dir ? '' : extname(temp.name),
           folder: path,
           type: temp.is_dir ? 'folder' : 'file',
-          lastModified: temp.modified,
+          lastModified: dayjs(temp.modified).toDate().getTime(),
           path: path + '/' + temp.name,
           cover: temp.thumb,
           sign: temp.sign

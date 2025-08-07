@@ -2,7 +2,6 @@ import {BaseMapper} from "@/modules/database/BaseMapper";
 import {SourceDiskDir} from "@/types/SourceDiskDIr";
 import {Database} from "db0";
 import {DirItem} from "@/modules/disk/DiskPlugin";
-import dayjs from "dayjs";
 
 export class SourceDiskDirDao extends BaseMapper<SourceDiskDir> {
   constructor(db: Database) {
@@ -17,7 +16,7 @@ export class SourceDiskDirDao extends BaseMapper<SourceDiskDir> {
       name: '',
       type: 'folder',
       size: 0,
-      last_modified: '',
+      last_modified: 0,
       expands: '',
       cover: '',
       cache: 0,
@@ -72,7 +71,7 @@ export class SourceDiskDirDao extends BaseMapper<SourceDiskDir> {
           folder: item.folder,
           path: item.path,
           size: item.size || 0,
-          last_modified: typeof item.lastModified === 'string' ? item.lastModified : dayjs(item.lastModified).format('YYYY-MM-DD HH:mm:ss'),
+          last_modified: item.lastModified,
           extname: item.extname || '',
           cover: item.cover || '',
           expands: item.expands ? JSON.stringify(item.expands) : '',

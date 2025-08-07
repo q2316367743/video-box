@@ -5,6 +5,7 @@ import {extname, joinPath} from "@/utils/WebPath";
 import {DirItem, DiskFileLink, DiskUploadOption} from "@/modules/disk/DiskPlugin";
 import {createClient, WebDAVClient} from "webdav";
 import {SourceDiskDir} from "@/types/SourceDiskDIr";
+import dayjs from "dayjs";
 
 interface DiskFromWebDAV {
   url: string;
@@ -59,7 +60,7 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
         extname: file.type === "file" ? extname(file.basename) : '',
         folder: path,
         type: file.type === "directory" ? 'folder' : file.type === "file" ? 'file' : 'unknow',
-        lastModified: file.lastmod,
+        lastModified: dayjs(file.lastmod).toDate().getTime(),
         path: p,
         expands: {
           sign: file.etag,

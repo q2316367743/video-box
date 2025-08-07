@@ -12,16 +12,20 @@ import {DiskPropsForQuarkOpen} from "@/modules/disk/impl/quark-open/props";
 import {DiskPropsForQuarkOrUc} from "@/modules/disk/impl/quark-or-uc/props";
 import {DiskPropsForBaiduNetDisk} from "@/modules/disk/impl/baidu-netdisk/props";
 
-export function buildDiskPlugin(source: DiskSourceView): DiskPlugin {
+export async function buildDiskPlugin(source: DiskSourceView): Promise<DiskPlugin> {
+  let p: DiskPlugin;
   switch (source.driver) {
     case "A_LIST_V3":
-      return new DiskPluginForAListV3(source);
+      p = new DiskPluginForAListV3(source);
+      break;
     case "WEB_DAV":
-      return new DiskPluginForWebDAV(source);
+      p = new DiskPluginForWebDAV(source);
+      break;
     case 'QUARK_OPEN':
-      return new DiskPluginForQuarkOpen(source);
+      p = new DiskPluginForQuarkOpen(source);
+      break;
     case 'QUARK':
-      return new DiskDriverForQuarkOrUc(source, {
+      p = new DiskDriverForQuarkOrUc(source, {
         ua: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) quark-cloud-drive/2.5.20 Chrome/100.0.4896.160 Electron/18.3.5.4-b478491100 Safari/537.36 Channel/pckk_other_ch",
         referer: "https://pan.quark.cn",
         api: "https://drive.quark.cn/1/clouddrive",
@@ -31,8 +35,9 @@ export function buildDiskPlugin(source: DiskSourceView): DiskPlugin {
         noOverwriteUpload: true,
         onlyProxy: false
       });
+      break;
     case 'UC':
-      return new DiskDriverForQuarkOrUc(source, {
+      p = new DiskDriverForQuarkOrUc(source, {
         ua: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) uc-cloud-drive/2.5.20 Chrome/100.0.4896.160 Electron/18.3.5.4-b478491100 Safari/537.36 Channel/pckk_other_ch",
         referer: "https://drive.uc.cn",
         api: "https://pc-api.uc.cn/1/clouddrive",
@@ -42,11 +47,15 @@ export function buildDiskPlugin(source: DiskSourceView): DiskPlugin {
         defaultRoot: '0',
         noOverwriteUpload: true
       });
+      break;
     case 'BAIDU_NET_DISK':
-      return new DiskDriverForBaiduNetDisk(source);
+      p = new DiskDriverForBaiduNetDisk(source);
+      break;
     default:
       throw new Error(`不支持的磁盘驱动: ${source.driver}`);
   }
+  await p.init();
+  return p;
 }
 
 export const DiskPluginOptions: Array<{ label: string, value: DiskDriver, disabled?: boolean }> = [{

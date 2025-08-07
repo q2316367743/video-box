@@ -18,8 +18,8 @@ export interface DirItem<T extends Record<string, any> = Record<string, any>> ex
   extname?: string;
   // 文件大小
   size?: number;
-  // 最后修改时间
-  lastModified?: number | string;
+  // 最后修改时间，时间戳
+  lastModified: number;
   // 拓展信息
   expands?: T;
   // 可能存在的封面,忽略
