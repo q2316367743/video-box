@@ -1,7 +1,7 @@
 <template>
   <t-base-table v-if="current.type === 'folder'" :data="data" :loading="loading" :columns="columns"
                 @refresh="onRefresh" row-key="path"
-                height="calc(100vh - 76px)"
+                height="calc(100vh - 76px)" :scroll="{ type: 'virtual' }"
                 @contextmenu="handleDirContextmenu({ sourceId, item: current, e: $event, onRefresh })"/>
   <file-view v-else :current="current" :source-id="sourceId"/>
 </template>

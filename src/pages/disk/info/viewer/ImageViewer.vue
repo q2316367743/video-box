@@ -11,7 +11,7 @@
             :disabled="scale >= maxScale"
           >
             <template #icon>
-              <ZoomInIcon />
+              <ZoomInIcon/>
             </template>
           </t-button>
         </t-tooltip>
@@ -24,7 +24,7 @@
             :disabled="scale <= minScale"
           >
             <template #icon>
-              <ZoomOutIcon />
+              <ZoomOutIcon/>
             </template>
           </t-button>
         </t-tooltip>
@@ -36,7 +36,7 @@
             @click="flipVertical"
           >
             <template #icon>
-              <FlipVerticalIcon />
+              <FlipVerticalIcon/>
             </template>
           </t-button>
         </t-tooltip>
@@ -48,7 +48,7 @@
             @click="flipHorizontal"
           >
             <template #icon>
-              <FlipHorizontalIcon />
+              <FlipHorizontalIcon/>
             </template>
           </t-button>
         </t-tooltip>
@@ -60,7 +60,7 @@
             @click="rotateClockwise"
           >
             <template #icon>
-              <RotateRightIcon />
+              <RotateRightIcon/>
             </template>
           </t-button>
         </t-tooltip>
@@ -72,7 +72,7 @@
             @click="rotateCounterClockwise"
           >
             <template #icon>
-              <RotateLeftIcon />
+              <RotateLeftIcon/>
             </template>
           </t-button>
         </t-tooltip>
@@ -84,7 +84,7 @@
             @click="downloadImage"
           >
             <template #icon>
-              <DownloadIcon />
+              <DownloadIcon/>
             </template>
           </t-button>
         </t-tooltip>
@@ -131,10 +131,11 @@
           :class="{ 'image-viewer__thumbnail--active': index === currentIndex }"
           @click="switchToImage(index)"
         >
-          <img
+          <t-image
             :src="url"
             :alt="`缩略图 ${index + 1}`"
             class="image-viewer__thumbnail-image"
+            lazy
           />
         </div>
       </div>
@@ -594,11 +595,10 @@ onUnmounted(() => {
   flex: 1;
   position: relative;
   overflow: hidden;
-  background:
-    linear-gradient(45deg, var(--td-bg-color-component) 25%, transparent 25%),
-    linear-gradient(-45deg, var(--td-bg-color-component) 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, var(--td-bg-color-component) 75%),
-    linear-gradient(-45deg, transparent 75%, var(--td-bg-color-component) 75%);
+  background: linear-gradient(45deg, var(--td-bg-color-component) 25%, transparent 25%),
+  linear-gradient(-45deg, var(--td-bg-color-component) 25%, transparent 25%),
+  linear-gradient(45deg, transparent 75%, var(--td-bg-color-component) 75%),
+  linear-gradient(-45deg, transparent 75%, var(--td-bg-color-component) 75%);
   background-size: 20px 20px;
   background-position: 0 0, 0 10px, 10px -10px, -10px 0;
   display: flex;
@@ -662,7 +662,7 @@ onUnmounted(() => {
 }
 
 .image-viewer__thumbnail--active {
-  border-color:  var(--td-brand-color);
+  border-color: var(--td-brand-color);
   box-shadow: var(--td-shadow-1)
 }
 

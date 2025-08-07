@@ -2,7 +2,7 @@
   <div class="live-list" ref="el">
     <loading-result v-if="loading" title="正在加载中"/>
     <empty-result v-else-if="items.length === 0" status="404" title="没有频道"/>
-    <div class="live-list-container">
+    <div v-else class="live-list-container">
       <t-tabs v-model="activeKey">
         <t-tab-panel v-for="name in groupNames" :key="name.value" :label="name.label" :value="name.value"/>
       </t-tabs>
@@ -23,7 +23,7 @@ import {useFuse} from "@vueuse/integrations/useFuse";
 import {channelsToGroup} from "@/views/SourceTv";
 import LiveListItem from "@/pages/live/components/LiveListItem.vue";
 import {SourceTvChannelView} from "@/views/SourceTv";
-import {onScrollToBottom} from "@/store/index";
+import {onScrollToBottom} from "@/store";
 
 type FuseResult<T> = {
   item: T

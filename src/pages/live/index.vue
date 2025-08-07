@@ -13,7 +13,7 @@
       </div>
 
       <div class="flex items-center gap-4">
-          <t-select v-model="active" :options="options" clearable auto-width/>
+        <t-select v-model="active" :options="options" clearable auto-width/>
       </div>
     </div>
     <div class="live-container">
