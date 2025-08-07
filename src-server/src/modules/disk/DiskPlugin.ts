@@ -57,6 +57,10 @@ export interface DiskUploadOption {
  * 磁盘插件，主要对磁盘的操作
  */
 export interface DiskPlugin {
+
+  // 初始化方法
+  init: () => Promise<void>;
+
   /**
    * 读取一个目录下的所有文件和文件夹
    * @param parent 目录

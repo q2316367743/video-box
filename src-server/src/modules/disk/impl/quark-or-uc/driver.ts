@@ -250,4 +250,8 @@ export class DiskDriverForQuarkOrUc extends AbsDiskPluginStore {
 
   }
 
+  init(): Promise<void> {
+    return Promise.resolve();
+  }
+
 }

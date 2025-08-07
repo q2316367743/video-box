@@ -54,4 +54,6 @@ export abstract class AbsDiskPluginStore implements DiskPlugin {
 
   abstract writeFile(request: Request, folder: SourceDiskDir, option: DiskUploadOption): Promise<void>;
 
+  abstract init(): Promise<void>;
+
 }

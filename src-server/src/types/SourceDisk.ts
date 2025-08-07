@@ -1,4 +1,4 @@
-export type DiskDriver = 'A_LIST_V3' | 'WEB_DAV' | 'QUARK_OPEN' | 'QUARK' | 'UC';
+export type DiskDriver = 'A_LIST_V3' | 'WEB_DAV' | 'QUARK_OPEN' | 'QUARK' | 'UC' | 'BAIDU_NET_DISK';
 
 export interface DiskSourceEntry {
   title: string;

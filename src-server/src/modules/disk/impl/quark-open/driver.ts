@@ -14,6 +14,11 @@ export class DiskPluginForQuarkOpen extends AbsDiskPluginStore {
     this.props = source.data as DiskFromQuarkOpen;
   }
 
+  init(): Promise<void> {
+    return Promise.resolve();
+  }
+
+
   cp(file: SourceDiskDir, folder: SourceDiskDir): Promise<void> {
     return Promise.resolve(undefined);
   }

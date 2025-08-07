@@ -28,6 +28,10 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
     });
   }
 
+  init(): Promise<void> {
+    return Promise.resolve();
+  }
+
   async cp(file: SourceDiskDir, folder: SourceDiskDir): Promise<void> {
     await this.client.copyFile(file.path, joinPath(folder.path, folder.path));
   }
@@ -125,7 +129,16 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
     const {filename, overwrite} = option
     const writable = this.client.createWriteStream(joinPath(folder.path, filename), {overwrite});
     if (request.signal.aborted) return Promise.reject(new Error("请求被终止"));
-    await request.body.pipeTo(writable);
+    const reader = request.body.getReader();
+    while (true) {
+      const {value, done} = await reader.read();
+      if (done) return;
+      if (request.signal.aborted) return Promise.reject(new Error("请求被终止"));
+      await new Promise<void>((resolve, reject) => writable.write(value, e => {
+        if (e) return reject(e);
+        resolve()
+      }));
+    }
   }
 
   async getFileDownloadLink(file: SourceDiskDir): Promise<DiskFileLink> {

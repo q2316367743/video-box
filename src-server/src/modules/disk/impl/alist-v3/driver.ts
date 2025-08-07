@@ -76,6 +76,11 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     this.props = source.data as DiskFromAList;
   }
 
+  init(): Promise<void> {
+    return Promise.resolve();
+  }
+
+
   private async request<T>(url: string, config: AxiosRequestConfig): Promise<T> {
     let {authorization} = this.props;
     const {data} = await useRequest<Result<T>>(url, {

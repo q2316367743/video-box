@@ -5,10 +5,12 @@ import {DiskPluginForAListV3} from "@/modules/disk/impl/alist-v3/driver";
 import {DiskPluginForWebDAV} from "@/modules/disk/impl/webdav/driver";
 import {DiskPluginForQuarkOpen} from "@/modules/disk/impl/quark-open/driver";
 import {DiskDriverForQuarkOrUc} from "@/modules/disk/impl/quark-or-uc/driver";
+import {DiskDriverForBaiduNetDisk} from "@/modules/disk/impl/baidu-netdisk/driver";
 import {DiskPropsForAListV3} from "@/modules/disk/impl/alist-v3/props";
 import {DiskPropsForWebDAV} from "@/modules/disk/impl/webdav/props";
 import {DiskPropsForQuarkOpen} from "@/modules/disk/impl/quark-open/props";
 import {DiskPropsForQuarkOrUc} from "@/modules/disk/impl/quark-or-uc/props";
+import {DiskPropsForBaiduNetDisk} from "@/modules/disk/impl/baidu-netdisk/props";
 
 export function buildDiskPlugin(source: DiskSourceView): DiskPlugin {
   switch (source.driver) {
@@ -40,6 +42,8 @@ export function buildDiskPlugin(source: DiskSourceView): DiskPlugin {
         defaultRoot: '0',
         noOverwriteUpload: true
       });
+    case 'BAIDU_NET_DISK':
+      return new DiskDriverForBaiduNetDisk(source);
     default:
       throw new Error(`不支持的磁盘驱动: ${source.driver}`);
   }
@@ -61,6 +65,9 @@ export const DiskPluginOptions: Array<{ label: string, value: DiskDriver, disabl
 }, {
   label: 'UC网盘',
   value: 'UC'
+}, {
+  label: '百度网盘',
+  value: 'BAIDU_NET_DISK'
 }]
 
 export const DiskPluginProps: Record<DiskDriver, Array<CustomForm>> = {
@@ -68,5 +75,6 @@ export const DiskPluginProps: Record<DiskDriver, Array<CustomForm>> = {
   'WEB_DAV': DiskPropsForWebDAV,
   'QUARK_OPEN': DiskPropsForQuarkOpen,
   'QUARK': DiskPropsForQuarkOrUc,
-  'UC': DiskPropsForQuarkOrUc
+  'UC': DiskPropsForQuarkOrUc,
+  'BAIDU_NET_DISK': DiskPropsForBaiduNetDisk
 }
