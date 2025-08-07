@@ -7,14 +7,6 @@ import {DiskPlugin} from "@/modules/disk/DiskPlugin";
 import {SourceDiskDir} from "@/types/SourceDiskDIr";
 import {diskRefreshCache, pluginDiskGet} from "@/service/plugin/disk";
 
-interface Param {
-  sign: string;
-  sourceDiskDir: SourceDiskDir;
-  plugin: DiskPlugin;
-  headers: Record<string, string | undefined>;
-  signal: AbortSignal;
-}
-
 /**
  * 刷新缓存
  * @param item 缓存项
@@ -27,14 +19,15 @@ async function refreshCache(item: SourceDiskDir, plugin: DiskPlugin): Promise<vo
   await diskRefreshCache(folder, plugin);
 }
 
-async function getResponse(param: Param): Promise<Response> {
+async function getResponse(request: Request, sourceDiskDir: SourceDiskDir, plugin: DiskPlugin): Promise<Response> {
   // 获取缓存
-  const {sourceDiskDir, plugin, headers, signal} = param;
   // 找到缓存记录
-  const rsp = await plugin.readFile(sourceDiskDir, shake({
-    connection: headers['connection'],
-    range: headers['range'],
-  }), signal);
+  const rsp = await plugin.readFile(new Request(request, {
+    headers: shake({
+      connection: request.headers.get('connection'),
+      range: request.headers.get('range'),
+    })
+  }), sourceDiskDir);
   if (rsp.status === 404) {
     // 虽然存在记录，但是文件实际不存在，所以要刷新缓存
     // 但是此处是异步的，不能阻塞当前进程
@@ -82,8 +75,7 @@ export default new Elysia()
       // set.headers['']
       // set.headers['Content-Disposition'] = `attachment; filename*=UTF-8''${encodeURIComponent(sourceDiskDir.name)}`;
 
-      const {signal} = request;
-      const response = await getResponse({sign, plugin, headers, signal, sourceDiskDir});
+      const response = await getResponse(request, sourceDiskDir, plugin);
       return new Response(response.body, {
         ...response,
         headers: {

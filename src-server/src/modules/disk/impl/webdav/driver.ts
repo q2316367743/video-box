@@ -90,16 +90,17 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
     };
   }
 
-  async readFile(file: SourceDiskDir, headers: Record<string, string>, signal: AbortSignal): Promise<Response> {
+  async readFile(request: Request, file: SourceDiskDir): Promise<Response> {
     const link = await this.getFileDownloadLink(file);
     const {url, Authorization} = this.parseBasicAuthUrl(link.url);
+    if (request.signal.aborted) return new Response("请求被终止", {status: 500, statusText: 'REQUEST_ABORT'});
     const rsp = await fetch(url, {
       headers: {
-        ...headers,
+        ...request.headers,
         ...link.headers,
         Authorization
       },
-      signal
+      signal: request.signal
     });
     return new Response(rsp.body, {
       headers: rsp.headers,
@@ -119,20 +120,12 @@ export class DiskPluginForWebDAV extends AbsDiskPluginStore {
     return this.client.deleteFile(path);
   }
 
-  async writeFile(folder: SourceDiskDir, option: DiskUploadOption): Promise<WritableStream> {
+  async writeFile(request: Request, folder: SourceDiskDir, option: DiskUploadOption): Promise<void> {
+    if (!request.body) return Promise.reject(new Error("文件内容不存在"));
     const {filename, overwrite} = option
     const writable = this.client.createWriteStream(joinPath(folder.path, filename), {overwrite});
-    return new WritableStream({
-      write: (chunk) => {
-        writable.write(chunk);
-      },
-      abort: (reason) => {
-        writable.destroy(reason)
-      },
-      close: () => {
-        writable.end();
-      }
-    })
+    if (request.signal.aborted) return Promise.reject(new Error("请求被终止"));
+    await request.body.pipeTo(writable);
   }
 
   async getFileDownloadLink(file: SourceDiskDir): Promise<DiskFileLink> {

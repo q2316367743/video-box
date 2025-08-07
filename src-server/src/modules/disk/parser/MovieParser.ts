@@ -32,7 +32,7 @@ async function parseMovieLoop(res: Array<DirItem>, plugin: DiskPlugin, progress:
       let p: DiskProgram;
       if (nfo) {
         // TODO: 存在nfo
-        const nfoContent = await plugin.readFile(nfo as any, {}, new AbortController().signal).then(res => res.text());
+        const nfoContent = await plugin.readFile(nfo as any, {} as any).then(res => res.text());
         p = parseNfo(nfoContent, 'movie');
       } else {
         // 构造默认

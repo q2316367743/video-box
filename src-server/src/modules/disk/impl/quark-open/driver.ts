@@ -36,8 +36,7 @@ export class DiskPluginForQuarkOpen extends AbsDiskPluginStore {
   }
 
 
-  writeFile(folder: SourceDiskDir, option: DiskUploadOption): Promise<WritableStream> {
-    return Promise.resolve(new WritableStream());
+  async writeFile(request: Request, folder: SourceDiskDir, option: DiskUploadOption): Promise<void> {
   }
 
   getFileDownloadLink(file: DirCoreItem): Promise<DiskFileLink> {
@@ -48,8 +47,8 @@ export class DiskPluginForQuarkOpen extends AbsDiskPluginStore {
     return Promise.resolve([]);
   }
 
-  readFile(file: SourceDiskDir, headers: Record<string, string>, signal: AbortSignal): Promise<Response> {
-    return Promise.resolve(new Response('', {headers}));
+  readFile(request: Request, file: SourceDiskDir): Promise<Response> {
+    return Promise.resolve(new Response('', {headers: request.headers}));
   }
 
 

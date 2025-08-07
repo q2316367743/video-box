@@ -8,41 +8,34 @@ import {runner} from "@/modules/task/TaskRunner";
 import {SourceDiskDir} from "@/types/SourceDiskDIr";
 import {diskFileUpload} from "@/modules/task/adhoc/DiskFileUpload";
 
-async function saveTempFile(filename: string, body: ReadableStream<Uint8Array>) {
+export async function saveTempFile(filename: string, body: ReadableStream<Uint8Array>) {
   const tempFileName = useSnowflake().nextId() + extname(filename);
-  await Bun.write(join(APP_TEMP_DIR, tempFileName), new Response(body));
-  return tempFileName;
+  // await Bun.write(join(APP_TEMP_DIR, tempFileName), new Response(body));
+  const file = Bun.file(join(APP_TEMP_DIR, tempFileName));
+  const writer = file.writer();
+
+  const reader = body.getReader(); // 假设 body 非空
+  while (true) {
+    const {done, value} = await reader.read();
+    if (done) break;
+    writer.write(value); // value 是 Uint8Array
+  }
+  await writer.end(); // 确保刷新并关闭文件
+  return {tempFileName, reader: file.stream().getReader()};
 }
 
-async function taskUpload(folder: SourceDiskDir, option: DiskUploadOption, body: ReadableStream<Uint8Array>, plugin: DiskPlugin) {
-  // 保存临时文件
-  const tempFileName = await saveTempFile(option.filename, body);
+async function taskUpload(folder: SourceDiskDir, option: DiskUploadOption, request: Request, plugin: DiskPlugin) {
   // 创建上传任务
   await runner.start(
     `${folder.path}:${option.filename}`,
     "internal",
     'disk:file-upload',
     async (ctx) => {
-      // 上传文件到本地磁盘
-      await diskFileUpload(tempFileName, folder, plugin, option);
-      ctx.update(33);
-      // 获取读取流
-      const ws = await plugin.writeFile(folder, option);
-      // 写入
-      const tempFile = Bun.file(join(APP_TEMP_DIR, tempFileName));
-      ctx.update(66);
-      await tempFile.stream().pipeTo(ws);
-      ctx.update(99);
+      await diskFileUpload(ctx, request, folder, plugin, option)
     })
 }
 
-async function syncUpload(folder: SourceDiskDir, option: DiskUploadOption, body: ReadableStream<Uint8Array>, plugin: DiskPlugin) {
-  const ws = await plugin.writeFile(folder, option);
-  await body.pipeTo(ws);
-}
-
 export async function pluginDiskUploadService(request: Request, params: Record<string, string>, headers: Record<string, string>) {
-  if (!request.body) return Promise.reject(new Error("没有上传文件"));
   const {id} = params;
   const folderPath = decodeURIComponent(headers['folder-path']);
   const plugin = await sourceDiskDao.getPlugin(id);
@@ -61,9 +54,9 @@ export async function pluginDiskUploadService(request: Request, params: Record<s
 
   const asTask = typeof headers['as-task'] !== 'undefined' && headers['as-task'] !== 'false';
   if (asTask) {
-    await taskUpload(folder, option, request.body, plugin);
+    await taskUpload(folder, option, request, plugin);
   } else {
-    await syncUpload(folder, option, request.body, plugin);
+    await plugin.writeFile(request, folder, option);
   }
   await Bun.sleep(1000);
   return asTask;

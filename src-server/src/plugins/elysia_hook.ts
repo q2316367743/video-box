@@ -3,6 +3,7 @@ import {Elysia, ValidationError} from "elysia";
 import {error as err} from "@rasla/logify";
 // 拓展
 import {Result} from "@/views/Result";
+import {AxiosError} from "axios";
 
 export function registerElysiaHook(app: Elysia) {
   app
@@ -18,7 +19,16 @@ export function registerElysiaHook(app: Elysia) {
     .onError(({status, error, set}) => {
       // 设为正常
       set.status = 200;
-      console.log(error)
+      if (error instanceof AxiosError) {
+        // 请求异常
+        err(`请求 url: ${error.config?.url},baseURL:${error.config?.baseURL} 出现错误，原因：${error.message}，响应体：${error.response?.data}`)
+        console.error(error.status, error.config, error.response?.data)
+        return new Response(JSON.stringify(Result.fail(error.message)), {
+          headers: {"Content-Type": "application/json"},
+        });
+      }
+      // 其他异常
+      console.error(error)
       // 打印错误
       err("onError: " + JSON.stringify(error));
       return new Response(

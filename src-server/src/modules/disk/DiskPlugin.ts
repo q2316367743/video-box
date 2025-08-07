@@ -104,18 +104,18 @@ export interface DiskPlugin {
 
   /**
    * 读取一个文件
+   * @param request 请求
    * @param file 文件
-   * @param headers 请求头
-   * @param signal 终止信号
    */
-  readFile: (file: SourceDiskDir, headers: Record<string, string>, signal: AbortSignal) => Promise<Response>;
+  readFile: (request: Request, file: SourceDiskDir) => Promise<Response>;
 
   /**
    * 写入一个文件
+   * @param request 请求
    * @param folder 要写入的目录
    * @param filename 文件名
    */
-  writeFile: (folder: SourceDiskDir, option: DiskUploadOption) => Promise<WritableStream>;
+  writeFile: (request: Request, folder: SourceDiskDir, option: DiskUploadOption) => Promise<void>;
 
 
 }

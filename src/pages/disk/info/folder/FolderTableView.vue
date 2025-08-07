@@ -34,7 +34,6 @@ const columns: Array<BaseTableCol> = [
   {
     title: '名称',
     colKey: 'name',
-    width: '70%',
     cell: (h, p) => h('div', {
       class: 'flex items-center'
     }, [
@@ -55,14 +54,14 @@ const columns: Array<BaseTableCol> = [
   }, {
     title: '文件大小',
     colKey: 'size',
-    width: '15%',
+    width: 120,
     cell: (h, p) => {
       return h('span', {}, p.row.type === 'file' ? prettyDataUnit(p.row.size) : '-')
     }
   }, {
     title: '更新时间',
     colKey: 'lastModified',
-    width: '15%',
+    width: 186,
     cell: (h, p) => h('span', {}, toDateTimeString(p.row.lastModified))
   }];
 

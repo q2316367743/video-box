@@ -204,14 +204,14 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     })
   }
 
-  async readFile(file: SourceDiskDir, headers: Record<string, string>, signal: AbortSignal): Promise<Response> {
+  async readFile(request: Request, file: SourceDiskDir): Promise<Response> {
     let link = await this.getFileDownloadLink(file);
     const rsp = await fetch(link.url, {
       headers: {
-        ...headers,
+        ...request.headers,
         ...link.headers
       },
-      signal
+      signal: request.signal
     });
     return new Response(rsp.body, {
       headers: rsp.headers,
@@ -220,26 +220,26 @@ export class DiskPluginForAListV3 extends AbsDiskPluginStore {
     });
   }
 
-  async writeFile(folder: SourceDiskDir, option: DiskUploadOption): Promise<WritableStream> {
+  async writeFile(request: Request, folder: SourceDiskDir, option: DiskUploadOption): Promise<void> {
     const {filename, overwrite, contentType, contentLength, md5, sha256, sha1} = option;
+    if (request.signal.aborted) return Promise.reject(new Error("请求被终止"));
     let {authorization} = this.props;
-    const {readable, writable} = new TransformStream<Uint8Array, Uint8Array>();
     await fetch(new URL('/api/fs/stream', this.props.url), {
       method: 'PUT',
       headers: shake({
         Authorization: authorization,
         "File-Path": encodeURIComponent(joinPath(folder.path, filename)),
         'As-Task': 'false',
-        'Overwrite': overwrite?'true':'false',
+        'Overwrite': overwrite ? 'true' : 'false',
         'X-File-Md5': md5,
         'X-File-Sha1': sha1,
         'X-File-Sha256': sha256,
         'Content-Type': contentType,
         'Content-Length': contentLength
       }),
-      body: readable
+      body: request.body,
+      signal: request.signal
     })
-    return writable;
   }
 
 
