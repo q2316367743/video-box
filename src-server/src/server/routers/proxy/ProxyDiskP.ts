@@ -45,7 +45,7 @@ async function getResponse(request: Request, sourceDiskDir: SourceDiskDir, plugi
 export default new Elysia()
   .get(
     '/disk/:id/p/*',
-    async ({params, query, set, headers, request}) => {
+    async ({params, query, set, request}) => {
       const {sign} = query;
       const {id} = params;
       const path = decodeURIComponent('/' + params['*']);

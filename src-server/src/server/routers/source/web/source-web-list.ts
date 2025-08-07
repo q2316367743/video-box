@@ -16,7 +16,7 @@ app.get(
   async ({params}) => {
     const {folder} = params;
     const views = new Array<SourceWebView>();
-    let files: Array<SourceWeb> = [];
+    let files: Array<SourceWeb>;
     if (folder === "root") {
       // 根目录
       // 查询源
