@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <div class="main-aside">
+    <div class="main-aside"  v-if="visible">
       <app-side />
     </div>
     <div class="main-content" ref="mainRef" @scroll="handleScroll">
@@ -15,8 +15,10 @@ import AppHeader from "@/layout/AppHeader.vue";
 import AppSide from "@/layout/AppSide.vue";
 import {emitScrollToTop, onScrollToBottom} from "@/store";
 
+const route = useRoute();
 const mainRef = ref();
 const showShadow = ref(false);
+const visible = computed(() => route.path !== '/auth/login');
 
 useInfiniteScroll(mainRef, () => {
   onScrollToBottom.trigger();

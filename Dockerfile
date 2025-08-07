@@ -20,7 +20,7 @@ RUN bun build \
   --outfile server \
   ./src/index.ts
 
-FROM gcr.io/distroless/base
+FROM docker.1panel.live/chainguard/wolfi-base
 
 WORKDIR /app/video-box
 

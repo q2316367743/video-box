@@ -7,6 +7,7 @@ const app = new Elysia();
 app.get("/list", async ({query}) => {
   const {pageNum, pageSize, type} = query;
   const page = await myVideoItemDao.query().eq('type', type)
+    .orderByDesc('create_time')
     .page(pageNum, pageSize);
   return Result.success(page);
 }, {

@@ -1,6 +1,6 @@
 <template>
   <!-- 任务定义表格 -->
-  <t-card hover-shadow title="任务列表" class="mt-16px">
+  <t-card hover-shadow title="任务列表" style="margin-top: 16px;">
     <template #actions>
       <t-button theme="primary" @click="refreshTaskList">
         <template #icon>

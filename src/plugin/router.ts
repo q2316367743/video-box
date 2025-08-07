@@ -142,7 +142,7 @@ export const routes: Array<RouteRecordRaw> = [{
 
 export const router = createRouter({
   history: createWebHashHistory(),
-  routes
+  routes,
 });
 
 router.afterEach(() => emitScrollToTop.trigger().catch(console.error))

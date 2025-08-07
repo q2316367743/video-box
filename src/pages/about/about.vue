@@ -24,9 +24,9 @@
       </div>
     </t-card>
     <t-tabs v-model="activeKey" class="mt-8px">
-      <t-tab-panel value="watched" label="看过的影视"/>
-      <t-tab-panel value="liked" label="喜欢的影视"/>
-      <t-tab-panel value="following" label="在追的影视"/>
+      <t-tab-panel value="1" label="看过的影视"/>
+      <t-tab-panel value="2" label="喜欢的影视"/>
+      <t-tab-panel value="3" label="在追的影视"/>
     </t-tabs>
     <div class="about-container">
       <empty-result v-if="items.length === 0" title="空空如也"/>
@@ -34,6 +34,7 @@
         <my-video-item v-for="item in items" :key="item.id" :item="item" :type="activeKey" @update="init"/>
       </div>
     </div>
+    <t-pagination v-model:current="pageNum" v-model:page-size="pageSize" :total="total" @change="init"/>
     <t-back-top container=".about-container"/>
   </div>
 </template>
@@ -43,10 +44,12 @@ import MyVideoItem from "@/pages/about/components/MyVideoItem.vue";
 import {MyVideoItemView} from "@/views/MyVideoItemView";
 import {myVideoItemList} from "@/apis/my/video-item";
 
-const activeKey = ref('watched');
-
+const activeKey = ref('1');
+const pageNum = ref(1);
+const pageSize = ref(20);
 
 const items = ref(new Array<MyVideoItemView>());
+const total = ref(0);
 
 const user = {
   nickname: '匿名用户',
@@ -54,8 +57,16 @@ const user = {
   avatar: './user.png'
 }
 
-const init = () => myVideoItemList().then(res => items.value = res);
+const init = () => myVideoItemList({
+  pageNum: pageNum.value,
+  pageSize: pageSize.value,
+  type: activeKey.value,
+}).then(res => {
+  items.value = res.records;
+  total.value = res.total;
+});
 
+watch(activeKey, init);
 onMounted(init)
 </script>
 <style scoped lang="less">

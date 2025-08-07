@@ -14,8 +14,8 @@
           正在加载更多...
         </div>
       </div>
+      <t-back-top container=".container-content"/>
     </div>
-    <t-back-top container=".container-content"/>
   </div>
 </template>
 <script lang="ts" setup>

@@ -1,5 +1,5 @@
 <template>
-  <div class="my-video-item" @click="handleClick(item)" @contextmenu="handleContextmenu($event, item)">
+  <div class="my-video-item" :data-id="item.id"  @click="handleClick(item)" @contextmenu="handleContextmenu($event, item)">
     <img
       :src="item.cover"
       :alt="item.title"

@@ -1,4 +1,4 @@
-import {useDelete, useGet, usePost, usePut} from "@/apis/common";
+import {PageResponse, useDelete, useGet, usePost, usePut} from "@/apis/common";
 import {MyVideoItemView, MyVideoItemCore, MyVideoItemForm} from "@/views/MyVideoItemView";
 
 export function myVideoItemDelete(id: string) {
@@ -9,8 +9,13 @@ export function myVideoItemExist(data: MyVideoItemCore) {
   return useGet<boolean>('/api/my/video-item/exist', data);
 }
 
-export function myVideoItemList() {
-  return useGet<Array<MyVideoItemView>>('/api/my/video-item/list')
+interface MyVideoItemListProps {
+  type: string;
+  pageNum: number;
+  pageSize: number;
+}
+export function myVideoItemList(props: MyVideoItemListProps) {
+  return useGet<PageResponse<MyVideoItemView>>('/api/my/video-item/list', props)
 }
 
 export function myVideoItemPost(data: MyVideoItemForm) {
