@@ -1,6 +1,7 @@
 import {defineStore} from "pinia";
 import {authLogin} from "@/apis/auth";
 import {router} from "@/plugin/router";
+import {useDictStore} from "@/store/DictStore.ts";
 
 export const useUserStore = defineStore("user", () => {
   const token = useLocalStorage('token', "");
@@ -12,6 +13,8 @@ export const useUserStore = defineStore("user", () => {
           if (data.success) {
             token.value = data.token;
             resolve();
+            // 初始化字典
+            useDictStore().init();
           } else {
             reject(data.message);
           }

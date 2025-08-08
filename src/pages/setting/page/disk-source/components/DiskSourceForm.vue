@@ -1,7 +1,7 @@
 <template>
   <t-form :data="data">
     <t-form-item v-for="p in params" :key="p.field" :label="p.label" :help="p.help" :required-mark="p.required"
-                 :rules="p.rules">
+                 :rules="p.rules" label-align="top">
       <t-input v-if="p.type === 'input'" v-model="data[p.field]" :placeholder="p.placeholder"
                :default-value="p.defaultValue"/>
       <t-input v-else-if="p.type === 'password'" v-model="data[p.field]" type="password" :placeholder="p.placeholder"
@@ -13,7 +13,7 @@
       <t-switch v-else-if="p.type === 'switch'" v-model="data[p.field]" :default-value="p.defaultValue"/>
       <t-select v-else-if="p.type === 'select'" v-model="data[p.field]" :placeholder="p.placeholder"
                 :default-value="p.defaultValue">
-        <t-option v-for="o in p.options" :key="o.value" :value="o.value">{{ o.label }}</t-option>
+        <t-option v-for="o in p.options" :key="o.value" :value="o.value" :label="o.label">{{ o.label }}</t-option>
       </t-select>
       <t-radio-group v-else-if="p.type === 'radio'" v-model="data[p.field]" :default-value="p.defaultValue">
         <t-radio v-for="o in p.options" :key="o.value" :value="o.value">{{ o.label }}</t-radio>

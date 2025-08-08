@@ -6,6 +6,10 @@
     <t-table :columns="columns" v-model:data="items" row-key="id"
              drag-sort="row-handler" :loading
              @drag-sort="onDragSort">
+      <template #driver="{ row }">
+        <t-tag theme="primary">{{ diskNameMap[row.driver] }}</t-tag>
+      </template>
+      <template #update_time="{row}">{{ toDateTimeString(row.update_time) }}</template>
       <template #actions="{ row }">
         <t-space size="small">
           <t-button theme="primary" shape="square" @click="addDiskSourceDialog(init, row)">
@@ -32,11 +36,16 @@ import {addDiskSourceDialog} from "@/pages/setting/page/disk-source/dialog/DiskS
 import {adminSourceDiskDelete, adminSourceDiskList, adminSourceDiskOrder} from "@/apis/admin/source/disk.ts";
 import {DiskSourceEntry} from "@/types/SourceDisk.ts";
 import MessageUtil from "@/utils/modal/MessageUtil.ts";
+import {useDictStore} from "@/store/DictStore.ts";
+import {toDateTimeString} from "@/utils/lang/FormatUtil.ts";
+
+const {diskNameMap} = useDictStore();
 
 const columns: TableProps['columns'] = [
   {
     colKey: 'drag',
     // 列拖拽排序必要参数
+    width: 72,
     title: '排序', cell: (h) => h('span', {}, [h(MoveIcon)])
   },
   {
@@ -53,7 +62,7 @@ const columns: TableProps['columns'] = [
   },
   {
     title: '更新日期',
-    colKey: 'update_time'
+    colKey: 'update_time',
   },
   {
     title: '操作',

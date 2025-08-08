@@ -4,7 +4,10 @@ import {Result} from "@/views/Result";
 
 export default new Elysia()
   .post("/add", async ({body}) => {
-    await sourceDiskDao.save(body);
+    await sourceDiskDao.save({
+      ...body,
+      data: JSON.stringify(body.data)
+    });
     return Result.success();
   }, {
     body: t.Object({

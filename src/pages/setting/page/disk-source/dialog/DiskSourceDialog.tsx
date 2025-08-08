@@ -6,9 +6,10 @@ import {isEmptyString} from "@/utils/lang/FieldUtil.ts";
 import MessageUtil from "@/utils/modal/MessageUtil.ts";
 import {CustomForm} from "@/views/CustomForm.ts";
 import {clone} from "radash";
+import {useDictStore} from "@/store/DictStore.ts";
 
 export async function addDiskSourceDialog(onSuccess: () => void, old?: DiskSourceEntry) {
-  const {options, props} = await adminSourceDiskProps();
+  const {diskOptions: options, diskProps: props} = useDictStore();
   const op = !!old ? '更新' : '新增';
   const data = ref<DiskSourceFormData>(clone(old) || {
     title: '',
@@ -22,7 +23,6 @@ export async function addDiskSourceDialog(onSuccess: () => void, old?: DiskSourc
     // 默认赋值默认值
     (props[value] || []).forEach(e => {
       if (typeof e.defaultValue === 'undefined') return;
-      if (typeof data.value.data[e.field] === 'undefined') return;
       data.value.data[e.field] = e.defaultValue;
     });
   });
@@ -31,10 +31,12 @@ export async function addDiskSourceDialog(onSuccess: () => void, old?: DiskSourc
     confirmBtn: op,
     size: '600px',
     default: () => <Form data={data.value}>
-      <FormItem label="名称" name={'title'} required-mark rules={[{required: true, trigger: 'blur'}]}>
+      <FormItem label="名称" name={'title'} required-mark rules={[{required: true, trigger: 'blur'}]}
+                labelAlign={'top'}>
         <Input v-model={data.value.title}/>
       </FormItem>
-      <FormItem label="类型" name={'driver'} required-mark rules={[{required: true, trigger: 'blur'}]}>
+      <FormItem label="类型" name={'driver'} required-mark rules={[{required: true, trigger: 'blur'}]}
+                labelAlign={'top'}>
         <Select v-model={data.value.driver} options={options}/>
       </FormItem>
       <DiskSourceForm v-model={data.value.data} params={params.value} style={{marginTop: 'var(--td-comp-margin-xxl)'}}/>

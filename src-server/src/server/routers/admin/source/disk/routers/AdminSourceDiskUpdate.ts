@@ -5,7 +5,10 @@ import {Result} from "@/views/Result";
 export default new Elysia()
   .put('/update/:id', async ({params, body}) => {
     const {id} = params;
-    await sourceDiskDao.update(id, body);
+    await sourceDiskDao.update(id, {
+      ...body,
+      data: JSON.stringify(body.data)
+    });
     return Result.success();
   }, {
     params: t.Object({

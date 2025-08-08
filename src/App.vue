@@ -1,7 +1,7 @@
 <template>
   <div class="main">
-    <div class="main-aside"  v-if="visible">
-      <app-side />
+    <div class="main-aside" v-if="visible">
+      <app-side/>
     </div>
     <div class="main-content" ref="mainRef" @scroll="handleScroll">
       <app-header :show-shadow="showShadow"/>
@@ -14,6 +14,8 @@
 import AppHeader from "@/layout/AppHeader.vue";
 import AppSide from "@/layout/AppSide.vue";
 import {emitScrollToTop, onScrollToBottom} from "@/store";
+import {useUserStore} from "@/store/UserStore.ts";
+import {useDictStore} from "@/store/DictStore.ts";
 
 const route = useRoute();
 const mainRef = ref();
@@ -32,6 +34,10 @@ emitScrollToTop.on(() => {
 });
 const handleScroll = (e: Event) => {
   showShadow.value = (e.target as HTMLDivElement)?.scrollTop > 10
+}
+// 如果登录，则初始化字典
+if (useUserStore().token) {
+  useDictStore().init();
 }
 </script>
 <style scoped lang="less">
