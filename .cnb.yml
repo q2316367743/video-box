@@ -4,7 +4,7 @@ pro:
       docker:
         image: oven/bun:1.2.19
         volumes:
-          - ~/.bun/install/cache:cow
+          - /root/.bun/install/cache:cow
       stages:
         - name: 安装依赖
           script: bun install
