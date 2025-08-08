@@ -9,4 +9,5 @@ export const APP_TEMP_DIR = `${APP_DIR}/temp`;
 export const APP_LOG_DIR = `${APP_DIR}/logs`;
 
 
-export const HTTP_USER_AGENT = ''
+export const HTTP_USER_AGENT = '';
+export type YesOrNoType = 1 | 0;
