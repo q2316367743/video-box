@@ -1,8 +1,8 @@
-master:
-  tag_push:
+pro:
+  push:
     - name: build_docker
       docker:
-        image: oven/bun:1.2.15
+        image: oven/bun:1.2.19
         volumes:
           - ~/.bun/install/cache:cow
       stages:
