@@ -11,6 +11,10 @@ export type SourceSubscribeDisplay = 1 | 2 | 3 | 4 | 5 | 6;
  */
 export interface SourceSubscribe {
   id: string;
+  created_at: number;
+  updated_at: number;
+  // 分组ID
+  group_id: string;
   // 类型
   type: SourceSubscribeType;
   // 使用的驱动，只有内部订阅有效
@@ -21,10 +25,32 @@ export interface SourceSubscribe {
   description: string;
   url: string;
   icon: string;
+  /**
+   * 是否缓存，不缓存每次都是最新的列表，内容也是新的，无法使用ai
+   * @default 1
+   */
+  cache: YesOrNoType;
+  /**
+   * 是否使用AI
+   * @default 0
+   */
+  ai: YesOrNoType;
+  // 排序
+  order: number;
+  // 记录数量
+  record_count: number;
+}
+
+/**
+ * 订阅分组
+ */
+export interface SourceSubscribeGroup {
+  id: string;
   created_at: number;
   updated_at: number;
-  // 是否缓存，不缓存每次都是最新的列表
-  cache: YesOrNoType;
+  name: string;
+  description: string;
+  order: number;
 }
 
 /**
@@ -43,7 +69,6 @@ export interface SourceSubscribeRule {
 
   // 列表规则
   list: string;
-  item: string;
   // 标题规则
   item_title: string;
   // 描述规则
@@ -82,37 +107,31 @@ export interface SourceSubscribeRssHub {
   is_enabled: number;
 }
 
-/**
- * 订阅浏览记录
- */
-export interface SourceSubscribeRecord {
-  id: string;
-  created_at: number;
-  updated_at: number;
-
-  // 所属订阅源
-  subscribe_id: string;
-  // 签名，唯一
-  sign: string;
+export interface SourceSubscribeList {
 
   title: string;
   description: string;
   // 最后更新时间
-  pub_date: string;
+  pub_date: number;
   media: string;
+  // 唯一
   link: string;
 }
 
 /**
- * 订阅内容
+ * 订阅浏览记录
  */
-export interface SourceSubscribeContent {
+export interface SourceSubscribeRecord extends SourceSubscribeList {
   id: string;
   created_at: number;
   updated_at: number;
-
   // 所属订阅源
   subscribe_id: string;
+  read_status: YesOrNoType;
+}
+
+export interface SourceSubscribeContentCore {
+
   // 原文链接
   link: string;
 
@@ -120,6 +139,18 @@ export interface SourceSubscribeContent {
    * 实际内容
    */
   content: string;
+}
+
+/**
+ * 订阅内容
+ */
+export interface SourceSubscribeContent extends SourceSubscribeContentCore{
+  id: string;
+  created_at: number;
+  updated_at: number;
+
+  // 所属订阅源
+  subscribe_id: string;
 
   /**
    * AI总结

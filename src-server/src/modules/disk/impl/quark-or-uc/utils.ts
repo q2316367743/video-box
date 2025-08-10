@@ -1,4 +1,4 @@
-import axios, {AxiosRequestConfig, Method} from "axios";
+import {AxiosRequestConfig, Method} from "axios";
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
 import * as crypto from "node:crypto";
@@ -12,12 +12,13 @@ import {
   SortRespMetadata, UpAuthRespData, UpHashRespData, UpPreRespData, UpPreRespMeta
 } from "@/modules/disk/impl/quark-or-uc/types";
 import {SourceDiskDir} from "@/types/SourceDiskDIr";
+import {http} from "@/global/http";
 
 dayjs.extend(utc);
 
 export async function quarkOrUcRequest<T, M extends Record<string, any> = {}>(pathname: string, method: Method, requestConfig: AxiosRequestConfig, driver: DiskDriverForQuarkOrUc) {
   const {config} = driver;
-  const rsp = await axios.request<QuarkOrUcResult<T, M>>({
+  const rsp = await http.request<QuarkOrUcResult<T, M>>({
     ...requestConfig,
     baseURL: config.api,
     url: pathname,

@@ -1,4 +1,4 @@
-import axios, {AxiosError, AxiosRequestConfig, Method} from "axios";
+import {AxiosError, AxiosRequestConfig, Method} from "axios";
 import {DiskDriverForBaiduNetDisk} from "@/modules/disk/impl/baidu-netdisk/driver";
 import {info} from "@rasla/logify";
 import {promiseRetry} from "@/utils/lang/PromiseUtil";
@@ -11,13 +11,14 @@ import {
   baiduNetDiskFileToDir,
   BaiduNetDiskListResp, BaiduNetDiskRefreshTokenRsp
 } from "@/modules/disk/impl/baidu-netdisk/types";
+import {http} from "@/global/http";
 
 async function refreshToken(driver: DiskDriverForBaiduNetDisk) {
   const {props} = driver;
   // 使用在线API刷新Token，无需ClientID和ClientSecret
   if (props.UseOnlineAPI && props.APIAddress.length && props.APIAddress.length > 0) {
     const url = props.APIAddress;
-    const {data} = await axios.request<BaiduNetDiskRefreshTokenRsp>({
+    const {data} = await http.request<BaiduNetDiskRefreshTokenRsp>({
       headers: {
         'User-Agent': "Mozilla/5.0 (Macintosh; Apple macOS 15_5) AppleWebKit/537.36 (KHTML, like Gecko) Safari/537.36 Chrome/138.0.0.0 Openlist/425.6.30",
       },
@@ -47,7 +48,7 @@ async function refreshToken(driver: DiskDriverForBaiduNetDisk) {
   }
   // 走原有的刷新逻辑
   try {
-    const {data} = await axios.request<BaiduNetDiskRefreshTokenRsp>({
+    const {data} = await http.request<BaiduNetDiskRefreshTokenRsp>({
       url: "https://openapi.baidu.com/oauth/2.0/token",
       method: 'GET',
       params: {
@@ -75,7 +76,7 @@ async function refreshToken(driver: DiskDriverForBaiduNetDisk) {
 export async function baiduNetDiskRequest<T extends Record<string, any>>(
   url: string, method: Method, config: AxiosRequestConfig, driver: DiskDriverForBaiduNetDisk) {
   return promiseRetry<T>(async () => {
-    const {data} = await axios.request<T>({
+    const {data} = await http.request<T>({
       ...config,
       url,
       method,
@@ -194,7 +195,7 @@ export async function baiduNetDiskLinkOfficial(file: SourceDiskDir, driver: Disk
     dlink: 1
   }, driver);
   const url = `${resp.list[0].dlink}&access_token=${driver.props.AccessToken}`;
-  const res = await axios.head(url, {
+  const res = await http.head(url, {
     headers: {
       'User-Agent': 'pan.baidu.com'
     }

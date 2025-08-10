@@ -1,7 +1,7 @@
 import * as crypto from "node:crypto";
-import axios from "axios";
 import {HTTP_USER_AGENT} from "@/global/constant";
 import {DiskPluginForQuarkOpen} from "@/modules/disk/impl/quark-open/driver";
+import {http} from "@/global/http";
 
 const baseURL = 'https://open-api-drive.quark.cn';
 
@@ -42,7 +42,7 @@ export async function requestByQuarkOpen(
 ) {
   const {timestamp, xPanToken, reqId} = sign || generateReqSign(method, pathname, config.SignKey);
 
-  const rsp = await axios.request({
+  const rsp = await http.request({
     baseURL,
     url: pathname,
     headers: {

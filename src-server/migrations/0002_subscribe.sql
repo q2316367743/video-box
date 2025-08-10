@@ -1,0 +1,87 @@
+-- 订阅分组
+create table source_subscribe_group
+(
+    id          text primary key,
+    created_at  integer not null default CURRENT_TIMESTAMP,
+    updated_at  integer not null default CURRENT_TIMESTAMP,
+    name        text    not null default '',
+    description text    not null default '',
+    `order`     integer not null default 0
+);
+-- 订阅源
+create table source_subscribe
+(
+    id           text primary key,
+    created_at   integer not null default CURRENT_TIMESTAMP,
+    updated_at   integer not null default CURRENT_TIMESTAMP,
+    group_id     text    not null default '',
+    type         integer not null,
+    driver       text    not null default '',
+    display      integer not null,
+    name         text    not null default '',
+    description  text    not null default '',
+    url          text    not null default '',
+    cache        integer not null default 1,
+    ai           integer not null default 0,
+    `order`      integer not null default 0,
+    record_count integer not null default -1
+);
+-- 订阅源规则
+create table source_subscribe_rule
+(
+    id               text primary key,
+    subscribe_id     text not null default '',
+    data             text not null default '',
+    list             text not null default '',
+    item_title       text not null default '',
+    item_description text not null default '',
+    item_link        text not null default '',
+    item_media       text not null default '',
+    item_content     text not null default '',
+    item_charset     text not null default ''
+);
+-- 订阅源 RSS Hub 实例
+create table source_subscribe_rss_hub
+(
+    id           text primary key,
+    created_at   integer not null default CURRENT_TIMESTAMP,
+    updated_at   integer not null default CURRENT_TIMESTAMP,
+    name         text    not null default '',
+    description  text    not null default '',
+    url          text    not null default '',
+    refresh_time integer not null default 0,
+    retry_count  integer not null default 0,
+    delay_time   integer not null default 0,
+    is_enabled   integer not null default 0
+);
+-- 订阅浏览记录
+create table source_subscribe_record
+(
+    id           text primary key,
+    created_at   integer not null default CURRENT_TIMESTAMP,
+    updated_at   integer not null default CURRENT_TIMESTAMP,
+    subscribe_id text    not null default '',
+    title        text    not null default '',
+    description  text    not null default '',
+    pub_date     integer not null default 0,
+    media        text    not null default '',
+    link         text    not null default '',
+    read_status  integer not null default 0
+);
+-- 订阅内容
+create table source_subscribe_content
+(
+
+    id           text primary key,
+    created_at   integer not null default CURRENT_TIMESTAMP,
+    updated_at   integer not null default CURRENT_TIMESTAMP,
+    subscribe_id text    not null default '',
+    link         text    not null default '',
+    content      text    not null default '',
+    ai           text    not null default ''
+);
+
+
+-- 文件上传
+insert into task_definition (id, name, type, schedule, script)
+values ('subscribe:cache', '订阅:刷新缓存', 'preset', '* * 0/2 * * ?', 'SubscribeCache.ts');
