@@ -6,7 +6,7 @@
       <div class="view-sidebar">
         <div class="view-header">
           <div class="view-title-row">
-            <h2>视图 {{ SubscribeDisplayMap[activeDisplayType] }}</h2>
+            <h2>{{ SubscribeDisplayMap[activeDisplayType] }}</h2>
             <div class="view-actions">
               <t-tooltip content="刷新订阅">
                 <t-button theme="default" shape="square" variant="text" @click="refreshSubscribes">
@@ -31,10 +31,6 @@
           <t-empty v-if="filteredSubscribeList.length === 0" description="暂无数据" />
 
           <div v-else class="sidebar-content">
-            <!-- 分类标题 -->
-            <div class="sidebar-section">
-              <div class="sidebar-title">列表</div>
-            </div>
 
             <!-- 无分组的订阅源直接显示 -->
             <div class="sidebar-list">
@@ -107,8 +103,8 @@
 <script lang="ts" setup>
 import { pluginSubscribeList, pluginSubscribeRefresh } from '@/apis/plugin/subscribe';
 import { SourceSubscribe, SourceSubscribeDisplay } from '@/types/SourceSubscribe';
-import DisplayRadio from './components/DisplayRadio.vue';
 import { SubscribeDisplayMap } from './constant';
+import DisplayRadio from './components/DisplayRadio.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -209,41 +205,40 @@ const loadSubscribeList = async () => {
     const result = await pluginSubscribeList(activeDisplayType.value as string);
     if (result) {
       subscribeList.value = result;
-      console.log('订阅列表加载成功:', subscribeList.value);
 
       // 如果当前类型没有数据，自动切换到有数据的类型
-      const currentType = route.params.type as string || activeDisplayType.value;
-      const currentTypeSubscribes = subscribeList.value.filter(
-        item => item.display === parseInt(currentType) as SourceSubscribeDisplay
-      );
+      // const currentType = route.params.type as string || activeDisplayType.value;
+      // const currentTypeSubscribes = subscribeList.value.filter(
+      //   item => item.display === parseInt(currentType) as SourceSubscribeDisplay
+      // );
 
-      if (currentTypeSubscribes.length === 0) {
-        const availableTypes = [1, 2, 3, 4, 5, 6].filter(type =>
-          subscribeList.value.some(item => item.display === type)
-        );
-        if (availableTypes.length > 0) {
-          const newType = availableTypes[0].toString();
-          activeDisplayType.value = newType;
-
-          // 选择第一个可用的订阅源
-          const firstSubscribe = subscribeList.value.find(item => item.display === availableTypes[0]);
-          if (firstSubscribe) {
-            activeSubscribeId.value = firstSubscribe.id;
-            navigateToSubscribe(firstSubscribe.id);
-          }
-        }
-      } else {
-        activeDisplayType.value = currentType;
+      // if (currentTypeSubscribes.length === 0) {
+        // const availableTypes = [1, 2, 3, 4, 5, 6].filter(type =>
+        //   subscribeList.value.some(item => item.display === type)
+        // );
+        // if (availableTypes.length > 0) {
+        //   const newType = availableTypes[0].toString();
+        //   activeDisplayType.value = newType;
+        //
+        //   // 选择第一个可用的订阅源
+        //   const firstSubscribe = subscribeList.value.find(item => item.display === availableTypes[0]);
+        //   if (firstSubscribe) {
+        //     activeSubscribeId.value = firstSubscribe.id;
+        //     navigateToSubscribe(firstSubscribe.id);
+        //   }
+        // }
+      // } else {
+      //   activeDisplayType.value = currentType;
 
         // 如果路由中有subscribeId参数，则使用该参数
-        if (route.params.subscribeId) {
-          activeSubscribeId.value = route.params.subscribeId as string;
-        } else if (currentTypeSubscribes.length > 0) {
-          // 否则选择第一个可用的订阅源
-          activeSubscribeId.value = currentTypeSubscribes[0].id;
-          navigateToSubscribe(currentTypeSubscribes[0].id);
-        }
-      }
+        // if (route.params.subscribeId) {
+        //   activeSubscribeId.value = route.params.subscribeId as string;
+        // } else if (currentTypeSubscribes.length > 0) {
+        //   // 否则选择第一个可用的订阅源
+        //   activeSubscribeId.value = currentTypeSubscribes[0].id;
+        //   navigateToSubscribe(currentTypeSubscribes[0].id);
+      //   }
+      // }
 
       // 自动展开所有分组
       expandedGroups.value = Object.keys(groupedSubscribes.value);
@@ -258,8 +253,10 @@ const loadSubscribeList = async () => {
 // 监听路由参数变化
 watch(() => route.params.viewId, (newId) => {
   activeDisplayType.value = newId as string;
+  activeSubscribeId.value = 'all';
 });
 watch(activeDisplayType, () => {
+  activeSubscribeId.value = 'all';
   // 重新请求API获取数据
   loadSubscribeList();
 
@@ -467,7 +464,6 @@ onMounted(() => {
 
 .view-content {
   flex: 1;
-  padding-left: 16px;
   overflow-y: auto;
   min-height: 300px;
 }

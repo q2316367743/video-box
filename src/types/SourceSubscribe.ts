@@ -175,3 +175,9 @@ export interface SourceSubscribeRecordView extends SourceSubscribeRecord {
   media: Array<SourceSubscribeMedia>;
   content: SourceSubscribeContent;
 }
+
+
+export interface SourceSubscribeRecordListView extends SourceSubscribeRecord {
+  medias: Array<SourceSubscribeMedia>;
+  subscribe: SourceSubscribe;
+}

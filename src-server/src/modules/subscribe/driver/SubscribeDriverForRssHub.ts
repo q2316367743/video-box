@@ -8,6 +8,7 @@ import {AbsSubscribePluginHttp} from "@/modules/subscribe/abs/AbsSubscribePlugin
 import {sourceSubscribeRssHubDao} from "@/dao";
 import {draw} from "radash";
 import {parseMedia} from "@/utils/http/HtmlUtil";
+import {debug} from "@rasla/logify";
 
 export class SubscribeDriverForRssHub extends AbsSubscribePluginHttp {
   private readonly subscribe: SourceSubscribe;
@@ -31,6 +32,7 @@ export class SubscribeDriverForRssHub extends AbsSubscribePluginHttp {
 
     const link = this.subscribe.url.replace('rsshub://', instance.url);
 
+    debug(`请求链接：${link}`)
 
     const rss = await this.parser.parseURL(link);
     const views = new Array<SourceSubscribeRecordResult>();

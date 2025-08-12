@@ -8,6 +8,7 @@ create table source_subscribe
     type         integer not null,
     driver       text    not null default '',
     display      integer not null,
+    icon         text    not null default '',
     name         text    not null default '',
     description  text    not null default '',
     url          text    not null default '',

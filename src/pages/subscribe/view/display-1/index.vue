@@ -53,6 +53,7 @@
     <div class="record-content">
       <router-view></router-view>
     </div>
+    <t-back-top container=".record-content" />
   </div>
 </template>
 
@@ -93,7 +94,6 @@ const loadRecords = async () => {
     if (result) {
       records.value = result.records || [];
       total.value = result.total || 0;
-      console.log('记录加载成功:', records.value);
 
       // 如果当前路由包含recordId，设置为选中状态
       const currentRecordId = route.params.recordId as string;
@@ -122,7 +122,6 @@ const handleItemClick = async (recordId: string) => {
       records.value[recordIndex].read_status = 1;
     }
 
-    console.log('记录已标记为已读:', recordId);
   } catch (error) {
     console.error('标记已读失败:', error);
   }
@@ -174,7 +173,6 @@ watch(() => route.params.contentId, (newValue) => {
 
 onMounted(() => {
   // 初始化加载列表数据
-  console.log('加载列表数据:', listId.value);
   loadRecords();
 });
 
