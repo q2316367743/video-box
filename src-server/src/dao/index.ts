@@ -1,11 +1,11 @@
-import {FolderWebDao} from "@/dao/FolderWebDao";
 import {db} from "@/global/db";
+import {FolderWebDao} from "@/dao/FolderWebDao";
 import {SourceWebDao} from "@/dao/SourceWebDao";
-import {SourceTvChannelDao} from "@/dao/SourceTvChannelDao";
-import {SourceTvDao} from "@/dao/SourceTvDao";
+import {SourceTvChannelDao} from "@/dao/tv/SourceTvChannelDao";
+import {SourceTvDao} from "@/dao/tv/SourceTvDao";
 import {SettingDao} from "@/dao/SettingDao";
-import {SourceDiskDao} from "@/dao/SourceDiskDao";
-import {SourceDiskDirDao} from "@/dao/SourceDiskDirDao";
+import {SourceDiskDao} from "@/dao/disk/SourceDiskDao";
+import {SourceDiskDirDao} from "@/dao/disk/SourceDiskDirDao";
 import {TaskDefinitionDao} from "@/dao/TaskDefinitionDao";
 import {TaskExecutionDao} from "@/dao/TaskExecutionDao";
 import {MyVideoItemDao} from "@/dao/MyVideoItemDao";
@@ -14,7 +14,7 @@ import {SourceSubscribeRuleDao} from "@/dao/subscribe/SourceSubscribeRuleDao";
 import {SourceSubscribeRssHubDao} from "@/dao/subscribe/SourceSubscribeRssHubDao";
 import {SourceSubscribeContentDao} from "@/dao/subscribe/SourceSubscribeContentDao";
 import {SourceSubscribeRecordDao} from "@/dao/subscribe/SourceSubscribeRecordDao";
-import {SourceSubscribeGroupDao} from "@/dao/subscribe/SourceSubscribeGroupDao";
+import {SourceSubscribeMediaDao} from "@/dao/subscribe/SourceSubscribeMediaDao";
 
 export const settingDao = new SettingDao(db);
 export const folderWebDao = new FolderWebDao(db);
@@ -28,8 +28,8 @@ export const taskExecutionDao = new TaskExecutionDao(db);
 export const myVideoItemDao = new MyVideoItemDao(db);
 
 export const sourceSubscribeDao = new SourceSubscribeDao(db);
-export const sourceSubscribeGroupDao = new SourceSubscribeGroupDao(db);
 export const sourceSubscribeRuleDao = new SourceSubscribeRuleDao(db);
 export const sourceSubscribeRssHubDao = new SourceSubscribeRssHubDao(db)
 export const sourceSubscribeRecordDao = new SourceSubscribeRecordDao(db)
 export const sourceSubscribeContentDao = new SourceSubscribeContentDao(db)
+export const sourceSubscribeMediaDao = new SourceSubscribeMediaDao(db);

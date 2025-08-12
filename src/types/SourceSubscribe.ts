@@ -1,4 +1,4 @@
-import {YesOrNoType} from "@/global/constant";
+import {YesOrNoType} from "@/global/Constant";
 
 // 订阅类型：RSS-1, rss hub-2，内部订阅-3，自定义订阅-4
 export type SourceSubscribeType = 1 | 2 | 3;

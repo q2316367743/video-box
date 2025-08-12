@@ -15,3 +15,5 @@ export default {
   // 帮助
   help: ''
 }
+
+export type YesOrNoType = 1 | 0;

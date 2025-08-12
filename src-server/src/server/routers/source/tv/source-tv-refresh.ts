@@ -3,7 +3,7 @@ import {debug} from "@rasla/logify";
 import {db} from "@/global/db";
 import {getM3u8Channel} from "@/utils/file/M3u8Util";
 import {Result} from "@/views/Result";
-import {runAsyncTask} from "@/modules/task/TempTaskRunner";
+import {runAsyncTempTask} from "@/modules/task/TempTaskRunner";
 import {sourceTvChannelDao, sourceTvDao} from "@/dao";
 import {SourceTv} from "@/types/SourceTv";
 
@@ -59,7 +59,7 @@ app.put(
     const taskId = `/source/web/channel/${id}`;
     // 判断是否已存在
     // 加入任务
-    const task = await runAsyncTask(`刷新「${row.name}」直播源`, `/source/web/channel/${id}`, async () => {
+    const task = await runAsyncTempTask(`刷新「${row.name}」直播源`, `/source/web/channel/${id}`, async () => {
       await runSourceTvRefresh(row);
     });
     if (task.status === 'failed') {

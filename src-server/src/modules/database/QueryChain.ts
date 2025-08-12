@@ -44,6 +44,9 @@ export class QueryChain<T extends Record<string, any>, K extends keyof T = keyof
   eq(k: K, v: T[K]) {
     return this.simpleWhere(k, v, "=");
   }
+  ne(k: K, v: T[K]) {
+    return this.simpleWhere(k, v, "!=");
+  }
 
   ge(k: K, v: T[K]) {
     return this.simpleWhere(k, v, ">=");

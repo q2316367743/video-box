@@ -25,7 +25,7 @@ interface TempTask {
 }
 
 // 用 Map 存，重启进程就消失
-export const taskStore = new Map<string, TempTask>();
+export const tempTaskStore = new Map<string, TempTask>();
 
 // 根据任务名执行不同逻辑
 async function doRealWork(task: TempTask, runner: (task: TempTask) => Promise<void>) {
@@ -42,15 +42,15 @@ async function doRealWork(task: TempTask, runner: (task: TempTask) => Promise<vo
  * @param runner 任务执行函数
  * @returns 任务对象
  */
-export async function runAsyncTask(
+export async function runAsyncTempTask(
   name: string,
   id: string,
   runner: (task: TempTask) => Promise<void>,
 ) {
-  const old = taskStore.get(id);
+  const old = tempTaskStore.get(id);
   if (old) {
     debug("存在历史任务，等待历史任务完成")
-    while (taskStore.has(id)) {
+    while (tempTaskStore.has(id)) {
       await Bun.sleep(100);
     }
     debug("返回历史任务")
@@ -64,7 +64,7 @@ export async function runAsyncTask(
     updatedAt: Date.now(),
     logs: [],
   };
-  taskStore.set(id, task);
+  tempTaskStore.set(id, task);
 
   // 异步执行，不阻塞
   try {
@@ -77,7 +77,7 @@ export async function runAsyncTask(
     task.updatedAt = Date.now();
     error(`任务「${name}」执行失败`)
   } finally {
-    taskStore.delete(task.id);
+    tempTaskStore.delete(task.id);
   }
 
   return task;

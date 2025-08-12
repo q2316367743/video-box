@@ -21,10 +21,12 @@ declare module 'vue' {
     TAside: typeof import('tdesign-vue-next')['Aside']
     TAvatar: typeof import('tdesign-vue-next')['Avatar']
     TBackTop: typeof import('tdesign-vue-next')['BackTop']
+    TBadge: typeof import('tdesign-vue-next')['Badge']
     TBaseTable: typeof import('tdesign-vue-next')['BaseTable']
     TBreadcrumb: typeof import('tdesign-vue-next')['Breadcrumb']
     TButton: typeof import('tdesign-vue-next')['Button']
     TCard: typeof import('tdesign-vue-next')['Card']
+    TCardMeta: typeof import('tdesign-vue-next')['CardMeta']
     TCheckbox: typeof import('tdesign-vue-next')['Checkbox']
     TCheckboxGroup: typeof import('tdesign-vue-next')['CheckboxGroup']
     TCol: typeof import('tdesign-vue-next')['Col']
@@ -40,6 +42,7 @@ declare module 'vue' {
     THeader: typeof import('tdesign-vue-next')['Header']
     THeadMenu: typeof import('tdesign-vue-next')['HeadMenu']
     ThemeSwitch: typeof import('./src/components/ThemeSwitch.vue')['default']
+    TIcon: typeof import('tdesign-vue-next')['Icon']
     TImage: typeof import('tdesign-vue-next')['Image']
     TInput: typeof import('tdesign-vue-next')['Input']
     TInputAdornment: typeof import('tdesign-vue-next')['InputAdornment']
@@ -73,6 +76,7 @@ declare module 'vue' {
     TTextarea: typeof import('tdesign-vue-next')['Textarea']
     TTooltip: typeof import('tdesign-vue-next')['Tooltip']
     TTree: typeof import('tdesign-vue-next')['Tree']
+    TTypography: typeof import('tdesign-vue-next')['Typography']
     TUpload: typeof import('tdesign-vue-next')['Upload']
   }
 }

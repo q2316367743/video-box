@@ -1,4 +1,4 @@
-import {SourceSubscribe, SourceSubscribeList} from "@/types/SourceSubscribe";
+import {SourceSubscribe, SourceSubscribeRecordView} from "@/types/SourceSubscribe";
 import {SubscribeDriverForRss} from "@/modules/subscribe/driver/SubscribeDriverForRss";
 import {sourceSubscribeRuleDao} from "@/dao";
 import {SubscribeDriverForRssHub} from "@/modules/subscribe/driver/SubscribeDriverForRssHub";
@@ -6,7 +6,7 @@ import {SubscribeDriver} from "@/modules/subscribe/SubscribeDriver";
 import {SubscribeDriverForCustomer} from "@/modules/subscribe/driver/SubscribeDriverForCustomer";
 import {buildInternalSubscribeDriver} from "@/modules/subscribe/internal";
 
-export async function pluginSubscribeRecordService(subscribe: SourceSubscribe): Promise<Array<SourceSubscribeList>> {
+export async function pluginSubscribeRecordService(subscribe: SourceSubscribe): Promise<Array<SourceSubscribeRecordView>> {
   const rule = await sourceSubscribeRuleDao.query().eq('subscribe_id', subscribe.id).one();
   if (!rule) return Promise.reject(new Error("系统异常，订阅规则不存在"));
   let driver: SubscribeDriver;

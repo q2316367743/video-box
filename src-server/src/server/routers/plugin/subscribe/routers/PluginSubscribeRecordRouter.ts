@@ -1,19 +1,24 @@
 import {Elysia, t} from "elysia";
 import {sourceSubscribeDao, sourceSubscribeRecordDao} from "@/dao";
 import {Result} from "@/views/Result";
-import {pluginSubscribeRecordService} from "@/service/plugin/subscribe/PluginSubscribeRecordService";
 
 export default new Elysia()
-  .get("record/:id", async ({params, query}) => {
-    const {id} = params;
+  .get("record/:display/:id", async ({params, query}) => {
+    const {display, id} = params;
     const {pageNum, pageSize} = query;
 
-    const subscribe = await sourceSubscribeDao.selectById( id);
-    if (!subscribe) return Result.fail("订阅源不存在");
-    if (subscribe.cache === 0) {
-      // 不缓存，现查
-      return Result.success(pluginSubscribeRecordService(subscribe));
+    if (id === 'all') {
+      // 查询全部订阅源的记录
+      const sub = await sourceSubscribeDao.query().eq('display', Number(display)).select('id').list();
+      const page = await sourceSubscribeRecordDao.query()
+        .in('subscribe_id', sub.map(item => item.id))
+        .orderByDesc('pub_date')
+        .page(pageNum, pageSize);
+      return Result.success(page);
     }
+
+    const subscribe = await sourceSubscribeDao.selectById(id);
+    if (!subscribe) return Result.fail("订阅源不存在");
 
     const page = await sourceSubscribeRecordDao.query()
       .eq('subscribe_id', id)
@@ -22,7 +27,8 @@ export default new Elysia()
     return Result.success(page);
   }, {
     params: t.Object({
-      id: t.String()
+      id: t.String(),
+      display: t.String(),
     }),
     query: t.Object({
       pageNum: t.Number({

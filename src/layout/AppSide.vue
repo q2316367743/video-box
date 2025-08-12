@@ -3,31 +3,37 @@
     <t-menu collapsed v-model="path">
       <t-menu-item value="/home/list">
         <template #icon>
-          <home-icon/>
+          <home-icon />
         </template>
         首页
       </t-menu-item>
       <t-menu-item value="/web/list">
         <template #icon>
-          <video-icon/>
+          <video-icon />
         </template>
         影视
       </t-menu-item>
       <t-menu-item value="/live">
         <template #icon>
-          <tv-icon/>
+          <tv-icon />
         </template>
         直播
       </t-menu-item>
+      <t-menu-item value="/subscribe/view-1/list-all/pending">
+        <template #icon>
+          <rss-icon />
+        </template>
+        订阅
+      </t-menu-item>
       <t-menu-item value="/disk/list">
         <template #icon>
-          <hard-disk-storage-icon/>
+          <hard-disk-storage-icon />
         </template>
         网盘
       </t-menu-item>
       <t-menu-item value="/task">
         <template #icon>
-          <task-icon/>
+          <task-icon />
         </template>
         任务
       </t-menu-item>
@@ -39,7 +45,7 @@
       </t-menu-item>
       <t-menu-item value="/about">
         <template #icon>
-          <user-icon/>
+          <user-icon />
         </template>
         我的
       </t-menu-item>
@@ -48,7 +54,9 @@
 </template>
 <script lang="ts" setup>
 import {
-  HardDiskStorageIcon, HomeIcon, SettingIcon, TaskIcon,
+  HardDiskStorageIcon, HomeIcon,
+  RssIcon,
+  SettingIcon, TaskIcon,
   TvIcon, UserIcon,
   VideoIcon,
 } from "tdesign-icons-vue-next";

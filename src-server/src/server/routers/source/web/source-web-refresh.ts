@@ -1,4 +1,4 @@
-import {runAsyncTask} from "@/modules/task/TempTaskRunner";
+import {runAsyncTempTask} from "@/modules/task/TempTaskRunner";
 import {refreshSourceWeb} from "@/modules/web/func/RefreshSourceWeb";
 import {Result} from "@/views/Result";
 import {Elysia, t} from "elysia";
@@ -14,7 +14,7 @@ app.get(
     if (!sourceWeb) return Result.error("网络资源不存在");
     const taskId = `/source/web/delay/${id}`;
     // 判断是否已存在
-    const task = await runAsyncTask(
+    const task = await runAsyncTempTask(
       `刷新「${sourceWeb.title}」`,
       taskId,
       async () => {
