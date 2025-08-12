@@ -97,6 +97,7 @@
         <router-view></router-view>
       </div>
     </div>
+    <t-back-top container=".view-content" />
   </div>
 </template>
 
