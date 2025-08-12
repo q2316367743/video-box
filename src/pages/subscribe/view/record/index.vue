@@ -2,9 +2,9 @@
   <div class="record-layout">
     <!-- 左侧边栏 -->
     <div width="324px" class="record-sidebar">
-      <div class="sidebar-header">
+      <div class="sidebar-header flex justify-between">
         <h3>订阅记录</h3>
-        <p class="sidebar-subtitle">列表 {{ listId }} · 视图 {{ viewId }}</p>
+        <span class="total-count">共 {{ total }} 条记录</span>
       </div>
 
       <div class="sidebar-loading" v-if="loading">
@@ -14,23 +14,12 @@
       <div class="sidebar-content" v-else>
         <!-- 分页信息 -->
         <div class="sidebar-pagination">
-          <span class="total-count">共 {{ total }} 条记录</span>
           <div class="pagination-controls">
-            <t-button 
-              size="small" 
-              variant="text" 
-              @click="prevPage" 
-              :disabled="currentPage <= 1"
-            >
+            <t-button size="small" variant="text" @click="prevPage" :disabled="currentPage <= 1">
               上一页
             </t-button>
             <span class="page-info">{{ currentPage }}/{{ totalPages }}</span>
-            <t-button 
-              size="small" 
-              variant="text" 
-              @click="nextPage" 
-              :disabled="currentPage >= totalPages"
-            >
+            <t-button size="small" variant="text" @click="nextPage" :disabled="currentPage >= totalPages">
               下一页
             </t-button>
           </div>
@@ -38,24 +27,16 @@
 
         <!-- 记录菜单 - 使用原生div -->
         <div class="record-menu">
-          <div 
-            v-for="record in records" 
-            :key="record.id"
-            class="record-menu-item"
-            :class="{ 'active': selectedRecordId === record.id }"
-            @click="handleItemClick(record.id)"
-          >
+          <div v-for="record in records" :key="record.id" class="record-menu-item"
+            :class="{ 'active': selectedRecordId === record.id }" @click="handleItemClick(record.id)">
             <div class="item-title">{{ record.title || '无标题' }}</div>
             <div class="item-description" v-if="record.description">
               {{ getPlainText(record.description) }}
             </div>
             <div class="item-meta">
               <span class="item-time">{{ prettyDate(record.created_at) }}</span>
-              <t-tag 
-                size="small" 
-                :variant="record.read_status === 1 ? 'light' : 'dark'"
-                :theme="record.read_status === 1 ? 'success' : 'primary'"
-              >
+              <t-tag size="small" :variant="record.read_status === 1 ? 'light' : 'dark'"
+                :theme="record.read_status === 1 ? 'success' : 'primary'">
                 {{ record.read_status === 1 ? '已读' : '未读' }}
               </t-tag>
             </div>
@@ -114,7 +95,7 @@ const loadRecords = async () => {
       records.value = result.records || [];
       total.value = result.total || 0;
       console.log('记录加载成功:', records.value);
-      
+
       // 如果当前路由包含recordId，设置为选中状态
       const currentRecordId = route.params.recordId as string;
       if (currentRecordId && records.value.some(r => r.id === currentRecordId)) {
@@ -131,22 +112,22 @@ const loadRecords = async () => {
 // 处理菜单项点击
 const handleItemClick = async (recordId: string) => {
   selectedRecordId.value = recordId;
-  
+
   // 异步调用已读接口
   try {
     await pluginSubscribeRead(recordId);
-    
+
     // 更新本地记录状态为已读
     const recordIndex = records.value.findIndex(r => r.id === recordId);
     if (recordIndex !== -1) {
       records.value[recordIndex].read_status = 1;
     }
-    
+
     console.log('记录已标记为已读:', recordId);
   } catch (error) {
     console.error('标记已读失败:', error);
   }
-  
+
   // 导航到内容页面
   navigateToContent(recordId);
 };
@@ -213,12 +194,11 @@ const navigateToContent = (recordId: string) => {
 </script>
 
 <style scoped lang="less">
-
 .record-layout {
   height: 100%;
   overflow: auto;
   display: flex;
-  
+
   .record-sidebar {
     background-color: #fafafa;
     border-right: 1px solid var(--td-border-level-1-color);
@@ -226,84 +206,84 @@ const navigateToContent = (recordId: string) => {
     flex-direction: column;
     width: 324px;
     min-width: 324px;
-    
+
     .sidebar-header {
       padding: 16px;
       border-bottom: 1px solid var(--td-border-level-1-color);
-      
+
       h3 {
         margin: 0 0 4px 0;
         font-size: 16px;
         font-weight: 600;
         color: var(--td-text-color-primary);
       }
-      
+
       .sidebar-subtitle {
         margin: 0;
         font-size: 12px;
         color: var(--td-text-color-secondary);
       }
     }
-    
+
     .sidebar-loading {
       padding: 20px;
       text-align: center;
     }
-    
+
     .sidebar-content {
       flex: 1;
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      
+
       .sidebar-pagination {
         padding: 12px 16px;
         border-bottom: 1px solid var(--td-border-level-1-color);
-        
+
         .total-count {
           font-size: 12px;
           color: var(--td-text-color-secondary);
           display: block;
           margin-bottom: 8px;
         }
-        
+
         .pagination-controls {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          
+
           .page-info {
             font-size: 12px;
             color: var(--td-text-color-secondary);
           }
         }
       }
-      
+
       .record-menu {
         flex: 1;
         overflow-y: auto;
-        
+
         .record-menu-item {
           position: relative;
           padding: 12px 16px;
           cursor: pointer;
           border-bottom: 1px solid var(--td-border-level-1-color);
           transition: all 0.2s ease;
-          
+
           &:hover {
             background-color: var(--td-bg-color-container-hover);
           }
-          
+
           &.active {
             background-color: var(--td-brand-color-light);
             border-right: 3px solid var(--td-brand-color);
-            
+
             .item-title {
               color: var(--td-brand-color);
               font-weight: 600;
             }
           }
-          
+
           .item-title {
             font-size: 14px;
             color: var(--td-text-color-primary);
@@ -314,7 +294,7 @@ const navigateToContent = (recordId: string) => {
             white-space: normal;
             font-weight: 500;
           }
-          
+
           .item-description {
             font-size: 12px;
             color: var(--td-text-color-secondary);
@@ -328,12 +308,12 @@ const navigateToContent = (recordId: string) => {
             word-wrap: break-word;
             word-break: break-all;
           }
-          
+
           .item-meta {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            
+
             .item-time {
               font-size: 12px;
               color: var(--td-text-color-placeholder);
@@ -341,20 +321,20 @@ const navigateToContent = (recordId: string) => {
           }
         }
       }
-      
+
       .no-records {
         padding: 40px 16px;
         text-align: center;
       }
     }
   }
-  
+
   .record-content {
     background-color: #ffffff;
     padding: 8px;
     overflow-y: auto;
     flex: auto;
-    
+
     // 如果没有选中任何记录，显示提示信息
     &:empty::before {
       content: "请从左侧选择一条记录查看详情";
@@ -379,12 +359,12 @@ const navigateToContent = (recordId: string) => {
 @media (max-width: 480px) {
   .record-layout {
     flex-direction: column;
-    
+
     .record-sidebar {
       width: 100% !important;
       height: 40vh;
     }
-    
+
     .record-content {
       height: 60vh;
     }
