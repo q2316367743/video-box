@@ -61,15 +61,25 @@ const MediaPreview = defineComponent<MediaPreviewProps>({
       if (mediaRef.value && containerRef.value) {
         const media = mediaRef.value;
         const mediaRect = media.getBoundingClientRect();
+        const containerRect = containerRef.value.getBoundingClientRect();
         
-        // 如果媒体宽度小于300px或高度小于200px，认为是小媒体
-        const isSmall = mediaRect.width < 300 || mediaRect.height < 200;
+        // 更合理的小媒体判断条件
+        // 1. 媒体宽度小于400px或高度小于300px
+        const isSmallSize = mediaRect.width < 400 || mediaRect.height < 300;
         
-        // 检查关闭按钮是否会遮挡媒体
-        const buttonSize = 48;
-        const wouldOverlap = mediaRect.width < buttonSize * 2 || mediaRect.height < buttonSize * 2;
+        // 2. 媒体占容器比例较小（小于50%）
+        const widthRatio = mediaRect.width / containerRect.width;
+        const heightRatio = mediaRect.height / containerRect.height;
+        const isSmallRatio = widthRatio < 0.5 || heightRatio < 0.5;
         
-        isSmallMedia.value = isSmall || wouldOverlap;
+        // 3. 检查导航按钮是否会与媒体重叠
+        const navButtonSize = 56;
+        const navButtonMargin = 20;
+        const totalNavWidth = navButtonSize + navButtonMargin * 2;
+        const wouldOverlapNav = mediaRect.width < totalNavWidth * 2;
+        
+        // 满足任一条件即认为是小媒体
+        isSmallMedia.value = isSmallSize || isSmallRatio || wouldOverlapNav;
       }
     };
 

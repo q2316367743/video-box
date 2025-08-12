@@ -275,22 +275,22 @@
 }
 
 .navExternal {
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(255, 255, 255, 0.3);
   opacity: 1;
   transform: translateY(-50%) scale(1);
 }
 
 .navExternal:hover {
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(255, 255, 255, 0.4);
 }
 
-.navExternal.navLeft {
-  left: -80px;
-}
+  .navExternal.navLeft {
+    left: 20px;
+  }
 
-.navExternal.navRight {
-  right: -80px;
-}
+  .navExternal.navRight {
+    right: 20px;
+  }
 
 /* 媒体控制栏 */
 .mediaControls {
@@ -511,11 +511,11 @@
   }
 
   .navExternal.navLeft {
-    left: -60px;
+    left: 5px;
   }
 
   .navExternal.navRight {
-    right: -60px;
+    right: 5px;
   }
 
   .mediaControls {
@@ -578,12 +578,14 @@
 @media (max-width: 480px) {
   .navExternal.navLeft {
     left: 5px;
-    top: 20%;
+    top: 50%;
+    transform: translateY(-50%);
   }
 
   .navExternal.navRight {
     right: 5px;
-    top: 20%;
+    top: 50%;
+    transform: translateY(-50%);
   }
 
   .mediaContainerSmall {
