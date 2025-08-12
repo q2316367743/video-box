@@ -342,6 +342,34 @@
   transform: scale(1.1);
 }
 
+/* 音量控制区域 */
+.volumeControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.volumeControls .volumeButton {
+  width: 32px;
+  height: 32px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.volumeControls .volumeButton:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.volumeIndicator {
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  min-width: 35px;
+  text-align: center;
+  opacity: 0.8;
+}
+
 .progressContainer {
   flex: 1;
   min-width: 200px;

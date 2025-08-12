@@ -1,6 +1,6 @@
 import { createVNode, defineComponent, render, ref, onMounted, onUnmounted, computed, nextTick } from 'vue';
-import {CloseIcon, ChevronLeftIcon, ChevronRightIcon, PlayIcon, PauseIcon, SoundMuteIcon} from 'tdesign-icons-vue-next';
-import { SourceSubscribeMedia, SourceSubscribeMediaType } from '@/types/SourceSubscribe';
+import {CloseIcon, ChevronLeftIcon, ChevronRightIcon, PlayIcon, PauseIcon, SoundIcon, SoundMute1Icon, SoundHighIcon, SoundUpIcon, SoundDownIcon} from 'tdesign-icons-vue-next';
+import { SourceSubscribeMedia } from '@/types/SourceSubscribe';
 import { detectMediaType, getMediaTypeName, formatTime } from '@/utils/mediaUtils';
 import styles from './MediaPlugin.module.css';
 
@@ -175,6 +175,53 @@ const MediaPreview = defineComponent<MediaPreviewProps>({
       mediaElement.muted = isMuted.value;
     };
 
+    // 增加音量
+    const increaseVolume = () => {
+      if (currentMediaType.value === 1) return;
+      
+      const mediaElement = mediaRef.value as HTMLVideoElement | HTMLAudioElement;
+      if (!mediaElement) return;
+      
+      const newVolume = Math.min(1, volume.value + 0.1);
+      volume.value = newVolume;
+      mediaElement.volume = newVolume;
+      
+      // 如果增加音量，自动取消静音
+      if (isMuted.value) {
+        isMuted.value = false;
+        mediaElement.muted = false;
+      }
+    };
+
+    // 减少音量
+    const decreaseVolume = () => {
+      if (currentMediaType.value === 1) return;
+      
+      const mediaElement = mediaRef.value as HTMLVideoElement | HTMLAudioElement;
+      if (!mediaElement) return;
+      
+      const newVolume = Math.max(0, volume.value - 0.1);
+      volume.value = newVolume;
+      mediaElement.volume = newVolume;
+      
+      // 如果音量为0，自动静音
+      if (newVolume === 0) {
+        isMuted.value = true;
+        mediaElement.muted = true;
+      }
+    };
+
+    // 获取音量图标
+    const getVolumeIcon = () => {
+      if (isMuted.value || volume.value === 0) {
+        return SoundMute1Icon;
+      } else if (volume.value > 0.7) {
+        return SoundHighIcon;
+      } else {
+        return SoundIcon;
+      }
+    };
+
     // 进度条控制
     const handleProgressChange = (event: Event) => {
       if (currentMediaType.value === 1) return;
@@ -194,6 +241,10 @@ const MediaPreview = defineComponent<MediaPreviewProps>({
       
       const mediaElement = mediaRef.value as HTMLVideoElement | HTMLAudioElement;
       if (!mediaElement) return;
+      
+      // 设置默认音量和静音状态
+      mediaElement.volume = volume.value;
+      mediaElement.muted = isMuted.value;
       
       mediaElement.addEventListener('play', () => {
         isPlaying.value = true;
@@ -352,6 +403,7 @@ const MediaPreview = defineComponent<MediaPreviewProps>({
       if (currentMediaType.value === 1) return null; // 图片不需要控制栏
       
       const progress = duration.value > 0 ? (currentTime.value / duration.value) * 100 : 0;
+      const VolumeIcon = getVolumeIcon();
       
       return (
         <div class={styles.mediaControls}>
@@ -374,9 +426,24 @@ const MediaPreview = defineComponent<MediaPreviewProps>({
             {formatTime(currentTime.value)} / {formatTime(duration.value)}
           </div>
           
-          <button class={styles.volumeButton} onClick={toggleMute}>
-            <SoundMuteIcon size="20" />
-          </button>
+          {/* 音量控制区域 */}
+          <div class={styles.volumeControls}>
+            <button class={styles.volumeButton} onClick={decreaseVolume} title="减少音量">
+              <SoundDownIcon size="18" />
+            </button>
+            
+            <button class={styles.volumeButton} onClick={toggleMute} title={isMuted.value ? "取消静音" : "静音"}>
+              <VolumeIcon size="20" />
+            </button>
+            
+            <button class={styles.volumeButton} onClick={increaseVolume} title="增加音量">
+              <SoundUpIcon size="18" />
+            </button>
+            
+            <div class={styles.volumeIndicator}>
+              {Math.round(isMuted.value ? 0 : volume.value * 100)}%
+            </div>
+          </div>
         </div>
       );
     };
