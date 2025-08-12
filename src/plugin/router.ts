@@ -100,17 +100,16 @@ export const routes: Array<RouteRecordRaw> = [{
   path: '/subscribe',
   component: () => import('@/pages/subscribe/index.vue'),
   children: [{
-    name: '订阅-视图',
-    path: 'view-:viewId',
-    component: () => import('@/pages/subscribe/view/index.vue'),
+    name: '订阅-文章视图',
+    path: 'view-1',
     children: [{
       name: '订阅-视图-记录',
       path: 'list-:listId',
-      component: () => import('@/pages/subscribe/view/record/index.vue'),
+      component: () => import('@/pages/subscribe/view/display-1/index.vue'),
       children: [{
         name: '订阅-视图-记录-内容',
         path: ':contentId',
-        component: () => import('@/pages/subscribe/view/record/content/index.vue'),
+        component: () => import('@/pages/subscribe/view/display-1/content/index.vue'),
       }]
     }]
   }, {

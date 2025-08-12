@@ -16,7 +16,7 @@
 
 <script setup>
 import { RssIcon, ChatIcon, Image1Icon, VideoIcon, NotificationIcon, AudioIcon } from 'tdesign-icons-vue-next'
-import { SubscribeDisplayMap } from '../../constant';
+import { SubscribeDisplayMap } from '../constant';
 
 const props = defineProps({
   modelValue: {

@@ -1,4 +1,4 @@
-import {YesOrNoType} from "@/global/Constant";
+import {YesOrNoType} from "@/global/constant";
 
 // 订阅类型：RSS-1, rss hub-2，内部订阅-3，自定义订阅-4
 export type SourceSubscribeType = 1 | 2 | 3;
@@ -98,7 +98,7 @@ export interface SourceSubscribeRssHub {
 interface SourceSubscribeList {
 
   title: string;
-  // 描述，去除图片、音频、视频
+  // 描述，去除图片、音频、视频，只显示100汉字
   description: string;
   // 最后更新时间
   pub_date: number;
@@ -136,12 +136,6 @@ export interface SourceSubscribeMedia extends SourceSubscribeMediaCore {
   record_id: string;
 }
 
-export interface SourceSubscribeRecordView extends SourceSubscribeList {
-  // 媒体资源
-  media: Array<SourceSubscribeMediaCore>;
-
-}
-
 export interface SourceSubscribeContentCore {
 
   // 原文链接
@@ -159,7 +153,6 @@ export interface SourceSubscribeContentCore {
 export interface SourceSubscribeContent extends SourceSubscribeContentCore {
   id: string;
   created_at: number;
-  updated_at: number;
 
   // 所属订阅源
   subscribe_id: string;
@@ -171,4 +164,14 @@ export interface SourceSubscribeContent extends SourceSubscribeContentCore {
    */
   ai: string;
 
+}
+
+export interface SourceSubscribeRecordResult extends SourceSubscribeList, SourceSubscribeContentCore {
+  // 媒体资源
+  media: Array<SourceSubscribeMediaCore>;
+}
+
+export interface SourceSubscribeRecordView extends SourceSubscribeRecord {
+  media: Array<SourceSubscribeMedia>;
+  content: SourceSubscribeContent;
 }

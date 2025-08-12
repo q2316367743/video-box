@@ -1,10 +1,9 @@
 import Parser from 'rss-parser';
 import {
   SourceSubscribe,
-  SourceSubscribeContentCore, SourceSubscribeDisplay, SourceSubscribeRecordView,
+   SourceSubscribeDisplay,  SourceSubscribeRecordResult,
   SourceSubscribeRule
 } from "@/types/SourceSubscribe";
-import {load} from "cheerio";
 import {AbsSubscribePluginHttp} from "@/modules/subscribe/abs/AbsSubscribePluginHttp";
 import {sourceSubscribeRssHubDao} from "@/dao";
 import {draw} from "radash";
@@ -22,7 +21,7 @@ export class SubscribeDriverForRssHub extends AbsSubscribePluginHttp {
     this.subscribe = subscribe;
   }
 
-  async getSubscribeList(): Promise<Array<SourceSubscribeRecordView>> {
+  async getSubscribeList(): Promise<Array<SourceSubscribeRecordResult>> {
 
     // 此处查询全部的rss hub 实例
     const instances = await sourceSubscribeRssHubDao.query()
@@ -32,36 +31,32 @@ export class SubscribeDriverForRssHub extends AbsSubscribePluginHttp {
 
     const link = this.subscribe.url.replace('rsshub://', instance.url);
 
-    const items = await this.parser.parseURL(link);
-    return items.items.map(e => {
-      const {title = '', pubDate = '', description = '', link = ''} = e;
-      const {mediaList, html} = parseMedia(description);
-      return {
-        title: title,
-        description: html,
+
+    const rss = await this.parser.parseURL(link);
+    const views = new Array<SourceSubscribeRecordResult>();
+    for (let item of rss.items) {
+      const {title = '', pubDate = '', link = ''} = item;
+      if (!link) continue;
+      // 不存在内容规则，那么描述就是内容
+      const desc = item['content:encoded'] || '';
+      const {mediaList, html} = parseMedia(desc);
+      const media = mediaList;
+      const content = desc;
+      const description = html;
+      views.push({
+        title,
+        description,
+        link,
+        media,
+        content,
         pub_date: pubDate ? new Date(pubDate).getTime() : 0,
-        link: link,
-        media: mediaList
-      }
-    }).filter(e => !!e.link)
-  }
+      });
 
-  async getSubscribeContent(link: string): Promise<SourceSubscribeContentCore> {
-    const {item_content} = this.rule;
-
-    // 此处要解码
-    let html = await this.request(link);
-    if (item_content) {
-      html = load(html)(item_content).text()
     }
 
-    const content = html2md(html);
+    return views;
 
-    return Promise.resolve({
-      link,
-      content,
-      subscribe_id: this.subscribe.id,
-    });
+
   }
 
 

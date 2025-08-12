@@ -1,6 +1,4 @@
-import {
-  SourceSubscribeContentCore, SourceSubscribeDisplay, SourceSubscribeRecordView,
-} from "@/types/SourceSubscribe";
+import {SourceSubscribeDisplay, SourceSubscribeRecordResult} from "@/types/SourceSubscribe";
 
 export interface SubscribeDriver {
 
@@ -17,11 +15,6 @@ export interface SubscribeDriver {
   /**
    * 获取订阅源列表
    */
-  getSubscribeList(): Promise<Array<SourceSubscribeRecordView>>;
+  getSubscribeList(): Promise<Array<SourceSubscribeRecordResult>>;
 
-  /**
-   * 获取订阅源内容
-   * @param link 链接
-   */
-  getSubscribeContent(link: string): Promise<SourceSubscribeContentCore>;
 }

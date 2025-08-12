@@ -28,7 +28,7 @@
     <div v-else class="content-card">
 
       <!-- 加载状态 -->
-      <t-loading v-if="loading" text="加载中..." size="large" />
+      <t-loading v-if="loading" text="加载中..." size="large" class="w-full h-100vh" />
 
       <!-- 内容主体 -->
       <div v-else-if="contentData" class="content-body">
@@ -54,9 +54,9 @@
           </t-space>
 
           <!-- 内容文本 -->
-          <div class="content-text" v-if="contentData.description">
+          <div class="content-text" v-if="contentData.content.content">
             <t-typography variant="body1">
-              <div v-html="contentData.description"></div>
+              <div v-html="contentData.content.content"></div>
             </t-typography>
           </div>
           <t-empty v-else description="暂无内容" />
@@ -78,7 +78,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { ref, onMounted, watch } from 'vue';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { pluginSubscribeContent } from '@/apis/plugin/subscribe';
-import { SourceSubscribeRecord } from '@/types/SourceSubscribe';
+import { SourceSubscribeRecordView } from '@/types/SourceSubscribe';
 
 const route = useRoute();
 const router = useRouter();
@@ -88,7 +88,7 @@ const contentId = ref(route.params.contentId);
 const loading = ref(false);
 const isReadLoading = ref(false);
 const isRefreshLoading = ref(false);
-const contentData = ref<SourceSubscribeRecord | null>(null);
+const contentData = ref<SourceSubscribeRecordView | null>(null);
 
 // Pending状态处理函数
 const handleSubscribe = () => {

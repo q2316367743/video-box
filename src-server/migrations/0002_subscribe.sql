@@ -78,7 +78,6 @@ create table source_subscribe_content
 
     id           text primary key,
     created_at   integer not null default CURRENT_TIMESTAMP,
-    updated_at   integer not null default CURRENT_TIMESTAMP,
     subscribe_id text    not null default '',
     record_id    text    not null default '',
     link         text    not null default '',

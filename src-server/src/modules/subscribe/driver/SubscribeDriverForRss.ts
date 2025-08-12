@@ -1,7 +1,7 @@
 import Parser from 'rss-parser';
 import {
   SourceSubscribe,
-  SourceSubscribeContentCore, SourceSubscribeDisplay, SourceSubscribeMediaCore, SourceSubscribeRecordView,
+  SourceSubscribeDisplay, SourceSubscribeMediaCore, SourceSubscribeRecordResult,
   SourceSubscribeRule
 } from "@/types/SourceSubscribe";
 import {load} from "cheerio";
@@ -20,43 +20,47 @@ export class SubscribeDriverForRss extends AbsSubscribePluginHttp {
     this.subscribe = subscribe;
   }
 
-  async getSubscribeList(): Promise<Array<SourceSubscribeRecordView>> {
-    const items = await this.parser.parseURL(this.subscribe.url);
-    return items.items.map(e => {
-      const {title = '', pubDate = '', link = ''} = e;
-      const {mediaList, html} = parseMedia(e['content:encoded'] || '');
-      return {
-        title: title,
-        description: html,
-        pub_date: pubDate ? new Date(pubDate).getTime() : 0,
-        link: link,
-        media: mediaList
-      }
-    }).filter(e => !!e.link)
-  }
-
-  async getSubscribeContent(link: string): Promise<SourceSubscribeContentCore> {
+  async getSubscribeList(): Promise<Array<SourceSubscribeRecordResult>> {
     const {item_content} = this.rule;
+    const rss = await this.parser.parseURL(this.subscribe.url);
+    const views = new Array<SourceSubscribeRecordResult>();
+    for (let item of rss.items) {
+      const {title = '', pubDate = '', link = ''} = item;
+      if (!link) continue;
+      let description: string;
+      let content: string;
+      let media: Array<SourceSubscribeMediaCore>;
 
-    // 此处要解码
-    let html = await this.request(link);
-    if (item_content) {
-      html = load(html)(item_content).text()
+      if (item_content) {
+        // 存在内容规则，那么描述就是描述
+        let html = await this.request(link);
+        if (item_content) {
+          html = load(html)(item_content).text()
+        }
+        const htmlParse = parseMedia(html);
+        description = item['content:encoded'] || '';
+        media = htmlParse.mediaList;
+        content = htmlParse.html;
+      } else {
+        // 不存在内容规则，那么描述就是内容
+        const desc = item['content:encoded'] || '';
+        const {mediaList, html} = parseMedia(desc);
+        media = mediaList;
+        content = desc;
+        description = html;
+      }
+      views.push({
+        title,
+        description,
+        link,
+        media,
+        content,
+        pub_date: pubDate ? new Date(pubDate).getTime() : 0,
+      });
+
     }
 
-
-    const content = html2md(html);
-
-    return Promise.resolve({
-      link,
-      content,
-      subscribe_id: this.subscribe.id,
-      id: link,
-      ai: '',
-      created_at: Date.now(),
-      updated_at: Date.now(),
-    });
+    return views;
   }
-
 
 }

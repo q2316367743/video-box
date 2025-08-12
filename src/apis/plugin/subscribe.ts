@@ -1,4 +1,4 @@
-import { SourceSubscribe, SourceSubscribeContent, SourceSubscribeRecord } from "@/types/SourceSubscribe";
+import { SourceSubscribe, SourceSubscribeContent, SourceSubscribeRecord, SourceSubscribeRecordView } from "@/types/SourceSubscribe";
 import { PageResponse, useGet } from "../common";
 
 // 查询一个展示类型下全部的订阅项
@@ -17,7 +17,7 @@ export function PluginSubscribeRecord(display: string, id: string, pageNum: numb
 // 获取一个订阅的详情
 export function pluginSubscribeContent(id: string) {
   // display=1是content，其余的是record
-  return useGet<SourceSubscribeRecord | null>(`/api/plugin/subscribe/content/${id}`);
+  return useGet<SourceSubscribeRecordView>(`/api/plugin/subscribe/content/${id}`);
 }
 // 强制刷新一个订阅记录
 export function pluginSubscribeRefresh(id: string) {

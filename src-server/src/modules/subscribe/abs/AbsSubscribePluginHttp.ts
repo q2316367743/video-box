@@ -1,7 +1,6 @@
 import {
-  SourceSubscribeContentCore,
   SourceSubscribeDisplay,
-  SourceSubscribeRecordView,
+  SourceSubscribeRecordResult,
   SourceSubscribeRule
 } from "@/types/SourceSubscribe";
 import {http} from "@/global/http";
@@ -12,7 +11,7 @@ export abstract class AbsSubscribePluginHttp extends AbsSubscribePluginStore {
 
   protected readonly rule: SourceSubscribeRule;
 
-  constructor(id: string, rule: SourceSubscribeRule) {
+  protected constructor(id: string, rule: SourceSubscribeRule) {
     super(id);
     this.rule = rule;
   }
@@ -36,8 +35,6 @@ export abstract class AbsSubscribePluginHttp extends AbsSubscribePluginStore {
   abstract display: SourceSubscribeDisplay;
   abstract supportContent: boolean;
 
-  abstract getSubscribeContent(link: string): Promise<SourceSubscribeContentCore>;
-
-  abstract getSubscribeList(): Promise<Array<SourceSubscribeRecordView>>;
+  abstract getSubscribeList(): Promise<Array<SourceSubscribeRecordResult>>;
 
 }

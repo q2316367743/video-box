@@ -1,4 +1,4 @@
-import {sourceSubscribeDao, sourceSubscribeMediaDao, sourceSubscribeRecordDao} from "@/dao";
+import {sourceSubscribeContentDao, sourceSubscribeDao, sourceSubscribeMediaDao, sourceSubscribeRecordDao} from "@/dao";
 import {pluginSubscribeRecordService} from "@/service/plugin/subscribe/PluginSubscribeRecordService";
 import {error, info} from "@rasla/logify";
 import {TaskRunnerContext} from "@/modules/task/TaskRunner";
@@ -7,13 +7,13 @@ import {db} from "@/global/db";
 
 export async function subscribeRefreshOne(subscribe: SourceSubscribe) {
   try {
-    db.sql`BEGIN`;
     info(`开始处理订阅源: ${subscribe.name}`);
     const list = await pluginSubscribeRecordService(subscribe);
     let update = 0;
     let insert = 0;
     for (const item of list) {
       try {
+        db.sql`BEGIN`;
         const old = await sourceSubscribeRecordDao.query().eq('link', item.link).one();
         if (old) {
           if (old.pub_date !== item.pub_date) {
@@ -37,6 +37,17 @@ export async function subscribeRefreshOne(subscribe: SourceSubscribe) {
                 created_at: Date.now(),
               });
             }
+            // 删除旧的内容
+            await sourceSubscribeContentDao.query().eq('record_id', old.id).delete();
+            // 插入新的内容
+            await sourceSubscribeContentDao.insert({
+              content: item.content,
+              subscribe_id: subscribe.id,
+              record_id: old.id,
+              created_at: Date.now(),
+              ai: '',
+              link: item.link,
+            })
           }
         }
         else {
@@ -60,12 +71,23 @@ export async function subscribeRefreshOne(subscribe: SourceSubscribe) {
               created_at: Date.now(),
             });
           }
+          // 插入新的内容
+          await sourceSubscribeContentDao.insert({
+            content: item.content,
+            subscribe_id: subscribe.id,
+            record_id: id,
+            created_at: Date.now(),
+            ai: '',
+            link: item.link,
+          })
         }
         // TODO：处理内容
         // 有内容规则才有内容，内部实现基于配置
+        db.sql`COMMIT`;
       } catch (e) {
         console.error(e);
-        error(`处理订阅「${subscribe.name}」出错: ` + ((e instanceof Error) ? e.message : String(e)))
+        error(`处理订阅「${subscribe.name}」出错: ` + ((e instanceof Error) ? e.message : String(e)));
+        db.sql`ROLLBACK`;
       }
     }
     // 更新订阅源的记录数量
@@ -75,10 +97,8 @@ export async function subscribeRefreshOne(subscribe: SourceSubscribe) {
       record_count: total,
     })
     info(`处理订阅「${subscribe.name}」完成，新增 ${insert} 条，更新 ${update} 条，当前总记录 ${total} 条`);
-    db.sql`COMMIT`;
   } catch (e) {
     error(`处理订阅「${subscribe.name}」出错: ` + ((e instanceof Error) ? e.message : String(e)))
-    db.sql`ROLLBACK`;
   }
 }
 

@@ -2,9 +2,8 @@ import {LocalNameEnum} from "@/global/LocalNameEnum";
 import {storage} from "@/global/db";
 import {SubscribeDriver} from "@/modules/subscribe/SubscribeDriver";
 import {
-  SourceSubscribeContentCore,
   SourceSubscribeDisplay,
-  SourceSubscribeRecordView
+  SourceSubscribeRecordResult
 } from "@/types/SourceSubscribe";
 
 export abstract class AbsSubscribePluginStore implements SubscribeDriver {
@@ -35,8 +34,6 @@ export abstract class AbsSubscribePluginStore implements SubscribeDriver {
   abstract display: SourceSubscribeDisplay;
   abstract supportContent: boolean;
 
-  abstract getSubscribeContent(link: string): Promise<SourceSubscribeContentCore>;
-
-  abstract getSubscribeList(): Promise<Array<SourceSubscribeRecordView>>;
+  abstract getSubscribeList(): Promise<Array<SourceSubscribeRecordResult>>;
 
 }

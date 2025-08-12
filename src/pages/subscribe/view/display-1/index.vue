@@ -64,7 +64,6 @@ import { prettyDate } from '@/utils/lang/FormatUtil';
 const route = useRoute();
 const router = useRouter();
 
-const viewId = ref(route.params.viewId as string);
 const listId = ref(route.params.listId as string);
 const loading = ref(false);
 const records = ref<SourceSubscribeRecord[]>([]);
@@ -85,7 +84,7 @@ const loadRecords = async () => {
   loading.value = true;
   try {
     const result = await PluginSubscribeRecord(
-      viewId.value,
+      '1',
       listId.value,
       currentPage.value,
       pageSize.value
@@ -163,12 +162,6 @@ watch(() => route.params.listId, (newId) => {
   loadRecords();
 });
 
-watch(() => route.params.viewId, (newId) => {
-  viewId.value = newId as string;
-  currentPage.value = 1; // 重置页码
-  loadRecords();
-});
-
 // 监听recordId变化，同步选中状态
 watch(() => route.params.recordId, (newRecordId) => {
   if (newRecordId && typeof newRecordId === 'string') {
@@ -182,13 +175,12 @@ watch(() => route.params.contentId, (newValue) => {
 onMounted(() => {
   // 初始化加载列表数据
   console.log('加载列表数据:', listId.value);
-  console.log('所属视图:', viewId.value);
   loadRecords();
 });
 
 const navigateToContent = (recordId: string) => {
   router.push({
-    path: `/subscribe/view-${viewId.value}/list-${listId.value}/${recordId}`
+    path: `/subscribe/view-1/list-${listId.value}/${recordId}`
   })
 }
 </script>
@@ -269,6 +261,7 @@ const navigateToContent = (recordId: string) => {
           cursor: pointer;
           border-bottom: 1px solid var(--td-border-level-1-color);
           transition: all 0.2s ease;
+            border-right: 3px solid transparent;
 
           &:hover {
             background-color: var(--td-bg-color-container-hover);
@@ -280,7 +273,6 @@ const navigateToContent = (recordId: string) => {
 
             .item-title {
               color: var(--td-brand-color);
-              font-weight: 600;
             }
           }
 
