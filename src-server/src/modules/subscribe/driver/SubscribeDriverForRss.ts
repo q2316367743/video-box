@@ -5,8 +5,7 @@ import {
   SourceSubscribeRule
 } from "@/types/SourceSubscribe";
 import {AbsSubscribePluginHttp} from "@/modules/subscribe/abs/AbsSubscribePluginHttp";
-import {parseMedia} from "@/utils/http/HtmlUtil";
-import {buildDomParseEngin} from "@/algorithm/ParserEngine";
+import {parseHtml, parseMedia} from "@/utils/http/HtmlUtil";
 
 export class SubscribeDriverForRss extends AbsSubscribePluginHttp {
   private readonly subscribe: SourceSubscribe;
@@ -35,8 +34,7 @@ export class SubscribeDriverForRss extends AbsSubscribePluginHttp {
         // 存在内容规则，那么描述就是描述
         let data = await this.request(link);
 
-        const $ = buildDomParseEngin(data);
-        const html = $.parseToString(item_content);
+        const html = parseHtml(item_content, data);
 
         const htmlParse = parseMedia(html);
         description = item['content:encoded'] || '';

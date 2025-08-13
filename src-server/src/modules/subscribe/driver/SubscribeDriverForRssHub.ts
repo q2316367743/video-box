@@ -7,9 +7,8 @@ import {
 import {AbsSubscribePluginHttp} from "@/modules/subscribe/abs/AbsSubscribePluginHttp";
 import {sourceSubscribeRssHubDao} from "@/dao";
 import {draw} from "radash";
-import {parseMedia} from "@/utils/http/HtmlUtil";
+import {parseHtml, parseMedia} from "@/utils/http/HtmlUtil";
 import {debug} from "@rasla/logify";
-import {buildDomParseEngin} from "@/algorithm/ParserEngine";
 
 export class SubscribeDriverForRssHub extends AbsSubscribePluginHttp {
   private readonly subscribe: SourceSubscribe;
@@ -49,8 +48,7 @@ export class SubscribeDriverForRssHub extends AbsSubscribePluginHttp {
         // 存在内容规则，那么描述就是描述
         let data = await this.request(link);
 
-        const $ = buildDomParseEngin(data);
-        const html = $.parseToString(item_content);
+        const html = parseHtml(item_content, data);
 
         const htmlParse = parseMedia(html);
         description = item['content:encoded'] || '';
