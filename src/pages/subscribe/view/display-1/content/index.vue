@@ -268,6 +268,7 @@ onUnmounted(() => {
           margin: 16px auto;
           display: block;
           box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+          cursor: pointer;
         }
 
         :deep(p) {

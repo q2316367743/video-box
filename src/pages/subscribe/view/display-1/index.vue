@@ -52,7 +52,12 @@
                 {{ getPlainText(record.description) }}
               </div>
               <div class="item-meta">
-                <span class="item-time">{{ prettyDate(record.pub_date) }}</span>
+                <t-tag size="small" theme="warning" variant="outline">
+                  <template #icon>
+                    <time-icon />
+                  </template>
+                  {{ prettyDate(record.pub_date) }}
+                </t-tag>
                 <t-tag size="small" :variant="record.read_status === 1 ? 'light' : 'dark'"
                   :theme="record.read_status === 1 ? 'success' : 'primary'">
                   {{ record.read_status === 1 ? '已读' : '未读' }}
@@ -80,7 +85,7 @@
 import { PluginSubscribeRecord, pluginSubscribeRead, pluginSubscribeRefresh } from '@/apis/plugin/subscribe';
 import { SourceSubscribeRecordListView } from '@/types/SourceSubscribe';
 import { prettyDate } from '@/utils/lang/FormatUtil';
-import { RefreshIcon } from 'tdesign-icons-vue-next';
+import { RefreshIcon, TimeIcon } from 'tdesign-icons-vue-next';
 
 const route = useRoute();
 const router = useRouter();
