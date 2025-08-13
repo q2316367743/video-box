@@ -40,12 +40,22 @@
           </h1>
 
           <t-space class="content-meta" size="large">
-            <t-tag theme="warning" variant="light-outline">
-              <template #icon>
-                <time-icon />
-              </template>
-             {{ prettyDate(contentData.created_at) }}
-            </t-tag>
+            <t-tooltip content="发布时间">
+              <t-tag theme="warning" variant="light-outline">
+                <template #icon>
+                  <time-icon />
+                </template>
+                {{ prettyDate(contentData.pub_date) }}
+              </t-tag>
+            </t-tooltip>
+            <t-tooltip content="刷新时间">
+              <t-tag theme="primary" variant="light-outline">
+                <template #icon>
+                  <refresh-icon />
+                </template>
+                {{ prettyDate(contentData.created_at) }}
+              </t-tag>
+            </t-tooltip>
           </t-space>
 
           <!-- 内容文本 -->
@@ -69,14 +79,12 @@
 </template>
 
 <script lang="ts" setup>
-import { useRoute, useRouter } from 'vue-router';
-import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { MessagePlugin } from 'tdesign-vue-next';
+import { RefreshIcon, TimeIcon } from "tdesign-icons-vue-next";
 import { pluginSubscribeContent } from '@/apis/plugin/subscribe';
 import { SourceSubscribeRecordView } from '@/types/SourceSubscribe';
 import { showImagesPlugin } from '@/plugin/MediaPlugin.tsx';
-import {TimeIcon} from "tdesign-icons-vue-next";
-import {prettyDate} from "@/utils/lang/FormatUtil.ts";
+import { prettyDate } from "@/utils/lang/FormatUtil.ts";
 
 const route = useRoute();
 const router = useRouter();
@@ -91,17 +99,17 @@ const contentData = ref<SourceSubscribeRecordView | null>(null);
 // 图片点击事件处理函数
 const handleImageClick = (event: Event) => {
   const target = event.target as HTMLElement;
-  
+
   // 检查点击的是否是图片
   if (target.tagName === 'IMG') {
     const contentTextElement = target.closest('.content-text');
-    
+
     if (contentTextElement) {
       // 获取该元素内的所有图片
       const images = contentTextElement.querySelectorAll('img');
       const imageUrls: string[] = [];
       let clickedIndex = 0;
-      
+
       images.forEach((img, index) => {
         const src = img.getAttribute('src');
         if (src) {
@@ -111,12 +119,12 @@ const handleImageClick = (event: Event) => {
           }
         }
       });
-      
+
       if (imageUrls.length > 0) {
         // 阻止默认行为
         event.preventDefault();
         event.stopPropagation();
-        
+
         // 调用图片预览
         showImagesPlugin(imageUrls, clickedIndex, () => {
           console.log('图片预览已关闭');
@@ -139,13 +147,6 @@ const handleSelectArticle = () => {
   // router.push(`/subscribe/view/${viewId.value}/record/${listId.value}`);
 };
 
-// 格式化日期
-const formatDate = (timestamp: number | string | undefined) => {
-  if (!timestamp) return '未知时间';
-  const date = new Date(Number(timestamp));
-  return date.toLocaleString();
-};
-
 // 加载内容数据
 const loadContentData = async () => {
   if (!contentId.value) return;
@@ -163,6 +164,12 @@ const loadContentData = async () => {
     contentData.value = null;
   } finally {
     loading.value = false;
+    // 尝试返回顶部
+    document.querySelector('.record-content')?.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth',
+    })
   }
 };
 
@@ -176,7 +183,7 @@ watch(() => route.params.contentId, (newId) => {
 onMounted(() => {
   // 初始化加载内容数据
   loadContentData();
-  
+
   // 添加图片点击事件监听器
   document.addEventListener('click', handleImageClick, true);
 });
@@ -241,7 +248,7 @@ onUnmounted(() => {
           align-items: center;
           gap: 6px;
           color: var(--td-text-color-secondary);
-          
+
           :deep(.t-icon) {
             color: var(--td-brand-color);
           }
@@ -283,7 +290,7 @@ onUnmounted(() => {
           color: var(--td-brand-color);
           text-decoration: none;
           transition: color 0.2s ease;
-          
+
           &:hover {
             color: var(--td-brand-color-hover);
           }
@@ -329,7 +336,7 @@ onUnmounted(() => {
         :deep(ol) {
           padding-left: 24px;
           margin: 16px 0;
-          
+
           li {
             margin-bottom: 8px;
           }
@@ -339,18 +346,19 @@ onUnmounted(() => {
           width: 100%;
           border-collapse: collapse;
           margin: 20px 0;
-          
-          th, td {
+
+          th,
+          td {
             border: 1px solid var(--td-component-stroke);
             padding: 10px;
             text-align: left;
           }
-          
+
           th {
             background-color: var(--td-bg-color-container-hover);
             font-weight: 600;
           }
-          
+
           tr:nth-child(even) {
             background-color: var(--td-bg-color-container-hover);
           }
@@ -380,13 +388,13 @@ onUnmounted(() => {
 
   .content-card {
     padding: 16px;
-    
+
     .content-body {
       .content-title {
         font-size: 1.5rem;
         line-height: 1.8rem;
       }
-      
+
       .content-actions {
         :deep(.t-space) {
           flex-direction: column;
@@ -396,26 +404,26 @@ onUnmounted(() => {
 
       .content-meta {
         padding: 10px;
-        
+
         :deep(.t-space) {
           flex-direction: column;
           align-items: flex-start;
           gap: 8px;
         }
       }
-      
+
       .content-text {
         font-size: 15px;
-        
+
         :deep(img) {
           margin: 12px auto;
         }
-        
+
         :deep(pre) {
           padding: 12px;
           font-size: 14px;
         }
-        
+
         :deep(blockquote) {
           padding: 12px;
         }
@@ -427,13 +435,13 @@ onUnmounted(() => {
 @media (max-width: 480px) {
   .content-card {
     padding: 12px;
-    
+
     .content-body {
       .content-title {
         font-size: 1.3rem;
         line-height: 1.6rem;
       }
-      
+
       .content-text {
         font-size: 14px;
       }

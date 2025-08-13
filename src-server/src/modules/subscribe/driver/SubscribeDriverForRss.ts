@@ -4,9 +4,9 @@ import {
   SourceSubscribeDisplay, SourceSubscribeMediaCore, SourceSubscribeRecordResult,
   SourceSubscribeRule
 } from "@/types/SourceSubscribe";
-import {load} from "cheerio";
 import {AbsSubscribePluginHttp} from "@/modules/subscribe/abs/AbsSubscribePluginHttp";
 import {parseMedia} from "@/utils/http/HtmlUtil";
+import {buildDomParseEngin} from "@/algorithm/ParserEngine";
 
 export class SubscribeDriverForRss extends AbsSubscribePluginHttp {
   private readonly subscribe: SourceSubscribe;
@@ -28,15 +28,16 @@ export class SubscribeDriverForRss extends AbsSubscribePluginHttp {
       const {title = '', pubDate = '', link = ''} = item;
       if (!link) continue;
       let description: string;
-      let content: string;
       let media: Array<SourceSubscribeMediaCore>;
+      let content: string;
 
       if (item_content) {
         // 存在内容规则，那么描述就是描述
-        let html = await this.request(link);
-        if (item_content) {
-          html = load(html)(item_content).text()
-        }
+        let data = await this.request(link);
+
+        const $ = buildDomParseEngin(data);
+        const html = $.parseToString(item_content);
+
         const htmlParse = parseMedia(html);
         description = item['content:encoded'] || '';
         media = htmlParse.mediaList;

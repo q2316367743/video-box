@@ -1,7 +1,7 @@
 import Parser from 'rss-parser';
 import {
   SourceSubscribe,
-   SourceSubscribeDisplay,  SourceSubscribeRecordResult,
+  SourceSubscribeDisplay, SourceSubscribeMediaCore, SourceSubscribeRecordResult,
   SourceSubscribeRule
 } from "@/types/SourceSubscribe";
 import {AbsSubscribePluginHttp} from "@/modules/subscribe/abs/AbsSubscribePluginHttp";
@@ -9,6 +9,7 @@ import {sourceSubscribeRssHubDao} from "@/dao";
 import {draw} from "radash";
 import {parseMedia} from "@/utils/http/HtmlUtil";
 import {debug} from "@rasla/logify";
+import {buildDomParseEngin} from "@/algorithm/ParserEngine";
 
 export class SubscribeDriverForRssHub extends AbsSubscribePluginHttp {
   private readonly subscribe: SourceSubscribe;
@@ -34,17 +35,35 @@ export class SubscribeDriverForRssHub extends AbsSubscribePluginHttp {
 
     debug(`请求链接：${link}`)
 
+    const {item_content} = this.rule;
     const rss = await this.parser.parseURL(link);
     const views = new Array<SourceSubscribeRecordResult>();
     for (let item of rss.items) {
       const {title = '', pubDate = '', link = ''} = item;
       if (!link) continue;
-      // 不存在内容规则，那么描述就是内容
-      const desc = item['content:encoded'] || '';
-      const {mediaList, html} = parseMedia(desc);
-      const media = mediaList;
-      const content = desc;
-      const description = html;
+      let description: string;
+      let media: Array<SourceSubscribeMediaCore>;
+      let content: string;
+
+      if (item_content) {
+        // 存在内容规则，那么描述就是描述
+        let data = await this.request(link);
+
+        const $ = buildDomParseEngin(data);
+        const html = $.parseToString(item_content);
+
+        const htmlParse = parseMedia(html);
+        description = item['content:encoded'] || '';
+        media = htmlParse.mediaList;
+        content = htmlParse.html;
+      } else {
+        // 不存在内容规则，那么描述就是内容
+        const desc = item['content:encoded'] || '';
+        const {mediaList, html} = parseMedia(desc);
+        media = mediaList;
+        content = desc;
+        description = html;
+      }
       views.push({
         title,
         description,
@@ -57,7 +76,6 @@ export class SubscribeDriverForRssHub extends AbsSubscribePluginHttp {
     }
 
     return views;
-
 
   }
 

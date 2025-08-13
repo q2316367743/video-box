@@ -13,10 +13,8 @@ export function pluginSubscribeList(display: number) {
 // 分页查询一个订阅下的记录
 export function PluginSubscribeRecord(display: string, id: string, pageNum: number, pageSize: number) {
   return useGet<PageResponse<SourceSubscribeRecordListView>>(`/api/plugin/subscribe/record/${display}/${id}`, {
-    params: {
-      pageNum,
-      pageSize
-    }
+    pageNum,
+    pageSize
   });
 }
 

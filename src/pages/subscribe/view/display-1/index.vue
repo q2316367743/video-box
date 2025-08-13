@@ -29,12 +29,23 @@
         <div class="record-menu">
           <div v-for="record in records" :key="record.id" class="record-menu-item"
             :class="{ 'active': selectedRecordId === record.id }" @click="handleItemClick(record.id)">
-            <div class="item-title">{{ record.title || '无标题' }}</div>
+            <div class="item-header">
+              <div class="item-title">{{ record.title || '无标题' }}</div>
+              <div class="item-publisher" v-if="record.subscribe">
+                <t-avatar size="16px" :image="record.subscribe.icon" v-if="record.subscribe.icon">
+                  {{ record.subscribe.name?.charAt(0) || 'S' }}
+                </t-avatar>
+                <t-avatar size="16px" v-else>
+                  {{ record.subscribe.name?.charAt(0) || 'S' }}
+                </t-avatar>
+                <span class="publisher-name">{{ record.subscribe.name || '未知发布者' }}</span>
+              </div>
+            </div>
             <div class="item-description" v-if="record.description">
               {{ getPlainText(record.description) }}
             </div>
             <div class="item-meta">
-              <span class="item-time">{{ prettyDate(record.created_at) }}</span>
+              <span class="item-time">{{ prettyDate(record.pub_date) }}</span>
               <t-tag size="small" :variant="record.read_status === 1 ? 'light' : 'dark'"
                 :theme="record.read_status === 1 ? 'success' : 'primary'">
                 {{ record.read_status === 1 ? '已读' : '未读' }}
@@ -59,7 +70,7 @@
 
 <script lang="ts" setup>
 import { PluginSubscribeRecord, pluginSubscribeRead } from '@/apis/plugin/subscribe';
-import { SourceSubscribeRecord } from '@/types/SourceSubscribe';
+import { SourceSubscribeRecordListView } from '@/types/SourceSubscribe';
 import { prettyDate } from '@/utils/lang/FormatUtil';
 
 const route = useRoute();
@@ -67,7 +78,7 @@ const router = useRouter();
 
 const listId = ref(route.params.listId as string);
 const loading = ref(false);
-const records = ref<SourceSubscribeRecord[]>([]);
+const records = ref<SourceSubscribeRecordListView[]>([]);
 const total = ref(0);
 const currentPage = ref(1);
 const pageSize = ref(10);
@@ -259,7 +270,7 @@ const navigateToContent = (recordId: string) => {
           cursor: pointer;
           border-bottom: 1px solid var(--td-border-level-1-color);
           transition: all 0.2s ease;
-            border-right: 3px solid transparent;
+          border-right: 3px solid transparent;
 
           &:hover {
             background-color: var(--td-bg-color-container-hover);
@@ -274,15 +285,32 @@ const navigateToContent = (recordId: string) => {
             }
           }
 
+          .item-header {
+            margin-bottom: 8px;
+          }
+
           .item-title {
             font-size: 14px;
             color: var(--td-text-color-primary);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             line-height: 1.5;
             word-wrap: break-word;
             word-break: break-all;
             white-space: normal;
             font-weight: 500;
+          }
+
+          .item-publisher {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 2px;
+
+            .publisher-name {
+              font-size: 12px;
+              color: var(--td-text-color-secondary);
+              font-weight: 400;
+            }
           }
 
           .item-description {

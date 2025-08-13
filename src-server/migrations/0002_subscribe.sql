@@ -25,6 +25,7 @@ create table source_subscribe_rule
     list             text not null default '',
     item_title       text not null default '',
     item_description text not null default '',
+    item_pub_date    text not null default '',
     item_link        text not null default '',
     item_content     text not null default '',
     item_charset     text not null default ''

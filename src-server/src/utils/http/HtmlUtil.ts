@@ -1,4 +1,4 @@
-import {load} from 'cheerio';
+import {CheerioAPI, load} from 'cheerio';
 import {SourceSubscribeMediaCore} from "@/types/SourceSubscribe";
 
 interface ParseResult {
@@ -94,4 +94,18 @@ export function parseMedia(rawHtml: string): ParseResult {
     html: $.html(),      // cheerio 默认会补齐闭合标签，如需完全原样可再处理
     mediaList
   };
+}
+
+export function parseHtml(selector: string, html: string | CheerioAPI): string {
+  const $ = typeof html === 'string' ? load(html) : html;
+  const [select, attr = 'text'] = selector.split('@');
+  const element = $(select);
+  switch (attr) {
+    case 'text':
+      return element.text();
+    case 'html':
+      return element.html() || (typeof html === 'string' ? html : html.toString());
+    default:
+      return element.attr(attr) || '';
+  }
 }

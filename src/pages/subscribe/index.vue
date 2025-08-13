@@ -9,7 +9,8 @@
             <h2>{{ SubscribeDisplayMap[activeDisplayType] }}</h2>
             <div class="view-actions">
               <t-tooltip content="刷新订阅">
-                <t-button theme="default" shape="square" variant="text" @click="refreshSubscribes">
+                <t-button theme="default" shape="square" variant="text" :loading="isRefreshLoading"
+                  @click="refreshSubscribes">
                   <template #icon><t-icon name="refresh" /></template>
                 </t-button>
               </t-tooltip>
@@ -26,7 +27,7 @@
             </div>
           </div>
         </div>
-        <display-radio v-model="activeDisplayType" />
+        <display-radio :display="displayCount" @change="selectOption" />
         <t-loading :loading="loading" size="small" class="mt-8px">
           <t-empty v-if="filteredSubscribeList.length === 0" description="暂无数据" />
 
@@ -39,7 +40,7 @@
                   @click="handleSubscribeChange(item.id)">
                   <div class="item-icon">
                     <t-avatar v-if="item.icon" :image="item.icon" size="small" shape="round" />
-                    <t-icon v-else name="rss" />
+                    <rss-icon v-else />
                   </div>
                   <div class="item-content">
                     <div class="item-name">{{ item.name }}</div>
@@ -76,7 +77,7 @@
                     :class="{ active: activeSubscribeId === item.id }" @click="handleSubscribeChange(item.id)">
                     <div class="item-icon">
                       <t-avatar v-if="item.icon" :image="item.icon" size="small" shape="round" />
-                      <t-icon v-else name="rss" />
+                      <rss-icon v-else />
                     </div>
                     <div class="item-content">
                       <div class="item-name">{{ item.name }}</div>
@@ -102,7 +103,8 @@
 </template>
 
 <script lang="ts" setup>
-import { pluginSubscribeList, pluginSubscribeRefresh } from '@/apis/plugin/subscribe';
+import { RssIcon } from 'tdesign-icons-vue-next';
+import { DisplayStatistics, pluginSubscribeDisplay, pluginSubscribeList, pluginSubscribeRefresh } from '@/apis/plugin/subscribe';
 import { SourceSubscribe, SourceSubscribeDisplay } from '@/types/SourceSubscribe';
 import { SubscribeDisplayMap } from './constant';
 import DisplayRadio from '@/pages/subscribe/components/DisplayRadio.vue';
@@ -111,6 +113,8 @@ const route = useRoute();
 const router = useRouter();
 const subscribeList = ref<SourceSubscribe[]>([]);
 const loading = ref(false);
+const isRefreshLoading = ref(false);
+const displayCount = ref(new Array<DisplayStatistics>());
 const activeDisplayType = ref<SourceSubscribeDisplay>(1); // 默认显示文章类型
 const activeSubscribeId = ref<string>(''); // 当前选中的订阅源ID
 const expandedGroups = ref<string[]>([]); // 展开的分组
@@ -156,12 +160,20 @@ const getGroupCount = (group: SourceSubscribe[]) => {
 
 // 刷新订阅列表
 const refreshSubscribes = async () => {
-  if (activeSubscribeId.value) {
-    // 选择订阅则刷新订阅
-    await pluginSubscribeRefresh(activeSubscribeId.value);
+  if (isRefreshLoading.value) return;
+  isRefreshLoading.value = true;
+  try {
+    if (activeSubscribeId.value && activeSubscribeId.value !== 'all') {
+      // 选择订阅则刷新订阅
+      await pluginSubscribeRefresh(activeSubscribeId.value);
+    }
+    // 再刷新列表
+    loadSubscribeList();
+    // 刷新统计信息
+    initDisplayCount();
+  } finally {
+    isRefreshLoading.value = false;
   }
-  // 再刷新列表
-  await loadSubscribeList();
 };
 
 
@@ -187,7 +199,11 @@ const navigateToSubscribe = (subscribeId: string) => {
     path: `/subscribe/view-${activeDisplayType.value}/list-${subscribeId}/pending`
   });
 };
-
+const initDisplayCount = () => {
+  pluginSubscribeDisplay().then(res => {
+    displayCount.value = res;
+  })
+}
 // 加载订阅列表数据
 const loadSubscribeList = async () => {
   if (!activeDisplayType.value) return;
@@ -207,6 +223,19 @@ const loadSubscribeList = async () => {
     loading.value = false;
   }
 };
+
+
+const selectOption = (option: SourceSubscribeDisplay) => {
+  activeDisplayType.value = option;
+  activeSubscribeId.value = 'all';
+  // 重新请求API获取数据
+  loadSubscribeList();
+
+  // 导航到新的路由，更新view参数，并将list设为all，content设为pending
+  router.push({
+    path: `/subscribe/view-${activeDisplayType.value}/list-all/pending`
+  });
+}
 
 // 监听路由参数变化
 watch(activeDisplayType, () => {
@@ -229,6 +258,8 @@ watch(() => route.params.subscribeId, (newId) => {
 onMounted(() => {
   // 初始化加载视图数据
   loadSubscribeList();
+  // 初始化记录数量
+  initDisplayCount();
 
   if (route.params.subscribeId) {
     activeSubscribeId.value = route.params.subscribeId as string;
