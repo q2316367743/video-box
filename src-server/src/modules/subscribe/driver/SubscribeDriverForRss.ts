@@ -5,7 +5,8 @@ import {
   SourceSubscribeRule
 } from "@/types/SourceSubscribe";
 import {AbsSubscribePluginHttp} from "@/modules/subscribe/abs/AbsSubscribePluginHttp";
-import {parseHtml, parseMedia} from "@/utils/http/HtmlUtil";
+import {parseMedia} from "@/utils/http/HtmlUtil";
+import {load} from "cheerio";
 
 export class SubscribeDriverForRss extends AbsSubscribePluginHttp {
   private readonly subscribe: SourceSubscribe;
@@ -34,19 +35,19 @@ export class SubscribeDriverForRss extends AbsSubscribePluginHttp {
         // 存在内容规则，那么描述就是描述
         let data = await this.request(link);
 
-        const html = parseHtml(item_content, data);
+        const html = load(data)(item_content).html() || data;
 
         const htmlParse = parseMedia(html);
         description = item['content:encoded'] || '';
         media = htmlParse.mediaList;
-        content = htmlParse.html;
+        content = html;
       } else {
         // 不存在内容规则，那么描述就是内容
         const desc = item['content:encoded'] || '';
         const {mediaList, html} = parseMedia(desc);
+        description = html;
         media = mediaList;
         content = desc;
-        description = html;
       }
       views.push({
         title,

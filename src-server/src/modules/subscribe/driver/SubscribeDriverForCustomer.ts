@@ -27,8 +27,9 @@ export class SubscribeDriverForCustomer extends AbsSubscribePluginHttp {
     // 此处要解码
     debug(`正在从「${link}」中获取内容`)
     let html = await this.request(link);
-    const content = parseHtml(item_content, html);
+    // const content = parseHtml(item_content, html);
     // const content = html2md(body);
+    const content = load(html)(item_content).html() || html;
 
     return {link, content};
   }
