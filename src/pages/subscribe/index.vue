@@ -15,7 +15,7 @@
                 </t-button>
               </t-tooltip>
               <t-tooltip content="添加订阅">
-                <t-button theme="default" shape="square" variant="text">
+                <t-button theme="default" shape="square" variant="text" @click="handleDiscover()">
                   <template #icon><t-icon name="add" /></template>
                 </t-button>
               </t-tooltip>
@@ -236,6 +236,11 @@ const selectOption = (option: SourceSubscribeDisplay) => {
     path: `/subscribe/view-${activeDisplayType.value}/list-all/pending`
   });
 }
+const handleDiscover = () => {
+  router.push({
+    path: `/subscribe/discover`
+  });
+}
 
 // 监听路由参数变化
 watch(activeDisplayType, () => {
@@ -247,7 +252,7 @@ watch(activeDisplayType, () => {
   router.push({
     path: `/subscribe/view-${activeDisplayType.value}/list-all/pending`
   });
-})
+});
 
 watch(() => route.params.subscribeId, (newId) => {
   if (newId) {
