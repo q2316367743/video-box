@@ -6,8 +6,7 @@
         <!-- 用户信息区域 -->
         <div class="user-info">
           <div class="avatar">
-            <img :src="record.subscribe?.icon || '/default-avatar.png'"
-                 :alt="record.subscribe?.name || '用户'"/>
+            <img :src="record.subscribe?.icon || '/default-avatar.png'" :alt="record.subscribe?.name || '用户'" />
           </div>
           <div class="user-details">
             <div class="username">{{ record.subscribe?.name || '匿名用户' }}</div>
@@ -17,7 +16,7 @@
             <t-dropdown>
               <t-button variant="text" size="small">
                 <template #icon>
-                  <MoreIcon/>
+                  <MoreIcon />
                 </template>
               </t-button>
               <t-dropdown-menu>
@@ -33,35 +32,23 @@
         <div class="post-content">
           <!-- 文本内容 -->
           <div class="post-text" v-if="record.description">
-            <div 
-              :class="['text-content', { 'expanded': expandedPosts[record.id] }]"
-              v-html="record.description"
-              ref="textContentRef"
-            ></div>
-            <div 
-              v-if="shouldShowExpandButton(record.id)"
-              class="expand-button"
-              @click="toggleExpand(record.id)"
-            >
+            <div :class="['text-content', { 'expanded': expandedPosts[record.id] }]" v-html="record.description"
+              ref="textContentRef"></div>
+            <div v-if="shouldShowExpandButton(record.id)" class="expand-button" @click="toggleExpand(record.id)">
               {{ expandedPosts[record.id] ? '收起' : '展开' }}
             </div>
           </div>
 
           <!-- 媒体网格 -->
           <div v-if="record.medias && record.medias.length > 0" class="media-grid"
-               :class="`grid-${getGridClass(record.medias.length)}`">
-            <div v-for="(media, index) in record.medias.slice(0, 9)"
-                 :key="index"
-                 class="media-item"
-                 @click="showMediaPlugin(record.medias, index)">
-              <img v-if="media.type === 1"
-                   :src="media.url"
-                   :alt="`图片 ${index + 1}`"
-                   class="media-image"/>
+            :class="`grid-${getGridClass(record.medias.length)}`">
+            <div v-for="(media, index) in record.medias.slice(0, 9)" :key="index" class="media-item"
+              @click="showMediaPlugin(record.medias, index)">
+              <img v-if="media.type === 1" :src="media.url" :alt="`图片 ${index + 1}`" class="media-image" />
               <div v-else-if="media.type === 2" class="media-video">
                 <video :src="media.url" :poster="media.alt" preload="metadata"></video>
                 <div class="play-button">
-                  <PlayIcon/>
+                  <PlayIcon />
                 </div>
               </div>
               <!-- 如果超过9张，显示更多提示 -->
@@ -76,25 +63,21 @@
     </div>
 
     <!-- 媒体查看器 -->
-    <t-image-viewer
-      v-model:visible="mediaViewerVisible"
-      :images="currentMedias"
-      :index="currentMediaIndex"
-    />
+    <t-image-viewer v-model:visible="mediaViewerVisible" :images="currentMedias" :index="currentMediaIndex" />
 
-    <t-back-top container=".weibo-container"/>
+    <t-back-top container=".weibo-container" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import {PluginSubscribeRecord} from '@/apis/plugin/subscribe';
-import {SourceSubscribeRecordListView} from '@/types/SourceSubscribe';
-import {prettyDate} from '@/utils/lang/FormatUtil';
+import { PluginSubscribeRecord } from '@/apis/plugin/subscribe';
+import { SourceSubscribeRecordListView } from '@/types/SourceSubscribe';
+import { prettyDate } from '@/utils/lang/FormatUtil';
 import {
   MoreIcon,
   PlayIcon
 } from 'tdesign-icons-vue-next';
-import {showImagesPlugin, showMediaPlugin} from "@/plugin/MediaPlugin.tsx";
+import { showImagesPlugin, showMediaPlugin } from "@/plugin/MediaPlugin.tsx";
 
 const route = useRoute();
 const router = useRouter();
@@ -177,13 +160,11 @@ const toggleExpand = (recordId: string) => {
 
 // 判断是否需要显示展开按钮
 const shouldShowExpandButton = (recordId: string) => {
-  return nextTick(() => {
-    const textElement = document.querySelector(`[data-record-id="${recordId}"] .text-content`);
-    if (textElement) {
-      return textElement.scrollHeight > maxHeight;
-    }
-    return false;
-  });
+  const textElement = document.querySelector(`[data-record-id="${recordId}"] .text-content`);
+  if (textElement) {
+    return textElement.scrollHeight > maxHeight;
+  }
+  return false;
 };
 
 // 检查文本高度并初始化展开状态
@@ -318,7 +299,7 @@ const navigateToContent = (recordId: string) => {
       overflow: hidden;
       transition: max-height 0.3s ease;
       position: relative;
-      
+
       &:not(.expanded)::after {
         content: '';
         position: absolute;
@@ -329,10 +310,10 @@ const navigateToContent = (recordId: string) => {
         background: linear-gradient(transparent, rgba(255, 255, 255, 0.9) 50%, #ffffff);
         pointer-events: none;
       }
-      
+
       &.expanded {
         max-height: none;
-        
+
         &::after {
           display: none;
         }
@@ -345,7 +326,7 @@ const navigateToContent = (recordId: string) => {
       font-size: 14px;
       margin-top: 8px;
       user-select: none;
-      
+
       &:hover {
         text-decoration: underline;
       }
@@ -562,6 +543,7 @@ const navigateToContent = (recordId: string) => {
   }
 
   .media-grid {
+
     &.grid-3,
     &.grid-6,
     &.grid-9 {

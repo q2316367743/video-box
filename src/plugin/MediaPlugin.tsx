@@ -1,8 +1,9 @@
-import { createVNode, defineComponent, render, ref, onMounted, onUnmounted, computed, nextTick } from 'vue';
+import { createVNode, defineComponent, render, ref, onMounted, onUnmounted, computed, nextTick, watch } from 'vue';
 import {CloseIcon, ChevronLeftIcon, ChevronRightIcon, PlayIcon, PauseIcon, SoundIcon, SoundMute1Icon, SoundHighIcon, SoundUpIcon, SoundDownIcon} from 'tdesign-icons-vue-next';
 import { SourceSubscribeMedia } from '@/types/SourceSubscribe';
 import { detectMediaType, getMediaTypeName, formatTime } from '@/utils/mediaUtils';
 import styles from './MediaPlugin.module.css';
+import { Button } from 'tdesign-vue-next';
 
 // 组件属性类型定义
 interface MediaPreviewProps {
@@ -36,6 +37,16 @@ const MediaPreview = defineComponent<MediaPreviewProps>({
     const isSmallMedia = ref(false);
     const mediaLoaded = ref(false);
     const showControls = ref(false);
+    
+    // 图片缩放相关状态
+    const scale = ref(1);
+    const translateX = ref(0);
+    const translateY = ref(0);
+    const isDragging = ref(false);
+    const dragStartX = ref(0);
+    const dragStartY = ref(0);
+    const lastTranslateX = ref(0);
+    const lastTranslateY = ref(0);
     
     // 视频/音频播放状态
     const isPlaying = ref(false);
@@ -83,11 +94,21 @@ const MediaPreview = defineComponent<MediaPreviewProps>({
       }
     };
 
+    // 重置图片缩放状态
+    const resetZoom = () => {
+      scale.value = 1;
+      translateX.value = 0;
+      translateY.value = 0;
+      lastTranslateX.value = 0;
+      lastTranslateY.value = 0;
+    };
+
     // 媒体加载完成处理
     const handleMediaLoad = () => {
       mediaLoaded.value = true;
       checkMediaSize();
       preloadMedias();
+      resetZoom(); // 重置缩放状态
       
       // 如果是视频或音频，设置时长
       if (currentMediaType.value === 2 || currentMediaType.value === 3) {
@@ -114,6 +135,7 @@ const MediaPreview = defineComponent<MediaPreviewProps>({
     const prevMedia = () => {
       stopCurrentMedia();
       mediaLoaded.value = false;
+      resetZoom(); // 重置缩放状态
       if (currentIndex.value > 0) {
         currentIndex.value--;
       } else {
@@ -125,6 +147,7 @@ const MediaPreview = defineComponent<MediaPreviewProps>({
     const nextMedia = () => {
       stopCurrentMedia();
       mediaLoaded.value = false;
+      resetZoom(); // 重置缩放状态
       if (currentIndex.value < props.medias.length - 1) {
         currentIndex.value++;
       } else {
@@ -137,6 +160,7 @@ const MediaPreview = defineComponent<MediaPreviewProps>({
       if (index >= 0 && index < props.medias.length) {
         stopCurrentMedia();
         mediaLoaded.value = false;
+        resetZoom(); // 重置缩放状态
         currentIndex.value = index;
       }
     };
@@ -303,6 +327,11 @@ const MediaPreview = defineComponent<MediaPreviewProps>({
           event.preventDefault();
           togglePlayPause();
           break;
+        case '0': // 数字0键重置缩放
+          if (currentMediaType.value === 1) {
+            resetZoom();
+          }
+          break;
       }
     };
 
@@ -313,17 +342,114 @@ const MediaPreview = defineComponent<MediaPreviewProps>({
       }
     };
 
+    // 处理图片滚轮缩放
+    const handleWheel = (event: WheelEvent) => {
+      // 只对图片类型处理滚轮缩放
+      if (currentMediaType.value !== 1) return;
+      
+      event.preventDefault();
+      
+      // 获取图片元素
+      const img = mediaRef.value as HTMLImageElement;
+      if (!img) return;
+      
+      // 获取图片的实际尺寸和位置
+      const rect = img.getBoundingClientRect();
+      
+      // 计算鼠标在图片上的相对位置（考虑当前的缩放和平移）
+      const mouseX = (event.clientX - rect.left) / scale.value - translateX.value / scale.value;
+      const mouseY = (event.clientY - rect.top) / scale.value - translateY.value / scale.value;
+      
+      // 缩放比例变化，向下滚动缩小，向上滚动放大
+      const delta = event.deltaY > 0 ? -0.1 : 0.1;
+      const oldScale = scale.value;
+      const newScale = Math.max(0.1, Math.min(10, oldScale + delta));
+      
+      if (newScale !== oldScale) {
+        // 更新缩放值
+        scale.value = newScale;
+        
+        // 计算新的平移值，使鼠标指向的点保持在相同位置
+        // 公式: 新位置 = 鼠标位置 - (鼠标位置 - 旧位置) * (新缩放 / 旧缩放)
+        translateX.value = (event.clientX - rect.left) - mouseX * newScale;
+        translateY.value = (event.clientY - rect.top) - mouseY * newScale;
+        
+        // 更新最后的位移值
+        lastTranslateX.value = translateX.value;
+        lastTranslateY.value = translateY.value;
+      }
+    };
+
+    // 处理图片拖动开始
+    const handleMouseDown = (event: MouseEvent) => {
+      // 只对图片类型且已缩放的情况处理拖动
+      if (currentMediaType.value !== 1 || scale.value <= 1) return;
+      
+      event.preventDefault();
+      isDragging.value = true;
+      dragStartX.value = event.clientX;
+      dragStartY.value = event.clientY;
+    };
+
+    // 处理图片拖动
+    const handleMouseMove = (event: MouseEvent) => {
+      if (!isDragging.value) return;
+      
+      const deltaX = event.clientX - dragStartX.value;
+      const deltaY = event.clientY - dragStartY.value;
+      
+      translateX.value = lastTranslateX.value + deltaX;
+      translateY.value = lastTranslateY.value + deltaY;
+    };
+
+    // 处理图片拖动结束
+    const handleMouseUp = () => {
+      if (isDragging.value) {
+        isDragging.value = false;
+        lastTranslateX.value = translateX.value;
+        lastTranslateY.value = translateY.value;
+      }
+    };
+
+    // 双击重置缩放
+    const handleDoubleClick = (event: MouseEvent) => {
+      if (currentMediaType.value === 1) {
+        event.preventDefault();
+        resetZoom();
+      }
+    };
+
     // 生命周期
     onMounted(() => {
       document.addEventListener('keydown', handleKeydown);
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
       document.body.style.overflow = 'hidden';
       showControls.value = true;
     });
 
     onUnmounted(() => {
       document.removeEventListener('keydown', handleKeydown);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
       document.body.style.overflow = '';
     });
+
+    // 监听媒体类型变化，重置缩放状态
+    watch(currentMediaType, () => {
+      resetZoom();
+    });
+
+    // 获取图片样式，包括缩放和位移
+    const getImageStyle = () => {
+      if (currentMediaType.value !== 1) return {};
+      
+      return {
+        transform: `scale(${scale.value}) translate(${translateX.value / scale.value}px, ${translateY.value / scale.value}px)`,
+        cursor: scale.value > 1 ? (isDragging.value ? 'grabbing' : 'grab') : 'default',
+        transition: isDragging.value ? 'none' : 'transform 0.1s ease'
+      };
+    };
 
     // 渲染不同类型的媒体元素
     const renderMediaElement = () => {
@@ -343,11 +469,15 @@ const MediaPreview = defineComponent<MediaPreviewProps>({
                 styles.image,
                 { [styles.imageSmall]: isSmallMedia.value }
               ]}
+              style={getImageStyle()}
               onError={handleMediaError}
               onLoad={() => {
                 handleMediaLoad();
                 setupMediaEvents();
               }}
+              onWheel={handleWheel}
+              onMousedown={handleMouseDown}
+              onDblclick={handleDoubleClick}
             />
           );
           
@@ -400,8 +530,12 @@ const MediaPreview = defineComponent<MediaPreviewProps>({
 
     // 渲染媒体控制栏
     const renderMediaControls = () => {
-      if (currentMediaType.value === 1) return null; // 图片不需要控制栏
+      if (currentMediaType.value === 1) {
+        // 对于图片类型，不再在这里显示缩放信息和重置按钮
+        return null;
+      }
       
+      // 视频/音频控制栏
       const progress = duration.value > 0 ? (currentTime.value / duration.value) * 100 : 0;
       const VolumeIcon = getVolumeIcon();
       
@@ -457,9 +591,23 @@ const MediaPreview = defineComponent<MediaPreviewProps>({
           onClick={handleMaskClick}
         >
           {/* 固定在屏幕左上角的媒体计数器 */}
-          {props.medias.length > 1 && mediaLoaded.value && (
+          {mediaLoaded.value && (
             <div class={styles.fixedCounter}>
-              {currentIndex.value + 1} / {props.medias.length} - {getMediaTypeName(currentMediaType.value)}
+              {props.medias.length > 1 && (
+                <span>{currentIndex.value + 1} / {props.medias.length} - {getMediaTypeName(currentMediaType.value)}</span>
+              )}
+              {currentMediaType.value === 1 && scale.value !== 1 && (
+                <span class={styles.zoomIndicator}>
+                  {Math.round(scale.value * 100)}%
+              <Button 
+                class={[styles.resetZoomButton, 'ml-12px']} 
+                onClick={resetZoom}
+                size={'small'}
+              >
+                重置
+              </Button>
+                </span>
+              )}
             </div>
           )}
           {/* 关闭按钮 */}
@@ -470,6 +618,8 @@ const MediaPreview = defineComponent<MediaPreviewProps>({
               { [styles.closeExternal]: isSmallMedia.value }
             ]} 
             onClick={closePreview}
+            title="关闭预览"
+            aria-label="关闭预览"
           >
             <CloseIcon size="24" />
           </button>
@@ -486,6 +636,8 @@ const MediaPreview = defineComponent<MediaPreviewProps>({
                   { [styles.navExternal]: isSmallMedia.value }
                 ]} 
                 onClick={prevMedia}
+                title="上一个媒体"
+                aria-label="上一个媒体"
               >
                 <ChevronLeftIcon size="32" />
               </button>
@@ -514,6 +666,8 @@ const MediaPreview = defineComponent<MediaPreviewProps>({
                   { [styles.navExternal]: isSmallMedia.value }
                 ]} 
                 onClick={nextMedia}
+                title="下一个媒体"
+                aria-label="下一个媒体"
               >
                 <ChevronRightIcon size="32" />
               </button>
