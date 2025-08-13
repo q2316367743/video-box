@@ -2,16 +2,22 @@
   <div class="record-layout">
     <!-- 左侧边栏 -->
     <div width="324px" class="record-sidebar">
-      <div class="sidebar-header flex justify-between">
-        <h3>订阅记录</h3>
-        <span class="total-count">共 {{ total }} 条记录</span>
+      <div class="sidebar-header">
+        <div class="header-top flex justify-between items-center">
+          <h3>订阅记录</h3>
+          <t-button size="small" variant="outline" :loading="loading" @click="refreshData" class="refresh-btn">
+            <template #icon>
+              <RefreshIcon />
+            </template>
+            刷新
+          </t-button>
+        </div>
+        <div class="header-bottom">
+          <span class="total-count">共 {{ total }} 条记录</span>
+        </div>
       </div>
 
-      <div class="sidebar-loading" v-if="loading">
-        <t-loading size="small" text="加载中..." />
-      </div>
-
-      <div class="sidebar-content" v-else>
+      <div class="sidebar-content">
         <!-- 分页信息 -->
         <div class="sidebar-pagination">
           <div class="pagination-controls">
@@ -27,31 +33,33 @@
 
         <!-- 记录菜单 - 使用原生div -->
         <div class="record-menu">
-          <div v-for="record in records" :key="record.id" class="record-menu-item"
-            :class="{ 'active': selectedRecordId === record.id }" @click="handleItemClick(record.id)">
-            <div class="item-header">
-              <div class="item-title">{{ record.title || '无标题' }}</div>
-              <div class="item-publisher" v-if="record.subscribe">
-                <t-avatar size="16px" :image="record.subscribe.icon" v-if="record.subscribe.icon">
-                  {{ record.subscribe.name?.charAt(0) || 'S' }}
-                </t-avatar>
-                <t-avatar size="16px" v-else>
-                  {{ record.subscribe.name?.charAt(0) || 'S' }}
-                </t-avatar>
-                <span class="publisher-name">{{ record.subscribe.name || '未知发布者' }}</span>
+          <t-loading :loading="loading">
+            <div v-for="record in records" :key="record.id" class="record-menu-item"
+              :class="{ 'active': selectedRecordId === record.id }" @click="handleItemClick(record.id)">
+              <div class="item-header">
+                <div class="item-title">{{ record.title || '无标题' }}</div>
+                <div class="item-publisher" v-if="record.subscribe">
+                  <t-avatar size="16px" :image="record.subscribe.icon" v-if="record.subscribe.icon">
+                    {{ record.subscribe.name?.charAt(0) || 'S' }}
+                  </t-avatar>
+                  <t-avatar size="16px" v-else>
+                    {{ record.subscribe.name?.charAt(0) || 'S' }}
+                  </t-avatar>
+                  <span class="publisher-name">{{ record.subscribe.name || '未知发布者' }}</span>
+                </div>
+              </div>
+              <div class="item-description" v-if="record.description">
+                {{ getPlainText(record.description) }}
+              </div>
+              <div class="item-meta">
+                <span class="item-time">{{ prettyDate(record.pub_date) }}</span>
+                <t-tag size="small" :variant="record.read_status === 1 ? 'light' : 'dark'"
+                  :theme="record.read_status === 1 ? 'success' : 'primary'">
+                  {{ record.read_status === 1 ? '已读' : '未读' }}
+                </t-tag>
               </div>
             </div>
-            <div class="item-description" v-if="record.description">
-              {{ getPlainText(record.description) }}
-            </div>
-            <div class="item-meta">
-              <span class="item-time">{{ prettyDate(record.pub_date) }}</span>
-              <t-tag size="small" :variant="record.read_status === 1 ? 'light' : 'dark'"
-                :theme="record.read_status === 1 ? 'success' : 'primary'">
-                {{ record.read_status === 1 ? '已读' : '未读' }}
-              </t-tag>
-            </div>
-          </div>
+          </t-loading>
         </div>
 
         <div v-if="records.length === 0" class="no-records">
@@ -69,9 +77,10 @@
 </template>
 
 <script lang="ts" setup>
-import { PluginSubscribeRecord, pluginSubscribeRead } from '@/apis/plugin/subscribe';
+import { PluginSubscribeRecord, pluginSubscribeRead, pluginSubscribeRefresh } from '@/apis/plugin/subscribe';
 import { SourceSubscribeRecordListView } from '@/types/SourceSubscribe';
 import { prettyDate } from '@/utils/lang/FormatUtil';
+import { RefreshIcon } from 'tdesign-icons-vue-next';
 
 const route = useRoute();
 const router = useRouter();
@@ -192,6 +201,18 @@ const navigateToContent = (recordId: string) => {
     path: `/subscribe/view-1/list-${listId.value}/${recordId}`
   })
 }
+
+// 刷新数据
+const refreshData = async () => {
+
+  loading.value = true;
+  try {
+    await pluginSubscribeRefresh(listId.value);
+  } finally {
+    loading.value = false;
+  }
+  await loadRecords();
+}
 </script>
 
 <style scoped lang="less">
@@ -201,7 +222,7 @@ const navigateToContent = (recordId: string) => {
   display: flex;
 
   .record-sidebar {
-    background-color: #fafafa;
+    background-color: var(--td-bg-color-component);
     border-right: 1px solid var(--td-border-level-1-color);
     display: flex;
     flex-direction: column;
@@ -348,7 +369,7 @@ const navigateToContent = (recordId: string) => {
   }
 
   .record-content {
-    background-color: #ffffff;
+    background-color: var(--td-bg-color-container);
     padding: 8px;
     overflow-y: auto;
     flex: auto;

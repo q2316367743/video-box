@@ -49,7 +49,10 @@ export class SubscribeDriverForCustomer extends AbsSubscribePluginHttp {
       const $item = load(item);
       const pubDate = parseHtml(item_pub_date, $item);
       const link = parseHtml(item_link, $item);
+
       if (!link) continue;
+      if (await this.exist(link)) continue;
+
       const url = new URL(link, this.subscribe.url).toString();
       results.push({
         title: parseHtml(item_title, $item),

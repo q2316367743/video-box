@@ -6,6 +6,8 @@ import {
 import {http} from "@/global/http";
 import {parseArrayBuffer} from "@/utils/file/CharsetUtil";
 import {AbsSubscribePluginStore} from "@/modules/subscribe/abs/AbsSubscribePluginStore";
+import {sourceSubscribeRecordDao} from "@/dao";
+import {debug} from "@rasla/logify";
 
 export abstract class AbsSubscribePluginHttp extends AbsSubscribePluginStore {
 
@@ -30,6 +32,15 @@ export abstract class AbsSubscribePluginHttp extends AbsSubscribePluginStore {
     }
 
     return html;
+  }
+
+  protected async exist(link: string): Promise<boolean> {
+    const t = await sourceSubscribeRecordDao.query()
+      .eq('subscribe_id', this.id)
+      .eq('link', link)
+      .count();
+    debug(`链接「${link}」存在「${t}」条`)
+    return t > 0;
   }
 
   abstract display: SourceSubscribeDisplay;

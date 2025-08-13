@@ -336,7 +336,7 @@ onMounted(() => {
 
 .sidebar-title {
   font-size: 13px;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--td-text-color-primary);
   font-weight: 500;
 }
 
@@ -352,11 +352,11 @@ onMounted(() => {
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: rgba(0, 0, 0, 0.04);
+    background-color: var(--td-bg-color-container-hover);
   }
 
   &.active {
-    background-color: rgba(0, 0, 0, 0.08);
+    background-color: var(--td-bg-color-container-active);
   }
 }
 
@@ -388,7 +388,7 @@ onMounted(() => {
 
 .item-count {
   font-size: 12px;
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--td-text-color-secondary);
   padding: 0 4px;
   min-width: 24px;
   text-align: right;

@@ -27,6 +27,9 @@ export class SubscribeDriverForRss extends AbsSubscribePluginHttp {
     for (let item of rss.items) {
       const {title = '', pubDate = '', link = ''} = item;
       if (!link) continue;
+
+      if (await this.exist(link)) continue;
+
       let description: string;
       let media: Array<SourceSubscribeMediaCore>;
       let content: string;

@@ -7,7 +7,7 @@ import {
 } from "@/types/SourceSubscribe";
 
 export abstract class AbsSubscribePluginStore implements SubscribeDriver {
-  private readonly id: string;
+  protected readonly id: string;
   private readonly prefix: string;
 
   protected constructor(id: string) {
