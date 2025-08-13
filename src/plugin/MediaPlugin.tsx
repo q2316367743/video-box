@@ -456,6 +456,12 @@ const MediaPreview = defineComponent<MediaPreviewProps>({
           class={styles.overlay} 
           onClick={handleMaskClick}
         >
+          {/* 固定在屏幕左上角的媒体计数器 */}
+          {props.medias.length > 1 && mediaLoaded.value && (
+            <div class={styles.fixedCounter}>
+              {currentIndex.value + 1} / {props.medias.length} - {getMediaTypeName(currentMediaType.value)}
+            </div>
+          )}
           {/* 关闭按钮 */}
           <button 
             class={[
@@ -495,18 +501,7 @@ const MediaPreview = defineComponent<MediaPreviewProps>({
             >
               {renderMediaElement()}
               
-              {/* 媒体计数器 */}
-              {props.medias.length > 1 && mediaLoaded.value && (
-                <div 
-                  class={[
-                    styles.counter,
-                    styles.counterVisible,
-                    { [styles.counterExternal]: isSmallMedia.value }
-                  ]}
-                >
-                  {currentIndex.value + 1} / {props.medias.length} - {getMediaTypeName(currentMediaType.value)}
-                </div>
-              )}
+              {/* 媒体计数器 - 移除了原来的位置 */}
             </div>
 
             {/* 右切换按钮 */}

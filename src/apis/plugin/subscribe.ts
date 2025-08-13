@@ -3,10 +3,10 @@ import {
   SourceSubscribeRecordListView,
   SourceSubscribeRecordView
 } from "@/types/SourceSubscribe";
-import {PageResponse, useGet} from "../common";
+import { PageResponse, useGet } from "../common";
 
 // 查询一个展示类型下全部的订阅项
-export function pluginSubscribeList(display: string) {
+export function pluginSubscribeList(display: number) {
   return useGet<Array<SourceSubscribe>>(`/api/plugin/subscribe/list/${display}`);
 }
 
@@ -34,6 +34,17 @@ export function pluginSubscribeRefresh(id: string) {
 // 已读一个记录
 export function pluginSubscribeRead(id: string) {
   return useGet(`/api/plugin/subscribe/read/${id}`);
+}
+
+export interface DisplayStatistics {
+  display: number;
+  record_count: number;
+}
+
+// 获取一个订阅的详情
+export function pluginSubscribeDisplay() {
+  // display=1是content，其余的是record
+  return useGet<Array<DisplayStatistics>>(`/api/plugin/subscribe/display`);
 }
 
 

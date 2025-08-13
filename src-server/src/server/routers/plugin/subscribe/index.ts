@@ -5,8 +5,11 @@ import pluginSubscribeContentRouter from "@/server/routers/plugin/subscribe/rout
 import pluginSubscribeRefreshRouter from "@/server/routers/plugin/subscribe/routers/PluginSubscribeRefreshRouter";
 import pluginSubscribeReadRouter from "@/server/routers/plugin/subscribe/routers/PluginSubscribeReadRouter";
 import pluginSubscribeAddRouter from "@/server/routers/plugin/subscribe/routers/PluginSubscribeAddRouter";
+import PluginSubscribeDisplayRouter from "@/server/routers/plugin/subscribe/routers/PluginSubscribeDisplayRouter";
 
 export default new Elysia({prefix: '/plugin/subscribe'})
+  // 获取所有的展示项
+  .use(PluginSubscribeDisplayRouter)
   // 查询一个展示类型下全部的订阅项
   .use(pluginSubscribeListRouter)
   // 分页查询一个订阅下的记录

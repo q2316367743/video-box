@@ -11,7 +11,7 @@
           </div>
           <div class="user-details">
             <div class="username">{{ record.subscribe?.name || '匿名用户' }}</div>
-            <div class="post-time">{{ prettyDate(record.created_at) }}</div>
+            <div class="post-time">{{ prettyDate(record.pub_date) }}</div>
           </div>
           <div class="more-actions">
             <t-dropdown>

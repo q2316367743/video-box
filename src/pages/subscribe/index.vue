@@ -26,8 +26,8 @@
             </div>
           </div>
         </div>
-        <display-radio :options="['1', '2', '3', '4', '5', '6']" v-model="activeDisplayType" />
-        <t-loading :loading="loading" size="small">
+        <display-radio v-model="activeDisplayType" />
+        <t-loading :loading="loading" size="small" class="mt-8px">
           <t-empty v-if="filteredSubscribeList.length === 0" description="暂无数据" />
 
           <div v-else class="sidebar-content">
@@ -105,20 +105,19 @@
 import { pluginSubscribeList, pluginSubscribeRefresh } from '@/apis/plugin/subscribe';
 import { SourceSubscribe, SourceSubscribeDisplay } from '@/types/SourceSubscribe';
 import { SubscribeDisplayMap } from './constant';
-import DisplayRadio from './components/DisplayRadio.vue';
+import DisplayRadio from '@/pages/subscribe/components/DisplayRadio.vue';
 
 const route = useRoute();
 const router = useRouter();
 const subscribeList = ref<SourceSubscribe[]>([]);
 const loading = ref(false);
-const activeDisplayType = ref<string>('1'); // 默认显示文章类型
+const activeDisplayType = ref<SourceSubscribeDisplay>(1); // 默认显示文章类型
 const activeSubscribeId = ref<string>(''); // 当前选中的订阅源ID
 const expandedGroups = ref<string[]>([]); // 展开的分组
 
 // 根据当前选择的展示类型过滤订阅列表
 const filteredSubscribeList = computed(() => {
-  const displayType = parseInt(activeDisplayType.value) as SourceSubscribeDisplay;
-  return subscribeList.value.filter(item => item.display === displayType);
+  return subscribeList.value.filter(item => item.display === activeDisplayType.value);
 });
 
 // 无分组的订阅源
@@ -155,22 +154,14 @@ const getGroupCount = (group: SourceSubscribe[]) => {
   return group.reduce((sum, item) => sum + item.record_count, 0);
 };
 
-// 获取特定类型的记录总数
-const getTypeTotal = (type: SourceSubscribeDisplay) => {
-  return subscribeList.value
-    .filter(item => item.display === type)
-    .reduce((sum, item) => sum + item.record_count, 0);
-};
-
 // 刷新订阅列表
 const refreshSubscribes = async () => {
   if (activeSubscribeId.value) {
     // 选择订阅则刷新订阅
     await pluginSubscribeRefresh(activeSubscribeId.value);
-  } else {
-    // 否则刷新列表
-    await loadSubscribeList();
   }
+  // 再刷新列表
+  await loadSubscribeList();
 };
 
 
@@ -203,43 +194,9 @@ const loadSubscribeList = async () => {
 
   loading.value = true;
   try {
-    const result = await pluginSubscribeList(activeDisplayType.value as string);
+    const result = await pluginSubscribeList(activeDisplayType.value);
     if (result) {
       subscribeList.value = result;
-
-      // 如果当前类型没有数据，自动切换到有数据的类型
-      // const currentType = route.params.type as string || activeDisplayType.value;
-      // const currentTypeSubscribes = subscribeList.value.filter(
-      //   item => item.display === parseInt(currentType) as SourceSubscribeDisplay
-      // );
-
-      // if (currentTypeSubscribes.length === 0) {
-        // const availableTypes = [1, 2, 3, 4, 5, 6].filter(type =>
-        //   subscribeList.value.some(item => item.display === type)
-        // );
-        // if (availableTypes.length > 0) {
-        //   const newType = availableTypes[0].toString();
-        //   activeDisplayType.value = newType;
-        //
-        //   // 选择第一个可用的订阅源
-        //   const firstSubscribe = subscribeList.value.find(item => item.display === availableTypes[0]);
-        //   if (firstSubscribe) {
-        //     activeSubscribeId.value = firstSubscribe.id;
-        //     navigateToSubscribe(firstSubscribe.id);
-        //   }
-        // }
-      // } else {
-      //   activeDisplayType.value = currentType;
-
-        // 如果路由中有subscribeId参数，则使用该参数
-        // if (route.params.subscribeId) {
-        //   activeSubscribeId.value = route.params.subscribeId as string;
-        // } else if (currentTypeSubscribes.length > 0) {
-        //   // 否则选择第一个可用的订阅源
-        //   activeSubscribeId.value = currentTypeSubscribes[0].id;
-        //   navigateToSubscribe(currentTypeSubscribes[0].id);
-      //   }
-      // }
 
       // 自动展开所有分组
       expandedGroups.value = Object.keys(groupedSubscribes.value);
@@ -252,10 +209,6 @@ const loadSubscribeList = async () => {
 };
 
 // 监听路由参数变化
-watch(() => route.params.viewId, (newId) => {
-  activeDisplayType.value = newId as string;
-  activeSubscribeId.value = 'all';
-});
 watch(activeDisplayType, () => {
   activeSubscribeId.value = 'all';
   // 重新请求API获取数据
@@ -267,12 +220,6 @@ watch(activeDisplayType, () => {
   });
 })
 
-watch(() => route.params.type, (newType) => {
-  if (newType) {
-    activeDisplayType.value = newType as string;
-  }
-});
-
 watch(() => route.params.subscribeId, (newId) => {
   if (newId) {
     activeSubscribeId.value = newId as string;
@@ -282,11 +229,6 @@ watch(() => route.params.subscribeId, (newId) => {
 onMounted(() => {
   // 初始化加载视图数据
   loadSubscribeList();
-
-  // 如果路由中有参数，则使用这些参数
-  if (route.params.type) {
-    activeDisplayType.value = route.params.type as string;
-  }
 
   if (route.params.subscribeId) {
     activeSubscribeId.value = route.params.subscribeId as string;
@@ -350,7 +292,7 @@ onMounted(() => {
   width: 240px;
   border-right: 1px solid var(--td-component-stroke);
   overflow-y: auto;
-  background-color: #f5f5f5;
+  background-color: var(--td-bg-color-container);
 }
 
 .sidebar-content {
