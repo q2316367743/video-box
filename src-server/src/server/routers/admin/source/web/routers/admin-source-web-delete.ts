@@ -1,6 +1,5 @@
 import {Elysia, t} from "elysia";
 import {Result} from "@/views/Result";
-import {deleteById} from "@/utils/SqlUtil";
 import {sourceWebDao} from "@/dao";
 // 子路由
 

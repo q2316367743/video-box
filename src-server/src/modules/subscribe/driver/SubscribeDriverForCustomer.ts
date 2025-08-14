@@ -50,14 +50,19 @@ export class SubscribeDriverForCustomer extends AbsSubscribePluginHttp {
       const pubDate = parseHtml(item_pub_date, $item);
       const link = parseHtml(item_link, $item);
 
+      const pub_date = pubDate ? dayjs(pubDate).toDate().getTime() : 0;
+
       if (!link) continue;
-      if (await this.exist(link)) continue;
 
       const url = new URL(link, this.subscribe.url).toString();
+
+
+      if (await this.exist(url, pub_date)) continue;
+
       results.push({
         title: parseHtml(item_title, $item),
         description: parseHtml(item_description, $item),
-        pub_date: pubDate ? dayjs(pubDate).toDate().getTime() : 0,
+        pub_date,
         link: url,
         media: [],
         content: ''

@@ -1,7 +1,7 @@
 import {YesOrNoType} from "@/global/constant";
 
 // 订阅类型：RSS-1, rss hub-2，内部订阅-3，自定义订阅-4
-export type SourceSubscribeType = 1 | 2 | 3;
+export type SourceSubscribeType = 1 | 2 | 3 | 4;
 // 展示方式：1-文章，2-社交媒体，3-图片，4-视频，5-音频，6-通知
 export type SourceSubscribeDisplay = 1 | 2 | 3 | 4 | 5 | 6;
 // 媒体类型：1-图片，2-视频，3-音频
@@ -11,11 +11,19 @@ export type SourceSubscribeMediaType = 1 | 2 | 3;
 内部订阅无法修改展示方式，默认订阅会有预设展示方式
 */
 
+export interface SourceSubscribeCore {
+  name: string;
+  description: string;
+  url: string;
+  icon: string;
+  link: string;
+}
+
 /**
  * 订阅源
  * @see https://docs.rsshub.app/zh/
  */
-export interface SourceSubscribe {
+export interface SourceSubscribe extends SourceSubscribeCore {
   id: string;
   created_at: number;
   updated_at: number;
@@ -27,10 +35,7 @@ export interface SourceSubscribe {
   driver: string;
   // 展示方式
   display: SourceSubscribeDisplay;
-  name: string;
-  description: string;
-  url: string;
-  icon: string;
+
   /**
    * 是否使用AI
    * @default 0
@@ -46,9 +51,7 @@ export interface SourceSubscribe {
  * 订阅规则
  * @see https://app.follow.is/discover?type=transform
  */
-export interface SourceSubscribeRule {
-  id: string;
-  subscribe_id: string;
+export interface SourceSubscribeRuleCore {
 
   // ======================= 内部订阅 =======================
 
@@ -71,6 +74,11 @@ export interface SourceSubscribeRule {
   item_content: string;
   // 编码规则
   item_charset: string;
+}
+
+export interface SourceSubscribeRule extends SourceSubscribeRuleCore {
+  id: string;
+  subscribe_id: string;
 
 }
 
@@ -95,7 +103,7 @@ export interface SourceSubscribeRssHub {
   is_enabled: number;
 }
 
-interface SourceSubscribeList {
+export interface SourceSubscribeList {
 
   title: string;
   // 描述，去除图片、音频、视频，只显示100汉字
@@ -174,4 +182,32 @@ export interface SourceSubscribeRecordResult extends SourceSubscribeList, Source
 export interface SourceSubscribeRecordView extends SourceSubscribeRecord {
   media: Array<SourceSubscribeMedia>;
   content: SourceSubscribeContent;
+}
+
+export interface SourceSubscribeRuleParam extends Omit<SourceSubscribeRuleCore, 'data'> {
+  data: Record<string, any>;
+}
+
+export interface SourceSubscribePostParam {
+  name: string;
+  // 描述，去除图片、音频、视频，只显示100汉字
+  description: string;
+  // 图标
+  icon: string;
+  // 链接
+  url: string;
+  // 主页
+  link: string;
+  // 分组，默认情况根据域名分组
+  group: string;
+  // 类型
+  type: SourceSubscribeType;
+  // 使用的驱动，只有内部订阅有效
+  driver: string;
+  // 展示方式
+  display: SourceSubscribeDisplay;
+  // 是否使用AI自动总结
+  ai: YesOrNoType;
+
+  rule: SourceSubscribeRuleParam;
 }

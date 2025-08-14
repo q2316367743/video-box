@@ -1,10 +1,9 @@
-import { list } from "radash";
-import { debug } from "@rasla/logify";
-import { db } from "@/global/db";
-import { useSnowflake } from "./Snowflake";
+import {debug} from "@rasla/logify";
+import {db} from "@/global/db";
 
 interface TableLike {
   id: string;
+
   [key: string]: any;
 }
 
@@ -29,9 +28,12 @@ export async function selectList<T extends TableLike>(
   }
   let sql: string;
   if (Object.keys(query).length === 0) {
-    sql = `select * from ${tableName}`;
+    sql = `select *
+           from ${tableName}`;
   } else {
-    sql = `select * from ${tableName} where ${query.join(" and ")}`;
+    sql = `select *
+           from ${tableName}
+           where ${query.join(" and ")}`;
   }
   debug("select sql:\t\t" + sql);
   const statement = db.prepare(sql);
@@ -39,82 +41,19 @@ export async function selectList<T extends TableLike>(
   return (await statement.all(...values)) as Array<T>;
 }
 
-export async function getOne<T extends TableLike>(
-  tableName: string,
-  params: Partial<T> = {}
-): Promise<T | null> {
-  const list = await selectList<T>(tableName, params);
-  if (list.length === 0) {
-    return null;
+/**
+ * 开启事务
+ * @param callback
+ */
+export async function beginTransactional<T = void>(callback: () => Promise<T>): Promise<T> {
+  try {
+    db.sql`BEGIN`;
+    const t = await callback();
+    db.sql`COMMIT`;
+    return t;
+  } catch (e) {
+    console.error(e);
+    db.sql`ROLLBACK`;
+    throw e;
   }
-  return list[0];
-}
-
-export async function selectFirst<T extends TableLike>(
-  tableName: string,
-  params: Partial<T> = {}
-): Promise<T | null> {
-  const list = await selectList<T>(tableName, params);
-  if (list.length === 0) {
-    return null;
-  }
-  return list[0];
-}
-
-export async function selectById<T extends TableLike>(
-  tableName: string,
-  id: string
-): Promise<T | null> {
-  const statement = db.prepare(`select * from ${tableName} where id = ?`);
-  const target = (await statement.get(id)) as T;
-  return target || null;
-}
-
-export async function updateById<T extends TableLike>(
-  tableName: string,
-  id: string,
-  params: Partial<T>
-) {
-  const query = new Array<string>();
-  const values = new Array<any>();
-  for (const key in params) {
-    query.push(`\`${key}\` = ?`);
-    values.push(params[key]);
-  }
-  if (query.length === 0) {
-    // 没有更新的
-    return;
-  }
-  const sql = `update ${tableName} set ${query.join(", ")} where id = ?`;
-  debug("update sql:\t\t" + sql);
-  debug("update values:\t" + values);
-  const statement = db.prepare(sql);
-  const r = await statement.run(...values, id);
-  debug("update result:\t" + r.success);
-}
-
-export async function deleteById(tableName: string, id: string) {
-  const statement = db.prepare(`delete from ${tableName} where id = ?`);
-  return statement.run(id);
-}
-
-export async function insert<T extends TableLike>(
-  tableName: string,
-  params: Partial<Omit<T, "id">>
-) {
-  const query = new Array<string>();
-  const values = new Array<any>();
-  for (const key in params) {
-    if (key === "id") continue;
-    query.push(`\`${key}\``);
-    values.push(params[key]);
-  }
-  const sql = `insert into ${tableName} (id, ${query.join(
-    ", "
-  )}) values (${list(0, query.length, "?").join(", ")})`;
-  debug("insert sql:\t\t" + sql);
-  debug("insert values:\t" + values);
-  const statement = db.prepare(sql);
-  const r = await statement.run(useSnowflake().nextId(), ...values);
-  debug("insert result:\t" + r.success);
 }

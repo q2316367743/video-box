@@ -133,9 +133,9 @@ export const routes: Array<RouteRecordRaw> = [{
       path: 'view-6/list-:listId/pending',
       component: () => import('@/pages/subscribe/view/display-6/index.vue'),
     }, {
-      name: '订阅-添加',
-      path: 'add',
-      component: () => import('@/pages/subscribe/add/index.vue'),
+      name: '订阅-发现',
+      path: 'discover',
+      component: () => import('@/pages/subscribe/discover/index.vue'),
     }]
   }, {
     name: '设置',

@@ -12,6 +12,7 @@ create table source_subscribe
     name         text    not null default '',
     description  text    not null default '',
     url          text    not null default '',
+    link         text    not null default '',
     ai           integer not null default 0,
     `order`      integer not null default 0,
     record_count integer not null default -1
@@ -61,6 +62,9 @@ create table source_subscribe_record
     link         text    not null default '',
     read_status  integer not null default 0
 );
+
+create unique index uq_ssr_subscribe_id_link
+    on source_subscribe_record (subscribe_id, link);
 
 -- 订阅浏览媒体
 create table source_subscribe_media

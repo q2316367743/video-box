@@ -3,7 +3,7 @@ import {pluginSubscribeRecordService} from "@/service/plugin/subscribe/PluginSub
 import {error, info} from "@rasla/logify";
 import {TaskRunnerContext} from "@/modules/task/TaskRunner";
 import {SourceSubscribe} from "@/types/SourceSubscribe";
-import {db} from "@/global/db";
+import {beginTransactional} from "@/utils/SqlUtil";
 
 export async function subscribeRefreshOne(subscribe: SourceSubscribe) {
   try {
@@ -13,81 +13,76 @@ export async function subscribeRefreshOne(subscribe: SourceSubscribe) {
     let insert = 0;
     for (const item of list) {
       try {
-        db.sql`BEGIN`;
-        const old = await sourceSubscribeRecordDao.query().eq('link', item.link).one();
-        if (old) {
-          if (old.pub_date !== item.pub_date) {
-            // 更新了
-            await sourceSubscribeRecordDao.updateById(old.id, {
+        await beginTransactional(async () => {
+          const old = await sourceSubscribeRecordDao.query().eq('link', item.link).one();
+          if (old) {
+            if (old.pub_date !== item.pub_date) {
+              // 更新了
+              await sourceSubscribeRecordDao.updateById(old.id, {
+                title: item.title,
+                description: item.description,
+                pub_date: item.pub_date,
+                link: item.link,
+                updated_at: Date.now()
+              });
+              update += 1;
+              // 删除旧的媒体资源
+              await sourceSubscribeMediaDao.query().eq('record_id', old.id).delete();
+              // 插入新的资源
+              for (let media of item.media) {
+                await sourceSubscribeMediaDao.insert({
+                  ...media,
+                  subscribe_id: subscribe.id,
+                  record_id: old.id,
+                  created_at: Date.now(),
+                });
+              }
+              // 删除旧的内容
+              await sourceSubscribeContentDao.query().eq('record_id', old.id).delete();
+              // 插入新的内容
+              await sourceSubscribeContentDao.insert({
+                content: item.content,
+                subscribe_id: subscribe.id,
+                record_id: old.id,
+                created_at: Date.now(),
+                ai: '',
+                link: item.link,
+              })
+            }
+          } else {
+            // 不存在历史的，新增
+            const {id} = await sourceSubscribeRecordDao.insert({
               title: item.title,
               description: item.description,
               pub_date: item.pub_date,
               link: item.link,
-              updated_at: Date.now()
+              subscribe_id: subscribe.id,
+              created_at: Date.now(),
+              updated_at: Date.now(),
             });
-            update += 1;
-            // 删除旧的媒体资源
-            await sourceSubscribeMediaDao.query().eq('record_id', old.id).delete();
+            insert += 1;
             // 插入新的资源
             for (let media of item.media) {
               await sourceSubscribeMediaDao.insert({
                 ...media,
                 subscribe_id: subscribe.id,
-                record_id: old.id,
+                record_id: id,
                 created_at: Date.now(),
               });
             }
-            // 删除旧的内容
-            await sourceSubscribeContentDao.query().eq('record_id', old.id).delete();
             // 插入新的内容
             await sourceSubscribeContentDao.insert({
               content: item.content,
               subscribe_id: subscribe.id,
-              record_id: old.id,
+              record_id: id,
               created_at: Date.now(),
               ai: '',
               link: item.link,
             })
           }
-        }
-        else {
-          // 不存在历史的，新增
-          const {id} = await sourceSubscribeRecordDao.insert({
-            title: item.title,
-            description: item.description,
-            pub_date: item.pub_date,
-            link: item.link,
-            subscribe_id: subscribe.id,
-            created_at: Date.now(),
-            updated_at: Date.now(),
-          });
-          insert += 1;
-          // 插入新的资源
-          for (let media of item.media) {
-            await sourceSubscribeMediaDao.insert({
-              ...media,
-              subscribe_id: subscribe.id,
-              record_id: id,
-              created_at: Date.now(),
-            });
-          }
-          // 插入新的内容
-          await sourceSubscribeContentDao.insert({
-            content: item.content,
-            subscribe_id: subscribe.id,
-            record_id: id,
-            created_at: Date.now(),
-            ai: '',
-            link: item.link,
-          })
-        }
-        // TODO：处理内容
-        // 有内容规则才有内容，内部实现基于配置
-        db.sql`COMMIT`;
+        })
       } catch (e) {
-        console.error(e);
         error(`处理订阅「${subscribe.name}」出错: ` + ((e instanceof Error) ? e.message : String(e)));
-        db.sql`ROLLBACK`;
       }
     }
     // 更新订阅源的记录数量

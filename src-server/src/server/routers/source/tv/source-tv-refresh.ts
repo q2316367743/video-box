@@ -1,11 +1,11 @@
 import {Elysia, t} from "elysia";
 import {debug} from "@rasla/logify";
-import {db} from "@/global/db";
 import {getM3u8Channel} from "@/utils/file/M3u8Util";
 import {Result} from "@/views/Result";
 import {runAsyncTempTask} from "@/modules/task/TempTaskRunner";
 import {sourceTvChannelDao, sourceTvDao} from "@/dao";
 import {SourceTv} from "@/types/SourceTv";
+import {beginTransactional} from "@/utils/SqlUtil";
 
 const app = new Elysia();
 
@@ -15,8 +15,7 @@ async function runSourceTvRefresh(row: SourceTv) {
   debug("获取新的m3u8数据");
   const items = await getM3u8Channel(url);
   debug(`获取到${items.length}个直播渠道，开启事务`);
-  await db.exec("BEGIN");
-  try {
+  await beginTransactional(async () => {
     // 删除旧的直播渠道
     debug("删除旧的直播渠道");
     await sourceTvChannelDao.deleteFromTvId(id);
@@ -40,14 +39,7 @@ async function runSourceTvRefresh(row: SourceTv) {
       refresh_time: Date.now(),
       refresh_status: 1,
     })
-    // 提交事务
-    debug("提交事务");
-    await db.exec("COMMIT");
-  } catch (e) {
-    debug("回滚事务");
-    console.error(e);
-    await db.exec("ROLLBACK");
-  }
+  })
 }
 
 app.put(

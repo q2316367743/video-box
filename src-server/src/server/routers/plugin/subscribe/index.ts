@@ -6,6 +6,7 @@ import pluginSubscribeRefreshRouter from "@/server/routers/plugin/subscribe/rout
 import pluginSubscribeReadRouter from "@/server/routers/plugin/subscribe/routers/PluginSubscribeReadRouter";
 import pluginSubscribeAddRouter from "@/server/routers/plugin/subscribe/routers/PluginSubscribeAddRouter";
 import PluginSubscribeDisplayRouter from "@/server/routers/plugin/subscribe/routers/PluginSubscribeDisplayRouter";
+import pluginSubscribeParseRouter from "@/server/routers/plugin/subscribe/routers/PluginSubscribeParseRouter";
 
 export default new Elysia({prefix: '/plugin/subscribe'})
   // 获取所有的展示项
@@ -22,3 +23,5 @@ export default new Elysia({prefix: '/plugin/subscribe'})
   .use(pluginSubscribeReadRouter)
   // 添加一个订阅
   .use(pluginSubscribeAddRouter)
+  // 解析一个订阅
+  .use(pluginSubscribeParseRouter)

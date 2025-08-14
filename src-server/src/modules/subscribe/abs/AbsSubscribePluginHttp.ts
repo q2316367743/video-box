@@ -34,10 +34,11 @@ export abstract class AbsSubscribePluginHttp extends AbsSubscribePluginStore {
     return html;
   }
 
-  protected async exist(link: string): Promise<boolean> {
+  protected async exist(link: string, pubDate: number): Promise<boolean> {
     const t = await sourceSubscribeRecordDao.query()
       .eq('subscribe_id', this.id)
       .eq('link', link)
+      .eq('pub_date', pubDate)
       .count();
     debug(`链接「${link}」存在「${t}」条`)
     return t > 0;

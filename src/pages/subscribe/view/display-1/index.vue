@@ -83,6 +83,7 @@
 
 <script lang="ts" setup>
 import { PluginSubscribeRecord, pluginSubscribeRead, pluginSubscribeRefresh } from '@/apis/plugin/subscribe';
+import { useRssRefreshRoot } from '@/global/EventBus';
 import { SourceSubscribeRecordListView } from '@/types/SourceSubscribe';
 import { prettyDate } from '@/utils/lang/FormatUtil';
 import { RefreshIcon, TimeIcon } from 'tdesign-icons-vue-next';
@@ -104,7 +105,6 @@ const totalPages = computed(() => {
 
 // 加载记录数据
 const loadRecords = async () => {
-  console.log(listId.value)
   if (!listId.value) return;
 
   loading.value = true;
@@ -217,6 +217,7 @@ const refreshData = async () => {
     loading.value = false;
   }
   await loadRecords();
+  useRssRefreshRoot.trigger()
 }
 </script>
 
@@ -227,7 +228,7 @@ const refreshData = async () => {
   display: flex;
 
   .record-sidebar {
-    background-color: var(--td-bg-color-component);
+    background-color: var(--td-bg-color-container);
     border-right: 1px solid var(--td-border-level-1-color);
     display: flex;
     flex-direction: column;

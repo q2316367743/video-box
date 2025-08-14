@@ -1,9 +1,11 @@
 import {
   SourceSubscribe,
+  SourceSubscribePostParam,
   SourceSubscribeRecordListView,
-  SourceSubscribeRecordView
+  SourceSubscribeRecordView,
+  SubscribeRssParseResult
 } from "@/types/SourceSubscribe";
-import { PageResponse, useGet } from "../common";
+import { PageResponse, useGet, usePost } from "../common";
 
 // 查询一个展示类型下全部的订阅项
 export function pluginSubscribeList(display: number) {
@@ -26,7 +28,10 @@ export function pluginSubscribeContent(id: string) {
 
 // 强制刷新一个订阅记录
 export function pluginSubscribeRefresh(id: string) {
-  return useGet(`/api/plugin/subscribe/refresh/${id}`);
+  return useGet(`/api/plugin/subscribe/refresh/${id}`, {}, {
+    // 这个接口有点特殊，所以超时60s
+    timeout: 60000
+  });
 }
 
 // 已读一个记录
@@ -45,4 +50,11 @@ export function pluginSubscribeDisplay() {
   return useGet<Array<DisplayStatistics>>(`/api/plugin/subscribe/display`);
 }
 
+export function pluginSubscribeAdd(param: SourceSubscribePostParam) {
+  return usePost("/api/plugin/subscribe/add", param);
+}
+
+export function pluginSubscribeParse(param: SourceSubscribePostParam) {
+  return usePost<SubscribeRssParseResult>("/api/plugin/subscribe/parse", param);
+}
 

@@ -1,8 +1,9 @@
 <template>
   <div class="radio-group">
-    <t-tooltip v-for="(option, index) in options" :key="index" :content="option.label" placement="bottom">
+    <t-tooltip v-for="(option, index) in options"  :key="index" :content="option.label"
+      placement="bottom">
       <div @click="selectOption(option.value)" :class="['radio-item', { 'selected': modelValue === option.value }]"
-        :style="{ flex: 1 }">
+        :style="{ flex: 1 }" v-show="option.count > 0">
         <div class="icon">
           <rss-icon v-if="option.value === 1" />
           <chat-icon v-else-if="option.value === 2" />
@@ -52,6 +53,14 @@ const options = computed(() => {
     label: '视频',
     value: 4,
     count: 0
+  }, {
+    label: '通知',
+    value: 5,
+    count: 0
+  }, {
+    label: '音频',
+    value: 6,
+    count: 0
   }];
   const displayMap = map(props.display, 'display');
   o.forEach(option => {
@@ -74,7 +83,7 @@ const selectOption = (option: number) => {
   position: relative;
   overflow: hidden;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   padding: 0 12px;
 
   .radio-item {

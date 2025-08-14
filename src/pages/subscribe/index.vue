@@ -10,7 +10,7 @@
             <div class="view-actions">
               <t-tooltip content="刷新订阅">
                 <t-button theme="default" shape="square" variant="text" :loading="isRefreshLoading"
-                  @click="refreshSubscribes">
+                  @click="refreshSubscribes(true)">
                   <template #icon><t-icon name="refresh" /></template>
                 </t-button>
               </t-tooltip>
@@ -108,6 +108,7 @@ import { DisplayStatistics, pluginSubscribeDisplay, pluginSubscribeList, pluginS
 import { SourceSubscribe, SourceSubscribeDisplay } from '@/types/SourceSubscribe';
 import { SubscribeDisplayMap } from './constant';
 import DisplayRadio from '@/pages/subscribe/components/DisplayRadio.vue';
+import { useRssRefreshRoot } from '@/global/EventBus';
 
 const route = useRoute();
 const router = useRouter();
@@ -159,11 +160,12 @@ const getGroupCount = (group: SourceSubscribe[]) => {
 };
 
 // 刷新订阅列表
-const refreshSubscribes = async () => {
+const refreshSubscribes = async (r = false) => {
+  console.log('刷新订阅列表')
   if (isRefreshLoading.value) return;
   isRefreshLoading.value = true;
   try {
-    if (activeSubscribeId.value && activeSubscribeId.value !== 'all') {
+    if (activeSubscribeId.value && activeSubscribeId.value !== 'all' && r) {
       // 选择订阅则刷新订阅
       await pluginSubscribeRefresh(activeSubscribeId.value);
     }
@@ -269,7 +271,12 @@ onMounted(() => {
   if (route.params.subscribeId) {
     activeSubscribeId.value = route.params.subscribeId as string;
   }
+
+  useRssRefreshRoot.on(refreshSubscribes);
 });
+onBeforeUnmount(() => {
+  useRssRefreshRoot.off(refreshSubscribes);
+})
 </script>
 
 <style scoped lang="less">

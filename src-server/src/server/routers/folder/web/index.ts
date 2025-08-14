@@ -1,7 +1,7 @@
 import {Elysia, t} from "elysia";
-import {db} from "@/global/db";
 import {Result} from "@/views/Result";
 import {folderWebDao, sourceWebDao} from "@/dao";
+import {beginTransactional} from "@/utils/SqlUtil";
 
 const app = new Elysia({prefix: "/folder/web"});
 
@@ -105,24 +105,21 @@ app.delete(
   async ({body}) => {
     const {id} = body;
     try {
-      await db.exec("BEGIN");
-      // 先查询
-      const folder = await folderWebDao.selectById(id);
-      if (!folder) {
-        return Result.error("文件夹不存在");
-      }
-      // 再删除
-      await folderWebDao.deleteById(id);
-      // 批量更新源
-      await sourceWebDao.updateById(id, {
-        folder: ''
+      await beginTransactional(async () => {
+        // 先查询
+        const folder = await folderWebDao.selectById(id);
+        if (!folder) {
+          return Promise.reject(new Error("文件夹不存在"));
+        }
+        // 再删除
+        await folderWebDao.deleteById(id);
+        // 批量更新源
+        await sourceWebDao.updateById(id, {
+          folder: ''
+        })
       })
-      // 提交事务
-      await db.exec("COMMIT");
       return Result.success();
     } catch (e) {
-      console.error("删除文件夹失败", e);
-      await db.exec("ROLLBACK");
       return Result.error(
         "删除文件夹失败," + (e instanceof Error ? e.message : e)
       );

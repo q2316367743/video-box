@@ -4,6 +4,7 @@ import {db} from "@/global/db.js";
 import {readdir, readFile} from "node:fs/promises";
 import {resolve} from "node:path";
 import {debug} from '@rasla/logify';
+import {beginTransactional} from "@/utils/SqlUtil";
 
 const dir = process.env.NODE_ENV === 'production' ? APP_MIGRATION_DIR : resolve(process.cwd(), "migrations");
 
@@ -62,18 +63,16 @@ export async function runMigrations() {
   for (const {file, version} of pending) {
     const sql = await readFile(resolve(dir, file), "utf8");
     debug("开始处理文件：" + file + ",版本：" + version);
-    await db.exec("BEGIN");
     try {
-      debug("执行sql文件");
-      await db.exec(sql);
-      debug("插入版本");
-      await db.sql`INSERT INTO schema_version(version)
-                   VALUES (${version})`;
-      debug("提交事务");
-      await db.exec("COMMIT");
-      console.info(`✅ migration ${file} applied`);
+      await beginTransactional(async () => {
+        debug("执行sql文件");
+        await db.exec(sql);
+        debug("插入版本");
+        await db.sql`INSERT INTO schema_version(version)
+                     VALUES (${version})`;
+        console.info(`✅ migration ${file} applied`);
+      });
     } catch (e) {
-      await db.exec("ROLLBACK");
       console.error(`❌ migration ${file} failed`, e);
       throw e;
     }

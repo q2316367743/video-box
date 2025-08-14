@@ -1,17 +1,16 @@
 import {Elysia, t} from "elysia";
-import {subscribeAddService} from "@/service/plugin/subscribe/SubscribeAddService";
+import {subscribeParseService} from "@/service/plugin/subscribe/SubscribeParseService";
 import {SourceSubscribePostParam} from "@/types/SourceSubscribe";
 import {Result} from "@/views/Result";
 
 export default new Elysia()
-  .post('add', async ({body}) => {
-    await subscribeAddService(body as SourceSubscribePostParam);
-    return Result.success();
+  .post('parse', async ({body}) => {
+    const result = await subscribeParseService(body as SourceSubscribePostParam);
+    return Result.success(result);
   }, {
     body: t.Object({
       name: t.String(),
       description: t.String(),
-      icon: t.String(),
       url: t.String(),
       link: t.String(),
       group: t.String(),
