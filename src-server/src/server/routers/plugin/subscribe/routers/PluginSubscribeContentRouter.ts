@@ -15,7 +15,8 @@ export default new Elysia()
     return Result.success({
       ...record,
       content,
-      media
+      media,
+      subscribe
     })
   }, {
     params: t.Object({

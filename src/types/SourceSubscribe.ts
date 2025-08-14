@@ -182,6 +182,7 @@ export interface SourceSubscribeRecordResult extends SourceSubscribeList, Source
 export interface SourceSubscribeRecordView extends SourceSubscribeRecord {
   media: Array<SourceSubscribeMedia>;
   content: SourceSubscribeContent;
+  subscribe: SourceSubscribe;
 }
 
 export interface SourceSubscribeRuleParam extends Omit<SourceSubscribeRuleCore, 'data'> {

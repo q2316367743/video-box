@@ -77,7 +77,6 @@
     <div class="record-content">
       <router-view></router-view>
     </div>
-    <t-back-top container=".record-content" />
   </div>
 </template>
 
@@ -376,7 +375,6 @@ const refreshData = async () => {
 
   .record-content {
     background-color: var(--td-bg-color-container);
-    padding: 8px;
     overflow-y: auto;
     flex: auto;
 
