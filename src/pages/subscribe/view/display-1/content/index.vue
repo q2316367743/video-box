@@ -130,7 +130,7 @@
 
 <script lang="ts" setup>
 import { MessagePlugin } from 'tdesign-vue-next';
-import { RefreshIcon, TimeIcon, UserIcon, CalendarIcon } from "tdesign-icons-vue-next";
+import { RefreshIcon, UserIcon, CalendarIcon } from "tdesign-icons-vue-next";
 import { pluginSubscribeContent } from '@/apis/plugin/subscribe';
 import { SourceSubscribeRecordView } from '@/types/SourceSubscribe';
 import { showImagesPlugin } from '@/plugin/MediaPlugin.tsx';
