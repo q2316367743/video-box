@@ -343,7 +343,7 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   height: 60px;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(216, 216, 216, 0.65);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--td-border-level-1-color);
   border-radius: 8px 8px 0 0;
@@ -392,7 +392,7 @@ onUnmounted(() => {
 
 // 暗色主题适配
 [theme-mode="dark"] .top-bar {
-  background: rgba(0, 0, 0, 0.95);
+  background: rgba(39, 39, 39, 0.65);
 }
 
 // Pending状态样式

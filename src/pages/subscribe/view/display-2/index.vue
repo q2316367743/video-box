@@ -136,7 +136,7 @@ onUnmounted(() => {
 <style scoped lang="less">
 .weibo-layout {
   min-height: 100vh;
-  background-color: #f7f9fa;
+  background-color: var(--td-bg-color-page);
   overflow-y: auto;
   height: 100vh;
 
@@ -151,15 +151,20 @@ onUnmounted(() => {
     align-items: center;
     justify-content: center;
     padding: 20px;
-    color: #666;
+    color: var(--td-text-color-secondary);
     gap: 8px;
+    font-size: 14px;
   }
 
   .no-more-data {
     text-align: center;
     padding: 20px;
-    color: #999;
+    color: var(--td-text-color-placeholder);
     font-size: 14px;
+    background-color: var(--td-bg-color-container);
+    border-radius: 8px;
+    margin: 16px 0;
+    border: 1px solid var(--td-border-level-1-color);
   }
 
   .empty-state {
@@ -167,8 +172,12 @@ onUnmounted(() => {
     align-items: center;
     justify-content: center;
     height: 200px;
-    color: #999;
+    color: var(--td-text-color-placeholder);
     font-size: 16px;
+    background-color: var(--td-bg-color-container);
+    border-radius: 12px;
+    border: 1px solid var(--td-border-level-1-color);
+    margin: 20px 0;
   }
 }
 
@@ -182,16 +191,21 @@ onUnmounted(() => {
 
     .loading-indicator {
       padding: 16px;
+      font-size: 13px;
     }
 
     .no-more-data {
       padding: 16px;
       font-size: 13px;
+      margin: 12px 0;
+      border-radius: 6px;
     }
 
     .empty-state {
       height: 150px;
       font-size: 15px;
+      border-radius: 8px;
+      margin: 16px 0;
     }
   }
 }
@@ -204,16 +218,21 @@ onUnmounted(() => {
 
     .loading-indicator {
       padding: 12px;
+      font-size: 12px;
     }
 
     .no-more-data {
       padding: 12px;
       font-size: 12px;
+      margin: 8px 0;
+      border-radius: 4px;
     }
 
     .empty-state {
       height: 120px;
       font-size: 14px;
+      border-radius: 6px;
+      margin: 12px 0;
     }
   }
 }

@@ -100,3 +100,28 @@ values ('subscribe:cache', '订阅:刷新缓存', 'preset', '0 0 0/2 * * ?', 'Su
 -- 刷新rss hub可用性
 insert into task_definition (id, name, type, schedule, script)
 values ('subscribe:refresh-rss_hub', '订阅:刷新rss hub可用性', 'preset', '*/30 * * * *', 'refreshSourceRssHub.ts');
+
+-- AI
+create table source_ai
+(
+    id          text primary key,
+    created_at  integer not null default CURRENT_TIMESTAMP,
+    updated_at  integer not null default CURRENT_TIMESTAMP,
+    name        text    not null default '',
+    description text    not null default '',
+    url         text    not null default '',
+    token       text    not null default '',
+    is_enabled  integer not null default 1
+);
+
+-- AI模型
+create table source_ai_model
+(
+    id         text primary key,
+    created_at integer not null default CURRENT_TIMESTAMP,
+    updated_at integer not null default CURRENT_TIMESTAMP,
+    ai_id      text    not null default '',
+
+    model      text    not null default '',
+    owned      text    not null default ''
+);

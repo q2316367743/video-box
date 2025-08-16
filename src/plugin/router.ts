@@ -164,6 +164,10 @@ export const routes: Array<RouteRecordRaw> = [{
       name: '网盘设置',
       path: 'disk',
       component: () => import('@/pages/setting/page/disk-source/DiskSource.vue'),
+    }, {
+      name: 'AI设置',
+      path: 'ai',
+      component: () => import('@/pages/setting/page/ai-source/index.vue'),
     }]
   }, {
     name: '关于',

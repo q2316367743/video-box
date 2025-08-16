@@ -75,7 +75,7 @@ const shouldShowExpandButton = ref(false)
 const maxHeight = 120
 
 // 格式化时间
-const formatTime = (dateStr: string) => {
+const formatTime = (dateStr: number | string | Date) => {
   return prettyDate(dateStr)
 }
 
@@ -116,16 +116,17 @@ onMounted(() => {
 
 <style scoped lang="less">
 .weibo-card {
-  background: #ffffff;
+  background: var(--td-bg-color-container);
   border-radius: 12px;
   margin-bottom: 16px;
   padding: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e1e8ed;
+  box-shadow: var(--td-shadow-1);
+  border: 1px solid var(--td-border-level-1-color);
   transition: all 0.2s ease;
 
   &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--td-shadow-2);
+    background: var(--td-bg-color-container-hover);
   }
 }
 
@@ -141,6 +142,7 @@ onMounted(() => {
     overflow: hidden;
     margin-right: 12px;
     flex-shrink: 0;
+    border: 1px solid var(--td-border-level-1-color);
 
     img {
       width: 100%;
@@ -156,19 +158,19 @@ onMounted(() => {
     .username {
       font-weight: 700;
       font-size: 15px;
-      color: #0f1419;
+      color: var(--td-text-color-primary);
       line-height: 20px;
     }
 
     .user-handle {
       font-size: 13px;
-      color: #536471;
+      color: var(--td-text-color-secondary);
       line-height: 16px;
     }
 
     .post-time {
       font-size: 13px;
-      color: #536471;
+      color: var(--td-text-color-secondary);
       margin-top: 2px;
     }
   }
@@ -182,7 +184,7 @@ onMounted(() => {
   .post-text {
     font-size: 15px;
     line-height: 20px;
-    color: #0f1419;
+    color: var(--td-text-color-primary);
     margin-bottom: 12px;
     word-wrap: break-word;
     position: relative;
@@ -200,7 +202,7 @@ onMounted(() => {
         left: 0;
         right: 0;
         height: 40px;
-        background: linear-gradient(transparent, rgba(255, 255, 255, 0.9) 50%, #ffffff);
+        background: linear-gradient(transparent, var(--td-bg-color-container) 50%, var(--td-bg-color-container));
         pointer-events: none;
       }
 
@@ -214,7 +216,7 @@ onMounted(() => {
     }
 
     .expand-button {
-      color: #1d9bf0;
+      color: var(--td-text-color-brand);
       cursor: pointer;
       font-size: 14px;
       margin-top: 8px;
@@ -222,6 +224,7 @@ onMounted(() => {
 
       &:hover {
         text-decoration: underline;
+        color: var(--td-brand-color-hover);
       }
     }
 
@@ -234,11 +237,12 @@ onMounted(() => {
     }
 
     :deep(a) {
-      color: #1d9bf0;
+      color: var(--td-text-color-link);
       text-decoration: none;
 
       &:hover {
         text-decoration: underline;
+        color: var(--td-brand-color-hover);
       }
     }
   }
@@ -249,6 +253,7 @@ onMounted(() => {
   overflow: hidden;
   display: grid;
   gap: 2px;
+  border: 1px solid var(--td-border-level-1-color);
 
   &.grid-1 {
     grid-template-columns: 1fr;
@@ -283,13 +288,14 @@ onMounted(() => {
 
   .media-item {
     position: relative;
-    background: #f7f9fa;
+    background: var(--td-bg-color-secondarycontainer);
     cursor: pointer;
     overflow: hidden;
     aspect-ratio: 1;
 
     &:hover {
       opacity: 0.9;
+      background: var(--td-bg-color-secondarycontainer-hover);
     }
 
     .media-image {
@@ -317,13 +323,18 @@ onMounted(() => {
         transform: translate(-50%, -50%);
         width: 48px;
         height: 48px;
-        background: rgba(0, 0, 0, 0.7);
+        background: var(--td-mask-active);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
+        color: var(--td-text-color-anti);
         font-size: 20px;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: rgba(0, 0, 0, 0.8);
+        }
       }
     }
 
@@ -333,11 +344,11 @@ onMounted(() => {
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(0, 0, 0, 0.6);
+      background: var(--td-mask-active);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
+      color: var(--td-text-color-anti);
       font-size: 24px;
       font-weight: 700;
     }

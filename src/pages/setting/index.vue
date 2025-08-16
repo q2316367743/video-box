@@ -1,6 +1,6 @@
 <template>
   <app-page v-model="active" :menus>
-    <router-view/>
+    <router-view />
   </app-page>
 </template>
 <script lang="ts">
@@ -8,7 +8,7 @@ import AppPage from "@/layout/AppPage.vue";
 
 export default defineComponent({
   name: 'setting',
-  components: {AppPage},
+  components: { AppPage },
   data: () => ({
     active: '/setting/base',
     menus: [{
@@ -26,10 +26,11 @@ export default defineComponent({
     }, {
       value: '/setting/disk',
       label: '网盘'
+    }, {
+      value: '/setting/ai',
+      label: 'AI设置'
     }]
   }),
 })
 </script>
-<style scoped lang="less">
-
-</style>
+<style scoped lang="less"></style>

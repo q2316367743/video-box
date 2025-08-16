@@ -3,9 +3,10 @@ import {Elysia} from "elysia";
 import sourceWeb from './source/web';
 import sourceDisk from './source/disk';
 import taskRouter from './task/TaskRouter';
+import aiRouter from './source/ai';
 
 const app = new Elysia({prefix: "/admin"});
 
-app.use(sourceWeb).use(sourceDisk).use(taskRouter);
+app.use(sourceWeb).use(sourceDisk).use(taskRouter).use(aiRouter);
 
 export default app;

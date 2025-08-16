@@ -15,6 +15,8 @@ import {SourceSubscribeRssHubDao} from "@/dao/subscribe/SourceSubscribeRssHubDao
 import {SourceSubscribeContentDao} from "@/dao/subscribe/SourceSubscribeContentDao";
 import {SourceSubscribeRecordDao} from "@/dao/subscribe/SourceSubscribeRecordDao";
 import {SourceSubscribeMediaDao} from "@/dao/subscribe/SourceSubscribeMediaDao";
+import {SourceAiDao} from "@/dao/ai/SourceAiDao";
+import {SourceAiModelDao} from "@/dao/ai/SourceAiModelDao";
 
 export const settingDao = new SettingDao(db);
 export const folderWebDao = new FolderWebDao(db);
@@ -26,6 +28,9 @@ export const sourceDiskDirDao = new SourceDiskDirDao(db);
 export const taskDefinitionDao = new TaskDefinitionDao(db);
 export const taskExecutionDao = new TaskExecutionDao(db);
 export const myVideoItemDao = new MyVideoItemDao(db);
+
+export const sourceAiDao = new SourceAiDao(db);
+export const sourceAiModelDao = new SourceAiModelDao(db);
 
 export const sourceSubscribeDao = new SourceSubscribeDao(db);
 export const sourceSubscribeRuleDao = new SourceSubscribeRuleDao(db);
