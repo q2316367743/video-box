@@ -1,7 +1,11 @@
 import { YesOrNoType } from "@/global/Constant";
 
+// 驱动 1-openai
+export type SourceAiDriver = 1;
+
 export interface SourceAiCore {
 
+  driver: SourceAiDriver;
   name: string;
   description: string;
 

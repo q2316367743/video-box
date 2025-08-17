@@ -107,6 +107,7 @@ create table source_ai
     id          text primary key,
     created_at  integer not null default CURRENT_TIMESTAMP,
     updated_at  integer not null default CURRENT_TIMESTAMP,
+    driver      integer not null default 0,
     name        text    not null default '',
     description text    not null default '',
     url         text    not null default '',

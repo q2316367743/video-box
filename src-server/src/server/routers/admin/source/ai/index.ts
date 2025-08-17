@@ -2,7 +2,7 @@ import {Elysia, t} from "elysia";
 import {sourceAiDao, sourceAiModelDao} from "@/dao";
 import {Result} from "@/views/Result";
 import {YesOrNoType} from "@/global/constant";
-import {SourceAi} from "@/types/SourceAi";
+import {SourceAi, SourceAiDriver} from "@/types/SourceAi";
 import {beginTransactional} from "@/utils/SqlUtil";
 import {http} from "@/global/http";
 
@@ -71,6 +71,7 @@ export default new Elysia({prefix: '/source/ai'})
       const ai = await sourceAiDao.insert({
         created_at: Date.now(),
         updated_at: Date.now(),
+        driver: body.driver as SourceAiDriver,
         name: body.name,
         description: body.description,
         url: body.url,
@@ -82,6 +83,7 @@ export default new Elysia({prefix: '/source/ai'})
     },
     {
       body: t.Object({
+        driver: t.Number(),
         name: t.String(),
         description: t.String(),
         url: t.String(),
@@ -95,6 +97,7 @@ export default new Elysia({prefix: '/source/ai'})
       if (!old) return Result.error("AI源不存在");
       await sourceAiDao.updateById(params.id, {
         updated_at: Date.now(),
+        driver: body.driver as SourceAiDriver,
         name: body.name,
         description: body.description,
         url: body.url,
@@ -110,6 +113,7 @@ export default new Elysia({prefix: '/source/ai'})
         id: t.String(),
       }),
       body: t.Object({
+        driver: t.Number(),
         name: t.String(),
         description: t.String(),
         url: t.String(),
