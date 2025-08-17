@@ -13,9 +13,8 @@
 <script setup lang="ts">
 import type {TaskExecution} from '@/types/Task'
 import {useUserStore} from "@/store/UserStore.ts";
-import {PrimaryTableCol} from "tdesign-vue-next/es/table/type";
 import {toDateTimeString} from "@/utils/lang/FormatUtil.ts";
-import {Progress} from "tdesign-vue-next";
+import {Progress, PrimaryTableCol} from "tdesign-vue-next";
 
 const columns: Array<PrimaryTableCol> = [
   {
