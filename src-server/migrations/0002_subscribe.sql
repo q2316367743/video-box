@@ -126,3 +126,51 @@ create table source_ai_model
     model      text    not null default '',
     owned      text    not null default ''
 );
+
+-- AI工具
+create table ai_tool
+(
+    id          text primary key,
+    created_at  integer not null default CURRENT_TIMESTAMP,
+    updated_at  integer not null default CURRENT_TIMESTAMP,
+
+    icon        text    not null default '',
+    title       text    not null default '',
+    description text    not null default '',
+    tags        text    not null default '',
+
+    is_liked    integer not null default 0,
+    run_count   integer not null default 0
+);
+-- AI工具内容
+create table ai_tool_content
+(
+    id         text primary key,
+    created_at integer not null default CURRENT_TIMESTAMP,
+    updated_at integer not null default CURRENT_TIMESTAMP,
+
+    tool_id    text    not null default '',
+    content    text    not null default ''
+);
+-- AI工具对话
+create table ai_tool_session
+(
+    id         text primary key,
+    created_at integer not null default CURRENT_TIMESTAMP,
+    updated_at integer not null default CURRENT_TIMESTAMP,
+
+    title      text    not null default '',
+    ai_id      text    not null default '',
+    ai_model   text    not null default ''
+);
+-- AI工具对话记录
+create table ai_tool_message
+(
+    id         text primary key,
+    created_at integer not null default CURRENT_TIMESTAMP,
+    updated_at integer not null default CURRENT_TIMESTAMP,
+
+    session_id text    not null default '',
+    role       text    not null default '',
+    content    text    not null default ''
+);

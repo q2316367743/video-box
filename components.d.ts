@@ -7,6 +7,9 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AiModelSelector: typeof import('./src/components/AiSelector/AiModelSelector.vue')['default']
+    AiSelectorGroup: typeof import('./src/components/AiSelector/AiSelectorGroup.vue')['default']
+    AiServiceSelector: typeof import('./src/components/AiSelector/AiServiceSelector.vue')['default']
     DiskFolderSelect: typeof import('./src/components/DiskFolderSelect.vue')['default']
     EmptyResult: typeof import('./src/components/Result/EmptyResult.vue')['default']
     FolderSelect: typeof import('./src/components/FolderSelect/FolderSelect.vue')['default']
@@ -34,6 +37,7 @@ declare module 'vue' {
     TDescriptionsItem: typeof import('tdesign-vue-next')['DescriptionsItem']
     TDialog: typeof import('tdesign-vue-next')['Dialog']
     TDivider: typeof import('tdesign-vue-next')['Divider']
+    TDrawer: typeof import('tdesign-vue-next')['Drawer']
     TDropdown: typeof import('tdesign-vue-next')['Dropdown']
     TDropdownItem: typeof import('tdesign-vue-next')['DropdownItem']
     TDropdownMenu: typeof import('tdesign-vue-next')['DropdownMenu']

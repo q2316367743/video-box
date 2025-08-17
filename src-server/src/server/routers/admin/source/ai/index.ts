@@ -41,7 +41,7 @@ async function refreshModels(sourceAi: SourceAi) {
     // 删除
     await sourceAiModelDao.query().eq('ai_id', sourceAi.id).delete();
     const {data} = await http.request<ModelObject>({
-      url: '/v1/models',
+      url: '/models',
       baseURL: sourceAi.url,
       headers: {
         'Content-Type': 'application/json',

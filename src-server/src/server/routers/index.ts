@@ -11,6 +11,7 @@ import pluginSubscribeRouters from '@/server/routers/plugin/subscribe';
 import myVideoItemRoutes from "@/server/routers/my/video-item";
 import proxyRoutes from "@/server/routers/proxy";
 import authRoutes from "@/server/routers/auth";
+import toolRouters from '@/server/routers/tool';
 
 export default new Elysia({prefix: "/api"})
   .use(adminRouters)
@@ -24,4 +25,5 @@ export default new Elysia({prefix: "/api"})
   .use(pluginSubscribeRouters)
   .use(myVideoItemRoutes)
   .use(proxyRoutes)
-  .use(authRoutes);
+  .use(authRoutes)
+  .use(toolRouters);

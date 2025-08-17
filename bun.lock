@@ -19,6 +19,7 @@
         "less": "^4.2.1",
         "less-loader": "^11.1.4",
         "macy": "^2.5.1",
+        "marked": "^16.1.2",
         "md-editor-v3": "^5.8.4",
         "pinia": "^2.3.0",
         "radash": "^12.1.0",
@@ -770,6 +771,8 @@
     "markdown-it-sub": ["markdown-it-sub@2.0.0", "https://registry.npmmirror.com/markdown-it-sub/-/markdown-it-sub-2.0.0.tgz", {}, "sha512-iCBKgwCkfQBRg2vApy9vx1C1Tu6D8XYo8NvevI3OlwzBRmiMtsJ2sXupBgEA7PPxiDwNni3qIUkhZ6j5wofDUA=="],
 
     "markdown-it-sup": ["markdown-it-sup@2.0.0", "https://registry.npmmirror.com/markdown-it-sup/-/markdown-it-sup-2.0.0.tgz", {}, "sha512-5VgmdKlkBd8sgXuoDoxMpiU+BiEt3I49GItBzzw7Mxq9CxvnhE/k09HFli09zgfFDRixDQDfDxi0mgBCXtaTvA=="],
+
+    "marked": ["marked@16.1.2", "https://registry.npmmirror.com/marked/-/marked-16.1.2.tgz", { "bin": { "marked": "bin/marked.js" } }, "sha512-rNQt5EvRinalby7zJZu/mB+BvaAY2oz3wCuCjt1RDrWNpS1Pdf9xqMOeC9Hm5adBdcV/3XZPJpG58eT+WBc0XQ=="],
 
     "math-intrinsics": ["math-intrinsics@1.1.0", "http://mirrors.tencent.com/npm/math-intrinsics/-/math-intrinsics-1.1.0.tgz", {}, "sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g=="],
 

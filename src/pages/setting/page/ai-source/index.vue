@@ -105,7 +105,7 @@ const columns: TableProps['columns'] = [
   { colKey: 'token', title: 'Token', width: 150, ellipsis: true },
   { colKey: 'is_enabled', title: '状态', width: 80 },
   { colKey: 'created_at', title: '创建时间', width: 160 },
-  { colKey: 'operation', title: '操作', width: 144, fixed: 'right' }
+  { colKey: 'operation', title: '操作', width: 176, fixed: 'right' }
 ]
 
 

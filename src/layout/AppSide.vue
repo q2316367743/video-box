@@ -31,6 +31,12 @@
         </template>
         网盘
       </t-menu-item>
+      <t-menu-item value="/tools/list">
+        <template #icon>
+          <tools-icon />
+        </template>
+        AI工具
+      </t-menu-item>
       <t-menu-item value="/task">
         <template #icon>
           <task-icon />
@@ -56,7 +62,7 @@
 import {
   HardDiskStorageIcon, HomeIcon,
   RssIcon,
-  SettingIcon, TaskIcon,
+  SettingIcon, TaskIcon, ToolsIcon,
   TvIcon, UserIcon,
   VideoIcon,
 } from "tdesign-icons-vue-next";

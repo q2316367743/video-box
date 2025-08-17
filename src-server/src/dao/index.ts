@@ -17,6 +17,10 @@ import {SourceSubscribeRecordDao} from "@/dao/subscribe/SourceSubscribeRecordDao
 import {SourceSubscribeMediaDao} from "@/dao/subscribe/SourceSubscribeMediaDao";
 import {SourceAiDao} from "@/dao/ai/SourceAiDao";
 import {SourceAiModelDao} from "@/dao/ai/SourceAiModelDao";
+import {AiToolDao} from "@/dao/tool/AiToolDao";
+import {AiToolContentDao} from "@/dao/tool/AiToolContentDao";
+import {AiToolSessionDao} from "@/dao/tool/AiToolSessionDao";
+import {AiToolMessageDao} from "@/dao/tool/AiToolMessageDao";
 
 export const settingDao = new SettingDao(db);
 export const folderWebDao = new FolderWebDao(db);
@@ -38,3 +42,8 @@ export const sourceSubscribeRssHubDao = new SourceSubscribeRssHubDao(db)
 export const sourceSubscribeRecordDao = new SourceSubscribeRecordDao(db)
 export const sourceSubscribeContentDao = new SourceSubscribeContentDao(db)
 export const sourceSubscribeMediaDao = new SourceSubscribeMediaDao(db);
+
+export const aiToolDao = new AiToolDao( db);
+export const aiToolContentDao = new AiToolContentDao( db);
+export const aiToolSessionDao = new AiToolSessionDao( db);
+export const aiToolMessageDao = new AiToolMessageDao( db);
