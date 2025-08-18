@@ -1,3 +1,16 @@
+
+export interface AiToolPost {
+
+  icon: string;
+  title: string;
+  description: string;
+  // 标签，数组
+  tags: Array<string>;
+
+  // 内容
+  content: string;
+
+}
 export interface AiTool {
   id: string;
   created_at: number;
@@ -7,7 +20,7 @@ export interface AiTool {
   title: string;
   description: string;
   // 标签，数组
-  tags: string;
+  tags: Array<string>;
 
   is_liked: number;
   run_count: number;
@@ -21,6 +34,10 @@ export interface AiToolContent {
   // 内容
   content: string;
 
+}
+
+export interface AiToolInfo extends AiTool {
+  content: string;
 }
 
 export interface AiToolSessionCore {

@@ -1,4 +1,5 @@
 import {Elysia} from "elysia";
+import fileRouter from '@/server/routers/common/FileRouter';
 import adminRouters from "@/server/routers/admin";
 import adminSetting from "@/server/routers/admin/setting";
 import folderWebRoutes from "@/server/routers/folder/web";
@@ -26,4 +27,5 @@ export default new Elysia({prefix: "/api"})
   .use(myVideoItemRoutes)
   .use(proxyRoutes)
   .use(authRoutes)
-  .use(toolRouters);
+  .use(toolRouters)
+  .use(fileRouter);

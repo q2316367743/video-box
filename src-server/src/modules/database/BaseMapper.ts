@@ -37,7 +37,9 @@ export class BaseMapper<T extends TableLike> {
   }
 
   async selectById(id: string): Promise<T | null> {
-    const sql = `select * from ${this.tableName} where id = ?`
+    const sql = `select *
+                 from ${this.tableName}
+                 where id = ?`
     const statement = this.db.prepare(sql);
     const target = (await statement.get(id)) as T;
     return target || null;
@@ -56,7 +58,9 @@ export class BaseMapper<T extends TableLike> {
       // 没有更新的
       return;
     }
-    const sql = `update ${this.tableName} set ${query.join(", ")} where id = ?`;
+    const sql = `update ${this.tableName}
+                 set ${query.join(", ")}
+                 where id = ?`;
     debug("update sql:\t\t" + sql);
     debug("update values:\t" + values);
     const statement = this.db.prepare(sql);
@@ -65,20 +69,24 @@ export class BaseMapper<T extends TableLike> {
   }
 
   async deleteById(id: string) {
-    const sql = `delete from ${this.tableName} where id = ?`;
+    const sql = `delete
+                 from ${this.tableName}
+                 where id = ?`;
     const statement = this.db.prepare(sql);
     debug("delete sql:\t\t" + sql);
     debug("delete values:\t" + id);
-    const r=  await statement.run(id);
+    const r = await statement.run(id);
     debug("delete result:\t" + r.success);
   }
 
   async deleteByIds(ids: Array<string>) {
-    const sql = `delete from ${this.tableName} where id in ${list(0, ids.length - 1, "?").join(", ")}`;
+    const sql = `delete
+                 from ${this.tableName}
+                 where id in ${list(0, ids.length - 1, "?").join(", ")}`;
     const statement = this.db.prepare(sql);
     debug("delete sql:\t\t" + sql);
     debug("delete values:\t" + ids.join(', '));
-    const r=  await statement.run(...ids);
+    const r = await statement.run(...ids);
     debug("delete result:\t" + r.success);
   }
 
@@ -104,6 +112,24 @@ export class BaseMapper<T extends TableLike> {
       ...params,
       id
     } as T
+  }
+
+  async insertSelf(params: T) {
+    const query = new Array<string>();
+    const values = new Array<any>();
+    for (const key in params) {
+      query.push(`\`${key}\``);
+      values.push(params[key]);
+    }
+    const sql = `insert into ${this.tableName} (${query.join(
+            ", "
+    )})
+                 values (${list(0, query.length - 1, "?").join(", ")})`;
+    debug("insert sql:\t\t" + sql);
+    debug("insert values:\t" + values);
+    const statement = this.db.prepare(sql);
+    const r = await statement.run(...values);
+    debug("insert result:\t" + r.success);
   }
 
 }

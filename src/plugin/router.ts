@@ -164,8 +164,8 @@ export const routes: Array<RouteRecordRaw> = [{
     component: () => import('@/pages/tools/list/index.vue'),
   }, {
     name: '工具新增',
-    path: 'add',
-    component: () => import('@/pages/tools/add/index.vue'),
+    path: 'post/:id',
+    component: () => import('@/pages/tools/post/index.vue'),
   }, {
     name: '工具-项',
     path: 'item/:id',

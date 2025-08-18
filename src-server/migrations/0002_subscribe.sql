@@ -146,8 +146,6 @@ create table ai_tool
 create table ai_tool_content
 (
     id         text primary key,
-    created_at integer not null default CURRENT_TIMESTAMP,
-    updated_at integer not null default CURRENT_TIMESTAMP,
 
     tool_id    text    not null default '',
     content    text    not null default ''

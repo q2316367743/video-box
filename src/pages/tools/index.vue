@@ -10,6 +10,11 @@
         </t-button>
         <t-button theme="primary" variant="text" shape="square" @click="handleChat()">
           <template #icon>
+            <chat-icon />
+          </template>
+        </t-button>
+        <t-button theme="primary" variant="text" shape="square" @click="handleAdd()">
+          <template #icon>
             <plus-icon />
           </template>
         </t-button>
@@ -21,29 +26,20 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { PlusIcon, RefreshIcon } from 'tdesign-icons-vue-next';
-import type { TdBreadcrumbProps } from 'tdesign-vue-next';
+import { PlusIcon, RefreshIcon, ChatIcon } from 'tdesign-icons-vue-next';
+import { useToolBreadcrumbStore } from './breadcrumb';
 
-const route = useRoute();
 const router = useRouter();
 
-const options = computed<TdBreadcrumbProps["options"]>(() => {
-  const op: TdBreadcrumbProps["options"] = [
-    { content: 'AI工具', to: '/tools/list'},
-  ];
-  if (route.path === '/tools/list') {
-    op.push({ content: '列表' });
-  } else if (route.path === '/tools/chat') {
-    op.push({ content: '新建' });
-  }
-  return op;
-});
+const options = computed(() => useToolBreadcrumbStore().options)
 
 const handleAdd = () => {
-  router.push('/tools/add');
+  useToolBreadcrumbStore().setTitle('新增');
+  router.push('/tools/post/0');
 }
 
 const handleChat = () => {
+  useToolBreadcrumbStore().setTitle('聊天');
   router.push('/tools/chat');
 }
 </script>
@@ -72,6 +68,7 @@ const handleChat = () => {
     left: 0;
     right: 0;
     bottom: 0;
+    overflow: auto;
   }
 }
 </style>

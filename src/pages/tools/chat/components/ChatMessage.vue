@@ -18,7 +18,7 @@
 import { marked } from 'marked'
 import hljs from 'highlight.js'
 import MessageUtil from '@/utils/modal/MessageUtil'
-import { openDrawer } from './CodeRunnerDrawer'
+import { openCodeRunnerDrawer } from './CodeRunnerDrawer'
 
 // 动态导入highlight.js样式
 const loadHighlightStyle = () => {
@@ -208,7 +208,7 @@ const copyCode = async (code: string, button: HTMLElement) => {
 
 // 打开代码运行器抽屉
 const openCodeRunner = (code: string, language: string) => {
-  openDrawer(code, {
+  openCodeRunnerDrawer(code, {
     width: '80vw',
     title: '代码运行器',
     maskClosable: true

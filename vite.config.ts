@@ -1,13 +1,14 @@
 // vite.config.js
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
-import {defineConfig} from "vite";
+import { defineConfig } from "vite";
 import path from "path";
 import UnoCSS from 'unocss/vite';
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite';
-import {TDesignResolver} from 'unplugin-vue-components/resolvers';
-import svgLoader from 'vite-svg-loader'
+import { TDesignResolver } from 'unplugin-vue-components/resolvers';
+import svgLoader from 'vite-svg-loader';
+import monacoEditorPlugin from 'vite-plugin-monaco-editor';
 
 function _resolve(dir: string) {
   return path.resolve(__dirname, dir);
@@ -20,6 +21,8 @@ export default defineConfig({
     },
   },
   plugins: [
+    // @ts-ignore
+    monacoEditorPlugin.default({}),
     vue({
       template: {
         compilerOptions: {
@@ -58,4 +61,13 @@ export default defineConfig({
       '/api': 'http://localhost:52411',
     },
   },
+  optimizeDeps: {
+    include: [
+      'monaco-editor/esm/vs/language/json/json.worker',
+      'monaco-editor/esm/vs/language/css/css.worker',
+      'monaco-editor/esm/vs/language/html/html.worker',
+      'monaco-editor/esm/vs/language/typescript/ts.worker',
+      'monaco-editor/esm/vs/editor/editor.worker'
+    ]
+  }
 });

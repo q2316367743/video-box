@@ -15,8 +15,6 @@ export interface AiTool {
 
 export interface AiToolContent {
   id: string;
-  created_at: number;
-  updated_at: number;
 
   tool_id: string;
   // 内容
