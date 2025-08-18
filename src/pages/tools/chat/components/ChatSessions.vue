@@ -138,6 +138,7 @@ defineExpose({ loadSessionList })
       cursor: pointer;
       transition: background-color 0.2s;
       margin-bottom: 8px;
+      border: 1px solid transparent;
 
       &:hover {
         background-color: var(--td-bg-color-container-hover);

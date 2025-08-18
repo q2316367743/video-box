@@ -170,7 +170,7 @@ const createCodeToolbar = (language: string, code: string): HTMLElement => {
   buttonGroup.appendChild(copyButton)
 
   // 支持多种语言的运行按钮
-  if (['html', 'javascript', 'js', 'python', 'css', 'json'].includes(language.toLowerCase())) {
+  if (['html'].includes(language.toLowerCase())) {
     const runButton = document.createElement('button')
     runButton.className = 'code-button run-button'
     runButton.innerHTML = '▶️'
@@ -287,6 +287,7 @@ const formatTime = (timestamp: number) => {
   background-color: var(--td-brand-color);
   color: white;
   margin-left: auto;
+  width: fit-content;
 }
 
 .message-avatar {

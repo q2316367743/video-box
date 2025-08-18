@@ -18,13 +18,8 @@
           <t-empty description="开始你的第一次对话吧！" />
         </div>
 
-        <chat-message
-          v-for="message in messages"
-          :key="message.id"
-          :content="message.content"
-          :is-user="message.role === 'user'"
-          :timestamp="message.created_at"
-        />
+        <chat-message v-for="message in messages" :key="message.id" :content="message.content"
+          :is-user="message.role === 'user'" :timestamp="message.created_at" />
 
         <!-- 正在输入指示器 -->
         <div v-if="isTyping" class="message-item">
@@ -148,7 +143,7 @@ const sendMessage = async (props: { message: string, ai_id: string, ai_model: st
         const { data } = event;
 
         // 更新助手消息内容
-        assistantMessage.content += data;
+        messages.value[messages.value.length - 1].content += JSON.parse(data).content;
 
       } catch (error) {
         console.error('解析SSE数据失败:', error)
@@ -163,14 +158,12 @@ const sendMessage = async (props: { message: string, ai_id: string, ai_model: st
       MessageUtil.error('连接中断，请重试')
     }
 
-    // 设置超时
-    setTimeout(() => {
-      if (eventSource.readyState !== EventSource.CLOSED) {
-        eventSource.close()
-        isTyping.value = false
-        MessageUtil.error('请求超时')
-      }
-    }, 60000) // 60秒超时
+
+    eventSource.addEventListener('complete', () => {
+      eventSource.close();
+      isTyping.value = false;
+    })
+
 
   } catch (error) {
     console.error('发送消息失败:', error)

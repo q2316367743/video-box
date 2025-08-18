@@ -57,6 +57,7 @@ const sendMessage = () => {
     ai_id: aiService.value,
     ai_model: aiModel.value
   });
+  inputMessage.value = '';
 }
 
 onMounted(() => {

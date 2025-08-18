@@ -4,13 +4,12 @@ import {aiToolMessageDao, aiToolSessionDao, sourceAiDao} from "@/dao";
 import {Result} from "@/views/Result";
 import {beginTransactional} from "@/utils/SqlUtil";
 import {sendSse} from "@/utils/http/SseUtil";
-import {running} from "@/modules/task/registry";
 
 export default new Elysia({prefix: '/chat'})
   // 获取全部的session
   .get('/list',
     async () => {
-      const list = await aiToolSessionDao.query().list();
+      const list = await aiToolSessionDao.query().orderByDesc('created_at').list();
       return Result.success(list);
     })
   // 创建一个session
@@ -65,7 +64,7 @@ export default new Elysia({prefix: '/chat'})
     })
   // 聊天
   .get('/stream/:id',
-    async ({params, query, set}) => {
+    async ({params, query, set, request}) => {
       // 获取使用的ID
       const sourceAi = await sourceAiDao.selectById(query.ai_id);
       if (!sourceAi) {
@@ -82,7 +81,7 @@ export default new Elysia({prefix: '/chat'})
       // 获取历史聊天记录
       const messages = await aiToolMessageDao.query().eq('session_id', params.id).orderByAsc('created_at').list();
 
-      return new ReadableStream({
+      const stream = new ReadableStream({
         async start(controller) {
           const {id} = await aiToolMessageDao.insert({
             created_at: Date.now(),
@@ -108,23 +107,41 @@ export default new Elysia({prefix: '/chat'})
                 try {
                   const content = chuck.choices?.[0]?.delta?.content || '';
                   if (content) {
-                    controller.enqueue(`event: data\ndata: ${content}\n\n`);
+                    controller.enqueue(`event: data\ndata: ${JSON.stringify({content})}\n\n`);
                     messageContent += content;
                     // 更新数据库
                     aiToolMessageDao.updateById(id, {
                       content: messageContent
                     })
                   }
-                } catch {
+                } catch(e) {
                   // 忽略解析失败的行
+                  console.error(e);
                   error("解析 SSE 数据失败：" + JSON.stringify(chuck));
                 }
               },
-            })
+            });
+
+            // 完成
+            controller.enqueue(`event: complete\ndata: ${JSON.stringify({content: messageContent})}\n\n`);
+            controller.close();
           } catch (e) {
             console.error(e);
             await aiToolMessageDao.deleteById(id);
           }
+
+          request.signal.addEventListener('abort', () => {
+            controller.close();
+          });
+        }
+      });
+      return new Response(stream, {
+        status: 200,
+        statusText: 'OK',
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive',
         }
       })
     },
