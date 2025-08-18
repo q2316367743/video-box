@@ -3,7 +3,6 @@ import EmptyResult from "@/components/Result/EmptyResult.vue";
 import { SourceSubscribePostParam, SubscribeRssParseResult } from "@/types/SourceSubscribe";
 import MessageUtil from "@/utils/modal/MessageUtil";
 import { DialogPlugin, Loading, Input, Button } from "tdesign-vue-next";
-import { ref } from "vue";
 import styles from "./SubscribeDiscoverDialog.module.css";
 import { useRssRefreshRoot } from "@/global/EventBus";
 

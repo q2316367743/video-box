@@ -80,7 +80,6 @@
 </template>
 
 <script lang="ts" setup>
-import { useRouter } from 'vue-router';
 import { FormInstanceFunctions, TdFormProps } from 'tdesign-vue-next';
 import { PlayIcon, RefreshIcon } from 'tdesign-icons-vue-next';
 import * as monaco from 'monaco-editor';
@@ -128,7 +127,7 @@ const initMonacoEditor = async () => {
     language: 'html',
     theme: isDark.value ? 'vs-dark' : 'vs-light',
     automaticLayout: true,
-    minimap: { enabled: false },
+    minimap: { enabled: true },
     scrollBeyondLastLine: false,
     fontSize: 14,
     lineNumbers: 'on',
@@ -252,7 +251,7 @@ onUnmounted(() => {
 <style scoped lang="less">
 .ai-tool-add-page {
   min-height: 100vh;
-  background-color: #f3f3f3;
+  background-color: var(--td-bg-color-page);
 }
 
 .page-content {
@@ -269,7 +268,7 @@ onUnmounted(() => {
     height: 80px;
     border-radius: 8px;
     overflow: hidden;
-    border: 1px solid #e8e8e8;
+    border: 1px solid var(--td-border-level-2-color);
 
     img {
       width: 100%;
@@ -285,7 +284,7 @@ onUnmounted(() => {
     gap: 12px;
     margin-bottom: 16px;
     padding-bottom: 16px;
-    border-bottom: 1px solid #e8e8e8;
+    border-bottom: 1px solid var(--td-border-level-2-color);
   }
 
   .editor-container {
@@ -295,7 +294,7 @@ onUnmounted(() => {
 
     .monaco-editor-wrapper {
       flex: 1;
-      border: 1px solid #e8e8e8;
+      border: 1px solid var(--td-border-level-2-color);
       border-radius: 6px;
       overflow: hidden;
 
@@ -308,7 +307,7 @@ onUnmounted(() => {
       flex: 1;
       display: flex;
       flex-direction: column;
-      border: 1px solid #e8e8e8;
+      border: 1px solid var(--td-border-level-2-color);
       border-radius: 6px;
       overflow: hidden;
 
@@ -317,17 +316,17 @@ onUnmounted(() => {
         justify-content: space-between;
         align-items: center;
         padding: 12px 16px;
-        background: #f8f9fa;
-        border-bottom: 1px solid #e8e8e8;
+        background: var(--td-bg-color-container);
+        border-bottom: 1px solid var(--td-border-level-2-color);
         font-size: 14px;
         font-weight: 500;
-        color: #374151;
+        color: var(--td-text-color-primary);
       }
 
       .preview-iframe {
         flex: 1;
         border: none;
-        background: white;
+        background: var(--td-bg-color-container);
       }
     }
   }
@@ -338,10 +337,10 @@ onUnmounted(() => {
   bottom: 0;
   left: 0;
   right: 0;
-  background: white;
-  border-top: 1px solid #e8e8e8;
+  background: var(--td-bg-color-container);
+  border-top: 1px solid var(--td-border-level-2-color);
   padding: 16px 24px;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--td-shadow-1);
   z-index: 100;
 
   .footer-actions {

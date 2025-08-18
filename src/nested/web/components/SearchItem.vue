@@ -1,12 +1,12 @@
 <template>
   <div class="search-item flex">
-    <img class="h-96px w-72px" :src="item.item.cover" :alt="item.item.title"/>
-    <div class="search-item-info ml-16px flex-auto flex flex-col">
+    <img style="width: 72px;height: 108px;" :src="item.item.cover" :alt="item.item.title" />
+    <div class="search-item-info">
       <div class="search-item__title">{{ item.item.title }}</div>
       <div class="search-item__remark">{{ item.item.remark }}</div>
       <div class="mt-auto">
         <t-button theme="primary" :disabled="videoId == item.item.id && sourceId === item.source.id"
-                  @click="$emit('choose')">切换
+          @click="$emit('choose')">切换
         </t-button>
       </div>
       <div class="search-item__source">
@@ -16,7 +16,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {SearchResultItem} from "@/pages/home/types/SearchResult";
+import { SearchResultItem } from "@/pages/home/types/SearchResult";
 
 defineProps({
   sourceId: String,
@@ -36,6 +36,13 @@ defineEmits(['choose']);
 
   &:last-child {
     border-bottom: none;
+  }
+
+  .search-item-info {
+    margin-left: 16px;
+    flex: auto;
+    display: flex;
+    flex-direction: column;
   }
 
   .search-item__title {

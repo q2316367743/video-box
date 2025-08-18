@@ -10,7 +10,7 @@
             <div class="view-actions">
               <t-tooltip content="刷新订阅">
                 <t-button theme="default" shape="square" variant="text" :loading="isRefreshLoading"
-                  @click="refreshSubscribes(true)">
+                  @click="refreshSubscribes">
                   <template #icon><t-icon name="refresh" /></template>
                 </t-button>
               </t-tooltip>
@@ -37,7 +37,8 @@
             <div class="sidebar-list">
               <template v-for="item in ungroupedSubscribes" :key="item.id">
                 <div class="sidebar-item" :class="{ active: activeSubscribeId === item.id }"
-                  @click="handleSubscribeChange(item.id)">
+                  @click="handleSubscribeChange(item.id)"
+                  @contextmenu="openSubscribeContextmenu($event, item, refreshList)">
                   <div class="item-icon">
                     <t-avatar v-if="item.icon" :image="item.icon" size="small" shape="round" />
                     <rss-icon v-else />
@@ -74,7 +75,8 @@
                 <!-- 分组内容 -->
                 <div class="sidebar-group-content" v-show="expandedGroups.includes(groupName)">
                   <div v-for="item in group" :key="item.id" class="sidebar-item"
-                    :class="{ active: activeSubscribeId === item.id }" @click="handleSubscribeChange(item.id)">
+                    :class="{ active: activeSubscribeId === item.id }" @click="handleSubscribeChange(item.id)"
+                    @contextmenu="openSubscribeContextmenu($event, item, refreshList)">
                     <div class="item-icon">
                       <t-avatar v-if="item.icon" :image="item.icon" size="small" shape="round" />
                       <rss-icon v-else />
@@ -109,6 +111,7 @@ import { SourceSubscribe, SourceSubscribeDisplay } from '@/types/SourceSubscribe
 import { SubscribeDisplayMap } from './constant';
 import DisplayRadio from '@/pages/subscribe/components/DisplayRadio.vue';
 import { useRssRefreshRoot } from '@/global/EventBus';
+import { openSubscribeContextmenu } from './components/SubscribeContextmenu';
 
 const route = useRoute();
 const router = useRouter();
@@ -158,21 +161,23 @@ const groupedSubscribes = computed(() => {
 const getGroupCount = (group: SourceSubscribe[]) => {
   return group.reduce((sum, item) => sum + item.record_count, 0);
 };
+const refreshList = () => {
+  // 再刷新列表
+  loadSubscribeList();
+  // 刷新统计信息
+  initDisplayCount();
+}
 
 // 刷新订阅列表
-const refreshSubscribes = async (r = false) => {
-  console.log('刷新订阅列表')
+const refreshSubscribes = async () => {
   if (isRefreshLoading.value) return;
   isRefreshLoading.value = true;
   try {
-    if (activeSubscribeId.value && activeSubscribeId.value !== 'all' && r) {
-      // 选择订阅则刷新订阅
-      await pluginSubscribeRefresh(activeSubscribeId.value);
-    }
     // 再刷新列表
-    loadSubscribeList();
+    await loadSubscribeList();
     // 刷新统计信息
-    initDisplayCount();
+    await initDisplayCount();
+
   } finally {
     isRefreshLoading.value = false;
   }

@@ -3,11 +3,6 @@
     <div class="tools-top">
       <t-breadcrumb :options="options" />
       <t-space size="small">
-        <t-button theme="primary" variant="text" shape="square">
-          <template #icon>
-            <refresh-icon />
-          </template>
-        </t-button>
         <t-button theme="primary" variant="text" shape="square" @click="handleChat()">
           <template #icon>
             <chat-icon />
@@ -15,7 +10,7 @@
         </t-button>
         <t-button theme="primary" variant="text" shape="square" @click="handleAdd()">
           <template #icon>
-            <plus-icon />
+            <add-icon />
           </template>
         </t-button>
       </t-space>
@@ -26,7 +21,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { PlusIcon, RefreshIcon, ChatIcon } from 'tdesign-icons-vue-next';
+import { AddIcon, ChatIcon } from 'tdesign-icons-vue-next';
 import { useToolBreadcrumbStore } from './breadcrumb';
 
 const router = useRouter();

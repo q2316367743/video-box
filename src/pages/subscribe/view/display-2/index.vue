@@ -1,24 +1,27 @@
 <template>
   <div class="weibo-layout" ref="containerRef">
+    <div class="weibo-header">
+      <t-button theme="primary" variant="text" shape="square" @click="refreshData()">
+        <template #icon>
+          <RefreshIcon />
+        </template>
+      </t-button>
+    </div>
     <div class="weibo-container">
       <!-- 使用微博卡片组件 -->
-      <WeiboCard 
-        v-for="record in records" 
-        :key="record.id" 
-        :record="record"
-      />
-      
+      <WeiboCard v-for="record in records" :key="record.id" :record="record" />
+
       <!-- 加载更多指示器 -->
       <div v-if="loading" class="loading-indicator">
         <t-loading size="small" />
         <span>加载中...</span>
       </div>
-      
+
       <!-- 没有更多数据提示 -->
       <div v-if="!hasMore && records.length > 0" class="no-more-data">
         没有更多数据了
       </div>
-      
+
       <!-- 空状态 -->
       <div v-if="!loading && records.length === 0" class="empty-state">
         暂无数据
@@ -33,6 +36,7 @@
 import { PluginSubscribeRecord } from '@/apis/plugin/subscribe';
 import { SourceSubscribeRecordListView } from '@/types/SourceSubscribe';
 import WeiboCard from './components/WeiboCard.vue';
+import { RefreshIcon } from 'tdesign-icons-vue-next';
 
 const route = useRoute();
 
@@ -82,7 +86,7 @@ const loadRecords = async (isLoadMore = false) => {
 // 加载更多数据
 const loadMore = async () => {
   if (!hasMore.value || loading.value) return;
-  
+
   currentPage.value++;
   await loadRecords(true);
 };
@@ -109,6 +113,11 @@ const resetData = () => {
   total.value = 0;
 };
 
+const refreshData = () => {
+  resetData();
+  loadRecords();
+}
+
 // 监听路由参数变化
 watch(() => route.params.listId, (newId) => {
   listId.value = newId as string;
@@ -118,7 +127,7 @@ watch(() => route.params.listId, (newId) => {
 
 onMounted(() => {
   loadRecords();
-  
+
   // 添加滚动监听
   if (containerRef.value) {
     containerRef.value.addEventListener('scroll', handleScroll);
@@ -139,6 +148,17 @@ onUnmounted(() => {
   background-color: var(--td-bg-color-page);
   overflow-y: auto;
   height: 100vh;
+
+  .weibo-header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    padding: 8px;
+    display: flex;
+    justify-content: flex-end;
+  }
 
   .weibo-container {
     max-width: 600px;

@@ -31,6 +31,22 @@ export default new Elysia({prefix: '/chat'})
         ai_model: t.String(),
       })
     })
+  // 重命名
+  .put('rename/:id',
+    async ({params, body}) => {
+      await aiToolSessionDao.updateById(params.id, {
+        title: body.title
+      });
+      return Result.success();
+    },
+    {
+      params: t.Object({
+        id: t.String(),
+      }),
+      body: t.Object({
+        title: t.String(),
+      })
+    })
   // 获取一个session的全部聊天记录
   .get("/message/:id",
     async ({params}) => {
@@ -114,7 +130,7 @@ export default new Elysia({prefix: '/chat'})
                       content: messageContent
                     })
                   }
-                } catch(e) {
+                } catch (e) {
                   // 忽略解析失败的行
                   console.error(e);
                   error("解析 SSE 数据失败：" + JSON.stringify(chuck));

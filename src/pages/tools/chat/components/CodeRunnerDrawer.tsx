@@ -1,4 +1,5 @@
 import { DrawerPlugin } from 'tdesign-vue-next'
+import { openChat2ToolDialog } from './Chat2ToolAdd';
 
 interface DrawerOptions {
   width?: string
@@ -17,6 +18,7 @@ export const openCodeRunnerDrawer = (html: string, options: DrawerOptions = {}) 
     size: options.width || '50vw',
     closeOnOverlayClick: false,
     footer: options.footer ?? true,
+    confirmBtn: '添加到工具',
     closeBtn: true,
     onCancel() {
       dp.destroy?.();
@@ -35,6 +37,9 @@ export const openCodeRunnerDrawer = (html: string, options: DrawerOptions = {}) 
     onClose() {
       URL.revokeObjectURL(url);
       dp.destroy?.();
-    }
+    },
+    onConfirm() {
+      openChat2ToolDialog(html, () => dp.destroy?.());
+    },
   });
 }

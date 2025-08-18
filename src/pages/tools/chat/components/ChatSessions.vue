@@ -14,14 +14,49 @@
       <div v-for="session in sessionList" :key="session.id"
         :class="['session-item', { active: sessionId === session.id }]" @click="switchSession(session)">
         <div class="session-info">
-          <div class="session-title">{{ session.title }}</div>
-          <div class="session-time">{{ toDateString(session.created_at) }}</div>
+          <!-- 编辑模式 -->
+          <div v-if="editingSessionId === session.id" class="session-edit">
+            <t-input
+              v-model="editingTitle"
+              size="small"
+              :loading="renameLoading"
+              @keyup.enter="saveRename"
+              @keyup.esc="cancelRename"
+              @blur="saveRename"
+              ref="editInput"
+              class="edit-input"
+            />
+            <div class="edit-actions">
+              <t-button size="small" theme="primary" variant="text" @click="saveRename" :loading="renameLoading">
+                <template #icon>
+                  <check-icon />
+                </template>
+              </t-button>
+              <t-button size="small" theme="default" variant="text" @click="cancelRename">
+                <template #icon>
+                  <close-icon />
+                </template>
+              </t-button>
+            </div>
+          </div>
+          <!-- 正常显示模式 -->
+          <div v-else class="session-display">
+            <div class="session-title">{{ session.title }}</div>
+            <div class="session-time">{{ toDateString(session.created_at) }}</div>
+          </div>
         </div>
-        <t-button size="small" theme="danger" variant="text" @click.stop="deleteSession(session)">
-          <template #icon>
-            <delete-icon />
-          </template>
-        </t-button>
+        <div class="session-actions">
+          <t-button v-if="editingSessionId !== session.id" size="small" theme="default" variant="text" @click.stop="startRename(session)">
+            <template #icon>
+              <edit-icon />
+            </template>
+          </t-button>
+          <t-button size="small" theme="danger" variant="text" @click.stop="deleteSession(session)">
+            <template #icon>
+              <delete-icon />
+            </template>
+          </t-button>
+        </div>
       </div>
 
       <div v-if="sessionList.length === 0" class="empty-sessions">
@@ -31,8 +66,8 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { AddIcon, DeleteIcon } from 'tdesign-icons-vue-next';
-import { toolChatDelete, toolChatList } from '@/apis/tool/chat';
+import { AddIcon, DeleteIcon, EditIcon, CheckIcon, CloseIcon } from 'tdesign-icons-vue-next';
+import { toolChatDelete, toolChatList, toolChatRename } from '@/apis/tool/chat';
 import { AiToolSession } from '@/types/AiTool';
 import { toDateString } from '@/utils/lang/FormatUtil';
 import MessageBoxUtil from '@/utils/modal/MessageBoxUtil';
@@ -44,8 +79,13 @@ const sessionId = defineModel({
 });
 const emit = defineEmits(['change'])
 
-
 const sessionList = ref<AiToolSession[]>([]);
+
+// 重命名相关状态
+const editingSessionId = ref<string | null>(null);
+const editingTitle = ref('');
+const renameLoading = ref(false);
+const editInput = ref();
 
 const loadSessionList = async () => {
   try {
@@ -66,6 +106,62 @@ const switchSession = async (session: AiToolSession | null) => {
 
 const createNewSession = () => {
   switchSession(null);
+}
+
+// 开始重命名
+const startRename = (session: AiToolSession) => {
+  editingSessionId.value = session.id;
+  editingTitle.value = session.title;
+  
+  // 下一帧聚焦输入框
+  nextTick(() => {
+    if (editInput.value) {
+      editInput.value.focus();
+      editInput.value.select();
+    }
+  });
+}
+
+// 保存重命名
+const saveRename = async () => {
+  if (!editingSessionId.value || !editingTitle.value.trim()) {
+    cancelRename();
+    return;
+  }
+
+  const newTitle = editingTitle.value.trim();
+  const currentSession = sessionList.value.find(s => s.id === editingSessionId.value);
+  
+  // 如果标题没有变化，直接取消编辑
+  if (currentSession && newTitle === currentSession.title) {
+    cancelRename();
+    return;
+  }
+
+  try {
+    renameLoading.value = true;
+    await toolChatRename(editingSessionId.value, newTitle);
+    
+    // 更新本地数据
+    if (currentSession) {
+      currentSession.title = newTitle;
+    }
+    
+    MessageUtil.success('重命名成功');
+    cancelRename();
+  } catch (error) {
+    console.error('重命名失败:', error);
+    MessageUtil.error('重命名失败');
+  } finally {
+    renameLoading.value = false;
+  }
+}
+
+// 取消重命名
+const cancelRename = () => {
+  editingSessionId.value = null;
+  editingTitle.value = '';
+  renameLoading.value = false;
 }
 
 // 删除会话
@@ -129,45 +225,70 @@ defineExpose({ loadSessionList })
     overflow-y: auto;
     padding: 12px;
 
-    .session-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-      margin-bottom: 8px;
-      border: 1px solid transparent;
+      .session-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        margin-bottom: 8px;
+        border: 1px solid transparent;
 
-      &:hover {
-        background-color: var(--td-bg-color-container-hover);
-      }
-
-      &.active {
-        background-color: var(--td-brand-color-light);
-        border: 1px solid var(--td-brand-color);
-      }
-
-      .session-info {
-        flex: 1;
-        min-width: 0;
-
-        .session-title {
-          font-weight: 500;
-          color: var(--td-text-color-primary);
-          margin-bottom: 4px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
+        &:hover {
+          background-color: var(--td-bg-color-container-hover);
         }
 
-        .session-time {
-          font-size: 12px;
-          color: var(--td-text-color-placeholder);
+        &.active {
+          background-color: var(--td-brand-color-light);
+          border: 1px solid var(--td-brand-color);
+        }
+
+        .session-info {
+          flex: 1;
+          min-width: 0;
+
+          .session-display {
+            .session-title {
+              font-weight: 500;
+              color: var(--td-text-color-primary);
+              margin-bottom: 4px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+
+            .session-time {
+              font-size: 12px;
+              color: var(--td-text-color-placeholder);
+            }
+          }
+
+          .session-edit {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            .edit-input {
+              flex: 1;
+              min-width: 0;
+            }
+
+            .edit-actions {
+              display: flex;
+              gap: 4px;
+              flex-shrink: 0;
+            }
+          }
+        }
+
+        .session-actions {
+          display: flex;
+          gap: 4px;
+          flex-shrink: 0;
         }
       }
-    }
 
     .empty-sessions {
       text-align: center;
