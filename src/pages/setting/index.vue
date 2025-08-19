@@ -29,6 +29,9 @@ export default defineComponent({
     }, {
       value: '/setting/ai',
       label: 'AI设置'
+    }, {
+      value: '/setting/news',
+      label: '资讯源设置'
     }]
   }),
 })

@@ -76,6 +76,7 @@ export async function runAsyncTempTask(
     task.error = e.message ?? String(e);
     task.updatedAt = Date.now();
     error(`任务「${name}」执行失败`)
+    // console.error(e);
   } finally {
     tempTaskStore.delete(task.id);
   }

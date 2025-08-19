@@ -1,10 +1,14 @@
-import {defineStore} from "pinia";
-import {authLogin} from "@/apis/auth";
-import {router} from "@/plugin/router";
-import {useDictStore} from "@/store/DictStore.ts";
+import { defineStore } from "pinia";
+import { authLogin } from "@/apis/auth";
+import { router } from "@/plugin/router";
+import { useDictStore } from "@/store/DictStore.ts";
+import { useCookies } from "@vueuse/integrations/useCookies";
 
 export const useUserStore = defineStore("user", () => {
   const token = useLocalStorage('token', "");
+  const { set } = useCookies(['']);
+
+  watch(token, val => set('authorization', val), { immediate: true });
 
   const login = (username: string, password: string) => {
     return new Promise<void>((resolve, reject) => {
@@ -33,9 +37,9 @@ export const useUserStore = defineStore("user", () => {
   }
 
   const getDiskUrl = (sourceId: string, path: string) => {
-    return  `/api/proxy/disk/${sourceId}/p${path}?authorization=${token.value}`
+    return `/api/proxy/disk/${sourceId}/p${path}?authorization=${token.value}`
   }
 
-  return {token, logout, login, getDiskUrl}
+  return { token, logout, login, getDiskUrl }
 
 })

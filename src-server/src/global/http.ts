@@ -1,4 +1,4 @@
-import axios, {AxiosRequestConfig} from "axios";
+import axios, {AxiosError, AxiosRequestConfig} from "axios";
 import https from "node:https";
 import {settingDao} from "@/dao";
 import {SettingConstantEnum} from "@/enum/SettingConstantEnum";
@@ -12,6 +12,19 @@ export const http = axios.create({
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
   },
 });
+
+http.interceptors.response.use(e => e, e => {
+  if (e instanceof AxiosError) {
+    console.error("请求链接：" + e.config?.url);
+    console.error('请求方法：' + e.config?.method);
+    console.error("请求头：" + JSON.stringify(e.config?.headers, null, 2));
+    console.error("请求体：" + JSON.stringify(e.config?.data, null, 2));
+    console.error("请求参数：" + JSON.stringify(e.config?.params, null, 2));
+    console.error("响应状态：" + e.status);
+    console.error("响应消息：" + e.message)
+  }
+  return Promise.reject(e);
+})
 
 export async function useRequest<T>(url: string, config?: AxiosRequestConfig) {
   const _config: AxiosRequestConfig = {

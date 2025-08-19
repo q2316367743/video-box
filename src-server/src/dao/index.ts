@@ -22,6 +22,9 @@ import {AiToolContentDao} from "@/dao/tool/AiToolContentDao";
 import {AiToolSessionDao} from "@/dao/tool/AiToolSessionDao";
 import {AiToolMessageDao} from "@/dao/tool/AiToolMessageDao";
 import {ResourceDao} from "@/dao/ResourceDao";
+import {SourceNewsDao} from "@/dao/news/SourceNewsDao";
+import {SourceNewsContentDao} from "@/dao/news/SourceNewsContentDao";
+import {SourceNewsRecordDao} from "@/dao/news/SourceNewsRecordDao";
 
 export const resourceDao = new ResourceDao(db);
 
@@ -38,6 +41,10 @@ export const myVideoItemDao = new MyVideoItemDao(db);
 
 export const sourceAiDao = new SourceAiDao(db);
 export const sourceAiModelDao = new SourceAiModelDao(db);
+
+export const sourceNewsDao = new SourceNewsDao(db);
+export const sourceNewsContentDao = new SourceNewsContentDao(db);
+export const sourceNewsRecordDao = new SourceNewsRecordDao(db);
 
 export const sourceSubscribeDao = new SourceSubscribeDao(db);
 export const sourceSubscribeRuleDao = new SourceSubscribeRuleDao(db);

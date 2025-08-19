@@ -17,7 +17,8 @@
               <!-- 工具图标和标题 -->
               <div class="tool-header">
                 <div class="tool-icon">
-                  <ToolsIcon />
+                  <t-avatar :image="tool.icon" shape="round" size="48px" v-if="tool.icon"/>
+                  <ToolsIcon v-else/>
                 </div>
                 <div class="tool-info">
                   <t-link class="tool-name" theme="primary" @click="handlePreview(tool)">{{ tool.title }}</t-link>

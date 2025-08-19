@@ -39,4 +39,10 @@ export class Result<T> {
     return new Result(402, '认证信息错误', null);
   }
 
+  // 认证信息错误
+  public static notFound() {
+    return new Result(404, '未找到', null);
+  }
+
+
 }

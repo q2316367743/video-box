@@ -43,12 +43,5 @@ export function registerElysiaPlugin(app: Elysia) {
           ],
         },
       })
-    )
-    .use(
-      jwt({
-        name: "jwt",
-        secret: process.env.ADMIN_JWT_SECRET || "123456",
-        exp: "7d",
-      })
     );
 }

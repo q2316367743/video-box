@@ -145,10 +145,10 @@ create table ai_tool
 -- AI工具内容
 create table ai_tool_content
 (
-    id         text primary key,
+    id      text primary key,
 
-    tool_id    text    not null default '',
-    content    text    not null default ''
+    tool_id text not null default '',
+    content text not null default ''
 );
 -- AI工具对话
 create table ai_tool_session
@@ -172,3 +172,65 @@ create table ai_tool_message
     role       text    not null default '',
     content    text    not null default ''
 );
+
+-- 资源表
+create table resource
+(
+    id            text primary key,
+    created_at    integer not null default CURRENT_TIMESTAMP,
+    filename      text    not null default '',
+    original_name text    not null default '',
+    mime_type     text    not null default '',
+    size          integer not null default 0,
+    path          text    not null default ''
+);
+
+-- 新闻资讯
+create table source_news
+(
+    id            text primary key,
+    created_at    integer not null default CURRENT_TIMESTAMP,
+    updated_at    integer not null default CURRENT_TIMESTAMP,
+    is_enabled    integer not null default 1,
+
+    logo          text    not null default '',
+    title         text    not null default '',
+    tag           text    not null default '',
+    primary_color text    not null default '',
+    website       text    not null default '',
+    type          integer not null default 0,
+    `order`       integer not null default 0
+);
+-- 新闻资讯内容
+create table source_news_content
+(
+    id      text primary key,
+    news_id text not null default '',
+    script  text not null default ''
+);
+create unique index source_news_content_news_id_uq_index
+    on source_news_content (news_id);
+-- 新闻资讯记录
+create table source_news_record
+(
+    id         text primary key,
+    created_at integer not null default CURRENT_TIMESTAMP,
+    updated_at integer not null default CURRENT_TIMESTAMP,
+
+    news_id    text    not null default '',
+
+    title      text    not null default '',
+    url        text    not null default '',
+    read       integer not null default 0,
+    hover      text    not null default '',
+    date       text    not null default '',
+    tag        text    not null default '',
+    tip        text    not null default '',
+    `order`    integer not null default 0
+);
+create unique index source_news_record_url_uq_index
+    on source_news_record (news_id, url);
+
+-- 刷新资讯
+insert into task_definition (id, name, type, schedule, script)
+values ('news:refresh-record', '资讯:刷新列表', 'preset', '*/30 * * * *', 'refreshSourceNews.ts');

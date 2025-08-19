@@ -4,9 +4,15 @@ import {error as err} from "@rasla/logify";
 // 拓展
 import {Result} from "@/views/Result";
 import {AxiosError} from "axios";
+import jwt from "@elysiajs/jwt";
 
 export function registerElysiaHook(app: Elysia) {
   app
+    .use(jwt({
+      name: "jwt",
+      secret: process.env.ADMIN_JWT_SECRET || "123456",
+      exp: "7d",
+    }))
     .onAfterHandle(({response}) => {
       if (response instanceof Result) {
         return new Response(JSON.stringify(response), {
@@ -50,16 +56,18 @@ export function registerElysiaHook(app: Elysia) {
         }
       );
     })
-    // @ts-ignore
-    .onRequest(async ({jwt, request}) => {
+    .onBeforeHandle(async ({jwt, request, cookie}) => {
       // 只拦截 /api/ 开头的路径
       const url = new URL(request.url);
       if (!url.pathname.startsWith("/api/")) return;
       if (url.pathname.startsWith("/api/auth")) return;
 
-      let token = request.headers.get("authorization");
+      let token: string | null | undefined = request.headers.get("authorization");
       if (!token) {
         token = new URL(request.url).searchParams.get("authorization");
+      }
+      if (!token) {
+        token = cookie['authorization']?.value
       }
 
       if (!token) {

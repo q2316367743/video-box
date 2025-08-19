@@ -12,7 +12,9 @@ export const routes: Array<RouteRecordRaw> = [{
   name: '主页',
   path: '/',
   redirect: '/home/list'
-}, {
+},
+// 首页
+{
   name: '首页',
   path: '/home',
   component: () => import("@/pages/home/index.vue"),
@@ -33,6 +35,7 @@ export const routes: Array<RouteRecordRaw> = [{
     component: () => import('@/pages/home/pages/series/index.vue'),
   }]
 },
+// 网络资源
 {
   name: "网络资源",
   path: '/web',
@@ -55,7 +58,9 @@ export const routes: Array<RouteRecordRaw> = [{
     path: 'info/:id',
     component: () => import('@/pages/web/pages/info/index.vue'),
   }]
-}, {
+},
+// 直播
+{
   name: '直播',
   path: '/live',
   component: () => import('@/pages/live/index.vue'),
@@ -63,6 +68,7 @@ export const routes: Array<RouteRecordRaw> = [{
     icon: TvIcon,
   }
 },
+// 网盘
 {
   name: '网盘',
   path: '/disk',
@@ -78,6 +84,7 @@ export const routes: Array<RouteRecordRaw> = [{
     component: () => import('@/pages/disk/info/index.vue'),
   }]
 },
+// 订阅
 {
   name: '订阅',
   path: '/subscribe',
@@ -121,6 +128,13 @@ export const routes: Array<RouteRecordRaw> = [{
     component: () => import('@/pages/subscribe/discover/index.vue'),
   }]
 },
+// 资讯
+{
+  name: '资讯',
+  path: '/news',
+  component: () => import('@/pages/news/index.vue'),
+},
+// 设置
 {
   name: '设置',
   path: '/setting',
@@ -152,8 +166,13 @@ export const routes: Array<RouteRecordRaw> = [{
     name: 'AI设置',
     path: 'ai',
     component: () => import('@/pages/setting/page/ai-source/index.vue'),
+  }, {
+    name: '资讯源',
+    path: 'news',
+    component: () => import('@/pages/setting/page/news-source/index.vue'),
   }]
 },
+// 工具
 {
   name: '工具',
   path: '/tools',

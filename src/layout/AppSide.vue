@@ -25,6 +25,12 @@
         </template>
         订阅
       </t-menu-item>
+      <t-menu-item value="/news">
+        <template #icon>
+          <LeaderboardIcon />
+        </template>
+        订阅
+      </t-menu-item>
       <t-menu-item value="/disk/list">
         <template #icon>
           <hard-disk-storage-icon />
@@ -60,7 +66,7 @@
 </template>
 <script lang="ts" setup>
 import {
-  HardDiskStorageIcon, HomeIcon,
+  HardDiskStorageIcon, HomeIcon, LeaderboardIcon,
   RssIcon,
   SettingIcon, TaskIcon, ToolsIcon,
   TvIcon, UserIcon,

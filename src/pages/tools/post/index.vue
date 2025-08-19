@@ -7,14 +7,7 @@
       <t-card class="info-section" title="基础信息">
         <t-form ref="formRef" :data="formData" :rules="formRules" layout="vertical">
           <t-form-item label="图标" name="icon">
-            <t-upload theme="image" accept="image/*" :max="1" :size-limit="{ size: 2, unit: 'MB' }"
-              tips="支持上传 jpg、png 格式图片，文件大小不超过 2MB" @success="handleIconUpload">
-              <template #file-list-display="{ files }">
-                <div v-if="files.length" class="icon-preview">
-                  <img :src="files[0].url" alt="图标预览" />
-                </div>
-              </template>
-            </t-upload>
+            <ImageUpload v-model="formData.icon" />
           </t-form-item>
           <t-form-item label="标题" name="title">
             <t-input v-model="formData.title" placeholder="请输入工具标题" />

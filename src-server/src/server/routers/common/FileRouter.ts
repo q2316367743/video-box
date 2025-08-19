@@ -31,7 +31,7 @@ export default new Elysia({prefix: '/file'})
           mime_type: file.type,
           size: file.size,
           path: `${datePath}/${filename}`,
-          create_at: Date.now(),
+          created_at: Date.now(),
         });
         return filename;
       });
@@ -43,19 +43,13 @@ export default new Elysia({prefix: '/file'})
         file: t.File(),
       })
     })
-  .get('/preview/:id.:ext',
-    async ({params: {id, ext}, set}) => {
+  .get('/preview/:filename',
+    async ({params, set}) => {
       // 1. 查库
-      const row = await resourceDao.selectById(id);
+      const row = await resourceDao.query().eq('filename', params.filename).one()
       if (!row) {
         set.status = 404;
         return 'Not Found';
-      }
-
-      // 2. 简单的扩展名校验（可选）
-      if (row.filename !== `${id}.${ext}`) {
-        set.status = 404;
-        return 'Extension mismatch';
       }
       // 3. 读文件并返回
       const filePath = join(APP_FILE_DIR, row.path);
@@ -64,7 +58,6 @@ export default new Elysia({prefix: '/file'})
     },
     {
       params: t.Object({
-        id: t.String(),
-        ext: t.String(),
+        filename: t.String(),
       })
     });

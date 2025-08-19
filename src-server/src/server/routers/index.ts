@@ -8,6 +8,7 @@ import sourceTvRoutes from "@/server/routers/source/tv";
 import sourceDiskRouters from "@/server/routers/source/disk";
 import pluginWebRoutes from "@/server/routers/plugin/web";
 import pluginDiskRouters from "@/server/routers/plugin/disk";
+import pluginNewsRouters from "@/server/routers/plugin/news";
 import pluginSubscribeRouters from '@/server/routers/plugin/subscribe';
 import myVideoItemRoutes from "@/server/routers/my/video-item";
 import proxyRoutes from "@/server/routers/proxy";
@@ -28,4 +29,5 @@ export default new Elysia({prefix: "/api"})
   .use(proxyRoutes)
   .use(authRoutes)
   .use(toolRouters)
-  .use(fileRouter);
+  .use(fileRouter)
+  .use(pluginNewsRouters);
