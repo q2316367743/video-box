@@ -25,12 +25,17 @@
         </template>
         订阅
       </t-menu-item>
-      <t-menu-item value="/news">
+      <t-submenu value="/discover" title="发现">
         <template #icon>
-          <LeaderboardIcon />
+          <MenuApplicationIcon />
         </template>
-        订阅
-      </t-menu-item>
+        <t-menu-item value="/discover/news">
+          资讯
+        </t-menu-item>
+        <t-menu-item value="/discover/random">
+          摸鱼
+        </t-menu-item>
+      </t-submenu>
       <t-menu-item value="/disk/list">
         <template #icon>
           <hard-disk-storage-icon />
@@ -66,7 +71,7 @@
 </template>
 <script lang="ts" setup>
 import {
-  HardDiskStorageIcon, HomeIcon, LeaderboardIcon,
+  HardDiskStorageIcon, HomeIcon, MenuApplicationIcon,
   RssIcon,
   SettingIcon, TaskIcon, ToolsIcon,
   TvIcon, UserIcon,

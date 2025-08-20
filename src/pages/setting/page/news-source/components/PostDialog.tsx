@@ -4,7 +4,7 @@ import MessageUtil from "@/utils/modal/MessageUtil";
 import { Button, ColorPicker, DialogPlugin, Form, FormItem, FormRule, Input, InputNumber, Radio, RadioGroup, Space, Switch, TabPanel, Tabs } from "tdesign-vue-next";
 import MonacoEditor from '@/components/MonacoEditor.vue';
 import ImageUpload from "@/components/Upload/ImageUpload.vue";
-import NewSourceView from "@/pages/news/components/NewSourceView.vue";
+import NewSourceView from "@/pages/discover/news/components/NewSourceView.vue";
 
 const formRules: Record<string, FormRule[]> = {
   title: [
@@ -114,6 +114,8 @@ export function openPostDialog(loadData: () => void, row?: SourceNews) {
     header: (isEdit.value ? '编辑' : '新增') + '新闻源',
     placement: 'center',
     width: "1200px",
+    closeOnEscKeydown: false,
+    closeOnOverlayClick: false,
     default: () => <div class="flex gap-24px h-462px">
       <div class="flex flex-300 pr-24px overflow-auto" style={{ borderRight: '1px solid var(--td-border-level-2-color)' }}>
         <NewSourceView source={source.value} disabled={true} />

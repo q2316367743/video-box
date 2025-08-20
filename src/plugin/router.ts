@@ -128,11 +128,20 @@ export const routes: Array<RouteRecordRaw> = [{
     component: () => import('@/pages/subscribe/discover/index.vue'),
   }]
 },
-// 资讯
+// 发现
 {
-  name: '资讯',
-  path: '/news',
-  component: () => import('@/pages/news/index.vue'),
+  name: '发现',
+  path: '/discover',
+  component: () => import('@/pages/discover/index.vue'),
+  children: [{
+    name: '发现-新闻',
+    path: 'news',
+    component: () => import('@/pages/discover/news/index.vue'),
+  }, {
+    name: '发现-摸鱼',
+    path: 'random',
+    component: () => import('@/pages/discover/random/index.vue'),
+  }]
 },
 // 设置
 {
@@ -170,6 +179,10 @@ export const routes: Array<RouteRecordRaw> = [{
     name: '资讯源',
     path: 'news',
     component: () => import('@/pages/setting/page/news-source/index.vue'),
+  }, {
+    name: '设置-随机源',
+    path: 'random',
+    component: () => import('@/pages/setting/page/random-source/index.vue'),
   }]
 },
 // 工具
@@ -208,6 +221,7 @@ export const routes: Array<RouteRecordRaw> = [{
   path: '/auth/login',
   component: () => import('@/pages/auth/login/index.vue'),
 },
+// 任务
 {
   name: '任务',
   path: '/task',

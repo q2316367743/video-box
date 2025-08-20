@@ -31,15 +31,15 @@
 </template>
 
 <script setup lang="ts">
-import { Button, type FormRule, PrimaryTableProps, Tag } from 'tdesign-vue-next'
-import { AddIcon, SearchIcon } from 'tdesign-icons-vue-next'
+import { Button, PrimaryTableProps, Tag } from 'tdesign-vue-next'
+import { AddIcon } from 'tdesign-icons-vue-next'
 import { useFuse } from '@vueuse/integrations/useFuse'
 import {
   adminSourceNewsList,
   adminSourceNewsDelete,
   adminSourceNewsEnable,
 } from '@/apis/admin/source/news'
-import type { SourceNews, SourceNewsPost, SourceNewsType } from '@/types/SourceNews'
+import type { SourceNews } from '@/types/SourceNews'
 import { openPostDialog } from './components/PostDialog'
 import MessageBoxUtil from '@/utils/modal/MessageBoxUtil'
 import MessageUtil from '@/utils/modal/MessageUtil'

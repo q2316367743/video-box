@@ -32,6 +32,9 @@ export default defineComponent({
     }, {
       value: '/setting/news',
       label: '资讯源设置'
+    }, {
+      value: '/setting/random',
+      label: '随机源设置'
     }]
   }),
 })

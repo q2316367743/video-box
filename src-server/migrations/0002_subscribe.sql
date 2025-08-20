@@ -234,3 +234,28 @@ create unique index source_news_record_url_uq_index
 -- 刷新资讯
 insert into task_definition (id, name, type, schedule, script)
 values ('news:refresh-record', '资讯:刷新列表', 'preset', '*/30 * * * *', 'refreshSourceNews.ts');
+
+-- 随机源
+create table source_random
+(
+    id          text primary key,
+    created_at  integer not null default CURRENT_TIMESTAMP,
+    updated_at  integer not null default CURRENT_TIMESTAMP,
+    is_enabled  integer not null default 1,
+
+    icon        text    not null default '',
+    name        text    not null default '',
+    description text    not null default '',
+    tags         text    not null default ''
+);
+-- 随机源脚本
+create table source_random_content
+(
+    id         text primary key,
+    random_id  text    not null default '',
+    script     text    not null default ''
+);
+create unique index source_random_script_random_id_uq_index
+    on source_random_script (random_id);
+
+

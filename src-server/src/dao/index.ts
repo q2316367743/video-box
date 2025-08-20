@@ -25,6 +25,8 @@ import {ResourceDao} from "@/dao/ResourceDao";
 import {SourceNewsDao} from "@/dao/news/SourceNewsDao";
 import {SourceNewsContentDao} from "@/dao/news/SourceNewsContentDao";
 import {SourceNewsRecordDao} from "@/dao/news/SourceNewsRecordDao";
+import {SourceRandomDao} from "@/dao/random/SourceRandomDao";
+import {SourceRandomContentDao} from "@/dao/random/SourceRandomContentDao";
 
 export const resourceDao = new ResourceDao(db);
 
@@ -41,6 +43,9 @@ export const myVideoItemDao = new MyVideoItemDao(db);
 
 export const sourceAiDao = new SourceAiDao(db);
 export const sourceAiModelDao = new SourceAiModelDao(db);
+
+export const sourceRandomDao = new SourceRandomDao(db);
+export const sourceRandomContentDao = new SourceRandomContentDao(db);
 
 export const sourceNewsDao = new SourceNewsDao(db);
 export const sourceNewsContentDao = new SourceNewsContentDao(db);

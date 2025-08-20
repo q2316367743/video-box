@@ -1,7 +1,7 @@
 import {Elysia, t} from "elysia";
 import {SourceNewsRecordView} from "@/types/SourceNews";
-import {getNewsRecords} from "@/modules/task/preset/refreshSourceNews";
 import {Result} from "@/views/Result";
+import {getNewsRecords} from "@/global/ScriptManage";
 
 export default new Elysia()
   .post('test', async ({body}) => {
