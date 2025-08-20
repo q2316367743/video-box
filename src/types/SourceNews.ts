@@ -54,6 +54,7 @@ export interface SourceNewsPost {
 
 export interface SourceNewsInfoView extends SourceNews {
   script: string;
+  records: Array<SourceNewsRecord>;
 }
 
 export interface SourceNewsRecordTag {

@@ -8,15 +8,22 @@ import {beginTransactional} from "@/utils/SqlUtil";
 import {http} from "@/global/http";
 import {load} from "cheerio";
 
-export async function refreshSourceNewsOne(row: SourceNews) {
-  const content = await sourceNewsContentDao.query().eq('news_id', row.id).one();
-  if (!content) return Promise.reject(new Error("资讯脚本不存在"));
-  const dataUrl = `data:text/javascript;base64,${btoa(content.script)}`;
+export async function getNewsRecords(script: string) {
+  const dataUrl = `data:text/javascript;base64,${btoa(script)}`;
   const module = await import(dataUrl);
   const records: Array<SourceNewsRecordView> = await module.default({
     http: http,
     load: load
   });
+  if (!records) return Promise.reject(new Error("获取资讯失败"));
+  if (!Array.isArray( records)) return Promise.reject(new Error("获取资讯失败"));
+  return records || [];
+}
+
+export async function refreshSourceNewsOne(row: SourceNews) {
+  const content = await sourceNewsContentDao.query().eq('news_id', row.id).one();
+  if (!content) return Promise.reject(new Error("资讯脚本不存在"));
+  const records = await getNewsRecords(content.script)
   await beginTransactional(async () => {
     // 查询旧的资讯
     console.log('查询旧的资讯')

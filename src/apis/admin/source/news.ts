@@ -1,5 +1,5 @@
 import { useDelete, useGet, usePost, usePut } from "@/apis/common";
-import { SourceNews, SourceNewsInfoView, SourceNewsPost } from "@/types/SourceNews";
+import { SourceNews, SourceNewsInfoView, SourceNewsPost, SourceNewsRecord } from "@/types/SourceNews";
 
 export function adminSourceNewsList() {
   return useGet<Array<SourceNews>>('/api/admin/source/news/list')
@@ -23,4 +23,8 @@ export function adminSourceNewsDelete(id: string) {
 
 export function adminSourceNewsInfo(id: string) {
   return useGet<SourceNewsInfoView>('/api/admin/source/news/info/' + id)
+}
+
+export function adminSourceNewsTest(body: SourceNewsPost) {
+  return usePost<Array<SourceNewsRecord>>('/api/admin/source/news/test', body)
 }

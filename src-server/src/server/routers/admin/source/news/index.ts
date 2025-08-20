@@ -5,6 +5,7 @@ import sourceNewsUpdateRouter from "@/server/routers/admin/source/news/routers/S
 import sourceNewsDeleteRouter from "@/server/routers/admin/source/news/routers/SourceNewsDeleteRouter";
 import sourceNewsEnableRouter from "@/server/routers/admin/source/news/routers/SourceNewsEnableRouter";
 import sourceNewsInfoRouter from "@/server/routers/admin/source/news/routers/SourceNewsInfoRouter";
+import sourceNewsTestRouter from "@/server/routers/admin/source/news/routers/SourceNewsTestRouter";
 
 export default new Elysia({prefix: '/source/news'})
   .use(sourceNewsListRouter)
@@ -13,3 +14,4 @@ export default new Elysia({prefix: '/source/news'})
   .use(sourceNewsDeleteRouter)
   .use(sourceNewsEnableRouter)
   .use(sourceNewsInfoRouter)
+  .use(sourceNewsTestRouter)

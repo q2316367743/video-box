@@ -2,19 +2,20 @@
   <div :style="{ transformOrigin: '50% 50%', backgroundColor: source.primary_color }" class="news-item">
     <div class="news-item-header">
       <div class="news-item-header__left">
-        <img class="w-8 h-8 rounded-full bg-cover" :src="source.logo"/>
+        <img class="w-8 h-8 rounded-full bg-cover" :src="source.logo" />
         <span class="flex flex-col">
           <span class="flex items-center gap-2">
-            <span class="news-item-header__title" @click="openWebsite">{{ source.title }}</span>
+            <span class="news-item-header__title" @click="openWebsite" :style="{ color: contrastColor }">{{ source.title
+            }}</span>
             <t-tag class="news-item-header__tag" v-if="source.tag" size="small" theme="primary">{{
               source.tag
             }}</t-tag>
           </span>
-          <span class="news-item-header__date">{{ date }}</span></span>
+          <span class="news-item-header__date" :style="{ color: contrastColor }">{{ date }}</span></span>
       </div>
-      <div class="news-item-header__opt">
+      <div v-if="!disabled" class="news-item-header__opt">
         <div class="btn">
-          <refresh-icon size="16px" :class="{ spin: loading }" @click="refresh" />
+          <refresh-icon size="16px" :class="{ spin: loading }" @click="refresh" :style="{ color: contrastColor }" />
         </div>
       </div>
     </div>
@@ -64,7 +65,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { MenuApplicationIcon, RefreshIcon } from "tdesign-icons-vue-next";
+import { RefreshIcon } from "tdesign-icons-vue-next";
 import { prettyDate } from "@/utils/lang/FormatUtil";
 import { SourceNewsItem, SourceNewsRecordTag } from '@/types/SourceNews';
 import { pluginNewsRefresh, pluginNewsInfo } from "@/apis/plugin/news";
@@ -73,7 +74,11 @@ const props = defineProps({
   source: {
     type: Object as PropType<SourceNewsItem>,
     required: true
-  }
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  },
 });
 
 const item = ref(props.source);
@@ -89,6 +94,27 @@ const tag = computed<SourceNewsRecordTag | null>(() => {
   return null;
 })
 
+// 根据主色生成对比色
+const contrastColor = computed(() => {
+  const color = props.source.primary_color;
+  if (!color) return '#000000';
+
+  // 移除 # 号
+  const hex = color.replace('#', '');
+
+  // 转换为 RGB
+  const r = parseInt(hex.substr(0, 2), 16);
+  const g = parseInt(hex.substr(2, 2), 16);
+  const b = parseInt(hex.substr(4, 2), 16);
+
+  // 计算亮度
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+  // 根据亮度返回黑色或白色
+  return brightness > 128 ? '#000000' : '#ffffff';
+})
+
+watch(() => props.source, val => item.value = val, { deep: true })
 
 const date = ref('很久很久以前更新');
 
@@ -111,7 +137,6 @@ const refresh = async () => {
 }
 </script>
 <style scoped lang="less">
-
 html[theme-mode="dark"] {
   .news-item {
     --nn-app-header-bg-color: rgba(0, 0, 0, 0.35);
