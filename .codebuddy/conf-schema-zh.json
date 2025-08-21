@@ -1,0 +1,1721 @@
+{
+  "title": "JSON schema for cnb configuration files",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "notRequiredNonEmptyString": {
+      "oneOf": [{
+        "$ref": "#/definitions/nonEmptyString"
+      },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "filePath": {
+      "$ref": "#/definitions/nonEmptyString"
+    },
+    "uri": {
+      "$ref": "#/definitions/nonEmptyString",
+      "type": "string",
+      "pattern": "^([a-zA-Z][a-zA-Z0-9+.-]*):(?:\\/\\/((?:(?=((?:[a-zA-Z0-9-._~!$&'()*+,;=:]|%[0-9a-fA-F]{2})*))(\\3)@)?(?=((?:\\[?(?:::[a-fA-F0-9]+(?::[a-fA-F0-9]+)?|(?:[a-fA-F0-9]+:)+(?::[a-fA-F0-9]+)+|(?:[a-fA-F0-9]+:)+(?::|(?:[a-fA-F0-9]+:?)*))\\]?)|(?:[a-zA-Z0-9-._~!$&'()*+,;=]|%[0-9a-fA-F]{2})*))\\5(?::(?=(\\d*))\\6)?)(\\/(?=((?:[a-zA-Z0-9-._~!$&'()*+,;=:@\\/]|%[0-9a-fA-F]{2})*))\\8)?|(\\/?(?!\\/)(?=((?:[a-zA-Z0-9-._~!$&'()*+,;=:@\\/]|%[0-9a-fA-F]{2})*))\\10)?)(?:\\?(?=((?:[a-zA-Z0-9-._~!$&'()*+,;=:@\\/?]|%[0-9a-fA-F]{2})*))\\11)?(?:#(?=((?:[a-zA-Z0-9-._~!$&'()*+,;=:@\\/?]|%[0-9a-fA-F]{2})*))\\12)?$"
+    },
+    "uriWithoutProtocol": {
+      "$ref": "#/definitions/nonEmptyString",
+      "type": "string",
+      "pattern": "^(((?:(?=((?:[a-zA-Z0-9-._~!$&'()*+,;=:]|%[0-9a-fA-F]{2})*))(\\3)@)?(?=((?:\\[?(?:::[a-fA-F0-9]+(?::[a-fA-F0-9]+)?|(?:[a-fA-F0-9]+:)+(?::[a-fA-F0-9]+)+|(?:[a-fA-F0-9]+:)+(?::|(?:[a-fA-F0-9]+:?)*))\\]?)|(?:[a-zA-Z0-9-._~!$&'()*+,;=]|%[0-9a-fA-F]{2})*))\\5(?::(?=(\\d*))\\6)?)(\\/(?=((?:[a-zA-Z0-9-._~!$&'()*+,;=:@\\/]|%[0-9a-fA-F]{2})*))\\8)?|(\\/?(?!\\/)(?=((?:[a-zA-Z0-9-._~!$&'()*+,;=:@\\/]|%[0-9a-fA-F]{2})*))\\10)?)(?:\\?(?=((?:[a-zA-Z0-9-._~!$&'()*+,;=:@\\/?]|%[0-9a-fA-F]{2})*))\\11)?(?:#(?=((?:[a-zA-Z0-9-._~!$&'()*+,;=:@\\/?]|%[0-9a-fA-F]{2})*))\\12)?$"
+    },
+    "arrayOfNonEmptyStrings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/nonEmptyString"
+      }
+    },
+    "stringOrArrayString": {
+      "oneOf": [{
+        "$ref": "#/definitions/nonEmptyString",
+        "default": "echo 'hello world'"
+      },
+        {
+          "$ref": "#/definitions/arrayOfNonEmptyStrings"
+        }
+      ]
+    },
+    "numberArrayUnique": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 1,
+      "items": {
+        "type": "number"
+      }
+    },
+    "stringArrayUnique": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/nonEmptyString"
+      }
+    },
+    "env": {
+      "type": "object",
+      "description": "指定执行脚本时候的环境变量。Job 中的会覆盖 Pipeline 中的同名环境变量"
+    },
+    "imports": {
+      "$ref": "#/definitions/stringOrArrayString",
+      "description": "指定某个本仓库或另外 CNB Git 仓库文件路径，可以读取此文件作为环境变量来源"
+    },
+    "ifModify": {
+      "oneOf": [{
+        "$ref": "#/definitions/nonEmptyString"
+      },
+        {
+          "$ref": "#/definitions/arrayOfNonEmptyStrings"
+        }
+      ],
+      "description": "指定一个 glob 字符串或字符串数组，只有相应文件变动时，才会执行"
+    },
+    "if": {
+      "$ref": "#/definitions/stringOrArrayString",
+      "description": "指定一个或者多个 Shell 脚本，当退出程序码为 0 时，执行该任务"
+    },
+    "ifNewBranch": {
+      "type": "boolean",
+      "description": "只有当前分支属于新分支（即 `CNB_IS_NEW_BRANCH` 为 `true`）时，才执行该任务"
+    },
+    "breakIfModify": {
+      "type": "boolean",
+      "description": "Job 执行前，如果源分支已更新，则终止构建"
+    },
+    "skipIfModify": {
+      "type": "boolean",
+      "description": "Job 执行前，如果源分支已更新，则跳过该 Job"
+    },
+    "retry": {
+      "type": "number",
+      "description": "失败重试次数，默认为 0，表示不重试",
+      "default": 0
+    },
+    "label": {
+      "type": "object",
+      "additionalProperties": {
+        "anyOf": [{
+          "$ref": "#/definitions/nonEmptyString"
+        },
+          {
+            "$ref": "#/definitions/arrayOfNonEmptyStrings"
+          }
+        ]
+      },
+      "description": "为流水线指定标签"
+    },
+    "event": {
+      "type": "object",
+      "default": "push",
+      "properties": {
+        "push": {
+          "$ref": "#/definitions/pipelines",
+          "description": "分支 push 事件"
+        },
+        "commit.add": {
+          "$ref": "#/definitions/pipelines",
+          "description": "新增 commit 事件"
+        },
+        "branch.create": {
+          "$ref": "#/definitions/pipelines",
+          "description": "分支创建事件"
+        },
+        "branch.delete": {
+          "$ref": "#/definitions/pipelines",
+          "description": "分支删除事件"
+        },
+        "tag_push": {
+          "$ref": "#/definitions/pipelines",
+          "description": "tag_push 事件触发"
+        },
+        "auto_tag": {
+          "$ref": "#/definitions/pipelines",
+          "description": "仓库的 tag 列表页面，点击 “自动生成 Tag” 按钮触发的事件"
+        },
+        "pull_request": {
+          "$ref": "#/definitions/pipelines",
+          "description": "由 PR 的创建、重新打开以及源分支 push 触发"
+        },
+        "pull_request.target": {
+          "$ref": "#/definitions/pipelines",
+          "description": "由 PR 的创建、重新打开以及源分支 push 触发。与 pull_request 的区别是此事件从目标分支取配置文件和代码"
+        },
+        "pull_request.update": {
+          "$ref": "#/definitions/pipelines",
+          "description": "由 PR 的创建、重新打开、源分支 push 以及 PR 的 title、description 修改触发。"
+        },
+        "pull_request.approved": {
+          "$ref": "#/definitions/pipelines",
+          "description": "有用户评审 PR 允许合并时触发"
+        },
+        "pull_request.changes_requested": {
+          "$ref": "#/definitions/pipelines",
+          "description": "有用户评审 PR 需要改进时触发"
+        },
+        "pull_request.merged": {
+          "$ref": "#/definitions/pipelines",
+          "description": "分支合并完成时触发"
+        },
+        "pull_request.mergeable": {
+          "$ref": "#/definitions/pipelines",
+          "description": "保护分支的 PR 评审通过且状态检查通过，PR 变为可合并时触发"
+        },
+        "pull_request.comment": {
+          "$ref": "#/definitions/pipelines",
+          "description": "在 PR 创建评论时触发"
+        },
+        "api_trigger": {
+          "$ref": "#/definitions/pipelines",
+          "description": "使用 API 触发的事件"
+        },
+        "web_trigger": {
+          "$ref": "#/definitions/pipelines",
+          "description": "在 web 页面触发的事件"
+        },
+        "vscode": {
+          "$ref": "#/definitions/pipelines",
+          "description": "仅限仓库页面中点击按钮启动远程开发的事件"
+        },
+        "issue.open": {
+          "$ref": "#/definitions/pipelines",
+          "description": "新建 issue 触发的事件"
+        },
+        "issue.reopen": {
+          "$ref": "#/definitions/pipelines",
+          "description": "重新打开 issue 触发的事件"
+        },
+        "issue.close": {
+          "$ref": "#/definitions/pipelines",
+          "description": "关闭 issue 触发的事件"
+        },
+        "issue.comment": {
+          "$ref": "#/definitions/pipelines",
+          "description": "issue 评论触发的事件"
+        },
+        "issue.update": {
+          "$ref": "#/definitions/pipelines",
+          "description": "issue 名称、描述、处理人、标签、优先级变更触发的事件"
+        },
+        "issue.update.assignee_change": {
+          "$ref": "#/definitions/pipelines",
+          "description": "issue 处理人变更触发的事件"
+        },
+        "issue.update.priority_change": {
+          "$ref": "#/definitions/pipelines",
+          "description": "issue 优先级变更触发的事件"
+        },
+        "issue.update.label_change": {
+          "$ref": "#/definitions/pipelines",
+          "description": "issue 标签变更触发的事件"
+        }
+      },
+      "patternProperties": {
+        "^api_trigger_\\w+": {
+          "$ref": "#/definitions/pipelines",
+          "description": "使用 API 触发的事件"
+        },
+        "^web_trigger_\\w+": {
+          "$ref": "#/definitions/pipelines",
+          "description": "在 web 页面触发的事件"
+        },
+        "^crontab:.+": {
+          "$ref": "#/definitions/pipelines",
+          "description": "使用 crontab 触发的事件"
+        },
+        "^tag_deploy\\..+": {
+          "$ref": "#/definitions/pipelines",
+          "description": "在仓库 tag/release 页面通过部署按钮触发的事件"
+        }
+      },
+      "description": "触发构建的分支名称",
+      "additionalProperties": false
+    },
+    "pipelines": {
+      "oneOf": [{
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/pipeline"
+        }
+      },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/pipeline"
+          }
+        }
+      ]
+    },
+    "pipeline": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/nonEmptyString",
+          "default": "name",
+          "description": "指定流水线名"
+        },
+        "runner": {
+          "type": "object",
+          "description": "指定构建机相关的参数",
+          "properties": {
+            "tags": {
+              "$ref": "#/definitions/stringOrArrayString",
+              "description": "指定使用具备哪些标签的构建机，可以指定多个，支持使用环境变量"
+            },
+            "cpus": {
+              "oneOf": [{
+                "type": "integer"
+              },
+                {
+                  "type": "string"
+                }
+              ],
+              "description": "指定需要使用的最大 cpu 核数，支持使用环境变量"
+            }
+          }
+        },
+        "docker": {
+          "type": "object",
+          "description": "可通过 Docker 自定义构建环境",
+          "properties": {
+            "image": {
+              "oneOf": [{
+                "$ref": "#/definitions/nonEmptyString",
+                "description": "指定当前 Pipeline 的环境镜像"
+              },
+                {
+                  "type": "object",
+                  "description": "指定当前 Pipeline 的环境镜像",
+                  "properties": {
+                    "name": {
+                      "$ref": "#/definitions/nonEmptyString",
+                      "description": "指定当前 Pipeline  的环境镜像"
+                    },
+                    "dockerUser": {
+                      "type": "string",
+                      "description": "指定 Docker 用户名，用于拉取镜像"
+                    },
+                    "dockerPassword": {
+                      "type": "string",
+                      "description": "指定 Docker 用户密码，用于拉取镜像"
+                    }
+                  }
+                }
+              ]
+            },
+            "build": {
+              "oneOf": [{
+                "$ref": "#/definitions/nonEmptyString",
+                "description": "见build.dockerfile"
+              },
+                {
+                  "type": "object",
+                  "description": "指定一个 Dockerfile，构建一个临时镜像，做为 image 的值使用",
+                  "additionalProperties": false,
+                  "properties": {
+                    "dockerfile": {
+                      "$ref": "#/definitions/nonEmptyString",
+                      "description": "指定一个 Dockerfile，构建一个临时镜像，做为 image 的值使用"
+                    },
+                    "target": {
+                      "type": "string",
+                      "description": "对应 docker build 中的 --target 参数，可以选择性地构建 Dockerfile 中的特定阶段，而不是构建整个 Dockerfile"
+                    },
+                    "by": {
+                      "description": "用来声明缓存构建过程中依赖的文件列表。未出现在 by 列表中的文件，除了 dockerfile，其他在构建缓存过程中，都当不存在处理",
+                      "oneOf": [{
+                        "type": "string"
+                      },
+                        {
+                          "type": "array"
+                        }
+                      ]
+                    },
+                    "versionBy": {
+                      "description": "用来进行版本控制，所指向的文件内容发生变化，我们就会认为是一个新的版本， 具体的计算逻辑见这个表达式：sha1(dockerfile + versionBy + buildArgs)",
+                      "oneOf": [{
+                        "type": "string"
+                      },
+                        {
+                          "type": "array"
+                        }
+                      ]
+                    },
+                    "buildArgs": {
+                      "type": "string",
+                      "description": "在 build 时插入额外的构建参数 (--build-arg $key=$value), value 值为 null 时只加入 key (--build-arg $key)"
+                    },
+                    "ignoreBuildArgsInVersion": {
+                      "type": "string",
+                      "description": "版本计算是否忽略 buildArgs。详见版本控制"
+                    }
+                  }
+                }
+              ]
+            },
+            "volumes": {
+              "$ref": "#/definitions/arrayOfNonEmptyStrings",
+              "description": "声明数据卷"
+            }
+          }
+        },
+        "git": {
+          "type": "object",
+          "description": "描述 Git 相关配置",
+          "properties": {
+            "enable": {
+              "type": "boolean",
+              "description": "指定是否拉取代码，默认值为 true",
+              "default": true
+            },
+            "submodules": {
+              "description": "指定是否要拉取子项目（submodules），可以是 Boolean 或 Object 类型，默认值为 true",
+              "oneOf": [{
+                "type": "boolean",
+                "default": true,
+                "description": "指定是否要拉取子项目（submodules），默认值为 true"
+              },
+                {
+                  "type": "object",
+                  "properties": {
+                    "enable": {
+                      "type": "boolean",
+                      "default": true,
+                      "description": "指定是否要拉取子项目（submodules），默认值为 true"
+                    },
+                    "remote": {
+                      "type": "boolean",
+                      "default": false,
+                      "description": "执行 git submodule update 时是否添加 --remote 参数，用于每次拉取 submodule 最新的代码"
+                    }
+                  }
+                }
+              ]
+            },
+            "lfs": {
+              "description": "指定是否拉取 LFS 文件，可以是 Boolean 或 Object 类型，默认值为 true",
+              "oneOf": [{
+                "type": "boolean",
+                "default": true,
+                "description": "指定是否拉取 LFS 文件，默认值为 true"
+              },
+                {
+                  "type": "object",
+                  "properties": {
+                    "enable": {
+                      "type": "boolean",
+                      "default": true,
+                      "description": "指定是否拉取 LFS 文件，默认值为 true"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "services": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "vscode",
+              "docker"
+            ]
+          },
+          "description": "用于声明构建时需要的服务，格式：name:[version], version 是可选的"
+        },
+        "env": {
+          "$ref": "#/definitions/env"
+        },
+        "imports": {
+          "$ref": "#/definitions/imports"
+        },
+        "allowFailure": {
+          "type": "boolean",
+          "description": "是否允许当前流水线失败，默认为 false，为 true 时流水线的失败的状态不会上报到 CNB 上"
+        },
+        "stages": {
+          "$ref": "#/definitions/stages"
+        },
+        "failStages": {
+          "$ref": "#/definitions/stages"
+        },
+        "endStages": {
+          "$ref": "#/definitions/stages"
+        },
+        "ifModify": {
+          "$ref": "#/definitions/ifModify"
+        },
+        "ifNewBranch": {
+          "$ref": "#/definitions/ifNewBranch"
+        },
+        "breakIfModify": {
+          "$ref": "#/definitions/breakIfModify"
+        },
+        "label": {
+          "$ref": "#/definitions/label"
+        },
+        "retry": {
+          "$ref": "#/definitions/retry"
+        },
+        "lock": {
+          "$ref": "#/definitions/lock"
+        }
+      },
+      "if": {
+        "properties": {
+          "services": {
+            "contains": {
+              "const": "vscode"
+            }
+          }
+        }
+      },
+      "else": {
+        "required": [
+          "stages"
+        ]
+      }
+    },
+    "stages": {
+      "type": "array",
+      "description": "定义一组阶段任务，每个阶段串行运行",
+      "items": {
+        "$ref": "#/definitions/stage"
+      },
+      "minItems": 1
+    },
+    "explicitStage": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/nonEmptyString",
+          "default": "name",
+          "description": "指定 Stage 名字"
+        },
+        "ifModify": {
+          "$ref": "#/definitions/ifModify"
+        },
+        "if": {
+          "$ref": "#/definitions/if"
+        },
+        "ifNewBranch": {
+          "$ref": "#/definitions/ifNewBranch"
+        },
+        "retry": {
+          "$ref": "#/definitions/retry"
+        },
+        "env": {
+          "$ref": "#/definitions/env"
+        },
+        "imports": {
+          "$ref": "#/definitions/imports"
+        },
+        "image": {
+          "oneOf": [{
+            "$ref": "#/definitions/nonEmptyString",
+            "type": "string",
+            "description": "指定当前 Stage 的环境镜像"
+          },
+            {
+              "type": "object",
+              "description": "指定当前 Stage 的环境镜像",
+              "properties": {
+                "name": {
+                  "$ref": "#/definitions/nonEmptyString",
+                  "description": "指定当前 Stage 的环境镜像"
+                },
+                "dockerUser": {
+                  "type": "string",
+                  "description": "指定 Docker 用户名，用于拉取缓存镜像"
+                },
+                "dockerPassword": {
+                  "type": "string",
+                  "description": "指定 Docker 用户密码，用于拉取缓存镜像"
+                }
+              }
+            }
+          ]
+        },
+        "jobs": {
+          "$ref": "#/definitions/jobs"
+        },
+        "lock": {
+          "$ref": "#/definitions/lock"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "jobs"
+      ]
+    },
+    "jobs": {
+      "description": "Job 是最基本的任务执行单元，如果一个 Stage 中没有指定 jobs 参数，那么一个 Stage 就当做一个 Job 来进行执行",
+      "oneOf": [{
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/job"
+        }
+      },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/job"
+          }
+        }
+      ]
+    },
+    "stage": {
+      "oneOf": [{
+        "$ref": "#/definitions/explicitStage"
+      },
+        {
+          "$ref": "#/definitions/job"
+        },
+        {
+          "$ref": "#/definitions/stages"
+        }
+      ]
+    },
+    "basicJob": {
+      "type": "object",
+      "description": "指定 Job。Job 是一个最基本的任务执行单元，如果一个 Stage 中没有指定 jobs 参数，那么一个 Stage 就当做一个 Job 来进行执行",
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/nonEmptyString",
+          "default": "name",
+          "description": "指定 Job 名称"
+        },
+        "timeout": {
+          "default": 3600000,
+          "description": "设置单个任务的超时时间（单位毫秒），默认为 1 小时，最大不能超过 12 小时",
+          "anyOf": [{
+            "type": "number"
+          },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "ifModify": {
+          "$ref": "#/definitions/ifModify"
+        },
+        "breakIfModify": {
+          "$ref": "#/definitions/breakIfModify"
+        },
+        "skipIfModify": {
+          "$ref": "#/definitions/skipIfModify"
+        },
+        "if": {
+          "$ref": "#/definitions/if"
+        },
+        "ifNewBranch": {
+          "$ref": "#/definitions/ifNewBranch"
+        },
+        "retry": {
+          "$ref": "#/definitions/retry"
+        },
+        "env": {
+          "$ref": "#/definitions/env"
+        },
+        "imports": {
+          "$ref": "#/definitions/imports"
+        },
+        "exports": {
+          "type": "object",
+          "description": "将执行结果导出为环境变量"
+        },
+        "allowFailure": {
+          "anyOf": [{
+            "type": "boolean"
+          },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "是否允许该 Job 失败，默认为 false。为 true 时如果失败也不会影响接下来流程的执行"
+        },
+        "lock": {
+          "$ref": "#/definitions/lock"
+        }
+      }
+    },
+    "job": {
+      "oneOf": [{
+        "$ref": "#/definitions/nonEmptyString",
+        "description": "指定该步骤所要执行的 shell 脚本"
+      },
+        {
+          "$ref": "#/definitions/internalStep"
+        },
+        {
+          "$ref": "#/definitions/customStep"
+        },
+        {
+          "$ref": "#/definitions/imageCommandJob"
+        },
+        {
+          "$ref": "#/definitions/imagePluginJob"
+        }
+      ],
+      "properties": {
+        "jobs": {
+          "not": true
+        }
+      }
+    },
+    "internalStep": {
+      "required": [
+        "type"
+      ],
+      "allOf": [{
+        "$ref": "#/definitions/basicJob"
+      },
+        {
+          "properties": {
+            "script": {
+              "not": true
+            },
+            "image": {
+              "not": true
+            },
+            "optionsFrom": {
+              "$ref": "#/definitions/stringOrArrayString",
+              "description": "指定本地或 Git 仓库文件路径，可以读取此文件作为内置任务参数"
+            }
+          }
+        }
+      ],
+      "oneOf": [{
+        "type": "object",
+        "required": [
+          "options"
+        ],
+        "events": [
+          "push",
+          "commit.add",
+          "tag_push",
+          "tag_deploy",
+          "pull_request.merged",
+          "api_trigger",
+          "web_trigger",
+          "crontab",
+          "branch.create"
+        ],
+        "visible": true,
+        "pluginDescription": "删除 CNB 制品标签，目前仅删除支持 CNB docker 和 helm 标签。需要有仓库写权限",
+        "properties": {
+          "type": {
+            "const": "artifact:remove-tag",
+            "title": "remove-tag",
+            "description": "events: push,commit.add,tag_push,tag_deploy,pull_request.merged,api_trigger,web_trigger,crontab,branch.create\n{\n\n\t// 制品包名\n name: string\n tags: Array<String>\n\t// 制品类型，目前仅支持  docker  和  helm \n type?: string= 'docker'\n}\n"
+          },
+          "options": {
+            "type": "object",
+            "title": "内置任务参数",
+            "properties": {
+              "name": {
+                "description": "制品包名",
+                "type": "string"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "type": {
+                "description": "制品类型，目前仅支持 `docker` 和 `helm`",
+                "default": "docker",
+                "enum": [
+                  "docker",
+                  "helm"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "tags"
+            ]
+          }
+        }
+      },
+        {
+          "type": "object",
+          "events": [
+            "push",
+            "commit.add",
+            "branch.create",
+            "pull_request.target",
+            "pull_request.mergeable",
+            "tag_push",
+            "pull_request.merged",
+            "api_trigger",
+            "web_trigger",
+            "crontab",
+            "tag_deploy"
+          ],
+          "visible": true,
+          "pluginDescription": "触发当前仓库当前分支流水线，可指定事件和配置文件",
+          "properties": {
+            "type": {
+              "const": "cnb:apply",
+              "title": "apply",
+              "description": "events: push,commit.add,branch.create,pull_request.target,pull_request.mergeable,tag_push,pull_request.merged,api_trigger,web_trigger,crontab,tag_deploy\n{\n\n\t// 完整的  CI  配置文件内容\n config?: string\n\t// 指定一个本地文件作为配置文件。\n configFrom?: string\n\t// 要执行的自定义事件名，必须为  api_trigger  或以  api_trigger_  开头。\n event?: string= 'api_trigger'\n\t// 是否同步执行。\n sync?: boolean= false\n\t// 同步模式下，触发的流水线构建失败时，是否继续执行下个任务。\n continueOnBuildError?: boolean= false\n\t// 自定义流水线标题\n title?: string\n}\n"
+            },
+            "options": {
+              "type": "object",
+              "title": "内置任务参数",
+              "properties": {
+                "config": {
+                  "description": "完整的 `CI` 配置文件内容",
+                  "type": "string"
+                },
+                "configFrom": {
+                  "description": "指定一个本地文件作为配置文件。",
+                  "type": "string"
+                },
+                "event": {
+                  "description": "要执行的自定义事件名，必须为 `api_trigger` 或以 `api_trigger_` 开头。",
+                  "default": "api_trigger",
+                  "type": "string"
+                },
+                "sync": {
+                  "description": "是否同步执行。",
+                  "default": false,
+                  "type": "boolean",
+                  "oriDesc": "是否同步执行。\n\n同步模式下会等待本次 `apply` 流水线执行成功，再执行下一个任务。"
+                },
+                "continueOnBuildError": {
+                  "description": "同步模式下，触发的流水线构建失败时，是否继续执行下个任务。",
+                  "default": false,
+                  "type": "boolean"
+                },
+                "title": {
+                  "description": "自定义流水线标题",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "options"
+          ],
+          "visible": true,
+          "pluginDescription": "等待和获取当前构建的另一条流水线的 cnb:resolve 任务的数据",
+          "properties": {
+            "type": {
+              "const": "cnb:await",
+              "title": "await",
+              "description": "\n{\n\n\t// 配对 ID\n key: string\n}\n"
+            },
+            "options": {
+              "type": "object",
+              "title": "内置任务参数",
+              "properties": {
+                "key": {
+                  "description": "配对 ID",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "key"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "options"
+          ],
+          "visible": true,
+          "pluginDescription": "读取并解析本地文件，可导出为环境变量",
+          "properties": {
+            "type": {
+              "const": "cnb:read-file",
+              "title": "read file",
+              "description": "\n{\n\n\t// 本地文件路径\n filePath: string\n}\n"
+            },
+            "options": {
+              "type": "object",
+              "title": "内置任务参数",
+              "properties": {
+                "filePath": {
+                  "description": "本地文件路径",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "filePath"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "options"
+          ],
+          "visible": true,
+          "pluginDescription": "通知和传递数据到当前构建的另一条流水线的 cnb:await 任务",
+          "properties": {
+            "type": {
+              "const": "cnb:resolve",
+              "title": "resolve",
+              "description": "\n{\n\n\t// 配对 ID\n key: string\n\t// 要传递的对象\n data?: object\n}\n"
+            },
+            "options": {
+              "type": "object",
+              "title": "内置任务参数",
+              "properties": {
+                "key": {
+                  "description": "配对 ID",
+                  "type": "string"
+                },
+                "data": {
+                  "description": "要传递的对象",
+                  "oriDesc": "要传递的对象\n\n`key: value` 格式，支持多级。示例：\n\n```yaml\n- name: resolve a json\n  type: cnb:resolve\n  options:\n    key: demo\n    data:\n      a: 1\n      b:\n        c: 2\n```\n\n`await` 任务的结果，是 `resolve` 声明的 `data` 对象。\n\n可以通过 `exports` 访问这个对象，示例：\n\n```yaml\n- name: await a json\n  type: cnb:await\n  options:\n    key: demo\n  exports:\n    a: VAR_A\n    b.c: VAR_B\n- name: show var\n  script:\n    - echo ${VAR_A}    # 1\n    - echo ${VAR_B}    # 2\n```\n\n当然，也可以不传送任务内容，仅仅表示一个等待动作：\n\n```yaml\n- name: ready\n  type: cnb:resolve\n  options:\n    key: i-am-ready\n```\n\n```yaml\n- name: ready\n  type: cnb:await\n  options:\n    key: i-am-ready\n```"
+                }
+              },
+              "required": [
+                "key"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "options"
+          ],
+          "visible": true,
+          "pluginDescription": "触发其他仓库流水线，可指定分支、事件和环境变量",
+          "properties": {
+            "type": {
+              "const": "cnb:trigger",
+              "title": "trigger",
+              "description": "\n{\n\n\t// 个人访问令牌。\n token: string\n\t// 目标仓库的完整路径，如： group/repo 。\n slug: string\n\t// 触发的自定义事件名，必须是  api_trigger  或 以 api_trigger_  开头。\n event?: string\n\t// 触发分支，默认为主分支。\n branch?: string\n\t// 触发分支中的 CommitId，默认取  branch  的最新提交记录。\n sha?: string\n\t// 触发目标仓库流水线时的环境变量。\n env?: TriggerEnv\n\t// 是否同步执行，同步模式下会等待本次  trigger  流水线执行成功后，再执行下一个任务。\n sync?: boolean= false\n\t// 同步模式下，触发的流水线构建失败时，是否继续执行下个任务。\n continueOnBuildError?: boolean= false\n\t// 自定义流水线标题\n title?: string\n}\n\tTriggerEnv\n{ \n [key:string]:string,number,boolean\n}\n"
+            },
+            "options": {
+              "type": "object",
+              "title": "内置任务参数",
+              "properties": {
+                "token": {
+                  "description": "个人访问令牌。",
+                  "type": "string",
+                  "oriDesc": "个人访问令牌。\n\n新流水线触发者为令牌对应用户，会判断有无目标仓库权限。"
+                },
+                "slug": {
+                  "description": "目标仓库的完整路径，如：`group/repo`。",
+                  "type": "string"
+                },
+                "event": {
+                  "description": "触发的自定义事件名，必须是 `api_trigger` 或 以`api_trigger_` 开头。",
+                  "type": "string",
+                  "oriDesc": "触发的自定义事件名，必须是 `api_trigger` 或 以`api_trigger_` 开头。\n\n需要目标仓库配置了对应事件的流水线，才可以触发。"
+                },
+                "branch": {
+                  "description": "触发分支，默认为主分支。",
+                  "type": "string"
+                },
+                "sha": {
+                  "description": "触发分支中的 CommitId，默认取 `branch` 的最新提交记录。",
+                  "type": "string"
+                },
+                "env": {
+                  "$ref": "#/definitions/TriggerEnv",
+                  "description": "触发目标仓库流水线时的环境变量。",
+                  "oriDesc": "触发目标仓库流水线时的环境变量。\n\n默认值中有如下环境变量，**用户无法覆盖**：\n\n- `API_TRIGGER_BUILD_ID`，含义同 CI 默认环境变量中的 `CNB_BUILD_ID`\n- `API_TRIGGER_PIPELINE_ID`，含义同 CI 默认环境变量中的 `CNB_PIPELINE_ID`\n- `API_TRIGGER_REPO_SLUG`，含义同 CI 默认环境变量中的 `CNB_REPO_SLUG`\n- `API_TRIGGER_REPO_ID`，含义同 CI 默认环境变量中的 `CNB_REPO_ID`\n- `API_TRIGGER_USER`，含义同 CI 默认环境变量中的 `CNB_BUILD_USER`\n- `API_TRIGGER_BRANCH`，含义同 CI 默认环境变量中的 `CNB_BRANCH`\n- `API_TRIGGER_COMMIT`，含义同 CI 默认环境变量中的 `CNB_COMMIT`\n- `API_TRIGGER_COMMIT_SHORT`，含义同 CI 默认环境变量中的 `CNB_COMMIT_SHORT`"
+                },
+                "sync": {
+                  "description": "是否同步执行，同步模式下会等待本次 `trigger` 流水线执行成功后，再执行下一个任务。",
+                  "default": false,
+                  "type": "boolean"
+                },
+                "continueOnBuildError": {
+                  "description": "同步模式下，触发的流水线构建失败时，是否继续执行下个任务。",
+                  "default": false,
+                  "type": "boolean"
+                },
+                "title": {
+                  "description": "自定义流水线标题",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "event",
+                "slug"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "options"
+          ],
+          "visible": true,
+          "pluginDescription": "构建一个 Docker 镜像作为缓存，在未来的构建中重复使用，可以避免网络资源如 依赖包 重复下载",
+          "properties": {
+            "type": {
+              "const": "docker:cache",
+              "title": "Docker 缓存",
+              "description": "\n{\n\n\t// 用于构建缓存镜像的 Dockerfile 路径。\n dockerfile: string\n\t// 用来声明缓存镜像构建过程中依赖的文件列表。**注意：未出现在  by  列表中的文件，除了 Dockerfile，其他在构建镜像过程中，都当不存在处理。**\n by?: array<string> | string\n\t// 用来进行版本控制，未传入  versionBy ，则默认取  by  的值进行版本控制。\n versionBy?: array<string> | string\n\t// 在 build 时插入额外的构建参数 ( --build-arg $key=$value ), value 值为 null 时只加入 key ( --build-arg $key )。\n buildArgs?: object\n\t// 对应 docker build 中的 --target 参数，可以选择性地构建 Dockerfile 中的特定阶段，而不是构建整个 Dockerfile。\n target?: string\n\t// 是否同步模式，等待缓存镜像  docker push  成功后才继续。\n sync?: boolean= false\n\t// 版本计算是否忽略  buildArgs 。\n ignoreBuildArgsInVersion?: boolean= false\n}\n"
+            },
+            "options": {
+              "type": "object",
+              "title": "内置任务参数",
+              "properties": {
+                "dockerfile": {
+                  "description": "用于构建缓存镜像的 Dockerfile 路径。",
+                  "type": "string",
+                  "oriDesc": "用于构建缓存镜像的 Dockerfile 路径。\n\n为避免超长时间构建，Docker 镜像构建超时时间受 [job.timeout](../../grammar/job.html#timeout) 参数控制。"
+                },
+                "by": {
+                  "description": "用来声明缓存镜像构建过程中依赖的文件列表。**注意：未出现在 `by` 列表中的文件，除了 Dockerfile，其他在构建镜像过程中，都当不存在处理。**",
+                  "anyOf": [{
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "oriDesc": "用来声明缓存镜像构建过程中依赖的文件列表。**注意：未出现在 `by` 列表中的文件，除了 Dockerfile，其他在构建镜像过程中，都当不存在处理。**\n\n- 支持数组格式\n- 支持字符串格式，多个文件用英文逗号分隔。"
+                },
+                "versionBy": {
+                  "description": "用来进行版本控制，未传入 `versionBy`，则默认取 `by` 的值进行版本控制。",
+                  "anyOf": [{
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "oriDesc": "用来进行版本控制，未传入 `versionBy`，则默认取 `by` 的值进行版本控制。\n\n`versionBy` 所指向的文件内容发生变化，我们就会认为是一个新的版本，\n具体的计算逻辑见这个表达式：sha1(Dockerfile + versionBy + buildArgs + target + arch)。\n\n- 支持数组格式。\n- 支持字符串格式，多个文件用英文逗号分隔。"
+                },
+                "buildArgs": {
+                  "description": "在 build 时插入额外的构建参数 (`--build-arg $key=$value`), value 值为 null 时只加入 key (`--build-arg $key`)。",
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                },
+                "target": {
+                  "description": "对应 docker build 中的 --target 参数，可以选择性地构建 Dockerfile 中的特定阶段，而不是构建整个 Dockerfile。",
+                  "type": "string"
+                },
+                "sync": {
+                  "description": "是否同步模式，等待缓存镜像 `docker push` 成功后才继续。",
+                  "default": false,
+                  "type": "boolean"
+                },
+                "ignoreBuildArgsInVersion": {
+                  "description": "版本计算是否忽略 `buildArgs`。",
+                  "default": false,
+                  "type": "boolean",
+                  "oriDesc": "版本计算是否忽略 `buildArgs`。\n\n详见`版本控制`"
+                }
+              },
+              "required": [
+                "dockerfile"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "events": [
+            "pull_request.mergeable"
+          ],
+          "visible": true,
+          "pluginDescription": "对于保护分支，PR 流水线检查通过和评审通过后，在 pull_request.mergeable 事件中自动合并 PR",
+          "properties": {
+            "type": {
+              "const": "git:auto-merge",
+              "title": "自动合并 pull request",
+              "description": "events: pull_request.mergeable\n{\n\n\t// 合并策略，默认为  auto ：如果多人提交走  merge  ，否则走  squash  。\n mergeType?: AUTO_MERGE_TYPE= auto\n\t// 合并点提交信息。\n mergeCommitMessage?: string\n\t// 合并点需要设置的脚注，多个脚注用  \\n  分隔，仅在  merge  和  squash  生效。\n mergeCommitFooter?: string\n\t// 合并后是否删除源分支。\n removeSourceBranch?: boolean= false\n\t// 是否忽略  assignee 。\n ignoreAssignee?: boolean= false\n}\n\n\t枚举 AUTO_MERGE_TYPE :\nmerge , squash , rebase , auto\n\n"
+            },
+            "options": {
+              "type": "object",
+              "title": "内置任务参数",
+              "properties": {
+                "mergeType": {
+                  "$ref": "#/definitions/AUTO_MERGE_TYPE",
+                  "description": "合并策略，默认为 `auto`：如果多人提交走 `merge` ，否则走 `squash` 。",
+                  "default": "auto"
+                },
+                "mergeCommitMessage": {
+                  "description": "合并点提交信息。",
+                  "type": "string",
+                  "oriDesc": "合并点提交信息。\n\n当合并策略为 `rebase` 的时候，该信息无效，无需填写。\n\n当合并策略为 `merge` ，默认为 `chore: merge node(merged by CNB)` ，会自动追加 `pr` 引用、`reviewers` 名单、`pr` 包含的提交人名单。举例说明：\n\n```text\nchore: merge node(merged by CNB)\n\nPR-URL: !916\nReviewed-By: tom\nReviewed-By: jerry\nCo-authored-by: jack\n```\n\n当合并策略为 `squash` 时，默认值为该 `pr` 的**第一条 commit message**。并会自动追加 `pr` 引用和 `reviewers` 名单、`pr` 包含的提交人名单。举例说明：\n\n```yaml\nmain:\n pull_request.mergeable:\n   - stages:\n     - name: automerge\n       type: git:auto-merge\n       options:\n         mergeType: squash\n```\n\n该配置会产生如下效果：\n\n某个 `pr` (feat/model-a -> main) 中有两条提交记录，\n\n提交记录 1，2023-10-1 日提交\n\n```text\nfeat(model-a): 给模块 A 增加一个新特性\n\n由于某某原因，新增某某特性\n\nclose #10\n```\n\n提交记录 2，修复了在 `cr` 时被指出的一些问题，2023-10-2 日提交\n\n```text\nfix(model-a): 修复评审中指出的问题\n```\n\n在自动合并后将会在 `main` 分支上产生一个这样的提交节点，即后续的提交记录（也就是提交记录 2）将会被抹掉\n\n```text\nfeat(model-a): 给模块 A 增加一个新特性\n\n由于某某原因，新增某某特性\n\nclose #10\n\nPR-URL: !3976\nReviewed-By: tom\nReviewed-By: jerry\nCo-authored-by: jack\n```"
+                },
+                "mergeCommitFooter": {
+                  "description": "合并点需要设置的脚注，多个脚注用 `\\n` 分隔，仅在 `merge` 和 `squash` 生效。",
+                  "type": "string",
+                  "oriDesc": "合并点需要设置的脚注，多个脚注用 `\\n` 分隔，仅在 `merge` 和 `squash` 生效。\n\n当合并策略为 `rebase` 的时候，该信息无效，无需填写。\n\n当合并策略为 `merge` 或 `squash` 时，会将传入信息按行加入到脚注中，再追加 `pr` 引用、`reviewers` 名单、`pr` 包含的提交人名单。举例说明：\n\n```yaml\nmain:\n pull_request.mergeable:\n   - stages:\n     - name: automerge\n       type: git:auto-merge\n       options:\n         mergeType: squash\n         mergeCommitMessage: \"add feature for some jobs\"\n         mergeCommitFooter: \"--story=123\\n--story=456\"\n```\n\n```text\nadd feature for some jobs\n\n--story=123\n--story=456\nPR-URL: !916\nReviewed-By: tom\nReviewed-By: jerry\nCo-authored-by: jack\n```"
+                },
+                "removeSourceBranch": {
+                  "description": "合并后是否删除源分支。",
+                  "default": false,
+                  "type": "boolean",
+                  "oriDesc": "合并后是否删除源分支。\n\n源分支与目标分支不同仓库时，该值无效。"
+                },
+                "ignoreAssignee": {
+                  "description": "是否忽略 `assignee`。",
+                  "default": false,
+                  "type": "boolean",
+                  "oriDesc": "是否忽略 `assignee`。\n\n当该 `pr` 有指定 `assignee` （指派人）的时候，本任务不会执行自动合并的逻辑。\n因为 `assignee` 的本意就是指派某人手动来处理。\n\n当为 `true` 时，可忽略 `assignee` 强行合并。"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "visible": true,
+          "pluginDescription": "关闭或打开 issue，修改 issue 标签",
+          "properties": {
+            "type": {
+              "const": "git:issue-update",
+              "title": "更新 issue 状态",
+              "description": "\n{\n\n\t// 从给定的文本中解析  issue id 。\n fromText?: string\n\t// 对应  state  属性，为  close  时，可关闭  issue \n state?: IssueStateMap\n\t// 对  label  的操作描述\n label?: IssueUpdateLabel\n\t// 过滤条件，多个条件之间是  or  关系。为空时表示对所有  issue  操作。\n when?: IssueUpdateStatus\n\t// 检查  issue  是否满足条件，不满足时抛出异常，多个条件之间是  or  关系，为空时表示不做检查。\n lint?: IssueUpdateStatus\n\t// 添加的标签的默认颜色，当有传入  label.add  参数时才有效\n defaultColor?: string\n}\n\n\t枚举 IssueStateMap :\nopen , close\n\n\nIssueUpdateLabel\n\n{\n\n\t// 要添加的标签列表，标签不存在时，会自动创建。\n add?: array<string> | string\n\t// 要移除的标签列表\n remove?: array<string> | string\n}\n\n\nIssueUpdateStatus\n\n{\n\n\t// 标签，多个值之间是  or  关系\n label?: array<string> | string\n}\n\n"
+            },
+            "options": {
+              "type": "object",
+              "title": "内置任务参数",
+              "properties": {
+                "fromText": {
+                  "description": "从给定的文本中解析 `issue id`。",
+                  "type": "string",
+                  "oriDesc": "从给定的文本中解析 `issue id`。\n\n不声明时，自动从上下文里的提交记录解析。\n\n> 可以指定一个包含 `issue id` 引用的文本来声明操作对象，比如： `${LATEST_CHANGE_LOG}` 。"
+                },
+                "state": {
+                  "$ref": "#/definitions/IssueStateMap",
+                  "description": "对应 `state` 属性，为 `close` 时，可关闭 `issue`"
+                },
+                "label": {
+                  "$ref": "#/definitions/IssueUpdateLabel",
+                  "description": "对 `label` 的操作描述"
+                },
+                "when": {
+                  "$ref": "#/definitions/IssueUpdateStatus",
+                  "description": "过滤条件，多个条件之间是 `or` 关系。为空时表示对所有 `issue` 操作。"
+                },
+                "lint": {
+                  "$ref": "#/definitions/IssueUpdateStatus",
+                  "description": "检查 `issue` 是否满足条件，不满足时抛出异常，多个条件之间是 `or` 关系，为空时表示不做检查。"
+                },
+                "defaultColor": {
+                  "description": "添加的标签的默认颜色，当有传入 `label.add` 参数时才有效",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "events": [
+            "push",
+            "commit.add",
+            "branch.create",
+            "tag_push",
+            "pull_request.merged",
+            "api_trigger",
+            "web_trigger",
+            "tag_deploy",
+            "crontab"
+          ],
+          "visible": true,
+          "pluginDescription": "发布 Release",
+          "properties": {
+            "type": {
+              "const": "git:release",
+              "title": "发布 Release",
+              "description": "events: push,commit.add,branch.create,tag_push,pull_request.merged,api_trigger,web_trigger,tag_deploy,crontab\n{\n\n\t// 叠加模式\n overlying?: boolean= false\n\t//  release  对应的 tag 名，非必填\n tag?: string | number\n\t//  release  的标题\n title?: string= '`tag` 名'\n\t//  release  的描述\n description?: string\n\t// 是否将  release  设置为  预发布 \n preRelease?: boolean= false\n\t// 是否将  release  设置为最新版本\n latest?: object= false\n}\n"
+            },
+            "options": {
+              "type": "object",
+              "title": "内置任务参数",
+              "properties": {
+                "overlying": {
+                  "description": "叠加模式",
+                  "default": false,
+                  "type": "boolean",
+                  "oriDesc": "叠加模式\n\n- `true`：叠加模式，即本次仅为编辑或更新 release。\n- `false`：非叠加模式，即先删除，再重新创建 release。\n\n::: tip 注意\n\n默认情况下，当 `release` 版本已经存在时，会先删除这个版本，重新生成。\n\n:::"
+                },
+                "tag": {
+                  "description": "`release` 对应的 tag 名，非必填",
+                  "type": [
+                    "string",
+                    "number"
+                  ],
+                  "oriDesc": "`release` 对应的 tag 名，非必填\n\n`tag_push` 事件无需传入，直接取触发 `tag_push` 事件的 `tag` 名。\n\n非 `tag_push` 事件必填，用来作为 `release` 对应的 `tag` 名。"
+                },
+                "title": {
+                  "description": "`release` 的标题",
+                  "default": "`tag` 名",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "`release` 的描述",
+                  "type": "string"
+                },
+                "preRelease": {
+                  "description": "是否将 `release` 设置为 `预发布`",
+                  "default": false,
+                  "type": "boolean"
+                },
+                "latest": {
+                  "description": "是否将 `release` 设置为最新版本",
+                  "default": false,
+                  "enum": [
+                    false,
+                    "false",
+                    true,
+                    "true"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "events": [
+            "pull_request",
+            "pull_request.target",
+            "pull_request.update"
+          ],
+          "visible": true,
+          "pluginDescription": "给 PR 添加、删除评审人/处理人，可指定备选评审人/处理人范围",
+          "properties": {
+            "type": {
+              "const": "git:reviewer",
+              "title": "配置评审人/处理人",
+              "description": "events: pull_request,pull_request.target,pull_request.update\n{\n\n\t// 操作类型\n type?: REVIEW_OPERATION_TYPE= add-reviewer\n\t// 要  添加  或  删除  的评审人用户名。多个使用  ,  或  ;  分隔。\n reviewers?: array<string> | string\n\t// 指定要添加的评审人或处理人数量，随机抽取指定数量的评审人或处理人。\n count?: number\n\t// 排除指定的用户。\n exclude?: array<string> | string\n\t// 文件评审人或处理人配置，如果配置中有配置当前变更文件的评审人或处理人，则会被添加为评审人或处理人。\n reviewersConfig?: IReviewersConfig | string\n\t// 评审人或处理人可以添加的角色\n role?: ROLE_TYPE\n\t// 是否跳过 WIP PR。\n skip_on_wip?: boolean= true\n}\n\n\t枚举 REVIEW_OPERATION_TYPE :\nadd-reviewer , add-reviewer-from-repo-members , add-reviewer-from-group-members , add-reviewer-from-outside-collaborator-members , remove-reviewer , add-assignee , remove-assignee\n\n\tIReviewersConfig\n{ \n [key:string]:string\n}\n\n\t枚举 ROLE_TYPE :\nDeveloper , Master , Owner\n\n"
+            },
+            "options": {
+              "type": "object",
+              "title": "内置任务参数",
+              "properties": {
+                "type": {
+                  "$ref": "#/definitions/REVIEW_OPERATION_TYPE",
+                  "description": "操作类型",
+                  "default": "add-reviewer",
+                  "oriDesc": "操作类型\n\n- `add-reviewer`: 添加评审人，会从 `reviewers` 参数中选择指定数量的评审人\n- `add-reviewer-from-repo-members`: 从仓库直接成员里选一名，添加为评审人\n- `add-reviewer-from-group-members`: 从仓库父组织（直接上级组织）里选一名，添加为评审人\n- `add-reviewer-from-outside-collaborator-members`: 从仓库的外部协作者里选一名，添加为评审人\n- `remove-reviewer`: 从已有的评审人中删除指定的成员\n- `add-assignee`: 添加处理人，添加 `reviewers` 参数传入的成员\n- `remove-assignee`: 从已有的处理人中删除指定的成员"
+                },
+                "reviewers": {
+                  "description": "要 `添加` 或 `删除` 的评审人用户名。多个使用 `,` 或 `;` 分隔。",
+                  "anyOf": [{
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "oriDesc": "要 `添加` 或 `删除` 的评审人用户名。多个使用 `,` 或 `;` 分隔。\n\n`type` 为 `add-reviewer`、`remove-reviewer`、`add-assignee`、`remove-assignee` 时有效。\n\n若同时配置了 `reviewers` 、 `reviewersConfig` ，则会在两者中随机选指定数量的评审人"
+                },
+                "count": {
+                  "description": "指定要添加的评审人或处理人数量，随机抽取指定数量的评审人或处理人。",
+                  "type": "number",
+                  "oriDesc": "指定要添加的评审人或处理人数量，随机抽取指定数量的评审人或处理人。\n\n- 当 `type=add-reviewer`，count 缺省值为 `reviewers` 的数量，即全部添加\n- 当 `type=add-reviewer-from-repo-members`，count 缺省值为 1\n- 当 `type=add-reviewer-from-group-members`，count 缺省值为 1\n- 当 `type=add-reviewer-from-outside-collaborator-members`，count 缺省值为 1\n- 当 `type=add-assignee`，count 缺省值为 `reviewers` 的数量，即全部添加\n\n如果已有评审人或处理人的数量 `< count` ，那么补齐。\n\n如果已有评审人或处理人的数量 `>= count` ，那么什么也不做。"
+                },
+                "exclude": {
+                  "description": "排除指定的用户。",
+                  "anyOf": [{
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                },
+                "reviewersConfig": {
+                  "description": "文件评审人或处理人配置，如果配置中有配置当前变更文件的评审人或处理人，则会被添加为评审人或处理人。",
+                  "anyOf": [{
+                    "$ref": "#/definitions/IReviewersConfig"
+                  },
+                    {
+                      "type": "string"
+                    }
+                  ],
+                  "oriDesc": "文件评审人或处理人配置，如果配置中有配置当前变更文件的评审人或处理人，则会被添加为评审人或处理人。\n\n`type` 为 `add-reviewer` 或  `add-assignee` 时有效。\n\n支持两种格式：\n\n- 字符串格式，传入配置文件相对路径(支持 `json` 文件)：\n\n```yaml\nreviewersConfig: config.json\n```\n\n```json\n{\n   \"./src\": \"name1,name2\",\n   \".cnb.yml\": \"name3\"\n}\n```\n\n- 对象格式，传入文件评审人/处理人配置：\n\n```yaml\nreviewersConfig:\n  ./src: name1,name2\n  .cnb.yml: name3\n```\n\n其中，文件评审人或处理人配置的 `key` 为文件相对路径；`value` 为评审人或处理人英文名，用英文逗号分隔。\n\n若同时配置了 `reviewers` 、 `reviewersConfig`，则会在两者中随机选指定数量的评审人或处理人。"
+                },
+                "role": {
+                  "$ref": "#/definitions/ROLE_TYPE",
+                  "description": "评审人或处理人可以添加的角色",
+                  "oriDesc": "评审人或处理人可以添加的角色\n可选包括：`Developer`(即开发者)、`Master`(即管理员Administrator)、`Owner`(即负责人)\n如果选择 `Developer`，则可添加 `Developer` 及以上权限成员，包括 `Developer`、`Master`、`Owner`"
+                },
+                "skip_on_wip": {
+                  "description": "是否跳过 WIP PR。",
+                  "default": true,
+                  "type": "boolean",
+                  "oriDesc": "是否跳过 WIP PR。\n\n当 pr 标题中带有【WIP】标记时是否跳过。默认跳过\n\n`true`：跳过 WIP PR\n`false`：不跳过 WIP PR"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "visible": true,
+          "pluginDescription": "通过单测结果报告，计算单测覆盖率结果，并上报徽章",
+          "properties": {
+            "type": {
+              "const": "testing:coverage",
+              "title": "单测覆盖率",
+              "description": "\n{\n\n\t//  Glob  格式，指定覆盖率报告文件位置，相对于当前工作目录。\n pattern?: string\n\t// 指定全量覆盖率红线，判断如果全量覆盖率百分比小于该值，阻断工作流退出流水线。\n lines?: number\n\t// 指定增量覆盖率红线，判断如果全量覆盖率百分比小于该值，阻断工作流退出流水线。\n diffLines?: number\n\t// 参与覆盖率计算的代码文件类型白名单，逗号分隔, 如： .json,.ts,.js 。\n allowExts?: string\n\t// 当覆盖率结果报告目标格式为  golang  时，请指定此参数 为  go ，否则会出现计算误差。其他情况可忽略该参数。\n lang?: string\n\t// 没有找到覆盖率报告文件时，是否抛出错误终止流程。\n breakIfNoCoverage?: boolean\n}\n"
+            },
+            "options": {
+              "type": "object",
+              "title": "内置任务参数",
+              "properties": {
+                "pattern": {
+                  "description": "`Glob` 格式，指定覆盖率报告文件位置，相对于当前工作目录。",
+                  "type": "string",
+                  "oriDesc": "`Glob` 格式，指定覆盖率报告文件位置，相对于当前工作目录。\n缺省时，将尝试查找当前目录（包括子目录）下的以下文件：*coverage*.json、jacoco*.xml、lcov.info、*.lcov。"
+                },
+                "lines": {
+                  "description": "指定全量覆盖率红线，判断如果全量覆盖率百分比小于该值，阻断工作流退出流水线。",
+                  "type": "number"
+                },
+                "diffLines": {
+                  "description": "指定增量覆盖率红线，判断如果全量覆盖率百分比小于该值，阻断工作流退出流水线。",
+                  "type": "number",
+                  "oriDesc": "指定增量覆盖率红线，判断如果全量覆盖率百分比小于该值，阻断工作流退出流水线。\n`pull_request`、`pull_request.update`、`pull_request.target` 事件支持计算增量覆盖率结果，其他事件只计算全量覆盖率。"
+                },
+                "allowExts": {
+                  "description": "参与覆盖率计算的代码文件类型白名单，逗号分隔, 如：`.json,.ts,.js`。",
+                  "type": "string",
+                  "oriDesc": "参与覆盖率计算的代码文件类型白名单，逗号分隔, 如：`.json,.ts,.js`。\n缺省时报告中的文件都会参与计算。"
+                },
+                "lang": {
+                  "description": "当覆盖率结果报告目标格式为 `golang` 时，请指定此参数 为 `go`，否则会出现计算误差。其他情况可忽略该参数。",
+                  "type": "string"
+                },
+                "breakIfNoCoverage": {
+                  "description": "没有找到覆盖率报告文件时，是否抛出错误终止流程。",
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "events": [
+            "vscode",
+            "branch.create",
+            "api_trigger",
+            "web_trigger"
+          ],
+          "visible": true,
+          "pluginDescription": "有添加该任务，则该任务执行完云原生开发才可用。\n如果不添加该任务，则 `code-server` 启动后（流水线准备阶段完成，stage 任务还未执行），云原生开发就可用。\n此处`可用`仅表示云原生开发启动 `loading` 页停止等待，进入跳转选择页。",
+          "properties": {
+            "type": {
+              "const": "vscode:go",
+              "title": "云原生开发可用时机",
+              "description": ""
+            }
+          }
+        }
+      ]
+    },
+    "customStep": {
+      "allOf": [{
+        "$ref": "#/definitions/basicJob"
+      },
+        {
+          "type": "object",
+          "description": "自定义任务",
+          "properties": {
+            "type": {
+              "not": true
+            },
+            "image": {
+              "not": true
+            },
+            "script": {
+              "oneOf": [{
+                "$ref": "#/definitions/nonEmptyString"
+              },
+                {
+                  "$ref": "#/definitions/arrayOfNonEmptyStrings"
+                }
+              ],
+              "default": "npm install",
+              "description": "指定该步骤所要执行的 shell 脚本，格式为字符串或字符串数组。数组会使用 && 连接"
+            }
+          },
+          "anyOf": [{
+            "required": [
+              "script"
+            ]
+          },
+            {
+              "required": [
+                "exports"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "imageCommandJob": {
+      "allOf": [{
+        "$ref": "#/definitions/imageJob"
+      },
+        {
+          "type": "object",
+          "properties": {
+            "script": {
+              "$ref": "#/definitions/arrayOfNonEmptyStrings",
+              "description": "shell 命令，格式为字符串或字符串数组，将直接以 docker run <IMAGE_NAME> <COMMANDS> 的形式执行"
+            },
+            "commands": {
+              "$ref": "#/definitions/arrayOfNonEmptyStrings",
+              "description": "shell 命令，格式为字符串或字符串数组，将直接以 docker run <IMAGE_NAME> <COMMANDS> 的形式执行"
+            }
+          },
+          "anyOf": [{
+            "required": [
+              "commands"
+            ]
+          },
+            {
+              "required": [
+                "script"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "imagePluginJob": {
+      "allOf": [{
+        "$ref": "#/definitions/imageJob"
+      },
+        {
+          "type": "object",
+          "properties": {
+            "settings": {
+              "type": "object",
+              "description": "指定该镜像任务参数。按照镜像提供方的文档填写即可。也可以通过 $VAR 或者 ${VAR} 取到环境变量"
+            },
+            "settingsFrom": {
+              "$ref": "#/definitions/stringOrArrayString",
+              "description": "指定本地或 Git 仓库文件路径，加载为镜像任务参数，格式为字符串或字符串数组"
+            }
+          }
+        },
+        {
+          "not": {
+            "$ref": "#/definitions/imageCommandJob"
+          }
+        }
+      ]
+    },
+    "imageJob": {
+      "allOf": [{
+        "$ref": "#/definitions/basicJob"
+      },
+        {
+          "type": "object",
+          "description": "镜像任务",
+          "properties": {
+            "type": {
+              "not": true
+            },
+            "image": {
+              "oneOf": [{
+                "$ref": "#/definitions/nonEmptyString",
+                "description": "指定当前 Job 的环境镜像"
+              },
+                {
+                  "type": "object",
+                  "description": "指定当前 Job 的环境镜像",
+                  "properties": {
+                    "name": {
+                      "$ref": "#/definitions/nonEmptyString",
+                      "description": "指定当前 Job 的环境镜像"
+                    },
+                    "dockerUser": {
+                      "type": "string",
+                      "description": "指定 Docker 用户名，用于拉取缓存镜像"
+                    },
+                    "dockerPassword": {
+                      "type": "string",
+                      "description": "指定 Docker 用户密码，用于拉取缓存镜像"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "required": [
+            "image"
+          ]
+        }
+      ]
+    },
+    "include": {
+      "type": "array",
+      "description": "include 其他的 yaml 配置文件",
+      "items": {
+        "$ref": "#/definitions/includeItem"
+      },
+      "minItems": 1
+    },
+    "includeItem": {
+      "oneOf": [{
+        "$ref": "#/definitions/stringOrArrayString"
+      },
+        {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "配置文件路径"
+            },
+            "ignoreError": {
+              "type": "boolean",
+              "description": "未读取到文件时是否忽略报错"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "config": {
+              "type": "object",
+              "description": "直接传入 yaml 配置内容"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "lock": {
+      "description": "给 stage 或 job 设置锁，只有获取到锁才能继续执行 Job，否则等待锁释放或直接抛出错误，格式为 Boolean 或 Object",
+      "oneOf": [{
+        "type": "boolean",
+        "default": false
+      },
+        {
+          "type": "object",
+          "properties": {
+            "key": {
+              "type": "string",
+              "description": "自定义锁名"
+            },
+            "wait": {
+              "type": "boolean",
+              "description": "锁被占用是否等待，true: 等待锁释放，false：不等待直接抛出错误。默认值：false"
+            },
+            "expires": {
+              "type": "number",
+              "description": "锁过期时间，过期后自动释放锁。单位：s，默认值：1 小时"
+            },
+            "timeout": {
+              "type": "number",
+              "description": "用于等待锁的超时时间。单位：s，默认值：1 小时"
+            }
+          }
+        }
+      ]
+    },
+    "TriggerEnv": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "number",
+          "boolean"
+        ]
+      }
+    },
+    "taskPropertyTypes": {
+      "type": "string",
+      "enum": [
+        "AUTO_MERGE_TYPE",
+        "IReviewersConfig",
+        "IssueStateMap",
+        "IssueUpdateLabel",
+        "IssueUpdateStatus",
+        "REVIEW_OPERATION_TYPE",
+        "ROLE_TYPE",
+        "TriggerEnv"
+      ]
+    },
+    "ApplyEnv": {
+      "type": "object",
+      "additionalProperties": {}
+    },
+    "AUTO_MERGE_TYPE": {
+      "type": "string",
+      "enum": [
+        "merge",
+        "squash",
+        "rebase",
+        "auto"
+      ]
+    },
+    "IssueState": {
+      "type": "number",
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "IssueUpdateLabel": {
+      "type": "object",
+      "properties": {
+        "add": {
+          "description": "要添加的标签列表，标签不存在时，会自动创建。",
+          "anyOf": [{
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "remove": {
+          "description": "要移除的标签列表",
+          "anyOf": [{
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    "IssueUpdateStatus": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "description": "标签，多个值之间是 `or` 关系",
+          "anyOf": [{
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    "IssueStateMap": {
+      "type": "string",
+      "enum": [
+        "open",
+        "close"
+      ]
+    },
+    "IReviewersConfig": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "REVIEW_OPERATION_TYPE": {
+      "type": "string",
+      "enum": [
+        "add-reviewer",
+        "add-reviewer-from-repo-members",
+        "add-reviewer-from-group-members",
+        "add-reviewer-from-outside-collaborator-members",
+        "remove-reviewer",
+        "add-assignee",
+        "remove-assignee"
+      ]
+    },
+    "ROLE_TYPE": {
+      "enum": [
+        "Developer",
+        "Master",
+        "Owner"
+      ],
+      "type": "string"
+    }
+  },
+  "type": "object",
+  "patternProperties": {
+    "^\\..": {
+      "description": "点开头不检查语法",
+      "oneOf": [{
+        "type": "array"
+      },
+        {
+          "type": "object"
+        }
+      ]
+    }
+  },
+  "properties": {
+    "include": {
+      "$ref": "#/definitions/include"
+    }
+  },
+  "additionalProperties": {
+    "anyOf": [{
+      "$ref": "#/definitions/nonEmptyString"
+    },
+      {
+        "$ref": "#/definitions/event"
+      },
+      {
+        "$ref": "#/definitions/pipeline"
+      },
+      {
+        "$ref": "#/definitions/stages"
+      },
+      {
+        "$ref": "#/definitions/explicitStage"
+      },
+      {
+        "$ref": "#/definitions/job"
+      }
+    ]
+  }
+}

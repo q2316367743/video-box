@@ -32,6 +32,9 @@
     "auto-imports.d.ts",
     "components.d.ts"
   ],
+  "exclude": [
+    "src-server"
+  ],
   "references": [
     {
       "path": "./tsconfig.node.json"
