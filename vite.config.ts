@@ -17,12 +17,12 @@ function _resolve(dir: string) {
 export default defineConfig({
   resolve: {
     alias: {
-      "@": _resolve("src")
+      '@':_resolve('src'),
     },
   },
   plugins: [
     // @ts-ignore
-    monacoEditorPlugin.default({}),
+    monacoEditorPlugin({}),
     vue({
       template: {
         compilerOptions: {

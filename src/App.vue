@@ -13,9 +13,9 @@
 <script lang="ts" setup>
 import AppHeader from "@/layout/AppHeader.vue";
 import AppSide from "@/layout/AppSide.vue";
-import {emitScrollToTop, onScrollToBottom} from "@/store";
-import {useUserStore} from "@/store/UserStore.ts";
-import {useDictStore} from "@/store/DictStore.ts";
+import {emitScrollToTop, onScrollToBottom} from "@/store/index";
+import {useUserStore} from "@/store/UserStore";
+import {useDictStore} from "@/store/DictStore";
 
 const route = useRoute();
 const mainRef = ref();
