@@ -1,6 +1,19 @@
 import {running, abortCtl} from './registry';
 import {TaskExecution, TaskStatus, TaskTrigger} from "@/types/Task";
 import {taskDefinitionDao, taskExecutionDao} from "@/dao";
+// 导入预设任务
+import a from './preset/refreshSourceNews';
+import b from './preset/refreshSourceWeb';
+import c from './preset/refreshSourceRssHub';
+import d from './preset/SubscribeCache';
+
+// 2. 把路径 key 变成纯文件名，方便按 row.script 查找
+const presetMap: Record<string, (ctx: TaskRunnerContext) => Promise<void>> = {
+  'refreshSourceNews.ts': a,
+  'refreshSourceWeb.ts': b,
+  'refreshSourceRssHub.ts': c,
+  "SubscribeCache.ts": d
+}
 
 export interface TaskRunnerContext {
   signal: AbortSignal;
@@ -66,7 +79,7 @@ export class TaskRunner {
         const row = await taskDefinitionDao.selectById(exec.definition_id);
         if (!row) return Promise.reject(new Error(`TaskDefinition ${exec.definition_id} not found`));
 
-        const {default: fn} = await import(`./preset/${row.script}`);
+        const fn = presetMap[row.script];
         result = await fn({signal, update: (p: number) => this._update(exec.id, p)});
       } else if (adhocFn) {
         // 临时任务
