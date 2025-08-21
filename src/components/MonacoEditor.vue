@@ -3,35 +3,36 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import {nextTick, onMounted, onUnmounted, ref, watch} from 'vue'
 import * as monaco from 'monaco-editor'
-import { isDark } from '@/store'
+import {isDark} from '@/store'
 
-interface Props {
-  modelValue: string
-  language?: string
-  height?: number | string
-  options?: monaco.editor.IStandaloneEditorConstructionOptions
-}
+const modelValue = defineModel({
+  type: String,
+  default: ''
+});
+const props = defineProps({
+  language: {
+    type: String,
+    default: 'javascript'
+  },
+  height: {
+    type: Object as PropType<number | string>,
+    default: 300
+  },
+  options: {
+    type: Object,
+    default: () => ({})
+  }
+});
 
-interface Emits {
-  (e: 'update:modelValue', value: string): void
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  language: 'javascript',
-  height: 300,
-  options: () => ({})
-})
-
-const emit = defineEmits<Emits>()
 
 const editorContainer = ref<HTMLElement>()
 let editor: monaco.editor.IStandaloneCodeEditor | null = null
 
 const defaultOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
   fontSize: 14,
-  minimap: { enabled: false },
+  minimap: {enabled: false},
   scrollBeyondLastLine: false,
   automaticLayout: true,
   tabSize: 2,
@@ -64,7 +65,7 @@ const initEditor = async () => {
   editor = monaco.editor.create(editorContainer.value, {
     ...defaultOptions,
     ...props.options,
-    value: props.modelValue,
+    value: modelValue.value,
     language: props.language,
     theme: isDark.value ? 'vs-dark' : 'vs'
   })
@@ -72,8 +73,7 @@ const initEditor = async () => {
   // 监听内容变化
   editor.onDidChangeModelContent(() => {
     if (editor) {
-      const value = editor.getValue()
-      emit('update:modelValue', value)
+      modelValue.value = editor.getValue();
     }
   })
 
@@ -111,13 +111,13 @@ const initEditor = async () => {
 }
 
 const updateValue = (newValue: string) => {
-  if (editor && editor.getValue() !== newValue) {
-    editor.setValue(newValue)
-  }
+  if (!editor) return;
+  if (newValue === editor.getValue()) return;
+  editor.setValue(newValue)
 }
 
 // 监听props变化
-watch(() => props.modelValue, updateValue)
+watch(modelValue, updateValue)
 
 watch(() => props.language, (newLanguage) => {
   if (editor) {

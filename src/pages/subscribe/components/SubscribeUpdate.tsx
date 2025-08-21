@@ -9,7 +9,19 @@ import { clone } from "radash";
 
 export function openSubscribeUpdateDialog(row: SourceSubscribe, onUpdate: () => void) {
 
-  const form = ref<SourceSubscribePostParam>(clone(row));
+  const form = ref<SourceSubscribePostParam>({
+    ...clone(row),
+    rule: {
+      data: {},
+      list: '',
+      item_charset: '',
+      item_content: '',
+      item_description: '',
+      item_link: '',
+      item_pub_date: '',
+      item_title: ''
+    }
+  });
   const result = ref<SubscribeRssParseResult>();
   const customIcon = ref<string>('');
 
